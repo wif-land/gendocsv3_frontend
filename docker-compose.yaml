@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  frontend:
+    container_name: gendocsv3_frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    ports:
+      - "3000:3000"
