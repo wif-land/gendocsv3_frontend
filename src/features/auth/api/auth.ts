@@ -29,3 +29,5 @@ export const login = async (email: string, password: string) => {
 
   return { status: 'error', message: data.message }
 }
+
+// TODO: GUARDAR TOKEN EN COOKIE Y USUARIO EN ESTADO GLOBAL

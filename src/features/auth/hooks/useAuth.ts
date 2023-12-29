@@ -26,7 +26,6 @@ export const useAuth = () => {
   })
 
   const onSubmit = async (form: IAuth) => {
-    console.log(form.email, form.password)
     const { status, message, decoded } = await login(form.email, form.password)
 
     if (status === 'ok') {
@@ -34,6 +33,7 @@ export const useAuth = () => {
       toast.success(`Bienvenido de vuelta ${decoded?.username}!`, {
         autoClose: 1800,
       })
+      router.push('/dashboard')
     } else {
       toast.error(message, { autoClose: 1800 })
     }
