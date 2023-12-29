@@ -6,6 +6,7 @@ import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 
+
 interface IAuth {
   email: string
   password: string
@@ -34,10 +35,13 @@ export const useAuth = () => {
       toast.success(`Bienvenido de vuelta ${decoded?.username}!`, {
         autoClose: 1800,
       })
+      router.push('/dashboard')
     } else {
       toast.error(message, { autoClose: 1800 })
     }
   }
+
+  
 
   const logout = () => {
     setCookie('user', null)
