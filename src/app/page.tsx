@@ -1,5 +1,6 @@
 'use client'
 
+import { ToastContainer } from 'react-toastify'
 import { LoginForm } from '../features/auth/components/LoginForm'
 
 // import { Input } from '@nextui-org/react'
@@ -77,6 +78,11 @@ export interface IUser {
 // }
 
 // eslint-disable-next-line no-extra-parens
-const Home = () => <LoginForm />
+const Home = () => (
+  <>
+    <ToastContainer position="top-center" />
+    <LoginForm />
+  </>
+)
 
 export default Home

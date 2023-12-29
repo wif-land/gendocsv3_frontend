@@ -2,6 +2,9 @@ import { useFormik } from 'formik'
 import { login } from '../api/auth'
 import { VALIDATION_MESSAGES } from '../utils/Messages'
 import * as yup from 'yup'
+import { setCookie } from '../../../shared/utils/CookiesUtil'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 interface IAuth {
   email: string
@@ -9,6 +12,7 @@ interface IAuth {
 }
 
 export const useAuth = () => {
+  const router = useRouter()
   const validationSchema = yup.object().shape({
     email: yup
       .string()
@@ -23,13 +27,22 @@ export const useAuth = () => {
 
   const onSubmit = async (form: IAuth) => {
     console.log(form.email, form.password)
-    const { status, message, data } = await login(form.email, form.password)
+    const { status, message, decoded } = await login(form.email, form.password)
 
     if (status === 'ok') {
-      console.log(data)
+      setCookie('user', decoded)
+      toast.success(`Bienvenido de vuelta ${decoded?.username}!`, {
+        autoClose: 1800,
+      })
     } else {
-      console.log(message)
+      toast.error(message, { autoClose: 1800 })
     }
+  }
+
+  const logout = () => {
+    setCookie('user', null)
+    toast.success('Hasta pronto!', { autoClose: 1800 })
+    router.push('/')
   }
 
   const formik = useFormik<IAuth>({
@@ -38,5 +51,5 @@ export const useAuth = () => {
     validationSchema,
   })
 
-  return { formik }
+  return { formik, logout }
 }
