@@ -5,6 +5,8 @@ import * as yup from 'yup'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import { IAccountUser } from '../types/IUserAccount'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 
 
 interface IAuth {
@@ -27,17 +29,23 @@ export const useAuth = () => {
   })
 
   const onSubmit = async (form: IAuth) => {
-    console.log(form.email, form.password)
-    const { status, message, decoded } = await login(form.email, form.password)
+    const { status, decoded } = (await login(form.email, form.password)) as {
+      status: number
+      decoded?: IAccountUser
+    }
 
-    if (status === 'ok') {
+    if (status === HTTP_STATUS_CODES.CREATED) {
       setCookie('user', decoded)
-      toast.success(`Bienvenido de vuelta ${decoded?.username}!`, {
+
+      toast.success(`Bienvenido de vuelta ${decoded!.username}!`, {
         autoClose: 1800,
       })
       router.push('/dashboard')
     } else {
-      toast.error(message, { autoClose: 1800 })
+      toast.error(
+        'Error al iniciar sesión, por favor verifica tus credenciales.',
+        { autoClose: 1800 },
+      )
     }
   }
 
@@ -46,6 +54,7 @@ export const useAuth = () => {
   const logout = () => {
     setCookie('user', null)
     toast.success('Hasta pronto!', { autoClose: 1800 })
+
     router.push('/')
   }
 
