@@ -1,57 +1,68 @@
 "use client"
 import React from 'react'
-import {Avatar, AvatarIcon} from "@nextui-org/react";
+import {Avatar, AvatarIcon, ScrollShadow,Divider} from "@nextui-org/react";
 import {  useEffect, useState } from 'react'
 import { getCookie } from '@/shared/utils/CookiesUtil';
 import { useRouter } from 'next/navigation';
 import CareerModule from '@/shared/components/CareerModule';
+import { IUser } from '@/features/auth/types/IUserAccount';
 
 interface LayoutProps{
     children: React.ReactNode
 }
 const layout: React.FC<LayoutProps>= ({children}) => {
-  const [user, setUser] = useState(null)
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userCookie = getCookie('user');
-      if (userCookie) {
-        setUser(await userCookie)
-      }
-    };
-    fetchUser();
-  }, []);
-  console.log(user)
+  // const [user, setUser] = useState<User | null>(null);
+  // const router = useRouter();
+
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       // Asumiendo que getCookie es una función que devuelve una Promesa que se resuelve a una cadena
+  //       const userCookieString = await Cookies.get('user'); // Cambia por tu función getCookie si no estás usando js-cookie
+  //       if (userCookieString) {
+  //         // Parsea la cadena JSON a un objeto JavaScript
+  //         const userObject: User = JSON.parse(userCookieString);
+  //         setUser(userObject);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error al obtener o parsear la cookie de usuario', error);
+  //     }
+  //   };
+
+  //   fetchUser();
+  // }, []);
   const router = useRouter()
   const onhandleClick = () => {
     router.push('/dashboard/consejos')
   }
   return (
-    <div className='container'>
-        <main className='grid '>
-          <nav className='fixed top-0 z-50  h-20 w-full bg-red-800  flex items-center '>
-            <div className='w-full flex justify-end'>
-            <Avatar
-              icon={<AvatarIcon />}
-              classNames={{
-              base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B] m-10",
-              icon: "text-black/80",
-              }}
-             />
-            </div>
-          </nav>
-          <div className='mt-24'><div>
-          <div className='w-1/4 bg-gray-200 h-screen'>
+    <div className='h-screen flex'>
+      <nav className='fixed top-0 z-50 h-20 w-full bg-red-800 flex items-center'>
+        <div className='w-full flex justify-end'>
+          <Avatar
+            icon={<AvatarIcon />}
+            classNames={{
+            base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B] m-10",
+            icon: "text-black/80",
+            }}
+          />
+        </div>
+      </nav>
+      <div className='flex mt-20 h-full w-full'>
+        <aside className='w-56 bg-white h-full overflow-x-auto'>
+          <ScrollShadow hideScrollBar className="h-full overflow-auto">
             <ul>
-              <CareerModule onclick={onhandleClick}/>
+            <CareerModule items={''}/>
             </ul>
-          </div>
-      <div className='w-3/4'>
+          </ScrollShadow>
+        </aside>
+        <Divider orientation='vertical'/>
+        <section className='flex-grow p-4'>
+          {children}
+        </section>
       </div>
-          </div>
-            {children}</div>
-        </main>
     </div>
   )
 }
 
-export default layout
+export default layout 
