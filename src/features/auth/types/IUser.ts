@@ -7,4 +7,5 @@ export interface IUser {
   roles: IRoleType[]
   sub: number
   username: string
+  accessModulesIds: number[]
 }

@@ -1,6 +1,11 @@
-import { getCookie } from '../../../shared/utils/CookiesUtil'
+import { getCookie } from './CookiesUtil'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
-import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { HTTP_STATUS_CODES } from './app-enums'
+
+interface MyResponseData {
+  message: string;
+  [key: string]: unknown; 
+}
 
 export class AxiosClient {
   private static client: AxiosInstance

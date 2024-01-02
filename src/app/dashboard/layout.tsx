@@ -37,7 +37,7 @@ const layout: React.FC<LayoutProps> = ({ children }) => {
               <aside className="w-56 bg-white h-full overflow-x-auto">
                 <ScrollShadow hideScrollBar className="h-full overflow-auto">
                   <ul>
-                    <CareerModule items={''} />
+                    <CareerModule />
                   </ul>
                 </ScrollShadow>
               </aside>

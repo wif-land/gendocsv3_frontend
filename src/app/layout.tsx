@@ -4,6 +4,7 @@ import './globals.css'
 import { Providers } from './providers'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
+import { ModulesProvider } from './providers/modules-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,7 +18,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
     <body className={inter.className}>
       <ToastContainer />
       <Providers>
-        <main>{children}</main>
+        <ModulesProvider>
+          <main>{children}</main>
+        </ModulesProvider>
       </Providers>
     </body>
   </html>

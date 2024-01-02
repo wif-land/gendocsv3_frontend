@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { jwtDecode } from 'jwt-decode'
 import { IUser } from '../types/IUser'
-import { AxiosClient } from '../utils/AxiosClient'
+import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
 
