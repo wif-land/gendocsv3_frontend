@@ -28,7 +28,7 @@ export class AxiosClient {
       this.client = axios.create({
         baseURL: this.baseUrl,
         headers: {
-          Authorization: `Bearer ${getCookie('accessToken')}`,
+          Authorization: `Bearer ${getCookie('access_token')}`,
           ['Content-Type']: 'application/json',
         },
       })
