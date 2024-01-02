@@ -1,6 +1,7 @@
 import { getCookie } from './CookiesUtil'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import { HTTP_STATUS_CODES } from './app-enums'
+import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 
 type AxiosErrorResponse = AxiosError<AxiosResponse<Record<string, unknown>>> & {
   response: {
@@ -28,7 +29,7 @@ export class AxiosClient {
       this.client = axios.create({
         baseURL: this.baseUrl,
         headers: {
-          Authorization: `Bearer ${getCookie('access_token')}`,
+          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_NAME)}`,
           ['Content-Type']: 'application/json',
         },
       })

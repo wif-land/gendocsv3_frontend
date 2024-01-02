@@ -2,13 +2,14 @@ import 'dotenv/config'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { IModule } from '../types/IModule'
+import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
 
 export const fetchModules = async (): Promise<{
   status: number
   message?: string
   modules?: IModule[]
 }> => {
-  const result = await AxiosClient.get<IModule[]>('/modules')
+  const result = await AxiosClient.get<IModule[]>(API_ROUTES.MODULES.GET_ALL)
 
   const { status, data } = result
 
