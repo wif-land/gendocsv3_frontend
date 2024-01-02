@@ -4,6 +4,7 @@ import { Input } from '@nextui-org/react'
 
 const FunctionaryForm = () => {
   const { formik } = useFunctionary()
+
   return (
     <>
       <div className="flex h-screen ">

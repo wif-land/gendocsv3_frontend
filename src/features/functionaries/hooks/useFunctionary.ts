@@ -61,7 +61,6 @@ export const useFunctionary = () => {
   })
 
   const onSubmit = async (form: IFunctionaryForm) => {
-    // TODO - Implemetar llamada a API
     console.log(form)
   }
 

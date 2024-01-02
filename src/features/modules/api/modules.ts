@@ -9,7 +9,9 @@ export const fetchModules = async (): Promise<{
   message?: string
   modules?: IModule[]
 }> => {
-  const result = await AxiosClient.get<IModule[]>(API_ROUTES.MODULES.GET_ALL)
+  const result = await AxiosClient.get<{
+    data: IModule[]
+  }>(API_ROUTES.MODULES.GET_ALL)
 
   const { status, data } = result
 
@@ -17,5 +19,5 @@ export const fetchModules = async (): Promise<{
     return { status, message: data?.message }
   }
 
-  return { status, modules: data?.content }
+  return { status, modules: data?.content.data }
 }
