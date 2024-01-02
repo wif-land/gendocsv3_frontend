@@ -31,42 +31,6 @@ const biHubleadsNavigation: { [name: string]: INavigationItem } = {
   },
 }
 
-export const biVehicleIntelligenceNavigation: {
-  [name: string]: IAppNavigationWithSubItems
-} = {
-  analyticsDashboard: {
-    name: 'Dashboard de analítica',
-    icon: icons.ANALYTICS_DASHBOARD,
-    subRoutes: {
-      summary: {
-        name: appRoutes.summary.name,
-        href: appPrivateRoutes.summary,
-        urlReference: appRoutes.summary.urlReference,
-        roleControl: [appRoles.admin.id],
-      },
-    },
-  },
-}
-
-export const publicNavigation: { [name: string]: INavigationItem } = {
-  models: {
-    name: appRoutes.models.name,
-    href: appPublicRoutes.models,
-    urlReference: appPublicRoutes.models,
-  },
-  pointOfSales: {
-    name: appRoutes.pointOfSales.name,
-    href: appPublicRoutes.pointOfSales,
-    urlReference: appPublicRoutes.pointOfSales,
-  },
-}
-
 export const mainNavigation: { [name: string]: INavigationItem } = {
-  selectPlatform: {
-    name: appRoutes.selectPlatform.name,
-    href: appRoutes.selectPlatform.url,
-  },
   ...biHubleadsNavigation,
-  ...biVehicleIntelligenceNavigation.analyticsDashboard.subRoutes,
-  ...publicNavigation,
 }
