@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build .env file
-        run: |
-          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Add Vercel Environment Variables
+        run: vercel env add --token=${{ secrets.VERCEL_TOKEN }} --prod --key=NEXT_PUBLIC_API_URL --value=${{ secrets.NEXT_PUBLIC_API_URL }}
 
   Deploy-Staging:
     runs-on: ubuntu-latest
