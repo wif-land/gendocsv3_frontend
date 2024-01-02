@@ -1,6 +1,6 @@
 import { appPublicRoutes, appPrivateRoutes } from '../constants/appPublicRoutes'
-import { IRoleType } from '../../features/auth/types/IUserAccount'
 import { usePathname, useRouter } from 'next/navigation'
+import { IRoleType } from '../constants/appRoles'
 
 export const useRoute = () => {
   const router = useRouter()

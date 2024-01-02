@@ -8,7 +8,7 @@ interface StoreState {
   logout: () => void
 }
 
-export const UserStore = create<StoreState>(
+export const useUserStore = create<StoreState>(
   persist(
     (set) => ({
       user: undefined,

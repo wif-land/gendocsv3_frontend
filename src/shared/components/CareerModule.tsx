@@ -3,16 +3,14 @@ import { ListboxWrapper } from './ListboxWrapper'
 import { useEffect, useState } from 'react'
 import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
-import { UserStore } from '../store/userStore'
+import { useUserStore } from '../store/userStore'
 import { useRouter } from 'next/navigation'
 
 const CareerModule = () => {
+  const { user } = useUserStore()
+  const { accessModules, setAccessModules } = useModulesStore()
   const [selectedItem, setSelectedItem] = useState('')
 
-  const { user } = UserStore()
-  const { accessModules, setAccessModules } = useModulesStore()
-
-  // get current path in nextjs 14 using useRouter
   const router = useRouter()
 
   useEffect(() => {

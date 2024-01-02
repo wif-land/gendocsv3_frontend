@@ -1,5 +1,5 @@
-import { IRoleType } from '../../features/auth/types/IUserAccount'
 import { mainNavigation } from '../constants/appNavigation'
+import { IRoleType } from '../constants/appRoles'
 
 export const validAccessToRoute = (userRole: IRoleType[], path: string) => {
   let haveAccess = false

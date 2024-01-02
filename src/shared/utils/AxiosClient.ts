@@ -2,11 +2,6 @@ import { getCookie } from './CookiesUtil'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import { HTTP_STATUS_CODES } from './app-enums'
 
-interface MyResponseData {
-  message: string
-  [key: string]: unknown
-}
-
 export class AxiosClient {
   private static client: AxiosInstance
   private static baseUrl? = process.env.NEXT_PUBLIC_API_URL
@@ -43,12 +38,19 @@ export class AxiosClient {
     } catch (error) {
       const response = error as AxiosError<
         AxiosResponse<Record<string, unknown>>
-      >
+      > & {
+        response: {
+          status: number
+          data: {
+            message: string
+          }
+        }
+      }
 
       return {
         status: response.response?.status,
         data: {
-          message: response.response?.data.message || 'Error desconocido',
+          message: response.response?.data?.message || 'Error desconocido',
         },
       }
     }
@@ -64,7 +66,6 @@ export class AxiosClient {
     })
 
     const data = await response.json()
-    console.log(data)
 
     if (response.ok) {
       return { status: 'ok', data }

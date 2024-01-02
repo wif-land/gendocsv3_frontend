@@ -1,8 +1,6 @@
-import { IRoleType } from '../../features/auth/types/IUserAccount'
-import { appPrivateRoutes, appPublicRoutes } from './appPublicRoutes'
-import appRoles from './appRoles'
+import { appPrivateRoutes } from './appPublicRoutes'
+import appRoles, { IRoleType } from './appRoles'
 import { appRoutes } from './appRoutes'
-import icons from './icons'
 
 export type customLinkActions = 'dispatch' | 'link'
 
@@ -23,9 +21,9 @@ export interface IAppNavigationWithSubItems {
 
 const biHubleadsNavigation: { [name: string]: INavigationItem } = {
   dashboard: {
-    name: appRoutes.leadsCapture.name,
-    href: appPrivateRoutes.leadsCapture,
-    urlReference: appRoutes.leadsCapture.urlReference,
+    name: 'Dashboard',
+    href: appPrivateRoutes.dashboard,
+    urlReference: appRoutes.dashboard.url,
     roleControl: [appRoles['admin'].id],
     // customHeaderRight: <CustomHeaderLeadsCapture />,
   },

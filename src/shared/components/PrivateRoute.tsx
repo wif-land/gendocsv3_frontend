@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { UserStore } from '../store/userStore'
+import { useUserStore } from '../store/userStore'
 import { getCookie } from '../utils/CookiesUtil'
 
 interface PrivateRouteProps {
@@ -8,7 +8,7 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const { user } = UserStore()
+  const { user } = useUserStore()
   const router = useRouter()
 
   useEffect(() => {
