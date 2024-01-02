@@ -38,7 +38,7 @@ export const useAuth = () => {
 
     if (status === HTTP_STATUS_CODES.CREATED) {
       decoded && setUser(decoded)
-      toast.success(`Bienvenido de vuelta ${decoded!.username}!`, {
+      toast.success(`Bienvenido de vuelta ${decoded!.firstName}!`, {
         autoClose: 1800,
       })
       router.push('/dashboard')
@@ -54,7 +54,8 @@ export const useAuth = () => {
     setCookie('access_token', null)
     userStoreLogout()
     toast.success('Hasta pronto!', { autoClose: 1800 })
-
+    router.refresh()
+    router.prefetch('/login')
     router.push('/login')
   }
 

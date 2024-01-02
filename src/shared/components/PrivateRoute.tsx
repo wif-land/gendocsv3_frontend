@@ -14,12 +14,16 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const router = useRouter()
 
   useEffect(() => {
-    if (getCookie(ACCESS_TOKEN_COOKIE_NAME) === null) {
+    if (
+      getCookie(ACCESS_TOKEN_COOKIE_NAME) === null ||
+      user === null ||
+      !user
+    ) {
       router.push(appPublicRoutes.login)
     }
   }, [])
 
-  if (!user) {
+  if (!user || user === null) {
     return null
   }
 
