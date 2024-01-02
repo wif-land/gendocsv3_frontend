@@ -14,7 +14,7 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Add Vercel Environment Variables
-        run: vercel env add --token=${{ secrets.VERCEL_TOKEN }} --prod --key=NEXT_PUBLIC_API_URL --value=${{ secrets.NEXT_PUBLIC_API_URL }}
+        run: vercel env add --token=${{ secrets.VERCEL_TOKEN }} --key=NEXT_PUBLIC_API_URL --value=${{ secrets.NEXT_PUBLIC_API_URL }}
 
   Deploy-Staging:
     runs-on: ubuntu-latest
