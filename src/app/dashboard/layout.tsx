@@ -10,6 +10,7 @@ interface LayoutProps {
 }
 const layout: React.FC<LayoutProps> = ({ children }) => {
   const { logout } = useAuth()
+
   const PrivateRoute = React.lazy(
     () => import('../../shared/components/PrivateRoute'),
   )

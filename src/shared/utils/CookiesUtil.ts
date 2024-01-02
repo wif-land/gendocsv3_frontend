@@ -16,6 +16,8 @@ export const setCookie = (key: string, value: unknown) => {
 export const getCookie = (key: string) => {
   const cookieData = COOKIES && COOKIES[key as keyof typeof COOKIES]
 
+  if (!cookieData) return null
+
   return cookieData && decodeURIComponent(cookieData as string)
 }
 

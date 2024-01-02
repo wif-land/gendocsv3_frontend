@@ -1,7 +1,12 @@
-import React from 'react'
+'use client'
+import React, { useEffect } from 'react'
 
 const Page = () => {
-  return <div className="m-24"></div>
+  useEffect(() => {
+    console.log('Page')
+  }, [])
+
+  return <div>Page</div>
 }
 
 export default Page

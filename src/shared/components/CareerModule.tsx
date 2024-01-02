@@ -1,22 +1,19 @@
-import { decode } from 'punycode'
-import { Listbox, ListboxItem, Divider } from '@nextui-org/react'
+import { Listbox, ListboxItem } from '@nextui-org/react'
 import { ListboxWrapper } from './ListboxWrapper'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import useModulesStore from '../store/modulesStore'
-import { IModule } from '@/features/modules/types/IModule'
+import { IModule } from '../../features/modules/types/IModule'
 import { UserStore } from '../store/userStore'
+import { useRouter } from 'next/navigation'
 
 const CareerModule = () => {
-  const [selectedItem, setSelectedItem] = useState(null)
+  const [selectedItem, setSelectedItem] = useState('')
 
   const { user } = UserStore()
   const { accessModules, setAccessModules } = useModulesStore()
 
   // get current path in nextjs 14 using useRouter
-
   const router = useRouter()
-  const path = router.pathname
 
   useEffect(() => {
     if (user) {
@@ -24,13 +21,12 @@ const CareerModule = () => {
     }
   }, [user])
 
-  const onHandleClick = (itemKey: any) => {
+  const onHandleClick = (moduleCode: string, submoduleName: string) => {
+    const itemKey = `${moduleCode}/${submoduleName}`
+
     setSelectedItem(itemKey)
-    if (itemKey === 'new') {
-      router.push('/dashboard/council')
-    } else if (itemKey === 'copy') {
-      router.push('/dashboard/search')
-    }
+
+    router.push(`/dashboard/${itemKey}`)
   }
 
   return (
@@ -42,7 +38,7 @@ const CareerModule = () => {
             {module.submodules.map((submodule) => (
               <ListboxItem
                 key={submodule.name}
-                onClick={() => onHandleClick(submodule.name)}
+                onClick={() => onHandleClick(module.code, submodule.name)}
                 className={
                   selectedItem === submodule.name
                     ? 'text-gray-400'
