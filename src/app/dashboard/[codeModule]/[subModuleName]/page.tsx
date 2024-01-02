@@ -1,7 +1,7 @@
 'use client'
 import { useParams } from 'next/navigation'
 import UsersView from '../../../../features/modules/components/users-view'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()

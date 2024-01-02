@@ -1,8 +1,8 @@
 'use client'
 
-import { fetchModules } from '@/features/modules/api/modules'
-import useModulesStore from '@/shared/store/modulesStore'
 import React, { useEffect } from 'react'
+import useModulesStore from '../../shared/store/modulesStore'
+import { fetchModules } from '../../features/modules/api/modules'
 
 export const ModulesProvider = ({
   children,

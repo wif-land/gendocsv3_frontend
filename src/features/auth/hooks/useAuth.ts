@@ -1,13 +1,13 @@
 import { useFormik } from 'formik'
 import { login } from '../api/auth'
-import { VALIDATION_MESSAGES } from '../utils/Messages'
+import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import * as yup from 'yup'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { IUser } from '../types/IUser'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { UserStore } from '../../../shared/store/userStore'
+import { useUserStore } from '../../../shared/store/userStore'
 
 interface IAuth {
   email: string
@@ -16,7 +16,7 @@ interface IAuth {
 
 export const useAuth = () => {
   const router = useRouter()
-  const { setUser, logout: userStoreLogout } = UserStore()
+  const { setUser, logout: userStoreLogout } = useUserStore()
 
   const validationSchema = yup.object().shape({
     email: yup

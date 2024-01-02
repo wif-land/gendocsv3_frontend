@@ -1,9 +1,11 @@
-
-interface IProps{
-    children: React.ReactNode
+interface IProps {
+  children: React.ReactNode
 }
-export const ListboxWrapper = ({children}:IProps) => (
-  <div className="w-full max-w-[260px]  px-1 py-2">
-    {children}
-  </div>
-);
+
+const styles = 'w-full max-w-[260px] px-1 py-2'
+
+export const ListboxWrapper = ({ children }: IProps) => (
+  <>
+    <div className={styles}>{children}</div>
+  </>
+)

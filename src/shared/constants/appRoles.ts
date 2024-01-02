@@ -16,7 +16,7 @@ const appRoles: IRolesInterface = {
     id: 'admin',
     name: 'Administrador',
     accessRoutes: appPrivateRoutes,
-    redirectPath: appPrivateRoutes.leadsCapture,
+    redirectPath: appPrivateRoutes.dashboard,
   },
   public: {
     id: 'public',

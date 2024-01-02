@@ -4,6 +4,10 @@ import { IUser } from '../types/IUser'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
+import {
+  ACCESS_TOKEN_COOKIE_NAME,
+  API_ROUTES,
+} from '../../../shared/constants/appApiRoutes'
 
 export const login = async (
   email: string,
@@ -13,24 +17,18 @@ export const login = async (
   message?: string
   decoded?: IUser
 }> => {
-  const result = await AxiosClient.post('/auth/login', { email, password })
+  const result = await AxiosClient.post<{
+    accessToken: string
+  }>(API_ROUTES.AUTH.LOGIN, { email, password })
 
   const {
     status,
     data: { message, content },
-  } = result as {
-    status: number
-    data: {
-      message: string
-      content: { accessToken: string }
-    }
-  }
+  } = result
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
-  console.log(content!.accessToken)
-
-  setCookie('access_token', content!.accessToken)
+  setCookie(ACCESS_TOKEN_COOKIE_NAME, content!.accessToken)
 
   const decoded: IUser = jwtDecode(content!.accessToken)
 

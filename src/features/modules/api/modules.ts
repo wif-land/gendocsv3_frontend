@@ -2,25 +2,20 @@ import 'dotenv/config'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { IModule } from '../types/IModule'
+import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
 
 export const fetchModules = async (): Promise<{
   status: number
   message?: string
   modules?: IModule[]
 }> => {
-  const result = await AxiosClient.get('/modules')
+  const result = await AxiosClient.get<IModule[]>(API_ROUTES.MODULES.GET_ALL)
 
-  const {
-    status,
-    data: { message, data },
-  } = result as unknown as {
-    status: number
-    data: {
-      message: string
-      data: IModule[]
-    }
+  const { status, data } = result
+
+  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+    return { status, message: data?.message }
   }
-  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
-  return { status, modules: data }
+  return { status, modules: data?.content }
 }
