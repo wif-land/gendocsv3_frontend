@@ -1,10 +1,13 @@
 import { useFormik } from 'formik'
 import { login } from '../api/auth'
-import { VALIDATION_MESSAGES } from '../utils/Messages'
+import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import * as yup from 'yup'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import { IUser } from '../types/IUser'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { useUserStore } from '../../../shared/store/userStore'
 
 interface IAuth {
   email: string
@@ -13,6 +16,8 @@ interface IAuth {
 
 export const useAuth = () => {
   const router = useRouter()
+  const { setUser, logout: userStoreLogout } = useUserStore()
+
   const validationSchema = yup.object().shape({
     email: yup
       .string()
@@ -26,23 +31,31 @@ export const useAuth = () => {
   })
 
   const onSubmit = async (form: IAuth) => {
-    const { status, message, decoded } = await login(form.email, form.password)
+    const { status, decoded } = (await login(form.email, form.password)) as {
+      status: number
+      decoded?: IUser
+    }
 
-    if (status === 'ok') {
-      setCookie('user', decoded)
-      toast.success(`Bienvenido de vuelta ${decoded?.username}!`, {
+    if (status === HTTP_STATUS_CODES.CREATED) {
+      decoded && setUser(decoded)
+      toast.success(`Bienvenido de vuelta ${decoded!.username}!`, {
         autoClose: 1800,
       })
       router.push('/dashboard')
     } else {
-      toast.error(message, { autoClose: 1800 })
+      toast.error(
+        'Error al iniciar sesión, por favor verifica tus credenciales.',
+        { autoClose: 1800 },
+      )
     }
   }
 
   const logout = () => {
-    setCookie('user', null)
+    setCookie('access_token', null)
+    userStoreLogout()
     toast.success('Hasta pronto!', { autoClose: 1800 })
-    router.push('/')
+
+    router.push('/login')
   }
 
   const formik = useFormik<IAuth>({

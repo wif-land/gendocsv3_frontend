@@ -1,33 +1,32 @@
 import 'dotenv/config'
 import { jwtDecode } from 'jwt-decode'
-import { IAccountUser } from '../types/IUserAccount'
+import { IUser } from '../types/IUser'
+import { AxiosClient } from '../../../shared/utils/AxiosClient'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { setCookie } from '../../../shared/utils/CookiesUtil'
 
-export const login = async (email: string, password: string) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-    {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        'Content-Type': 'application/json',
-      },
-    },
-  )
+export const login = async (
+  email: string,
+  password: string,
+): Promise<{
+  status: number
+  message?: string
+  decoded?: IUser
+}> => {
+  const result = await AxiosClient.post<{
+    accessToken: string
+  }>('/auth/login', { email, password })
 
-  // eslint-disable-next-line no-magic-numbers
-  if (response.status === 401) {
-    return { status: 'error', message: 'No se pudo conectar con el servidor' }
-  }
+  const {
+    status,
+    data: { message, content },
+  } = result
 
-  const data = await response.json()
-  const decoded: IAccountUser = jwtDecode(data.accessToken)
+  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
-  if (response.ok) {
-    return { status: 'ok', decoded }
-  }
+  setCookie('access_token', content!.accessToken)
 
-  return { status: 'error', message: data.message }
+  const decoded: IUser = jwtDecode(content!.accessToken)
+
+  return { status, decoded }
 }
-
-// TODO: GUARDAR TOKEN EN COOKIE Y USUARIO EN ESTADO GLOBAL
