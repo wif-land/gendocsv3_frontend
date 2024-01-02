@@ -51,11 +51,11 @@ export const useAuth = () => {
   }
 
   const logout = () => {
-    setCookie('user', null)
+    setCookie('access_token', null)
     userStoreLogout()
     toast.success('Hasta pronto!', { autoClose: 1800 })
 
-    router.push('/')
+    router.push('/login')
   }
 
   const formik = useFormik<IAuth>({
