@@ -8,19 +8,13 @@ export const fetchModules = async (): Promise<{
   message?: string
   modules?: IModule[]
 }> => {
-  const result = await AxiosClient.get('/modules')
+  const result = await AxiosClient.get<IModule[]>('/modules')
 
-  const {
-    status,
-    data: { message, data },
-  } = result as unknown as {
-    status: number
-    data: {
-      message: string
-      data: IModule[]
-    }
+  const { status, data } = result
+
+  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+    return { status, message: data?.message }
   }
-  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
-  return { status, modules: data }
+  return { status, modules: data?.content }
 }

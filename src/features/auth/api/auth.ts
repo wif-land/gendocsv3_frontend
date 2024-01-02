@@ -13,18 +13,14 @@ export const login = async (
   message?: string
   decoded?: IUser
 }> => {
-  const result = await AxiosClient.post('/auth/login', { email, password })
+  const result = await AxiosClient.post<{
+    accessToken: string
+  }>('/auth/login', { email, password })
 
   const {
     status,
     data: { message, content },
-  } = result as {
-    status: number
-    data: {
-      message: string
-      content: { accessToken: string }
-    }
-  }
+  } = result
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 

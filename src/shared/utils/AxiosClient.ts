@@ -2,6 +2,23 @@ import { getCookie } from './CookiesUtil'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import { HTTP_STATUS_CODES } from './app-enums'
 
+type AxiosErrorResponse = AxiosError<AxiosResponse<Record<string, unknown>>> & {
+  response: {
+    status: number
+    data: {
+      message: string
+    }
+  }
+}
+
+interface AxiosClientResponse<T> {
+  status: number
+  data: {
+    message: string
+    content: T
+  }
+}
+
 export class AxiosClient {
   private static client: AxiosInstance
   private static baseUrl? = process.env.NEXT_PUBLIC_API_URL
@@ -20,7 +37,10 @@ export class AxiosClient {
     return this.client
   }
 
-  static async post(path: string, body: unknown): Promise<unknown> {
+  static async post<T>(
+    path: string,
+    body: unknown,
+  ): Promise<AxiosClientResponse<T>> {
     try {
       const response = await this.getInstance().post(path, body)
 
@@ -35,42 +55,60 @@ export class AxiosClient {
           },
         }
       }
-    } catch (error) {
-      const response = error as AxiosError<
-        AxiosResponse<Record<string, unknown>>
-      > & {
-        response: {
-          status: number
-          data: {
-            message: string
-          }
-        }
+
+      return {
+        status,
+        data: {
+          message: 'Error desconocido',
+          content: null as T,
+        },
       }
+    } catch (error) {
+      const response = error as AxiosErrorResponse
 
       return {
         status: response.response?.status,
         data: {
           message: response.response?.data?.message || 'Error desconocido',
+          content: null as T,
         },
       }
     }
   }
 
-  static async get(path: string) {
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${getCookie('accessToken')}`,
-        ['Content-Type']: 'application/json',
-      },
-    })
+  static async get<T>(path: string): Promise<AxiosClientResponse<T>> {
+    try {
+      const response = await this.getInstance().get(path)
 
-    const data = await response.json()
+      const { data, status } = response
 
-    if (response.ok) {
-      return { status: 'ok', data }
+      if (status === HTTP_STATUS_CODES.OK) {
+        return {
+          status,
+          data: {
+            message: 'Success',
+            content: data as T,
+          },
+        }
+      }
+
+      return {
+        status,
+        data: {
+          message: 'Error desconocido',
+          content: null as T,
+        },
+      }
+    } catch (error) {
+      const response = error as AxiosErrorResponse
+
+      return {
+        status: response.response?.status,
+        data: {
+          message: response.response?.data?.message || 'Error desconocido',
+          content: null as T,
+        },
+      }
     }
-
-    return { status: 'error', message: data.message }
   }
 }
