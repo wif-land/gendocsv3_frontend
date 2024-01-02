@@ -4,4 +4,4 @@ export interface IAccountUser {
   platformPermission: string[]
 }
 
-export type IRoleType = 'admin' | 'writer' | 'reader'
+export type IRoleType = 'admin' | 'writer' | 'reader' | 'api' | 'public'

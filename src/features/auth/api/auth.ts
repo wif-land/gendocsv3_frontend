@@ -2,8 +2,8 @@ import 'dotenv/config'
 import { jwtDecode } from 'jwt-decode'
 import { IAccountUser } from '../types/IUserAccount'
 import { AxiosClient } from '../utils/AxiosClient'
-import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { setCookie } from '../../../shared/utils/CookiesUtil'
 
 export const login = async (
   email: string,
@@ -28,11 +28,9 @@ export const login = async (
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
-  setCookie('accessToken', content!.accessToken, 1)
+  setCookie('access_token', content!.accessToken)
 
   const decoded: IAccountUser = jwtDecode(content!.accessToken)
 
   return { status, decoded }
 }
-
-// TODO: GUARDAR TOKEN EN COOKIE Y USUARIO EN ESTADO GLOBAL
