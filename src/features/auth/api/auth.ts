@@ -28,6 +28,8 @@ export const login = async (
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
+  console.log(content!.accessToken)
+
   setCookie('access_token', content!.accessToken)
 
   const decoded: IUser = jwtDecode(content!.accessToken)

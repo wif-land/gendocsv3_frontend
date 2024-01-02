@@ -1,10 +1,10 @@
 import { fetchUsers } from '../../../features/users/api/users'
-import { IUser } from '../../../features/auth/types/IUser'
+import { IResponseUser } from '../../../features/auth/types/IUser'
 import { Button } from '@nextui-org/react'
 import React from 'react'
 
 const UsersView = () => {
-  const [users, setUsers] = React.useState<IUser[]>([])
+  const [users, setUsers] = React.useState<IResponseUser[]>([])
 
   React.useEffect(() => {
     const fetchingUsers = async () => {
@@ -17,10 +17,11 @@ const UsersView = () => {
   return (
     <div>
       <Button>Create User</Button>
-      <ul>
-        {users.map((user) => (
-          <li key={user.sub}>{user.fir}</li>
-        ))}
+      {users.map((user) => (
+        <ul>
+          <li key={user.id}>{user.firstName}</li>
+        </ul>
+      ))}
     </div>
   )
 }

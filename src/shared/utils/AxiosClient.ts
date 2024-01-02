@@ -3,8 +3,8 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import { HTTP_STATUS_CODES } from './app-enums'
 
 interface MyResponseData {
-  message: string;
-  [key: string]: unknown; 
+  message: string
+  [key: string]: unknown
 }
 
 export class AxiosClient {
@@ -64,6 +64,7 @@ export class AxiosClient {
     })
 
     const data = await response.json()
+    console.log(data)
 
     if (response.ok) {
       return { status: 'ok', data }

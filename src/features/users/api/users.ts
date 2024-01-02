@@ -1,26 +1,25 @@
 import 'dotenv/config'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { IUser } from '../../auth/types/IUser'
+import { IResponseUser } from '../../auth/types/IUser'
 
 export const fetchUsers = async (): Promise<{
   status: number
-  message?: string
-  users?: IUser[]
+  users?: IResponseUser[]
 }> => {
   const result = await AxiosClient.get('/users')
 
   const {
     status,
-    data: { message, data },
+    data: { data },
   } = result as unknown as {
     status: number
     data: {
       message: string
-      data: IUser[]
+      data: IResponseUser[]
     }
   }
-  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
+  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, users: data }
 
   return { status, users: data }
 }

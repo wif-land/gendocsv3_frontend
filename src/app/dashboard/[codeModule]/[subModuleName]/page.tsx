@@ -1,4 +1,5 @@
 'use client'
+import UsersView from '../../../../features/modules/components/users-view'
 import React, { useEffect } from 'react'
 
 const Page = () => {
@@ -6,7 +7,11 @@ const Page = () => {
     console.log('Page')
   }, [])
 
-  return <div>Page</div>
+  return (
+    <div>
+      <UsersView />
+    </div>
+  )
 }
 
 export default Page
