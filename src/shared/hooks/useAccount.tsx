@@ -12,10 +12,10 @@ export const useAccount = () => {
   const haveAccessToRoute = validAccessToRoute([], pathname)
 
   return {
-    isLoggedIn: getCookie('accessToken') !== undefined,
+    isLoggedIn: getCookie('access_token') !== undefined,
     haveRoles: 1,
     userRoles: ['admin'],
     haveAccessToRoute,
-    user: getCookie('accessToken'),
+    user: getCookie('access_token'),
   }
 }

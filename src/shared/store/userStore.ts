@@ -1,6 +1,7 @@
 import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { IUser } from '../../features/auth/types/IUser'
+import { setCookie } from '../utils/CookiesUtil'
 
 interface StoreState {
   user: IUser | undefined
@@ -13,7 +14,10 @@ export const useUserStore = create<StoreState>(
     (set) => ({
       user: undefined,
       setUser: (user?: IUser | undefined) => set({ user }),
-      logout: () => set({ user: undefined }),
+      logout: () => {
+        setCookie('access_token', null)
+        set({ user: undefined })
+      },
     }),
     {
       name: 'user',
