@@ -14,9 +14,9 @@ export const setCookie = (key: string, value: unknown) => {
 }
 
 export const getCookie = (key: string) => {
-  const cookieData = COOKIES && COOKIES[key]
+  const cookieData = COOKIES && COOKIES[key as keyof typeof COOKIES]
 
-  return cookieData && decodeURIComponent(cookieData)
+  return cookieData && decodeURIComponent(cookieData as string)
 }
 
 export const cookieToJson = (cookie: string) => {
@@ -24,7 +24,7 @@ export const cookieToJson = (cookie: string) => {
     [key: string]: string
   } = {}
 
-  JSON.parse(cookie).forEach((cookie: any) => {
+  JSON.parse(cookie).forEach((cookie: { name: string; value: string }) => {
     const { name, value } = cookie
 
     try {
