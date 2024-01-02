@@ -1,7 +1,7 @@
 import { fetchUsers } from '../../../features/users/api/users'
 import { IResponseUser } from '../../../features/auth/types/IUser'
 import { Button } from '@nextui-org/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const UsersView = () => {
   const [users, setUsers] = React.useState<IResponseUser[]>([])
@@ -16,11 +16,15 @@ const UsersView = () => {
     }
     fetchingUsers()
   }, [])
+
+  useEffect(() => {
+    console.log({ usersLocal: users })
+  }, [users])
   return (
     <div>
       <Button>Create User</Button>
       {users.map((user) => (
-        <div className="bg-red">
+        <div className="bg-red" key={user.id}>
           <ul>
             <li key={user.id}>{user.firstName}</li>
           </ul>

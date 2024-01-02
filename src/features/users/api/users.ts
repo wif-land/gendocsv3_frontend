@@ -11,13 +11,10 @@ export const fetchUsers = async (): Promise<{
 
   console.log('result', result)
 
-  const { status, data } = result as unknown as {
-    status: number
-    data: IResponseUser[]
-  }
+  const { status, data } = result
 
   console.log('data', data)
-  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, users: data }
+  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 
-  return { status, users: data }
+  return { status, users: data.content as IResponseUser[] }
 }
