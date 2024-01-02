@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import { login } from '../api/auth'
-import { VALIDATION_MESSAGES } from '../utils/Messages'
+import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import * as yup from 'yup'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { toast } from 'react-toastify'
