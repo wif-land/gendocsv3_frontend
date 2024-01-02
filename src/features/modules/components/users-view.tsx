@@ -10,6 +10,8 @@ const UsersView = () => {
     const fetchingUsers = async () => {
       const users = await fetchUsers()
 
+      console.log({ users })
+
       if (users.users) setUsers(users.users)
     }
     fetchingUsers()
@@ -18,9 +20,11 @@ const UsersView = () => {
     <div>
       <Button>Create User</Button>
       {users.map((user) => (
-        <ul>
-          <li key={user.id}>{user.firstName}</li>
-        </ul>
+        <div className="bg-red">
+          <ul>
+            <li key={user.id}>{user.firstName}</li>
+          </ul>
+        </div>
       ))}
     </div>
   )

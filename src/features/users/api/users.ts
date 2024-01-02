@@ -9,16 +9,14 @@ export const fetchUsers = async (): Promise<{
 }> => {
   const result = await AxiosClient.get('/users')
 
-  const {
-    status,
-    data: { data },
-  } = result as unknown as {
+  console.log('result', result)
+
+  const { status, data } = result as unknown as {
     status: number
-    data: {
-      message: string
-      data: IResponseUser[]
-    }
+    data: IResponseUser[]
   }
+
+  console.log('data', data)
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, users: data }
 
   return { status, users: data }
