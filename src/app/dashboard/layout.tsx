@@ -1,41 +1,15 @@
 'use client'
-import React, { useEffect, useState } from 'react'
 import { Avatar, AvatarIcon, ScrollShadow, Divider } from '@nextui-org/react'
-
-import { useRouter } from 'next/navigation'
-import CareerModule from '@/shared/components/CareerModule'
-import { useAuth } from '@/features/auth/hooks/useAuth'
-import PrivateRoute from '@/shared/components/PrivateRoute'
+import PrivateRoute from '../../shared/components/PrivateRoute'
+import { useAuth } from '../../features/auth/hooks/useAuth'
+import CareerModule from '../../shared/components/CareerModule'
 
 interface LayoutProps {
   children: React.ReactNode
 }
 const layout: React.FC<LayoutProps> = ({ children }) => {
-  // const [user, setUser] = useState<User | null>(null);
-  // const router = useRouter();
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       // Asumiendo que getCookie es una función que devuelve una Promesa que se resuelve a una cadena
-  //       const userCookieString = await Cookies.get('user'); // Cambia por tu función getCookie si no estás usando js-cookie
-  //       if (userCookieString) {
-  //         // Parsea la cadena JSON a un objeto JavaScript
-  //         const userObject: User = JSON.parse(userCookieString);
-  //         setUser(userObject);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error al obtener o parsear la cookie de usuario', error);
-  //     }
-  //   };
-
-  //   fetchUser();
-  // }, []);
-  const router = useRouter()
   const { logout } = useAuth()
-  const onhandleClick = () => {
-    router.push('/dashboard/consejos')
-  }
+
   return (
     <>
       <PrivateRoute>

@@ -1,31 +1,38 @@
-'use server'
-import { cookies } from 'next/headers'
+'use client'
+import Cookies from 'js-cookie'
+import { COOKIES } from '../../middleware'
 
-export const setCookie = (
-  key: string,
-  value: unknown,
-  expire?: number | undefined,
-) => {
+export const setCookie = (key: string, value: unknown) => {
   const DAY = 24
   const HOUR = 60
   const MINUTE = 60
   const SECOND = 1000
 
-  if (expire) {
-    cookies().set(key, JSON.stringify(value), {
-      expires: expire * DAY * HOUR * MINUTE * SECOND,
-    })
-  } else {
-    cookies().set(key, JSON.stringify(value))
-  }
+  Cookies.set(key, JSON.stringify(value), {
+    expires: DAY * HOUR * MINUTE * SECOND,
+  })
 }
 
-export const getCookie = async (key: string) => {
-  const cookie = cookies().get(key)
-  if (!cookie) return null
-  return await JSON.parse(cookie.value)
+export const getCookie = (key: string) => {
+  const cookieData = COOKIES && COOKIES[key as keyof typeof COOKIES]
+
+  return cookieData && decodeURIComponent(cookieData as string)
 }
 
-export const removeCookie = (key: string) => {
-  cookies().delete(key)
+export const cookieToJson = (cookie: string) => {
+  const parsedCookies: {
+    [key: string]: string
+  } = {}
+
+  JSON.parse(cookie).forEach((cookie: { name: string; value: string }) => {
+    const { name, value } = cookie
+
+    try {
+      parsedCookies[name] = JSON.parse(value)
+    } catch (error) {
+      parsedCookies[name] = value
+    }
+  })
+
+  return parsedCookies
 }

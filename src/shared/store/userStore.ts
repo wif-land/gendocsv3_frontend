@@ -1,6 +1,6 @@
-import { IUser } from '../../features/auth/types/IUser'
 import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { IUser } from '../../features/auth/types/IUser'
 
 interface StoreState {
   user: IUser | undefined

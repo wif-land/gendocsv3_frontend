@@ -1,11 +1,9 @@
 'use client'
 
-import {NextUIProvider} from '@nextui-org/react'
+import { NextUIProvider as N } from '@nextui-org/react'
 
-export function Providers({children}: { children: React.ReactNode }) {
-  return (
-    <NextUIProvider>
-      {children}
-    </NextUIProvider>
-  )
+interface IProviders {
+  children: React.ReactNode
 }
+
+export const Providers = (data: IProviders) => <N>{data.children}</N>

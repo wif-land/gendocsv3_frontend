@@ -1,9 +1,3 @@
-export interface IAccountUser {
-  username: string
-  roles: IRoleType[]
-  platformPermission: string[]
-}
-
 export type IRoleType = 'admin' | 'writer' | 'reader'
 
 export interface IUser {
