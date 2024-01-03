@@ -30,6 +30,7 @@ export const useUser = () => {
   })
 
   const onSubmit = async (form: IUserForm) => {
+    console.log(form)
     const { status } = await UsersApi.createUser(form)
 
     if (status === 201) {

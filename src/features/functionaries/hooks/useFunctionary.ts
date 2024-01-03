@@ -60,7 +60,7 @@ export const useFunctionary = () => {
     forthLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
   })
 
-  const onSubmit = async (form: IFunctionaryForm) => {
+  const onSubmit = (form: IFunctionaryForm) => {
     console.log(form)
   }
 
