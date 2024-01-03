@@ -23,8 +23,10 @@ import {
   DropdownItem,
 } from '@nextui-org/react'
 import { IStudent } from '@/features/students/types/IStudent'
+import { useRouter } from 'next/navigation'
 
 const StudentsView = () => {
+  const router = useRouter()
   const COLUMNS = [
     {
       key: 'dni',
@@ -56,7 +58,7 @@ const StudentsView = () => {
 
   return (
     <div>
-      
+      <Button onClick={()=>{router.push('Estudiantes/add')}}>Create User</Button>
     </div>
   )
 }

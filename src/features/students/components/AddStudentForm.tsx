@@ -1,6 +1,6 @@
 import React from 'react'
 import { useStudent } from '../hooks/useStudent'
-import { Input } from '@nextui-org/react'
+import { Button, Input } from '@nextui-org/react'
 
 const AddStudentForm = () => {
   const { formik } = useStudent()
@@ -68,9 +68,9 @@ const AddStudentForm = () => {
                 className="w-full"
               />
               <Input
-                id="lastName"
-                name="lastName"
-                type="lastName"
+                id="firstLastName"
+                name="firstLastName"
+                type="firstLastName"
                 label="Apellido"
                 variant="underlined"
                 placeholder="Ingrese un apellido"
@@ -104,6 +104,14 @@ const AddStudentForm = () => {
                 className="w-full"
               />
             </div>
+            <Button
+                type="submit"
+                size="lg"
+                className="w-1/2"
+                disabled={formik.isSubmitting}
+              >
+                Crear
+              </Button>
           </form>
         </div>
       </div>
