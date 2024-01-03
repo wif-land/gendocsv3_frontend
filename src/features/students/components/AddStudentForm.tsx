@@ -1,8 +1,8 @@
 import React from 'react'
 import { useStudent } from '../hooks/useStudent'
-import { Input } from '@nextui-org/react'
+import { Button, Input } from '@nextui-org/react'
 
-const addStudentForm = () => {
+const AddStudentForm = () => {
   const { formik } = useStudent()
   return (
     <>
@@ -68,9 +68,9 @@ const addStudentForm = () => {
                 className="w-full"
               />
               <Input
-                id="lastName"
-                name="lastName"
-                type="lastName"
+                id="firstLastName"
+                name="firstLastName"
+                type="firstLastName"
                 label="Apellido"
                 variant="underlined"
                 placeholder="Ingrese un apellido"
@@ -104,6 +104,14 @@ const addStudentForm = () => {
                 className="w-full"
               />
             </div>
+            <Button
+                type="submit"
+                size="lg"
+                className="w-1/2"
+                disabled={formik.isSubmitting}
+              >
+                Crear
+              </Button>
           </form>
         </div>
       </div>
@@ -111,4 +119,4 @@ const addStudentForm = () => {
   )
 }
 
-export default addStudentForm
+export default AddStudentForm

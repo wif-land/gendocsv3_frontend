@@ -20,4 +20,10 @@ export const API_ROUTES = {
     UPDATE: '/modules/:id',
     DELETE: '/modules/:id',
   },
+  STUDENTS: {
+    GET_ALL: '/students',
+    GET_ONE: '/students/:id',
+    UPDATE: '/students/:id',
+    DELETE: '/students/:id',
+  },
 }
