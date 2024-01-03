@@ -140,7 +140,23 @@ const AddUserForm = () => {
                 }
                 className="w-full"
               />
-              <Select
+              <Input
+                id="password"
+                name="password"
+                type="text"
+                label="Contraseña"
+                variant="bordered"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                size="lg"
+                errorMessage={
+                  formik.touched.password && formik.errors.password
+                    ? formik.errors.password
+                    : ''
+                }
+                className="w-full"
+              />
+              {/* <Select
                 id="accessModules"
                 name="accessModules"
                 label="Favorite Animal"
@@ -162,7 +178,7 @@ const AddUserForm = () => {
               </Select>
               <p className="text-default-500 text-small">
                 Selected: {Array.from(value).join(', ')}
-              </p>
+              </p> */}
               <Switch
                 id="isActive"
                 name="isActive"
@@ -182,10 +198,10 @@ const AddUserForm = () => {
               <Select
                 id="roles"
                 name="roles"
-                label="Favorite Animal"
+                label="Roles"
                 variant="bordered"
-                placeholder="Select an animal"
-                description="Selecciona los modulos a los que tendra acceso el usuario"
+                placeholder="Selecciona los roles"
+                description="Selecciona los roles del usuario"
                 selectionMode="multiple"
                 onSelectionChange={(value) =>
                   handleSelectChange('roles', value)

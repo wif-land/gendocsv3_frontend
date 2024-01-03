@@ -105,13 +105,13 @@ const AddStudentForm = () => {
               />
             </div>
             <Button
-                type="submit"
-                size="lg"
-                className="w-1/2"
-                disabled={formik.isSubmitting}
-              >
-                Crear
-              </Button>
+              type="submit"
+              size="lg"
+              className="w-1/2"
+              disabled={formik.isSubmitting}
+            >
+              Crear
+            </Button>
           </form>
         </div>
       </div>

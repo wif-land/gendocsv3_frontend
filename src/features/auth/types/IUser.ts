@@ -36,5 +36,6 @@ export interface ICreateUser {
   googleEmail: string
   roles?: string[] | null
   isActive: boolean
-  accessModules?: string[] | null
+  // accessModules?: string[] | null
+  password: string
 }

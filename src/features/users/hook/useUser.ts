@@ -13,7 +13,7 @@ interface IUserForm {
   googleEmail: ''
   roles: []
   isActive: false
-  accessModules: []
+  password: ''
 }
 
 export const useUser = () => {
@@ -26,7 +26,7 @@ export const useUser = () => {
     googleEmail: yup.string().required(VALIDATION_MESSAGES.required),
     roles: yup.array().required(VALIDATION_MESSAGES.required),
     isActive: yup.boolean().required(VALIDATION_MESSAGES.required),
-    accessModules: yup.array().required(VALIDATION_MESSAGES.required),
+    password: yup.string().required(VALIDATION_MESSAGES.required),
   })
 
   const onSubmit = async (form: IUserForm) => {
@@ -52,7 +52,7 @@ export const useUser = () => {
       googleEmail: '',
       roles: [],
       isActive: false,
-      accessModules: [],
+      password: '',
     },
     onSubmit,
     validationSchema,
