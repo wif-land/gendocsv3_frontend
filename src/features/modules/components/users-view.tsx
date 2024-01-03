@@ -164,7 +164,7 @@ const UsersView = () => {
       <Button onPress={() => router.push('Usuarios/add')} radius="sm" className='w-40 h-12 ml-6 border-2 border-blue-900 bg-white   text-blue-900'>Create User</Button>
       <div className="m-6">
         <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={COLUMNS} className='bg-red-800'>
+          <TableHeader columns={COLUMNS} className=''>
             {(column) => (
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
