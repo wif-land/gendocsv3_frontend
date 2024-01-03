@@ -30,7 +30,7 @@ const layout: React.FC<LayoutProps> = ({ children }) => {
                   }}
                 />
               </div>
-              <div className="text-black" onClick={logout}>
+              <div className="text-white font-sm" onClick={logout}>
                 Cerrar sesión
               </div>
             </nav>

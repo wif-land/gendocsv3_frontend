@@ -10,11 +10,24 @@ import {
 } from '@nextui-org/react'
 import { fetchModules } from '../../../features/modules/api/modules'
 import { IModule } from '../../modules/types/IModule'
+import { IRoleType } from '../../../features/auth/types/IUser'
+import { useRouter } from 'next/navigation'
 
 const AddUserForm = () => {
+  const router = useRouter()
   const { formik } = useUser()
   const [value, setValue] = React.useState<Selection>(new Set([]))
   const [modules, setModules] = useState<IModule[] | undefined>([]) // State para guardar los módulos
+  const rolesArray: IRoleType[] = ['admin', 'writer', 'reader']
+
+  const handleSelectChange = (name: string, value: Selection) => {
+    formik.setFieldValue(name, Array.from(value))
+  }
+
+  const handleModuleChange = (name: string, value: Selection) => {
+    setValue(value)
+    formik.setFieldValue(name, Array.from(value))
+  }
 
   useEffect(() => {
     const fetchAndSetModules = async () => {
@@ -30,9 +43,9 @@ const AddUserForm = () => {
         <div className="flex-1 flex flex-col justify-center items-center">
           <form
             onSubmit={formik.handleSubmit}
-            className="w-1/2 justify-items-center pl-16 pb-32"
+            className="w-3/4 justify-items-center pl-16 pb-32"
           >
-            <div className="grid w-6/6 justify-items-center ">
+            <div className="grid grid-cols-2 gap-4 justify-items-center  ">
               <Input
                 id="firstName"
                 name="firstName"
@@ -41,7 +54,6 @@ const AddUserForm = () => {
                 variant="bordered"
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 size="lg"
                 errorMessage={
                   formik.touched.firstName && formik.errors.firstName
@@ -58,7 +70,6 @@ const AddUserForm = () => {
                 variant="bordered"
                 value={formik.values.secondName}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 size="lg"
                 errorMessage={
                   formik.touched.secondName && formik.errors.secondName
@@ -75,7 +86,6 @@ const AddUserForm = () => {
                 variant="bordered"
                 value={formik.values.firstLastName}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 size="lg"
                 errorMessage={
                   formik.touched.firstLastName && formik.errors.firstLastName
@@ -92,7 +102,6 @@ const AddUserForm = () => {
                 variant="bordered"
                 value={formik.values.secondLastName}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 size="lg"
                 errorMessage={
                   formik.touched.secondLastName && formik.errors.secondLastName
@@ -109,7 +118,6 @@ const AddUserForm = () => {
                 variant="bordered"
                 value={formik.values.googleEmail}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 size="lg"
                 errorMessage={
                   formik.touched.googleEmail && formik.errors.googleEmail
@@ -126,7 +134,6 @@ const AddUserForm = () => {
                 variant="bordered"
                 value={formik.values.outlookEmail}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 size="lg"
                 errorMessage={
                   formik.touched.outlookEmail && formik.errors.outlookEmail
@@ -135,7 +142,23 @@ const AddUserForm = () => {
                 }
                 className="w-full"
               />
-              <Select
+              <Input
+                id="password"
+                name="password"
+                type="text"
+                label="Contraseña"
+                variant="bordered"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                size="lg"
+                errorMessage={
+                  formik.touched.password && formik.errors.password
+                    ? formik.errors.password
+                    : ''
+                }
+                className="w-full"
+              />
+              {/* <Select
                 id="accessModules"
                 name="accessModules"
                 label="Favorite Animal"
@@ -144,13 +167,10 @@ const AddUserForm = () => {
                 description="Selecciona los modulos a los que tendra acceso el usuario"
                 selectionMode="multiple"
                 selectedKeys={value}
-                onSelectionChange={(e) => {
-                  setValue(e)
-                  formik.handleChange
-                }}
-                // selectedKeys={value}
+                onSelectionChange={(value) =>
+                  handleModuleChange('accessModules', value)
+                }
                 className="max-w-xs"
-                // onSelectionChange={setValue}
               >
                 {modules!.map((module) => (
                   <SelectItem key={module.name} value={module.name}>
@@ -160,14 +180,31 @@ const AddUserForm = () => {
               </Select>
               <p className="text-default-500 text-small">
                 Selected: {Array.from(value).join(', ')}
-              </p>
+              </p> */}
+              <Select
+                id="roles"
+                name="roles"
+                label="Roles"
+                variant="bordered"
+                placeholder="Selecciona los roles"
+                description="Selecciona los roles del usuario"
+                selectionMode="multiple"
+                onSelectionChange={(value) =>
+                  handleSelectChange('roles', value)
+                }
+                className="w-full"
+              >
+                {rolesArray!.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </Select>
               <Switch
                 id="isActive"
                 name="isActive"
-                defaultSelected
                 size="sm"
                 onValueChange={(value) => {
-                  // Crear un evento falso con la estructura esperada
                   const fakeEvent = {
                     target: {
                       name: 'isActive',
@@ -180,14 +217,23 @@ const AddUserForm = () => {
                 Usuario activo
               </Switch>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center items center  m-2">
               <Button
                 type="submit"
                 size="lg"
-                className="w-1/2"
+                className="w-1/2 m-4 bg-blue-600 text-white"
                 disabled={formik.isSubmitting}
               >
                 Crear
+              </Button>
+              <Button
+                type="reset"
+                size="lg"
+                className="w-1/2 m-4 bg-red-600 text-white"
+                disabled={formik.isSubmitting}
+                onClick={()=>{window.history.back();}}
+              >
+                Cancelar
               </Button>
             </div>
           </form>
