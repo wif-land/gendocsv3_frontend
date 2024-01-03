@@ -9,7 +9,6 @@ export interface IUser {
   outlookEmail: string
   googleEmail: string
   roles?: string[] | null
-  platformPermission?: null
   isActive: boolean
   accessModules?: AccessModulesEntity[] | null
 }

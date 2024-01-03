@@ -9,7 +9,7 @@ export const setCookie = (key: string, value: unknown) => {
   const SECOND = 1000
 
   cookies().set(key, JSON.stringify(value), {
-    maxAge: DAY * HOUR * MINUTE * SECOND,
+    // expires: DAY * HOUR * MINUTE * SECOND,
   })
 }
 
