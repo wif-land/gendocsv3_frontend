@@ -2,7 +2,7 @@ import React from 'react'
 import { useStudent } from '../hooks/useStudent'
 import { Input } from '@nextui-org/react'
 
-const addStudentForm = () => {
+const AddStudentForm = () => {
   const { formik } = useStudent()
   return (
     <>
@@ -111,4 +111,4 @@ const addStudentForm = () => {
   )
 }
 
-export default addStudentForm
+export default AddStudentForm
