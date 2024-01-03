@@ -14,19 +14,6 @@ export interface IUser {
   accessModules?: AccessModulesEntity[] | null
 }
 
-export interface IResponseUser {
-  id: number
-  firstName: string
-  secondName: string
-  firstLastName: string
-  secondLastName: string
-  outlookEmail: string
-  googleEmail: string
-  roles?: string[] | null
-  platformPermission?: null
-  isActive: boolean
-  accessModules?: AccessModulesEntity[] | null
-}
 export interface AccessModulesEntity {
   id: number
   createdAt: string

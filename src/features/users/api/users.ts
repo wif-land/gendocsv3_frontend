@@ -1,20 +1,35 @@
 import 'dotenv/config'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { IResponseUser } from '../../auth/types/IUser'
+import { IUser } from '../../auth/types/IUser'
+import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
 
-export const fetchUsers = async (): Promise<{
-  status: number
-  users?: IResponseUser[]
-}> => {
-  const result = await AxiosClient.get('/users')
+export class UsersApi {
+  static fetchUsers = async (): Promise<{
+    status: number
+    users?: IUser[]
+  }> => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
 
-  console.log('result', result)
+    const { status, data } = result
 
-  const { status, data } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 
-  console.log('data', data)
-  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    return { status, users: data.content as IUser[] }
+  }
 
-  return { status, users: data.content as IResponseUser[] }
+  static updateUser = async (
+    id: string,
+    data: Partial<IUser>,
+  ): Promise<{ status: number }> => {
+    const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, data, {
+      id,
+    })
+
+    const { status } = result
+
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+
+    return { status }
+  }
 }

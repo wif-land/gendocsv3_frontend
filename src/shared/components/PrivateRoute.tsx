@@ -1,9 +1,7 @@
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useUserStore } from '../store/userStore'
 import { getCookie } from '../utils/CookiesUtil'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
-import { appPublicRoutes } from '../constants/appPublicRoutes'
 
 interface PrivateRouteProps {
   children: React.ReactNode
@@ -11,7 +9,7 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { user } = useUserStore()
-  const router = useRouter()
+  // const router = useRouter()
 
   useEffect(() => {
     if (
@@ -19,7 +17,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
       user === null ||
       !user
     ) {
-      router.push(appPublicRoutes.login)
+      // router.push(appPublicRoutes.login)
     }
   }, [])
 

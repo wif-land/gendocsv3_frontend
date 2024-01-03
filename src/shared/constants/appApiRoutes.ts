@@ -1,4 +1,6 @@
 export const ACCESS_TOKEN_COOKIE_NAME = 'access_token'
+export const PARAM_TO_REPLACE = ':id'
+export const QUERY_PARAM_TO_REPLACE = '?id='
 
 export const API_ROUTES = {
   AUTH: {
@@ -8,7 +10,7 @@ export const API_ROUTES = {
   USERS: {
     GET_ALL: '/users',
     GET_ONE: '/users/:id',
-    UPDATE: '/users/:id',
+    UPDATE: '/users',
     DELETE: '/users/:id',
   },
   MODULES: {

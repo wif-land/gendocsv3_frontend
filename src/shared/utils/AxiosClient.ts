@@ -29,13 +29,55 @@ export class AxiosClient {
       this.client = axios.create({
         baseURL: this.baseUrl,
         headers: {
-          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_NAME)}`,
           ['Content-Type']: 'application/json',
         },
       })
+
+      this.client.interceptors.request.use(
+        async (config) => {
+          const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+
+          if (accessToken) {
+            if (config.headers) {
+              config.headers.Authorization = `Bearer ${accessToken.replaceAll(
+                '"',
+                '',
+              )}`
+            }
+          }
+
+          return config
+        },
+        (error) => Promise.reject(error),
+      )
     }
 
+    this.client.interceptors.request.use(
+      async (config) => {
+        const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+
+        if (accessToken) {
+          if (config.headers) {
+            config.headers.Authorization = `Bearer ${accessToken.replaceAll(
+              '"',
+              '',
+            )}`
+          }
+        }
+
+        return config
+      },
+      (error) => Promise.reject(error),
+    )
+
     return this.client
+  }
+
+  static setHeaders(headers: Record<string, string>) {
+    this.client.defaults.headers = {
+      ...this.client.defaults.headers,
+      ...headers,
+    }
   }
 
   static async post<T>(
@@ -80,6 +122,48 @@ export class AxiosClient {
   static async get<T>(path: string): Promise<AxiosClientResponse<T>> {
     try {
       const response = await this.getInstance().get(path)
+
+      const { data, status } = response
+
+      if (status === HTTP_STATUS_CODES.OK) {
+        return {
+          status,
+          data: {
+            message: 'Success',
+            content: data as T,
+          },
+        }
+      }
+
+      return {
+        status,
+        data: {
+          message: 'Error desconocido',
+          content: null as T,
+        },
+      }
+    } catch (error) {
+      const response = error as AxiosErrorResponse
+
+      return {
+        status: response.response?.status,
+        data: {
+          message: response.response?.data?.message || 'Error desconocido',
+          content: null as T,
+        },
+      }
+    }
+  }
+
+  static async put<T>(
+    path: string,
+    body: unknown,
+    params?: Record<string, unknown>,
+  ): Promise<AxiosClientResponse<T>> {
+    try {
+      const response = await this.getInstance().put(path, body, {
+        params,
+      })
 
       const { data, status } = response
 
