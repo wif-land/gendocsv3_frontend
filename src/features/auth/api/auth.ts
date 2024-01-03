@@ -28,7 +28,7 @@ export const login = async (
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
-  setCookie(ACCESS_TOKEN_COOKIE_NAME, content!.accessToken)
+  await setCookie(ACCESS_TOKEN_COOKIE_NAME, content!.accessToken)
 
   const decoded: IUser = jwtDecode(content!.accessToken)
 
