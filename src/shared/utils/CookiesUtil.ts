@@ -9,7 +9,8 @@ export const setCookie = (key: string, value: unknown) => {
   const SECOND = 1000
 
   cookies().set(key, JSON.stringify(value), {
-    // expires: DAY * HOUR * MINUTE * SECOND,
+    path: '/',
+    maxAge: DAY * HOUR * MINUTE * SECOND,
   })
 }
 
@@ -19,22 +20,4 @@ export const getCookie = (key: string) => {
   if (!cookieData) return null
 
   return cookieData
-}
-
-export const cookieToJson = (cookie: string) => {
-  const parsedCookies: {
-    [key: string]: string
-  } = {}
-
-  JSON.parse(cookie).forEach((cookie: { name: string; value: string }) => {
-    const { name, value } = cookie
-
-    try {
-      parsedCookies[name] = JSON.parse(value)
-    } catch (error) {
-      parsedCookies[name] = value
-    }
-  })
-
-  return parsedCookies
 }

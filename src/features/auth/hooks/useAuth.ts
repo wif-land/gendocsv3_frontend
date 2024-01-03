@@ -2,12 +2,12 @@ import { useFormik } from 'formik'
 import { login } from '../api/auth'
 import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import * as yup from 'yup'
-import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { IUser } from '../types/IUser'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useUserStore } from '../../../shared/store/userStore'
+import { appPublicRoutes } from '../../../shared/constants/appPublicRoutes'
 
 interface IAuth {
   email: string
@@ -50,13 +50,19 @@ export const useAuth = () => {
     }
   }
 
-  const logout = () => {
-    setCookie('access_token', null)
-    userStoreLogout()
-    toast.success('Hasta pronto!', { autoClose: 1800 })
-    router.refresh()
-    router.prefetch('/login')
-    router.push('/login')
+  const logout = async () => {
+    const TIME_TO_SLEEP = 250
+
+    new Promise((resolve) => setTimeout(resolve, TIME_TO_SLEEP))
+      .then(() => {
+        userStoreLogout()
+        toast.success('Hasta pronto!', { autoClose: 1800 })
+      })
+      .then(() => {
+        new Promise((resolve) => setTimeout(resolve, TIME_TO_SLEEP)).then(() =>
+          router.push(appPublicRoutes.login),
+        )
+      })
   }
 
   const formik = useFormik<IAuth>({

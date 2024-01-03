@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.tsx\" --fix",
-    "prepare": "husky install"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.tsx\" --fix"
   },
   "dependencies": {
     "@nextui-org/react": "^2.2.9",
@@ -43,7 +42,6 @@
     "eslint-plugin-jest-formatting": "^3.1.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^5.0.1",
-    "husky": "^8.0.0",
     "postcss": "^8",
     "prettier": "^3.1.1",
     "tailwindcss": "^3",
