@@ -19,4 +19,11 @@ export const API_ROUTES = {
     UPDATE: '/modules/:id',
     DELETE: '/modules/:id',
   },
+  CAREERS: {
+    CREATE: '/careers',
+    GET_ALL: '/careers',
+    GET_ONE: '/careers/:id',
+    UPDATE: '/careers',
+    DELETE: '/careers/:id',
+  },
 }
