@@ -11,8 +11,10 @@ import {
 import { fetchModules } from '../../../features/modules/api/modules'
 import { IModule } from '../../modules/types/IModule'
 import { IRoleType } from '../../../features/auth/types/IUser'
+import { useRouter } from 'next/navigation'
 
 const AddUserForm = () => {
+  const router = useRouter()
   const { formik } = useUser()
   const [value, setValue] = React.useState<Selection>(new Set([]))
   const [modules, setModules] = useState<IModule[] | undefined>([]) // State para guardar los módulos
@@ -41,9 +43,9 @@ const AddUserForm = () => {
         <div className="flex-1 flex flex-col justify-center items-center">
           <form
             onSubmit={formik.handleSubmit}
-            className="w-1/2 justify-items-center pl-16 pb-32"
+            className="w-3/4 justify-items-center pl-16 pb-32"
           >
-            <div className="grid w-6/6 justify-items-center ">
+            <div className="grid grid-cols-2 gap-4 justify-items-center  ">
               <Input
                 id="firstName"
                 name="firstName"
@@ -179,6 +181,25 @@ const AddUserForm = () => {
               <p className="text-default-500 text-small">
                 Selected: {Array.from(value).join(', ')}
               </p> */}
+              <Select
+                id="roles"
+                name="roles"
+                label="Roles"
+                variant="bordered"
+                placeholder="Selecciona los roles"
+                description="Selecciona los roles del usuario"
+                selectionMode="multiple"
+                onSelectionChange={(value) =>
+                  handleSelectChange('roles', value)
+                }
+                className="w-full"
+              >
+                {rolesArray!.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </Select>
               <Switch
                 id="isActive"
                 name="isActive"
@@ -195,34 +216,24 @@ const AddUserForm = () => {
               >
                 Usuario activo
               </Switch>
-              <Select
-                id="roles"
-                name="roles"
-                label="Roles"
-                variant="bordered"
-                placeholder="Selecciona los roles"
-                description="Selecciona los roles del usuario"
-                selectionMode="multiple"
-                onSelectionChange={(value) =>
-                  handleSelectChange('roles', value)
-                }
-                className="max-w-xs"
-              >
-                {rolesArray!.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </Select>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center items center  m-2">
               <Button
                 type="submit"
                 size="lg"
-                className="w-1/2"
+                className="w-1/2 m-4 bg-blue-600 text-white"
                 disabled={formik.isSubmitting}
               >
                 Crear
+              </Button>
+              <Button
+                type="reset"
+                size="lg"
+                className="w-1/2 m-4 bg-red-600 text-white"
+                disabled={formik.isSubmitting}
+                onClick={()=>{window.history.back();}}
+              >
+                Cancelar
               </Button>
             </div>
           </form>
