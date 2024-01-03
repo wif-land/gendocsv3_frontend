@@ -12,6 +12,7 @@ export const API_ROUTES = {
     GET_ONE: '/users/:id',
     UPDATE: '/users',
     DELETE: '/users/:id',
+    CREATE: '/users',
   },
   MODULES: {
     GET_ALL: '/modules',

@@ -35,7 +35,6 @@ export interface ICreateUser {
   outlookEmail: string
   googleEmail: string
   roles?: string[] | null
-  platformPermission?: null
   isActive: boolean
   accessModules?: string[] | null
 }
