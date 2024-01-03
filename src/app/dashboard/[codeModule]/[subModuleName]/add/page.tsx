@@ -2,14 +2,16 @@
 import { useParams } from 'next/navigation'
 import React from 'react'
 import AddUserForm from '../../../../../features/users/components/AddUserForm'
+import AddStudentForm from '@/features/students/components/AddStudentForm'
 
 const AddPage = () => {
-  const { codeModule } = useParams()
-  console.log(codeModule)
+  const { subModuleName } = useParams()
 
-  switch (codeModule) {
-    case 'ADMIN':
+  switch (subModuleName) {
+    case 'Usuarios':
       return <AddUserForm />
+    case 'Estudiantes':
+      return <AddStudentForm/>
     default:
       return <div>DEFAULT</div>
   }
