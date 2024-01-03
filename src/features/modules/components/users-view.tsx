@@ -27,6 +27,7 @@ import { MdMoreVert } from 'react-icons/md'
 import { UserServices } from '../../users/services/userServices'
 import { toast } from 'react-toastify'
 import { IUser } from '../../auth/types/IUser'
+import { useRouter } from 'next/navigation'
 
 interface UsersViewProps extends IUser {
   name: string
@@ -63,6 +64,7 @@ const COLUMNS = [
 const UsersView = () => {
   const [users, setUsers] = useState<UsersViewProps[]>([])
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const router = useRouter()
 
   const resolveRowComponentByColumnKey = (
     item: {
@@ -158,11 +160,11 @@ const UsersView = () => {
   }, [])
 
   return (
-    <div>
-      <Button onPress={onOpen}>Create User</Button>
+    <div className='m-10'>
+      <Button onPress={() => router.push('Usuarios/add')} radius="sm" className='w-40 h-12 ml-6 border-2 border-blue-900 bg-white   text-blue-900'>Create User</Button>
       <div className="m-6">
         <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={COLUMNS}>
+          <TableHeader columns={COLUMNS} className=''>
             {(column) => (
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}

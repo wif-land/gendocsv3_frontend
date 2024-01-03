@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { jwtDecode } from 'jwt-decode'
-import { IResponseUser } from '../types/IUser'
+import { IUser } from '../types/IUser'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
@@ -15,7 +15,7 @@ export const login = async (
 ): Promise<{
   status: number
   message?: string
-  decoded?: IResponseUser
+  decoded?: IUser
 }> => {
   const result = await AxiosClient.post<{
     accessToken: string
@@ -30,7 +30,7 @@ export const login = async (
 
   await setCookie(ACCESS_TOKEN_COOKIE_NAME, content!.accessToken)
 
-  const decoded: IResponseUser = jwtDecode(content!.accessToken)
+  const decoded: IUser = jwtDecode(content!.accessToken)
 
   return { status, decoded }
 }

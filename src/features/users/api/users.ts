@@ -1,8 +1,9 @@
 import 'dotenv/config'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { IUser } from '../../auth/types/IUser'
+import { ICreateUser, IUser } from '../../auth/types/IUser'
 import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
+import { create } from 'zustand'
 
 export class UsersApi {
   static fetchUsers = async (): Promise<{
@@ -25,6 +26,18 @@ export class UsersApi {
     const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, data, {
       id,
     })
+
+    const { status } = result
+
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+
+    return { status }
+  }
+
+  static createUser = async (
+    data: Partial<ICreateUser>,
+  ): Promise<{ status: number }> => {
+    const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, data)
 
     const { status } = result
 

@@ -12,11 +12,18 @@ export const API_ROUTES = {
     GET_ONE: '/users/:id',
     UPDATE: '/users',
     DELETE: '/users/:id',
+    CREATE: '/users',
   },
   MODULES: {
     GET_ALL: '/modules',
     GET_ONE: '/modules/:id',
     UPDATE: '/modules/:id',
     DELETE: '/modules/:id',
+  },
+  STUDENTS: {
+    GET_ALL: '/students',
+    GET_ONE: '/students/:id',
+    UPDATE: '/students/:id',
+    DELETE: '/students/:id',
   },
 }
