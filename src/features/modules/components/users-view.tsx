@@ -1,5 +1,4 @@
-import { fetchUsers } from '../../../features/users/api/users'
-import { IResponseUser } from '../../../features/auth/types/IUser'
+import { UsersApi } from '../../../features/users/api/users'
 import {
   Button,
   Modal,
@@ -16,72 +15,162 @@ import {
   getKeyValue,
   useDisclosure,
   Input,
+  Chip,
+  ChipProps,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from '@nextui-org/react'
-import React, { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { Key, useEffect, useState } from 'react'
+import { MdMoreVert } from 'react-icons/md'
+import { UserServices } from '../../users/services/userServices'
+import { toast } from 'react-toastify'
+import { IUser } from '../../auth/types/IUser'
+
+interface UsersViewProps extends IUser {
+  name: string
+}
+
+const statusColorMap: Record<string, ChipProps['color']> = {
+  active: 'success',
+  paused: 'danger',
+}
+
+const COLUMNS = [
+  {
+    key: 'name',
+    label: 'Nombre',
+  },
+  {
+    key: 'googleEmail',
+    label: 'Google email',
+  },
+  {
+    key: 'outlookEmail',
+    label: 'Outlook email',
+  },
+  {
+    key: 'isActive',
+    label: 'Activo',
+  },
+  {
+    key: 'actions',
+    label: 'Acciones',
+  },
+]
 
 const UsersView = () => {
-  const [users, setUsers] = React.useState<IResponseUser[]>([])
-  const router = useRouter()
+  const [users, setUsers] = useState<UsersViewProps[]>([])
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-  React.useEffect(() => {
-    const fetchingUsers = async () => {
-      const users = await fetchUsers()
+  const resolveRowComponentByColumnKey = (
+    item: {
+      id: number
+      name: string
+      googleEmail: string
+      outlookEmail: string
+      isActive: boolean
+    },
+    columnKey: Key,
+  ) => {
+    switch (columnKey) {
+      case 'isActive':
+        return (
+          <TableCell>
+            {
+              <Chip
+                className="capitalize"
+                color={statusColorMap[item.isActive ? 'active' : 'paused']}
+                size="sm"
+                variant="flat"
+              >
+                {item.isActive ? 'Si' : 'No'}
+              </Chip>
+            }
+          </TableCell>
+        )
+      case 'actions':
+        return (
+          <TableCell>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button variant="light">
+                  <MdMoreVert size={25} />
+                </Button>
+              </DropdownTrigger>
 
-      console.log({ users })
+              <DropdownMenu aria-label="Static Actions">
+                <DropdownItem key="edit">Editar</DropdownItem>
+                <DropdownItem
+                  key={item.isActive ? 'desactivate' : 'activate'}
+                  className={item.isActive ? 'text-danger' : 'text-success'}
+                  color={item.isActive ? 'danger' : 'success'}
+                  onClick={async () => {
+                    await UserServices.updateUser(item.id, {
+                      isActive: !item.isActive,
+                    })
+                      .then((_) =>
+                        setUsers(
+                          users.map((user) => {
+                            if (user.id === item.id) {
+                              return {
+                                ...user,
+                                isActive: !user.isActive,
+                              }
+                            }
 
-      if (users.users) setUsers(users.users)
+                            return user
+                          }),
+                        ),
+                      )
+                      .catch((error) => {
+                        toast.error(error.message)
+                      })
+                  }}
+                >
+                  {item.isActive ? 'Desactivar usuario' : 'Activar usuario'}
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </TableCell>
+        )
+      default:
+        return <TableCell>{getKeyValue(item, columnKey)}</TableCell>
     }
+  }
+
+  useEffect(() => {
+    const fetchingUsers = async () => {
+      const users = await UsersApi.fetchUsers()
+
+      if (users.users) {
+        setUsers(
+          users.users.map((user) => ({
+            ...user,
+            name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
+          })),
+        )
+      }
+    }
+
     fetchingUsers()
   }, [])
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
-
-  const columns = [
-    {
-      key: 'firstName',
-      label: 'Nombre',
-    },
-    {
-      key: 'secondName',
-      label: 'Segundo Nombre',
-    },
-    {
-      key: 'firstLastName',
-      label: 'Apellido',
-    },
-    {
-      key: 'secondLastName',
-      label: 'Segundo Apellido',
-    },
-    {
-      key: 'googleEmail',
-      label: 'Google email',
-    },
-    {
-      key: 'outlookEmail',
-      label: 'Outlook email',
-    },
-  ]
-
-  useEffect(() => {
-    console.log({ usersLocal: users })
-  }, [users])
-
   return (
     <div>
-      <Button onPress={() => router.push('Usuarios/add')}>Create User</Button>
+      <Button onPress={onOpen}>Create User</Button>
       <div className="m-6">
         <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={columns}>
-            {/* eslint-disable-next-line prettier/prettier*/}
-            {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+          <TableHeader columns={COLUMNS}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
           </TableHeader>
           <TableBody items={users}>
             {(item) => (
               <TableRow key={item.id}>
-                {/* eslint-disable-next-line prettier/prettier*/}
-                {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+                {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
               </TableRow>
             )}
           </TableBody>
@@ -164,13 +253,6 @@ const UsersView = () => {
           )}
         </ModalContent>
       </Modal>
-      {/* {users.map((user) => (
-        <div className="bg-red" key={user.id}>
-          <ul>
-            <li key={user.id}>{user.}</li>
-          </ul>
-        </div>
-      ))} */}
     </div>
   )
 }

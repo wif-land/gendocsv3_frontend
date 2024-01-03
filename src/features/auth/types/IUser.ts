@@ -1,6 +1,6 @@
 export type IRoleType = 'admin' | 'writer' | 'reader'
 
-export interface IResponseUser {
+export interface IUser {
   id: number
   firstName: string
   secondName: string

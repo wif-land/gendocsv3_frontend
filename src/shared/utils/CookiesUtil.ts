@@ -1,6 +1,6 @@
-'use client'
-import Cookies from 'js-cookie'
-import { COOKIES } from '../../middleware'
+'use server'
+
+import { cookies } from 'next/headers'
 
 export const setCookie = (key: string, value: unknown) => {
   const DAY = 24
@@ -8,17 +8,17 @@ export const setCookie = (key: string, value: unknown) => {
   const MINUTE = 60
   const SECOND = 1000
 
-  Cookies.set(key, JSON.stringify(value), {
-    expires: DAY * HOUR * MINUTE * SECOND,
+  cookies().set(key, JSON.stringify(value), {
+    maxAge: DAY * HOUR * MINUTE * SECOND,
   })
 }
 
 export const getCookie = (key: string) => {
-  const cookieData = COOKIES && COOKIES[key as keyof typeof COOKIES]
+  const cookieData = cookies().get(key)?.value
 
   if (!cookieData) return null
 
-  return cookieData && decodeURIComponent(cookieData as string)
+  return cookieData
 }
 
 export const cookieToJson = (cookie: string) => {
