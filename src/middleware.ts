@@ -7,11 +7,18 @@ import {
 import { ACCESS_TOKEN_COOKIE_NAME } from './shared/constants/appApiRoutes'
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/',
+    '/login',
+    '/dashboard/:slug',
+  ],
 }
 
 export const middleware = async (request: NextRequest) => {
-  const hasAccessToken = getCookie(ACCESS_TOKEN_COOKIE_NAME) !== null
+  const hasAccessToken =
+    getCookie(ACCESS_TOKEN_COOKIE_NAME) &&
+    getCookie(ACCESS_TOKEN_COOKIE_NAME) !== 'null'
 
   const isLoginPage = request.nextUrl.pathname.startsWith(appPublicRoutes.login)
   const isRootPage = request.nextUrl.pathname === '/'
