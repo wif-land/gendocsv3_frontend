@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import { useCareersStore } from '../../../shared/store/careerStore'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useFormik } from 'formik'
+import { useEffect } from 'react'
 
 export const CareersForm = ({
   isOpen,
@@ -59,7 +60,14 @@ export const CareersForm = ({
   }
 
   const formik = useFormik({
-    initialValues: values,
+    enableReinitialize: true,
+    initialValues: {
+      name: values.name || '',
+      credits: values.credits || 0,
+      menDegree: values.menDegree || '',
+      womenDegree: values.womenDegree || '',
+      isActive: values.isActive,
+    },
     validationSchema,
     onSubmit,
   })
@@ -86,7 +94,7 @@ export const CareersForm = ({
     try {
       const { status } = await CareerApi.update(values.id!, values)
 
-      if (status === HTTP_STATUS_CODES.ACCEPTED) {
+      if (status === HTTP_STATUS_CODES.OK) {
         setCareers(
           careers!.map((career) => {
             if (career.id === values.id) {
@@ -110,6 +118,15 @@ export const CareersForm = ({
       toast.error('Ocurrió un error al actualizar la carrera')
     }
   }
+
+  useEffect(() => {
+    if (!values.id) return
+
+    formik.setValues({
+      ...values,
+      credits: values.credits,
+    })
+  }, [values])
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -200,8 +217,8 @@ export const CareersForm = ({
                   }
                 />
                 <Switch
-                  defaultSelected
                   aria-label="Automatic updates"
+                  isSelected={formik.values.isActive}
                   onValueChange={(value) => {
                     const fakeEvent = {
                       target: {

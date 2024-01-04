@@ -37,7 +37,7 @@ const COLUMNS = [
   },
   {
     key: 'isActive',
-    label: 'Activo',
+    label: 'Estado',
   },
   {
     key: 'actions',
@@ -62,7 +62,7 @@ const CareersView = () => {
                 size="sm"
                 variant="flat"
               >
-                {item.isActive ? 'Si' : 'No'}
+                {item.isActive ? 'Activado' : 'Desactivado'}
               </Chip>
             }
           </TableCell>
@@ -144,6 +144,8 @@ const CareersView = () => {
           setSelectedCareer(null)
           onOpen()
         }}
+        radius="sm"
+        className="w-40 h-12 ml-6 border-2  bg-red-600 text-white"
       >
         Crear carrera
       </Button>
@@ -155,7 +157,7 @@ const CareersView = () => {
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
           </TableHeader>
-          <TableBody>
+          <TableBody emptyContent={'No existen datos sobre carerras'}>
             {careers!.map((item) => (
               <TableRow key={item.id}>
                 {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
