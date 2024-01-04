@@ -37,15 +37,15 @@ export class FunctionariesApi {
     return { status }
   }
 
-  static createFunctionary = async (
-    data: Partial<ICreateFunctionary>,
-  ): Promise<{ status: number }> => {
-    const result = await AxiosClient.post(API_ROUTES.FUNCTIONARIES.CREATE, data)
+  // static createFunctionary = async (
+  //   data: Partial<ICreateFunctionary>,
+  // ): Promise<{ status: number }> => {
+  //   const result = await AxiosClient.post(API_ROUTES.FUNCTIONARIES.CREATE, data)
 
-    const { status } = result
+  //   const { status } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+  //   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 
-    return { status }
-  }
+  //   return { status }
+  // }
 }

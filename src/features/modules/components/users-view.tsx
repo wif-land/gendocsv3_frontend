@@ -26,7 +26,7 @@ import { MdMoreVert } from 'react-icons/md'
 import { UserServices } from '../../users/services/userServices'
 import { toast } from 'react-toastify'
 import { IUser } from '../../auth/types/IUser'
-import UpdateUserForm from '../../users/components/UpdateUserForm'
+import UpdateUserForm from '../../users/components/updateUserForm'
 import AddUserForm from '../../../features/users/components/AddUserForm'
 
 interface UsersViewProps extends IUser {
