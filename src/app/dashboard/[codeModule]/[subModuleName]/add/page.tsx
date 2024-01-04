@@ -7,7 +7,6 @@ import AddStudentForm from '../../../../../features/students/components/AddStude
 
 const AddPage = () => {
   const { subModuleName } = useParams()
-  console.log(subModuleName)
 
   switch (subModuleName) {
     case 'Usuarios':
