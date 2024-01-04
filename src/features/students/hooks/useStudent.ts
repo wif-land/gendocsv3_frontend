@@ -84,7 +84,7 @@ export const useStudent = () => {
     console.log(form)
     const { status } = await StudentsApi.createStudent(form)
 
-    if (status === 201) {
+    if (status === 200) {
       toast.success('Estudiante creado con éxito!', { autoClose: 1800 })
     } else {
       toast.error('Error al crear estudiante!', { autoClose: 1800 })
