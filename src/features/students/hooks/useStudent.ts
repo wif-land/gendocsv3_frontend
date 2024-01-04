@@ -11,12 +11,12 @@ interface IStudentForm {
   firstLastName: string
   secondLastName: string
   gender: string
-  birthDate: Date
+  birthdate: Date
   canton: string
   googleEmail: string
   outlookEmail: string
   regularPhoneNumber: string
-  cellphone: string
+  phoneNumber: string
   folio: string
   registration: string
   approvedCredits: number
@@ -24,49 +24,58 @@ interface IStudentForm {
 
 export const useStudent = () => {
   const validationSchema = yup.object().shape({
-    dni: yup
-      .string()
-      .required(VALIDATION_MESSAGES.required)
-      .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    firstName: yup
-      .string()
-      .required(VALIDATION_MESSAGES.required)
-      .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    secondName: yup
-      .string()
-      .required(VALIDATION_MESSAGES.required)
-      .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    firstLastName: yup
-      .string()
-      .required(VALIDATION_MESSAGES.required)
-      .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    secondLastName: yup
-      .string()
-      .required(VALIDATION_MESSAGES.required)
-      .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    gender: yup.string().required(VALIDATION_MESSAGES.required),
-    birthDate: yup.date().required(VALIDATION_MESSAGES.required),
-    canton: yup.string().required(VALIDATION_MESSAGES.required),
-    googleEmail: yup
-      .string()
-      .required(VALIDATION_MESSAGES.required)
-      .matches(
-        /^[A-Z0-9._%+-]+@gmail\.com$/i,
-        VALIDATION_MESSAGES.invalidFormat,
-      ),
-    outlookEmail: yup
-      .string()
-      .required(VALIDATION_MESSAGES.required)
-      .matches(
-        /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
-        VALIDATION_MESSAGES.invalidFormat,
-      ),
-    regularPhoneNumber: yup.string().required(VALIDATION_MESSAGES.required).matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
-    phoneNumber: yup.string().required(VALIDATION_MESSAGES.required).matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
-    cellphone: yup.string().required(VALIDATION_MESSAGES.required).matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
-    registration: yup.string().required(VALIDATION_MESSAGES.required),
-    approvedCredits: yup.number().required(VALIDATION_MESSAGES.required),
-    folio: yup.string().required(VALIDATION_MESSAGES.required),
+    // dni: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+    // firstName: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+    // secondName: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+    // firstLastName: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+    // secondLastName: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+    // gender: yup.string().required(VALIDATION_MESSAGES.required),
+    // birthDate: yup.date().required(VALIDATION_MESSAGES.required),
+    // canton: yup.string().required(VALIDATION_MESSAGES.required),
+    // googleEmail: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(
+    //     /^[A-Z0-9._%+-]+@gmail\.com$/i,
+    //     VALIDATION_MESSAGES.invalidFormat,
+    //   ),
+    // outlookEmail: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(
+    //     /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
+    //     VALIDATION_MESSAGES.invalidFormat,
+    //   ),
+    // regularPhoneNumber: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
+    // phoneNumber: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
+    // cellphone: yup
+    //   .string()
+    //   .required(VALIDATION_MESSAGES.required)
+    //   .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
+    // registration: yup.string().required(VALIDATION_MESSAGES.required),
+    // approvedCredits: yup.number().required(VALIDATION_MESSAGES.required),
+    // folio: yup.string().required(VALIDATION_MESSAGES.required),
   })
 
   const onSubmit = async (form: IStudentForm) => {
@@ -75,7 +84,7 @@ export const useStudent = () => {
 
     if (status === 201) {
       toast.success('Estudiante creado con éxito!', { autoClose: 1800 })
-    }else{
+    } else {
       toast.error('Error al crear estudiante!', { autoClose: 1800 })
     }
   }
@@ -88,12 +97,12 @@ export const useStudent = () => {
       firstLastName: '',
       secondLastName: '',
       gender: '',
-      birthDate: new Date(),
+      birthdate: new Date(),
       canton: '',
       googleEmail: '',
       outlookEmail: '',
       regularPhoneNumber: '',
-      cellphone: '',
+      phoneNumber: '',
       folio: '',
       registration: '',
       approvedCredits: 0,
