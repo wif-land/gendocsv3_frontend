@@ -6,15 +6,15 @@ import { toast } from 'react-toastify'
 import { useState } from 'react'
 
 interface IUpdateUserForm {
-  firstName: ''
-  secondName: ''
-  firstLastName: ''
-  secondLastName: ''
-  outlookEmail: ''
-  roles: []
-  isActive: false
-  password: ''
-  accessModules: number[]
+  firstName: '' | undefined
+  secondName: '' | undefined
+  firstLastName: '' | undefined
+  secondLastName: '' | undefined
+  outlookEmail: '' | undefined
+  roles: [] | undefined
+  isActive: false | undefined
+  password: '' | undefined
+  accessModules: number[] | undefined
 }
 
 const validationSchema = yup.object().shape({
@@ -44,20 +44,21 @@ export const useUpdateUser = () => {
           autoClose: 1800,
         },
       )
+      console.log(status)
     }
   }
 
   const formik = useFormik<IUpdateUserForm>({
     initialValues: {
-      firstName: '',
-      secondName: '',
-      firstLastName: '',
-      secondLastName: '',
-      outlookEmail: '',
-      roles: [],
-      isActive: false,
-      password: '',
-      accessModules: [],
+      firstName: undefined,
+      secondName: undefined,
+      firstLastName: undefined,
+      secondLastName: undefined,
+      outlookEmail: undefined,
+      roles: undefined,
+      isActive: undefined,
+      password: undefined,
+      accessModules: undefined,
     },
     onSubmit,
     validationSchema,

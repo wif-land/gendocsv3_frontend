@@ -29,6 +29,8 @@ export class UsersApi {
 
     const { status } = result
 
+    console.log(result)
+
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 
     return { status }
