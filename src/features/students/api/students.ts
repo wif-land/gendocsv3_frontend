@@ -14,15 +14,18 @@ export class StudentsApi {
 
     return { status, students: data.content as IStudent[] }
   }
-  // static updateStudent = async (): Promise<{ status: number }> => {
-  //     const result = await AxiosClient.put(API_ROUTES.STUDENTS.UPDATE);
 
-  //     const { status } = result;
-
-  //     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status };
-
-  //     return { status };
-  // }
+  static updateStudent = async (
+    id: string,
+    data: Partial<IStudent>,
+  ): Promise<{ status: number }> => {
+    const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, data, {
+      id,
+    })
+    const { status } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    return { status }
+  }
 
   static createStudent = async (
     data: Partial<IStudent>,

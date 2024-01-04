@@ -1,8 +1,14 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { Key, use, useEffect, useState } from 'react'
 import { StudentsApi } from '@/features/students/api/students'
 import { useStudent } from '../../students/hooks/useStudent'
 import {
   Button,
+  Chip,
+  ChipProps,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Modal,
   ModalBody,
   ModalContent,
@@ -22,78 +28,138 @@ import { ICareer } from '@/features/careers/types/ICareer'
 import { useRouter } from 'next/navigation'
 import { CareersApi } from '@/features/careers/api/carers'
 import AddStudentForm from '@/features/students/components/AddStudentForm'
+import { MdMoreVert } from 'react-icons/md'
+import { StudentServices } from '../../students/services/studentServices'
+import { toast } from 'react-toastify'
+
+interface StudentsViewProps extends IStudent {
+  name: string
+}
+const statusColorMap: Record<string, ChipProps['color']> = {
+  active: 'success',
+  paused: 'danger',
+}
+const COLUMNS = [
+  {
+    key: 'dni',
+    label: 'DNI',
+  },
+  {
+    key: 'name',
+    label: 'Nombre',
+  },
+  {
+    key: 'googleEmail',
+    label: 'Correo Personal',
+  },
+  {
+    key: 'outlookEmail',
+    label: 'Correo Institucional',
+  },
+  {
+    key: 'approvedCredits',
+    label: 'Creditos Aprobados',
+  },
+  {
+    key: 'registration',
+    label: 'Matricula',
+  },
+  {
+    key: 'canton',
+    label: 'Ciudad de Residencia',
+  },
+  {
+    key: 'gender',
+    label: 'Genero',
+  },
+  {
+    key: 'isActive',
+    label: 'Activo',
+  },
+  {
+    key: 'actions',
+    label: 'Acciones',
+  },
+]
 
 const StudentsView = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-
   const router = useRouter()
-  const rows = [
-    {
-      key: '1',
-      name: 'Tony Reichert',
-      role: 'CEO',
-      status: 'Active',
-    },
-    {
-      key: '2',
-      name: 'Zoey Lang',
-      role: 'Technical Lead',
-      status: 'Paused',
-    },
-    {
-      key: '3',
-      name: 'Jane Fisher',
-      role: 'Senior Developer',
-      status: 'Active',
-    },
-    {
-      key: '4',
-      name: 'William Howard',
-      role: 'Community Manager',
-      status: 'Vacation',
-    },
-  ]
 
-  const COLUMNS = [
-    {
-      key: 'dni',
-      label: 'DNI',
-    },
-    {
-      key: 'name',
-      label: 'Nombre',
-    },
-    {
-      key: 'googleEmail',
-      label: 'Correo Personal',
-    },
-    {
-      key: 'outlookEmail',
-      label: 'Correo Institucional',
-    },
-    {
-      key: 'approvedCredits',
-      label: 'Creditos Aprobados',
-    },
-    {
-      key: 'registration',
-      label: 'Matricula',
-    },
-    {
-      key: 'canton',
-      label: 'Ciudad de Residencia',
-    },
-    {
-      key: 'gender',
-      label: 'Genero',
-    },
-    {
-      key: 'actions',
-      label: 'Acciones',
-    },
-  ]
+  const [students, setStudents] = useState<StudentsViewProps[]>([])
 
-  const [students, setStudents] = useState<IStudent[]>([])
+  const resolveRowComponentByColumnKey = (
+    item: {
+      id: string
+      isActive: boolean
+    },
+    columnKey: Key,
+  ) => {
+    switch (columnKey) {
+      case 'isActive':
+        return (
+          <TableCell>
+            {
+              <Chip
+                className="capitalize"
+                color={statusColorMap[item.isActive ? 'active' : 'paused']}
+                size="sm"
+                variant="flat"
+              >
+                {item.isActive ? 'Si' : 'No'}
+              </Chip>
+            }
+          </TableCell>
+        )
+      case 'actions':
+        return (
+          <TableCell>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button variant="light">
+                  <MdMoreVert size={25} />
+                </Button>
+              </DropdownTrigger>
+
+              <DropdownMenu aria-label="Static Actions">
+                <DropdownItem key="edit">Editar</DropdownItem>
+                <DropdownItem
+                  key={item.isActive ? 'desactivate' : 'activate'}
+                  className={item.isActive ? 'text-danger' : 'text-success'}
+                  color={item.isActive ? 'danger' : 'success'}
+                  onClick={async () => {
+                    await StudentServices.updateStudent(item.id, {
+                      isActive: !item.isActive,
+                    })
+                      .then(() =>
+                        setStudents(
+                          students.map((student) => {
+                            if (student.id === item.id) {
+                              return {
+                                ...student,
+                                isActive: !student.isActive,
+                              }
+                            }
+
+                            return student
+                          }),
+                        ),
+                      )
+                      .catch((error) => {
+                        toast.error(error.message)
+                      })
+                  }}
+                >
+                  {item.isActive ? 'Desactivar usuario' : 'Activar usuario'}
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </TableCell>
+        )
+      default:
+        return <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+    }
+  }
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -127,12 +193,10 @@ const StudentsView = () => {
         </TableHeader>
         <TableBody items={students}>
           {(item) => (
-            <TableRow key={item.dni}>
-              {(columnKey) => (
-                <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-              )}
+            <TableRow key={item.id}>
+            {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
             </TableRow>
-          )}
+          )}      
         </TableBody>
       </Table>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
