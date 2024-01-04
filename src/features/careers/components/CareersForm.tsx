@@ -216,22 +216,24 @@ export const CareersForm = ({
                       : ''
                   }
                 />
-                <Switch
-                  aria-label="Automatic updates"
-                  isSelected={formik.values.isActive}
-                  onValueChange={(value) => {
-                    const fakeEvent = {
-                      target: {
-                        name: 'isActive',
-                        value,
-                      },
-                    }
+                {isAddMode && (
+                  <Switch
+                    aria-label="Automatic updates"
+                    isSelected={formik.values.isActive}
+                    onValueChange={(value) => {
+                      const fakeEvent = {
+                        target: {
+                          name: 'isActive',
+                          value,
+                        },
+                      }
 
-                    formik.handleChange(fakeEvent)
-                  }}
-                >
-                  Activo
-                </Switch>
+                      formik.handleChange(fakeEvent)
+                    }}
+                  >
+                    Activo
+                  </Switch>
+                )}
               </ModalBody>
 
               <ModalFooter>
