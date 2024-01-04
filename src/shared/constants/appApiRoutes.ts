@@ -30,8 +30,9 @@ export const API_ROUTES = {
   STUDENTS: {
     GET_ALL: '/students',
     GET_ONE: '/students/:id',
-    UPDATE: '/students/:id',
+    UPDATE: '/students',
     DELETE: '/students/:id',
+    CREATE: '/students',
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
@@ -39,5 +40,12 @@ export const API_ROUTES = {
     UPDATE: '/functionaries/:id',
     DELETE: '/functionaries/:id',
     CREATE: '/functionaries',
+  },
+  CAREERS: {
+    GET_ALL: '/careers',
+    GET_ONE: '/careers/:id',
+    UPDATE: '/careers/:id',
+    DELETE: '/careers/:id',
+    CREATE: '/careers',
   },
 }

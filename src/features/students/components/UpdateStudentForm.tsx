@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import cantones from '../../../features/students/data/canton'
+import cantones from '../data/canton'
 import { formatISO } from 'date-fns'
 
 import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
 import { useStudent } from '../hooks/useStudent'
-import { ICareer } from '../../../features/careers/types/ICareer'
-import { CareersApi } from '../../../features/careers/api/carers'
+import { ICareer } from '../../careers/types/ICareer'
+import { CareersApi } from '../../careers/api/carers'
 
-const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
+const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
   const { formik } = useStudent()
   const [careers, setCareers] = useState<ICareer[]>([])
 
@@ -373,4 +373,4 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
-export default AddStudentForm
+export default UpdateStudentForm
