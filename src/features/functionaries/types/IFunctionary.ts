@@ -1,4 +1,5 @@
 export interface IFunctionary {
+  id?: string
   dni: string
   firstName: string
   secondName: string
@@ -10,5 +11,6 @@ export interface IFunctionary {
   regularPhoneNumber: string
   secondLevelDegree: string
   thirdLevelDegree: string
-  forthLevelDegree: string
+  fourthLevelDegree: string
+  isActive: boolean
 }

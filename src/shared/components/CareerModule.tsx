@@ -3,7 +3,7 @@ import { ListboxWrapper } from './ListboxWrapper'
 import { useEffect, useState } from 'react'
 import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
-import { useUserStore } from '../store/userStore'
+import { useUserStore } from '../store/userProfileStore'
 import { useRouter } from 'next/navigation'
 
 const CareerModule = () => {

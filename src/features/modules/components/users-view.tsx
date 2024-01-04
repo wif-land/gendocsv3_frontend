@@ -14,20 +14,22 @@ import {
   TableRow,
   getKeyValue,
   useDisclosure,
-  Input,
   Chip,
   ChipProps,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  User,
 } from '@nextui-org/react'
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { UserServices } from '../../users/services/userServices'
 import { toast } from 'react-toastify'
 import { IUser } from '../../auth/types/IUser'
-import { useRouter } from 'next/navigation'
+import UpdateUserForm from '../../users/components/updateUserForm'
+import AddUserForm from '../../../features/users/components/AddUserForm'
+import { useUsersStore } from '@/shared/store/usersStore'
 
 interface UsersViewProps extends IUser {
   name: string
@@ -63,12 +65,30 @@ const COLUMNS = [
 
 const UsersView = () => {
   const [users, setUsers] = useState<UsersViewProps[]>([])
+  const [selectedUser, setSelectedUser] = useState<UsersViewProps | undefined>(
+    undefined,
+  )
+  const { load } = useUsersStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const router = useRouter()
+  const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
+  const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } =
+    useDisclosure()
+
+  const onOpenEditChange = (id: string) => {
+    setSelectedUser(users.find((user) => user.id === id))
+    onOpenChangeEdit()
+  }
+
+  const onOpenDeleteChange = (id: string) => {
+    setSelectedUser(users.find((user) => user.id === id))
+    onOpenChangeDelete()
+  }
+
+  const { setUsers: setUserStore, users: UsersStore } = useUsersStore()
 
   const resolveRowComponentByColumnKey = (
     item: {
-      id: number
+      id: string
       name: string
       googleEmail: string
       outlookEmail: string
@@ -103,7 +123,19 @@ const UsersView = () => {
               </DropdownTrigger>
 
               <DropdownMenu aria-label="Static Actions">
-                <DropdownItem key="edit">Editar</DropdownItem>
+                <DropdownItem
+                  key="edit"
+                  onClick={() => onOpenEditChange(item.id)}
+                >
+                  Editar
+                </DropdownItem>
+                {/* <DropdownItem
+                  key="delete"
+                  color="danger"
+                  onClick={() => onOpenDeleteChange(item.id)}
+                >
+                  Eliminar
+                </DropdownItem> */}
                 <DropdownItem
                   key={item.isActive ? 'desactivate' : 'activate'}
                   className={item.isActive ? 'text-danger' : 'text-success'}
@@ -112,10 +144,11 @@ const UsersView = () => {
                     await UserServices.updateUser(item.id, {
                       isActive: !item.isActive,
                     })
-                      .then((_) =>
+                      .then((_) => {
+                        load()
                         setUsers(
                           users.map((user) => {
-                            if (user.id === item.id) {
+                            if (user.id === item.id.toString()) {
                               return {
                                 ...user,
                                 isActive: !user.isActive,
@@ -124,8 +157,8 @@ const UsersView = () => {
 
                             return user
                           }),
-                        ),
-                      )
+                        )
+                      })
                       .catch((error) => {
                         toast.error(error.message)
                       })
@@ -143,28 +176,38 @@ const UsersView = () => {
   }
 
   useEffect(() => {
-    const fetchingUsers = async () => {
-      const users = await UsersApi.fetchUsers()
+    if (UsersStore) {
+      setUsers(
+        UsersStore.map((user) => ({
+          ...user,
+          name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
+        })),
+      )
+    } else {
+      const fetchingUsers = async () => {
+        const result = await UsersApi.get()
 
-      if (users.users) {
-        setUsers(
-          users.users.map((user) => ({
-            ...user,
-            name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
-          })),
-        )
+        if (result.users) {
+          setUserStore(result.users)
+        }
       }
-    }
 
-    fetchingUsers()
-  }, [])
+      fetchingUsers()
+    }
+  }, [UsersStore, setUserStore])
 
   return (
-    <div className='m-10'>
-      <Button onPress={() => router.push('Usuarios/add')} radius="sm" className='w-40 h-12 ml-6 border-2  bg-blue-700   text-white'>Create User</Button>
+    <div className="m-10">
+      <Button
+        onPress={onOpen}
+        radius="sm"
+        className="w-40 h-12 ml-6 border-2  bg-blue-700   text-white"
+      >
+        Create User
+      </Button>
       <div className="m-6">
         <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={COLUMNS} className=''>
+          <TableHeader columns={COLUMNS} className="">
             {(column) => (
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
@@ -186,69 +229,72 @@ const UsersView = () => {
                 Create User
               </ModalHeader>
               <ModalBody>
-                <form action="">
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    type="firstName"
-                    label="Nombre"
-                    variant="underlined"
-                    placeholder="Ingrese el nombre"
-                    className="w-full"
-                  />
-                  <Input
-                    id="secondName"
-                    name="secondName"
-                    type="secondName"
-                    label="Segundo Nombre"
-                    variant="underlined"
-                    placeholder="Ingrese el segundo nombre"
-                    className="w-full"
-                  />
-                  <Input
-                    id="firstLastName"
-                    name="firstLastName"
-                    type="firstLastName"
-                    label="Apellido"
-                    variant="underlined"
-                    placeholder="Ingrese el primer apellido"
-                    className="w-full"
-                  />
-                  <Input
-                    id="secondLastName"
-                    name="secondLastName"
-                    type="secondLastName"
-                    label="Segundo Apellido"
-                    variant="underlined"
-                    placeholder="Ingrese el segundo apellido"
-                    className="w-full"
-                  />
-                  <Input
-                    id="googleEmail"
-                    name="googleEmail"
-                    type="googleEmail"
-                    label="Google Email"
-                    variant="underlined"
-                    placeholder="Ingrese el correo de google"
-                    className="w-full"
-                  />
-                  <Input
-                    id="outlookEmail"
-                    name="outlookEmail"
-                    type="outlookEmail"
-                    label="Outlook Email"
-                    variant="underlined"
-                    placeholder="Ingrese el correo de outlook"
-                    className="w-full"
-                  />
-                </form>
+                <AddUserForm onClose={onClose} />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Edit User
+              </ModalHeader>
+              <ModalBody>
+                <UpdateUserForm user={selectedUser as IUser} />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenDelete} onOpenChange={onOpenChangeDelete}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Delete User
+              </ModalHeader>
+              <ModalBody>
+                <p>
+                  ¿Estas seguro que deseas eliminar este usuario?{' '}
+                  {selectedUser?.firstName} {selectedUser?.firstLastName}
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={async () => {
+                    await UsersApi.deleteUser(selectedUser?.id as string)
+                      .then((_) => {
+                        setUsers(
+                          users.filter(
+                            (user) => user.id !== (selectedUser?.id as string),
+                          ),
+                        )
+                        onClose()
+                      })
+                      .catch((error) => {
+                        toast.error(error.message)
+                      })
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button color="success" variant="light" onPress={onClose}>
+                  Cancel
                 </Button>
               </ModalFooter>
             </>

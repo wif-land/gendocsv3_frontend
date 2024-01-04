@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useUserStore } from '../store/userStore'
+import { useUserStore } from '../store/userProfileStore'
 import { getCookie } from '../utils/CookiesUtil'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 

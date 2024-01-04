@@ -2,7 +2,7 @@
 import { useParams } from 'next/navigation'
 import React from 'react'
 import AddUserForm from '../../../../../features/users/components/AddUserForm'
-import FunctionaryForm from '../../../../../features/functionaries/components/addFunctionaryForm'
+import AddFunctionaryForm from '../../../../../features/functionaries/components/addFunctionaryForm'
 import AddStudentForm from '../../../../../features/students/components/AddStudentForm'
 
 const AddPage = () => {
@@ -12,7 +12,7 @@ const AddPage = () => {
     case 'Usuarios':
       return <AddUserForm />
     case 'Funcionarios':
-      return <FunctionaryForm />
+      return <AddFunctionaryForm />
     case 'Estudiantes':
       return <AddStudentForm />
     default:

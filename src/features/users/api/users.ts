@@ -3,10 +3,10 @@ import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { ICreateUser, IUser } from '../../auth/types/IUser'
 import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
-import { create } from 'zustand'
+import { IUpdateUser } from '../types/IUserUpdate'
 
 export class UsersApi {
-  static fetchUsers = async (): Promise<{
+  static get = async (): Promise<{
     status: number
     users?: IUser[]
   }> => {
@@ -21,7 +21,7 @@ export class UsersApi {
 
   static updateUser = async (
     id: string,
-    data: Partial<IUser>,
+    data: Partial<IUpdateUser>,
   ): Promise<{ status: number }> => {
     const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, data, {
       id,
@@ -29,15 +29,32 @@ export class UsersApi {
 
     const { status } = result
 
+    console.log(data)
+
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 
     return { status }
   }
 
   static createUser = async (
-    data: Partial<ICreateUser>,
-  ): Promise<{ status: number }> => {
-    const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, data)
+    body: Partial<ICreateUser>,
+  ): Promise<{
+    status: number
+    data?: { message: string; content: unknown }
+  }> => {
+    const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, body)
+
+    const { status, data } = result
+
+    console.log(data.content)
+
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+
+    return { status, data }
+  }
+
+  static deleteUser = async (id: string): Promise<{ status: number }> => {
+    const result = await AxiosClient.delete(API_ROUTES.USERS.DELETE, { id })
 
     const { status } = result
 
