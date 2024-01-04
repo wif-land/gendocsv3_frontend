@@ -231,7 +231,9 @@ const AddUserForm = () => {
                 size="lg"
                 className="w-1/2 m-4 bg-red-600 text-white"
                 disabled={formik.isSubmitting}
-                onClick={()=>{window.history.back();}}
+                onClick={() => {
+                  window.history.back()
+                }}
               >
                 Cancelar
               </Button>
