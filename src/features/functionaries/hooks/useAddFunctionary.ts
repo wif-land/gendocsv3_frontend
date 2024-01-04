@@ -17,7 +17,7 @@ interface IFunctionaryForm {
   forthLevelDegree: string
 }
 
-export const useFunctionary = () => {
+export const useAddFunctionary = () => {
   const validationSchema = yup.object().shape({
     dni: yup
       .string()

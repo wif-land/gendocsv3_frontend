@@ -1,9 +1,9 @@
 import React from 'react'
-import { useFunctionary } from '../hooks/useFunctionary'
+import { useAddFunctionary } from '../hooks/useAddFunctionary'
 import { Input } from '@nextui-org/react'
 
 const FunctionaryForm = () => {
-  const { formik } = useFunctionary()
+  const { formik } = useAddFunctionary()
 
   return (
     <>

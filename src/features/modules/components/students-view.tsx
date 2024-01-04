@@ -41,24 +41,28 @@ const StudentsView = () => {
       label: 'Email',
     },
     {
-      key:'gender',
-      label:'Genero',
+      key: 'gender',
+      label: 'Genero',
     },
     {
-      key:'folio',
-      label:'Folio',
+      key: 'folio',
+      label: 'Folio',
     },
     {
       key: 'actions',
       label: 'Acciones',
     },
-    
-
   ]
 
   return (
     <div>
-      <Button onClick={()=>{router.push('Estudiantes/add')}}>Create User</Button>
+      <Button
+        onClick={() => {
+          router.push('Estudiantes/add')
+        }}
+      >
+        Create User
+      </Button>
     </div>
   )
 }

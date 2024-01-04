@@ -11,4 +11,5 @@ export interface IFunctionary {
   secondLevelDegree: string
   thirdLevelDegree: string
   forthLevelDegree: string
+  isActive: boolean
 }

@@ -14,9 +14,10 @@ interface IUserForm {
   roles: []
   isActive: false
   password: ''
+  accessModules: number[]
 }
 
-export const useUser = () => {
+export const useAddUser = () => {
   const validationSchema = yup.object().shape({
     firstName: yup.string().required(VALIDATION_MESSAGES.required),
     secondName: yup.string().required(VALIDATION_MESSAGES.required),
@@ -27,6 +28,7 @@ export const useUser = () => {
     roles: yup.array().required(VALIDATION_MESSAGES.required),
     isActive: yup.boolean().required(VALIDATION_MESSAGES.required),
     password: yup.string().required(VALIDATION_MESSAGES.required),
+    accessModules: yup.number().required(VALIDATION_MESSAGES.required),
   })
 
   const onSubmit = async (form: IUserForm) => {
@@ -53,6 +55,7 @@ export const useUser = () => {
       roles: [],
       isActive: false,
       password: '',
+      accessModules: [],
     },
     onSubmit,
     validationSchema,

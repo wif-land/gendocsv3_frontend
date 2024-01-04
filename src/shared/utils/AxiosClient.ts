@@ -196,4 +196,45 @@ export class AxiosClient {
       }
     }
   }
+
+  static async delete<T>(
+    path: string,
+    params?: Record<string, unknown>,
+  ): Promise<AxiosClientResponse<T>> {
+    try {
+      const response = await this.getInstance().delete(path, {
+        params,
+      })
+
+      const { data, status } = response
+
+      if (status === HTTP_STATUS_CODES.OK) {
+        return {
+          status,
+          data: {
+            message: 'Success',
+            content: data as T,
+          },
+        }
+      }
+
+      return {
+        status,
+        data: {
+          message: 'Error desconocido',
+          content: null as T,
+        },
+      }
+    } catch (error) {
+      const response = error as AxiosErrorResponse
+
+      return {
+        status: response.response?.status,
+        data: {
+          message: response.response?.data?.message || 'Error desconocido',
+          content: null as T,
+        },
+      }
+    }
+  }
 }

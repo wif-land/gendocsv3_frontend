@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useUser } from '../hook/useUser'
+import { useUpdateUser } from '../hook/useUpdateUser'
 import {
   Button,
   Input,
@@ -8,228 +9,233 @@ import {
   Selection,
   Switch,
 } from '@nextui-org/react'
-import { fetchModules } from '../../../features/modules/api/modules'
+import { fetchModules } from '../../modules/api/modules'
 import { IModule } from '../../modules/types/IModule'
-import { IRoleType } from '../../../features/auth/types/IUser'
+import { IUser } from '@/features/auth/types/IUser'
 
-const AddUserForm = () => {
-  const { formik } = useUser()
-  const [value, setValue] = React.useState<Selection>(new Set([]))
-  const [modules, setModules] = useState<IModule[] | undefined>([]) // State para guardar los módulos
-  const rolesArray: IRoleType[] = ['admin', 'writer', 'reader']
+const UpdateUserForm = ({ user }: { user: IUser }) => {
+  const [defaultValue, setValue] = React.useState<Selection>(new Set([]))
+  const [modules, setModules] = useState<IModule[]>([]) // State para guardar los módulos
+  const rolesArray = ['ADMIN', 'WRITTER', 'READER']
 
-  const handleSelectChange = (name: string, value: Selection) => {
-    formik.setFieldValue(name, Array.from(value))
+  const [selectedModules, setSelectedModules] = useState<Selection>(
+    new Set(user.accessModules?.map((mod) => mod.id.toString())),
+  )
+
+  useEffect(() => {
+    if (user.accessModules) {
+      setSelectedModules(
+        new Set(user.accessModules.map((mod) => mod.id.toString())),
+      )
+    }
+  }, [user.accessModules])
+
+  const handleSelectChange = (name: string, defaultValue: Selection) => {
+    formik.setFieldValue(name, Array.from(defaultValue))
   }
 
-  const handleModuleChange = (name: string, value: Selection) => {
-    setValue(value)
-    formik.setFieldValue(name, Array.from(value))
+  const handleModuleChange = (id: string, value: Selection) => {
+    // Convertir cada valor del Set a número y luego actualizar el estado con el nuevo array
+    const numberArray = Array.from(value).map((val) => {
+      // Asegúrate de que val sea tratado como una cadena si no es un número
+      const valueAsString = typeof val === 'number' ? val.toString() : val
+      return parseInt(valueAsString, 10)
+    })
+
+    setValue(new Set(numberArray))
+    formik.setFieldValue(id, numberArray)
   }
 
+  const { formik, setUserId } = useUpdateUser()
   useEffect(() => {
     const fetchAndSetModules = async () => {
       const fetchedModules = await fetchModules()
-      setModules(fetchedModules.modules)
+      if (fetchedModules.modules) {
+        setModules(fetchedModules.modules)
+      }
     }
     fetchAndSetModules()
+    // console.log(user.id)
   }, [])
+
+  useEffect(() => {
+    setUserId(user.id)
+    console.log(user.roles)
+  }, [user.id])
 
   return (
     <>
-      <div className="flex h-screen ">
-        <div className="flex-1 flex flex-col justify-center items-center">
-          <form
-            onSubmit={formik.handleSubmit}
-            className="w-1/2 justify-items-center pl-16 pb-32"
+      <form
+        onSubmit={formik.handleSubmit}
+        className="w-full flex flex-col justify-center  items-center"
+      >
+        <div className="flex flex-col gap-4 justify-items-center ">
+          <Input
+            id="firstName"
+            name="firstName"
+            type="firstName"
+            label="Primer Nombre"
+            variant="bordered"
+            defaultValue={user.firstName}
+            onChange={formik.handleChange}
+            size="lg"
+            errorMessage={
+              formik.touched.firstName && formik.errors.firstName
+                ? formik.errors.firstName
+                : ''
+            }
+            className="w-full"
+          />
+          <Input
+            id="secondName"
+            name="secondName"
+            type="secondName"
+            label="Segundo Nombre"
+            variant="bordered"
+            defaultValue={user.secondName}
+            onChange={formik.handleChange}
+            size="lg"
+            errorMessage={
+              formik.touched.secondName && formik.errors.secondName
+                ? formik.errors.secondName
+                : ''
+            }
+            className="w-full"
+          />
+          <Input
+            id="firstLastName"
+            name="firstLastName"
+            type="firstLastName"
+            label="Primer Apellido"
+            variant="bordered"
+            defaultValue={user.firstLastName}
+            onChange={formik.handleChange}
+            size="lg"
+            errorMessage={
+              formik.touched.firstLastName && formik.errors.firstLastName
+                ? formik.errors.firstLastName
+                : ''
+            }
+            className="w-full"
+          />
+          <Input
+            id="secondLastName"
+            name="secondLastName"
+            type="secondLastName"
+            label="Segundo Apellido"
+            variant="bordered"
+            defaultValue={user.secondLastName}
+            onChange={formik.handleChange}
+            size="lg"
+            errorMessage={
+              formik.touched.secondLastName && formik.errors.secondLastName
+                ? formik.errors.secondLastName
+                : ''
+            }
+            className="w-full"
+          />
+
+          <Input
+            id="outlookEmail"
+            name="outlookEmail"
+            type="email"
+            label="Outlook Email"
+            variant="bordered"
+            defaultValue={user.outlookEmail}
+            onChange={formik.handleChange}
+            size="lg"
+            errorMessage={
+              formik.touched.outlookEmail && formik.errors.outlookEmail
+                ? formik.errors.outlookEmail
+                : ''
+            }
+            className="w-full"
+          />
+
+          <Input
+            id="password"
+            name="password"
+            type="text"
+            label="Contraseña"
+            variant="bordered"
+            onChange={formik.handleChange}
+            size="lg"
+            errorMessage={
+              formik.touched.password && formik.errors.password
+                ? formik.errors.password
+                : ''
+            }
+            className="w-full"
+          />
+          <Select
+            id="accessModules"
+            name="accessModules"
+            label="Módulos de acceso"
+            variant="bordered"
+            placeholder="Selecciona los módulos"
+            description="Selecciona los módulos a los que tendrá acceso el usuario"
+            selectionMode="multiple"
+            selectedKeys={selectedModules}
+            onSelectionChange={(value) => {
+              handleModuleChange('accessModules', value)
+              setSelectedModules(value)
+            }}
           >
-            <div className="grid w-6/6 justify-items-center ">
-              <Input
-                id="firstName"
-                name="firstName"
-                type="firstName"
-                label="Primer Nombre"
-                variant="bordered"
-                value={formik.values.firstName}
-                onChange={formik.handleChange}
-                size="lg"
-                errorMessage={
-                  formik.touched.firstName && formik.errors.firstName
-                    ? formik.errors.firstName
-                    : ''
-                }
-                className="w-full"
-              />
-              <Input
-                id="secondName"
-                name="secondName"
-                type="secondName"
-                label="Segundo Nombre"
-                variant="bordered"
-                value={formik.values.secondName}
-                onChange={formik.handleChange}
-                size="lg"
-                errorMessage={
-                  formik.touched.secondName && formik.errors.secondName
-                    ? formik.errors.secondName
-                    : ''
-                }
-                className="w-full"
-              />
-              <Input
-                id="firstLastName"
-                name="firstLastName"
-                type="firstLastName"
-                label="Primer Apellido"
-                variant="bordered"
-                value={formik.values.firstLastName}
-                onChange={formik.handleChange}
-                size="lg"
-                errorMessage={
-                  formik.touched.firstLastName && formik.errors.firstLastName
-                    ? formik.errors.firstLastName
-                    : ''
-                }
-                className="w-full"
-              />
-              <Input
-                id="secondLastName"
-                name="secondLastName"
-                type="secondLastName"
-                label="Segundo Apellido"
-                variant="bordered"
-                value={formik.values.secondLastName}
-                onChange={formik.handleChange}
-                size="lg"
-                errorMessage={
-                  formik.touched.secondLastName && formik.errors.secondLastName
-                    ? formik.errors.secondLastName
-                    : ''
-                }
-                className="w-full"
-              />
-              <Input
-                id="googleEmail"
-                name="googleEmail"
-                type="googleEmail"
-                label="Google Email"
-                variant="bordered"
-                value={formik.values.googleEmail}
-                onChange={formik.handleChange}
-                size="lg"
-                errorMessage={
-                  formik.touched.googleEmail && formik.errors.googleEmail
-                    ? formik.errors.googleEmail
-                    : ''
-                }
-                className="w-full"
-              />
-              <Input
-                id="outlookEmail"
-                name="outlookEmail"
-                type="outlookEmail"
-                label="Outlook Email"
-                variant="bordered"
-                value={formik.values.outlookEmail}
-                onChange={formik.handleChange}
-                size="lg"
-                errorMessage={
-                  formik.touched.outlookEmail && formik.errors.outlookEmail
-                    ? formik.errors.outlookEmail
-                    : ''
-                }
-                className="w-full"
-              />
-              <Input
-                id="password"
-                name="password"
-                type="text"
-                label="Contraseña"
-                variant="bordered"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                size="lg"
-                errorMessage={
-                  formik.touched.password && formik.errors.password
-                    ? formik.errors.password
-                    : ''
-                }
-                className="w-full"
-              />
-              {/* <Select
-                id="accessModules"
-                name="accessModules"
-                label="Favorite Animal"
-                variant="bordered"
-                placeholder="Select an animal"
-                description="Selecciona los modulos a los que tendra acceso el usuario"
-                selectionMode="multiple"
-                selectedKeys={value}
-                onSelectionChange={(value) =>
-                  handleModuleChange('accessModules', value)
-                }
-                className="max-w-xs"
-              >
-                {modules!.map((module) => (
-                  <SelectItem key={module.name} value={module.name}>
-                    {module.name}
-                  </SelectItem>
-                ))}
-              </Select>
-              <p className="text-default-500 text-small">
-                Selected: {Array.from(value).join(', ')}
-              </p> */}
-              <Switch
-                id="isActive"
-                name="isActive"
-                size="sm"
-                onValueChange={(value) => {
-                  const fakeEvent = {
-                    target: {
-                      name: 'isActive',
-                      value,
-                    },
-                  }
-                  formik.handleChange(fakeEvent)
-                }}
-              >
-                Usuario activo
-              </Switch>
-              <Select
-                id="roles"
-                name="roles"
-                label="Roles"
-                variant="bordered"
-                placeholder="Selecciona los roles"
-                description="Selecciona los roles del usuario"
-                selectionMode="multiple"
-                onSelectionChange={(value) =>
-                  handleSelectChange('roles', value)
-                }
-                className="max-w-xs"
-              >
-                {rolesArray!.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </Select>
-            </div>
-            <div className="flex justify-center">
-              <Button
-                type="submit"
-                size="lg"
-                className="w-1/2"
-                disabled={formik.isSubmitting}
-              >
-                Crear
-              </Button>
-            </div>
-          </form>
+            {modules?.map((module) => (
+              <SelectItem key={module.id} value={module.id.toString()}>
+                {module.name}
+              </SelectItem>
+            ))}
+          </Select>
+          <p>Modulos seleccionados: {Array.from(selectedModules).join(', ')}</p>
+          <Switch
+            id="isActive"
+            name="isActive"
+            size="sm"
+            onValueChange={(defaultValue) => {
+              const fakeEvent = {
+                target: {
+                  name: 'isActive',
+                  defaultValue,
+                },
+              }
+              formik.handleChange(fakeEvent)
+            }}
+          >
+            Usuario activo
+          </Switch>
+          <Select
+            id="roles"
+            name="roles"
+            label="Roles"
+            variant="bordered"
+            placeholder="Selecciona los roles"
+            description="Selecciona los roles del usuario"
+            selectionMode="multiple"
+            onSelectionChange={(value) => handleSelectChange('roles', value)}
+            defaultSelectedKeys={user.roles || []}
+            className="max-w-xs"
+          >
+            {rolesArray!.map((role) => (
+              <SelectItem key={role} value={role}>
+                {role}
+              </SelectItem>
+            ))}
+          </Select>
         </div>
-      </div>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            size="lg"
+            className="w-1/2"
+            disabled={formik.isSubmitting}
+          >
+            Actualizar
+          </Button>
+        </div>
+      </form>
     </>
   )
 }
 
-export default AddUserForm
+export default UpdateUserForm

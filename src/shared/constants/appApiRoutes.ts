@@ -11,7 +11,7 @@ export const API_ROUTES = {
     GET_ALL: '/users',
     GET_ONE: '/users/:id',
     UPDATE: '/users',
-    DELETE: '/users/:id',
+    DELETE: '/users',
     CREATE: '/users',
   },
   MODULES: {
@@ -32,5 +32,12 @@ export const API_ROUTES = {
     GET_ONE: '/students/:id',
     UPDATE: '/students/:id',
     DELETE: '/students/:id',
+  },
+  FUNCTIONARIES: {
+    GET_ALL: '/functionaries',
+    GET_ONE: '/functionaries/:id',
+    UPDATE: '/functionaries/:id',
+    DELETE: '/functionaries/:id',
+    CREATE: '/functionaries',
   },
 }
