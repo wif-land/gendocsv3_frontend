@@ -7,4 +7,7 @@ export interface ICareer {
   menDegree: string
   womenDegree: string
   isActive: boolean
+  internshipHours: number
+  vinculationHours: number
+  coordinator: string
 }

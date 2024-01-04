@@ -26,6 +26,9 @@ export const CareersForm = ({
     menDegree: '',
     womenDegree: '',
     isActive: true,
+    coordinator: '',
+    internshipHours: 0,
+    vinculationHours: 0,
   },
   onClose,
 }: {
@@ -43,6 +46,9 @@ export const CareersForm = ({
     credits: yup.number().required('Campo requerido'),
     menDegree: yup.string().required('Campo requerido'),
     womenDegree: yup.string().required('Campo requerido'),
+    coordinator: yup.string().required('Campo requerido'),
+    internshipHours: yup.number().required('Campo requerido'),
+    vinculationHours: yup.number().required('Campo requerido'),
   })
 
   const onSubmit = async (values: ICareer) => {
@@ -67,6 +73,9 @@ export const CareersForm = ({
       menDegree: values.menDegree || '',
       womenDegree: values.womenDegree || '',
       isActive: values.isActive,
+      coordinator: values.coordinator || '',
+      internshipHours: values.internshipHours || 0,
+      vinculationHours: values.vinculationHours || 0,
     },
     validationSchema,
     onSubmit,
@@ -216,6 +225,69 @@ export const CareersForm = ({
                       : ''
                   }
                 />
+                <Input
+                  id="internshipHours"
+                  name="internshipHours"
+                  type="internshipHours"
+                  label="Horas de prácticas"
+                  variant="underlined"
+                  placeholder="Eg. 45"
+                  className="w-full"
+                  value={
+                    formik.values.internshipHours.toString() ??
+                    values.internshipHours
+                  }
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  size="lg"
+                  errorMessage={
+                    formik.touched.internshipHours &&
+                    formik.errors.internshipHours
+                      ? formik.errors.internshipHours
+                      : ''
+                  }
+                />
+                <Input
+                  id="vinculationHours"
+                  name="vinculationHours"
+                  type="vinculationHours"
+                  label="Horas de vinculación"
+                  variant="underlined"
+                  placeholder="Eg. 45"
+                  className="w-full"
+                  value={
+                    formik.values.vinculationHours.toString() ??
+                    values.vinculationHours
+                  }
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  size="lg"
+                  errorMessage={
+                    formik.touched.vinculationHours &&
+                    formik.errors.vinculationHours
+                      ? formik.errors.vinculationHours
+                      : ''
+                  }
+                />
+                <Input
+                  id="coordinator"
+                  name="coordinator"
+                  type="coordinator"
+                  label="Coordinador"
+                  variant="underlined"
+                  placeholder="Eg. Ing. Juan Pérez"
+                  className="w-full"
+                  value={formik.values.coordinator ?? values.coordinator}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  size="lg"
+                  errorMessage={
+                    formik.touched.coordinator && formik.errors.coordinator
+                      ? formik.errors.coordinator
+                      : ''
+                  }
+                />
+
                 {isAddMode && (
                   <Switch
                     aria-label="Automatic updates"
