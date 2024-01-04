@@ -1,5 +1,5 @@
 export interface IStudent {
-  id : string
+  id: string
   dni: string
   firstName: string
   secondName: string

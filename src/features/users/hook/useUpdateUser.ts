@@ -4,17 +4,18 @@ import * as yup from 'yup'
 import { UsersApi } from '../api/users'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { useUsersStore } from '@/shared/store/usersStore'
 
 interface IUpdateUserForm {
-  firstName: ''
-  secondName: ''
-  firstLastName: ''
-  secondLastName: ''
-  outlookEmail: ''
-  roles: []
-  isActive: false
-  password: ''
-  accessModules: number[]
+  firstName: '' | undefined
+  secondName: '' | undefined
+  firstLastName: '' | undefined
+  secondLastName: '' | undefined
+  outlookEmail: '' | undefined
+  roles: [] | undefined
+  isActive: false | undefined
+  password: '' | undefined
+  accessModules: number[] | undefined
 }
 
 const validationSchema = yup.object().shape({
@@ -30,6 +31,7 @@ const validationSchema = yup.object().shape({
 
 export const useUpdateUser = () => {
   const [userId, setUserId] = useState('')
+  const { load } = useUsersStore()
   const onSubmit = async (form: IUpdateUserForm) => {
     console.log(form)
     console.log(userId)
@@ -37,6 +39,7 @@ export const useUpdateUser = () => {
 
     if (status === 200) {
       toast.success('Usuario actualizado con éxito!', { autoClose: 1800 })
+      load()
     } else {
       toast.error(
         'Error al actualizar el usuario, por favor intenta de nuevo.',
@@ -44,20 +47,21 @@ export const useUpdateUser = () => {
           autoClose: 1800,
         },
       )
+      console.log(status)
     }
   }
 
   const formik = useFormik<IUpdateUserForm>({
     initialValues: {
-      firstName: '',
-      secondName: '',
-      firstLastName: '',
-      secondLastName: '',
-      outlookEmail: '',
-      roles: [],
-      isActive: false,
-      password: '',
-      accessModules: [],
+      firstName: undefined,
+      secondName: undefined,
+      firstLastName: undefined,
+      secondLastName: undefined,
+      outlookEmail: undefined,
+      roles: undefined,
+      isActive: undefined,
+      password: undefined,
+      accessModules: undefined,
     },
     onSubmit,
     validationSchema,

@@ -47,6 +47,7 @@ const UpdateUserForm = ({ user }: { user: IUser }) => {
   }
 
   const { formik, setUserId } = useUpdateUser()
+
   useEffect(() => {
     const fetchAndSetModules = async () => {
       const fetchedModules = await fetchModules()
@@ -60,7 +61,6 @@ const UpdateUserForm = ({ user }: { user: IUser }) => {
 
   useEffect(() => {
     setUserId(user.id)
-    console.log(user.roles)
   }, [user.id])
 
   return (

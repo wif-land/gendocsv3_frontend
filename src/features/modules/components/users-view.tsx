@@ -20,6 +20,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  User,
 } from '@nextui-org/react'
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
@@ -28,6 +29,7 @@ import { toast } from 'react-toastify'
 import { IUser } from '../../auth/types/IUser'
 import UpdateUserForm from '../../users/components/updateUserForm'
 import AddUserForm from '../../../features/users/components/AddUserForm'
+import { useUsersStore } from '@/shared/store/usersStore'
 
 interface UsersViewProps extends IUser {
   name: string
@@ -66,6 +68,7 @@ const UsersView = () => {
   const [selectedUser, setSelectedUser] = useState<UsersViewProps | undefined>(
     undefined,
   )
+  const { load } = useUsersStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
   const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } =
@@ -80,6 +83,8 @@ const UsersView = () => {
     setSelectedUser(users.find((user) => user.id === id))
     onOpenChangeDelete()
   }
+
+  const { setUsers: setUserStore, users: UsersStore } = useUsersStore()
 
   const resolveRowComponentByColumnKey = (
     item: {
@@ -139,7 +144,8 @@ const UsersView = () => {
                     await UserServices.updateUser(item.id, {
                       isActive: !item.isActive,
                     })
-                      .then((_) =>
+                      .then((_) => {
+                        load()
                         setUsers(
                           users.map((user) => {
                             if (user.id === item.id.toString()) {
@@ -151,8 +157,8 @@ const UsersView = () => {
 
                             return user
                           }),
-                        ),
-                      )
+                        )
+                      })
                       .catch((error) => {
                         toast.error(error.message)
                       })
@@ -170,21 +176,25 @@ const UsersView = () => {
   }
 
   useEffect(() => {
-    const fetchingUsers = async () => {
-      const users = await UsersApi.fetchUsers()
+    if (UsersStore) {
+      setUsers(
+        UsersStore.map((user) => ({
+          ...user,
+          name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
+        })),
+      )
+    } else {
+      const fetchingUsers = async () => {
+        const result = await UsersApi.get()
 
-      if (users.users) {
-        setUsers(
-          users.users.map((user) => ({
-            ...user,
-            name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
-          })),
-        )
+        if (result.users) {
+          setUserStore(result.users)
+        }
       }
-    }
 
-    fetchingUsers()
-  }, [])
+      fetchingUsers()
+    }
+  }, [UsersStore, setUserStore])
 
   return (
     <div className="m-10">
