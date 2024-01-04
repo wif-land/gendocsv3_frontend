@@ -6,7 +6,7 @@ export interface IStudent {
   secondLastName: string
   gender: string
   birthDate: Date
-  residenceCity: string
+  canton: string
   personalEmail: string
   institutionalEmail: string
   regularPhoneNumber: string

@@ -25,5 +25,13 @@ export const API_ROUTES = {
     GET_ONE: '/students/:id',
     UPDATE: '/students/:id',
     DELETE: '/students/:id',
+    CREATE: '/students',
   },
+  CAREERS: {
+    GET_ALL: '/careers',
+    GET_ONE: '/careers/:id',
+    UPDATE: '/careers/:id',
+    DELETE: '/careers/:id',
+    CREATE: '/careers',
+  }
 }
