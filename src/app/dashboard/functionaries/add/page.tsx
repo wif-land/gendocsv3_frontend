@@ -1,6 +1,6 @@
 'use client'
-import FunctionaryForm from '../../../../features/functionaries/components/addFunctionaryForm'
+import AddFunctionaryForm from '../../../../features/functionaries/components/addFunctionaryForm'
 
-const AddFunctionary = () => <FunctionaryForm />
+const AddFunctionary = () => <AddFunctionaryForm />
 
 export default AddFunctionary

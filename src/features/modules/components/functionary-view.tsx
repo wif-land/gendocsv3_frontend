@@ -27,9 +27,9 @@ import { Key } from '@react-types/shared'
 import { MdMoreVert } from 'react-icons/md'
 import { FunctionaryServices } from '@/features/functionaries/services/functionaryServices'
 import { toast } from 'react-toastify'
-
-
-
+import AddStudentForm from '@/features/students/components/AddStudentForm'
+import AddFunctionaryForm from '@/features/functionaries/components/addFunctionaryForm'
+import UpdateFunctionaryForm from '@/features/functionaries/components/updateFunctionaryForm'
 
 interface FunctionariesViewProps extends IFunctionary {
   name: string
@@ -63,24 +63,29 @@ const COLUMNS = [
 ]
 
 const FunctionaryView = () => {
-  const [functionaries, setFunctionaries] = useState<FunctionariesViewProps[]>([])
+  const [functionaries, setFunctionaries] = useState<FunctionariesViewProps[]>(
+    [],
+  )
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
-  const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } = useDisclosure()
-  const [selectedFunctionary, setSelectedFunctionary] = useState<FunctionariesViewProps | undefined>(undefined)
+  const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } =
+    useDisclosure()
+  const [selectedFunctionary, setSelectedFunctionary] = useState<IFunctionary>()
 
   const onOpenEditChange = (dni: string) => {
-    setSelectedFunctionary(functionaries.find((functionary) => functionary.dni=== dni))
+    setSelectedFunctionary(
+      functionaries.find((functionary) => functionary.dni === dni),
+    )
     onOpenChangeEdit()
   }
 
   const onOpenDeleteChange = (dni: string) => {
-    setSelectedFunctionary(functionaries.find((functionary) => functionary.dni === dni))
+    setSelectedFunctionary(
+      functionaries.find((functionary) => functionary.dni === dni),
+    )
     onOpenChangeDelete()
   }
-  
 
-  
   const resolveRowComponentByColumnKey = (
     item: {
       dni: string
@@ -167,42 +172,88 @@ const FunctionaryView = () => {
       default:
         return <TableCell>{getKeyValue(item, columnKey)}</TableCell>
     }
-  
   }
 
   useEffect(() => {
     const getFunctionaries = async () => {
       const functionaries = await FunctionariesApi.fetchFunctionaries()
       if (functionaries.functionaries) {
-        setFunctionaries(functionaries.functionaries.map((functionary) => ({
-          ...functionary,
-          name: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName}`,
-        })))
+        setFunctionaries(
+          functionaries.functionaries.map((functionary) => ({
+            ...functionary,
+            name: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName}`,
+          })),
+        )
       }
-      
     }
     getFunctionaries()
   }, [])
 
-
   return (
     <div>
+      <Button
+        onClick={() => {
+          onOpen()
+        }}
+      >
+        Crear funcionario
+      </Button>
       <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={COLUMNS} className="">
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={functionaries}>
-            {(item) => (
-              <TableRow key={item.dni}>
-                 {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <TableHeader columns={COLUMNS} className="">
+          {(column) => (
+            <TableColumn key={column.key}>{column.label}</TableColumn>
+          )}
+        </TableHeader>
+        <TableBody items={functionaries}>
+          {(item) => (
+            <TableRow key={item.dni}>
+              {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Create User
+              </ModalHeader>
+              <ModalBody>
+                <AddFunctionaryForm />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Edit User
+              </ModalHeader>
+              <ModalBody>
+                <UpdateFunctionaryForm
+                  functionary={selectedFunctionary as IFunctionary}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
 
-export default FunctionaryView;
+export default FunctionaryView

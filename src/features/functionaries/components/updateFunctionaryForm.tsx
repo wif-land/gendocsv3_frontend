@@ -1,9 +1,18 @@
-import React from 'react'
-import { useAddFunctionary } from '../hooks/useAddFunctionary'
+import React, { useEffect } from 'react'
 import { Input, Switch } from '@nextui-org/react'
+import { IFunctionary } from '../types/IFunctionary'
+import { useUpdateFunctionary } from '../hooks/useUpdateFunctionary'
 
-const AddFunctionaryForm = () => {
-  const { formik } = useAddFunctionary()
+const UpdateFunctionaryForm = ({
+  functionary,
+}: {
+  functionary: IFunctionary
+}) => {
+  const { formik, setFunctionaryId } = useUpdateFunctionary()
+
+  useEffect(() => {
+    setFunctionaryId(functionary.dni)
+  }, [])
 
   return (
     <>
@@ -16,7 +25,7 @@ const AddFunctionaryForm = () => {
             label="DNI"
             variant="underlined"
             placeholder="Ingrese un DNI"
-            value={formik.values.dni}
+            value={functionary.dni}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -32,7 +41,7 @@ const AddFunctionaryForm = () => {
             label="Primer Nombre"
             variant="underlined"
             placeholder="Ingrese un primer nombre"
-            value={formik.values.firstName}
+            defaultValue={functionary.firstName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -50,7 +59,7 @@ const AddFunctionaryForm = () => {
             label="Segundo Nombre"
             variant="underlined"
             placeholder="Ingrese un segundo nombre"
-            value={formik.values.secondName}
+            defaultValue={functionary.secondName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -68,7 +77,7 @@ const AddFunctionaryForm = () => {
             label="Primer Apellido"
             variant="underlined"
             placeholder="Ingrese un primer apellido"
-            value={formik.values.firstLastName}
+            defaultValue={functionary.firstLastName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -86,7 +95,7 @@ const AddFunctionaryForm = () => {
             label="Segundo Apellido"
             variant="underlined"
             placeholder="Ingrese un segundo apellido"
-            value={formik.values.secondLastName}
+            defaultValue={functionary.secondLastName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -104,7 +113,7 @@ const AddFunctionaryForm = () => {
             label="Correo Outlook"
             variant="underlined"
             placeholder="Ingrese un correo Outlook"
-            value={formik.values.outlookEmail}
+            defaultValue={functionary.outlookEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -122,7 +131,7 @@ const AddFunctionaryForm = () => {
             label="Correo Google"
             variant="underlined"
             placeholder="Ingrese un correo Google"
-            value={formik.values.googleEmail}
+            defaultValue={functionary.googleEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -140,7 +149,7 @@ const AddFunctionaryForm = () => {
             label="Número de Teléfono"
             variant="underlined"
             placeholder="Ingrese un número de teléfono"
-            value={formik.values.phoneNumber}
+            defaultValue={functionary.phoneNumber}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -158,7 +167,7 @@ const AddFunctionaryForm = () => {
             label="Número de Teléfono Convencional"
             variant="underlined"
             placeholder="Ingrese un número de teléfono convencional"
-            value={formik.values.regularPhoneNumber}
+            defaultValue={functionary.regularPhoneNumber}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -177,7 +186,7 @@ const AddFunctionaryForm = () => {
             label="Título de Segundo Nivel"
             variant="underlined"
             placeholder="Ingrese un título de segundo nivel"
-            value={formik.values.secondLevelDegree}
+            defaultValue={functionary.secondLevelDegree}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -196,7 +205,7 @@ const AddFunctionaryForm = () => {
             label="Título de Tercer Nivel"
             variant="underlined"
             placeholder="Ingrese un título de tercer nivel"
-            value={formik.values.thirdLevelDegree}
+            defaultValue={functionary.thirdLevelDegree}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -214,7 +223,7 @@ const AddFunctionaryForm = () => {
             label="Título de Cuarto Nivel"
             variant="underlined"
             placeholder="Ingrese un título de cuarto nivel"
-            value={formik.values.fourthLevelDegree}
+            defaultValue={functionary.fourthLevelDegree}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -231,11 +240,11 @@ const AddFunctionaryForm = () => {
           id="isActive"
           name="isActive"
           size="sm"
-          onValueChange={(value) => {
+          onValueChange={(defaultValue) => {
             const fakeEvent = {
               target: {
                 name: 'isActive',
-                value,
+                defaultValue,
               },
             }
             formik.handleChange(fakeEvent)
@@ -256,4 +265,4 @@ const AddFunctionaryForm = () => {
   )
 }
 
-export default AddFunctionaryForm
+export default UpdateFunctionaryForm
