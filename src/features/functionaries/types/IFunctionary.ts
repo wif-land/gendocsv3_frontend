@@ -1,4 +1,5 @@
 export interface IFunctionary {
+  id?: string
   dni: string
   firstName: string
   secondName: string

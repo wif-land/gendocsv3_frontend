@@ -1,4 +1,3 @@
-import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { FunctionariesApi } from '../api/functionaries'
@@ -6,20 +5,21 @@ import { toast } from 'react-toastify'
 import { useState } from 'react'
 
 interface IFunctionaryForm {
-  dni: string
-  firstName: string
-  secondName: string
-  firstLastName: string
-  secondLastName: string
-  outlookEmail: string
-  googleEmail: string
-  phoneNumber: string
-  regularPhoneNumber: string
-  secondLevelDegree: string
-  thirdLevelDegree: string
-  fourthLevelDegree: string // Corregido de 'forth' a 'fourth'
-  isActive: boolean // Agregado para reflejar el objeto JSON
+  dni?: string
+  firstName?: string
+  secondName?: string
+  firstLastName?: string
+  secondLastName?: string
+  outlookEmail?: string
+  googleEmail?: string
+  phoneNumber?: string
+  regularPhoneNumber?: string
+  secondLevelDegree?: string
+  thirdLevelDegree?: string
+  fourthLevelDegree?: string
+  isActive?: boolean
 }
+
 const validationSchema = yup.object().shape({
   // dni: yup
   //   .string()
@@ -64,9 +64,8 @@ const validationSchema = yup.object().shape({
 
 export const useUpdateFunctionary = () => {
   const [functionaryId, setFunctionaryId] = useState('')
-  const onSubmit = async (form: IFunctionaryForm) => {
-    console.log(form)
 
+  const onSubmit = async (form: IFunctionaryForm) => {
     const { status } = await FunctionariesApi.updateFunctionary(
       functionaryId,
       form,
@@ -86,18 +85,18 @@ export const useUpdateFunctionary = () => {
 
   const formik = useFormik<IFunctionaryForm>({
     initialValues: {
-      dni: '',
-      firstName: '',
-      secondName: '',
-      firstLastName: '',
-      secondLastName: '',
-      outlookEmail: '',
-      googleEmail: '',
-      phoneNumber: '',
-      regularPhoneNumber: '',
-      secondLevelDegree: '',
-      thirdLevelDegree: '',
-      fourthLevelDegree: '',
+      dni: undefined,
+      firstName: undefined,
+      secondName: undefined,
+      firstLastName: undefined,
+      secondLastName: undefined,
+      outlookEmail: undefined,
+      googleEmail: undefined,
+      phoneNumber: undefined,
+      regularPhoneNumber: undefined,
+      secondLevelDegree: undefined,
+      thirdLevelDegree: undefined,
+      fourthLevelDegree: undefined,
       isActive: true,
     },
     validationSchema,

@@ -37,15 +37,8 @@ export const API_ROUTES = {
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
     GET_ONE: '/functionaries/:id',
-    UPDATE: '/functionaries/:id',
+    UPDATE: '/functionaries',
     DELETE: '/functionaries/:id',
     CREATE: '/functionaries',
-  },
-  CAREERS: {
-    GET_ALL: '/careers',
-    GET_ONE: '/careers/:id',
-    UPDATE: '/careers/:id',
-    DELETE: '/careers/:id',
-    CREATE: '/careers',
   },
 }

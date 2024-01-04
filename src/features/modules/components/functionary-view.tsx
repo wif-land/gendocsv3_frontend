@@ -1,6 +1,4 @@
-import { IFunctionary } from '@/features/functionaries/types/IFunctionary'
-import React, { useEffect, useState } from 'react'
-import { FunctionariesApi } from '@/features/functionaries/api/functionaries'
+import React, { Key, useEffect, useState } from 'react'
 import {
   Button,
   Modal,
@@ -23,13 +21,13 @@ import {
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/react'
-import { Key } from '@react-types/shared'
 import { MdMoreVert } from 'react-icons/md'
-import { FunctionaryServices } from '@/features/functionaries/services/functionaryServices'
 import { toast } from 'react-toastify'
-import AddStudentForm from '@/features/students/components/AddStudentForm'
-import AddFunctionaryForm from '@/features/functionaries/components/addFunctionaryForm'
-import UpdateFunctionaryForm from '@/features/functionaries/components/updateFunctionaryForm'
+import { IFunctionary } from '../../functionaries/types/IFunctionary'
+import { FunctionaryServices } from '../../functionaries/services/functionaryServices'
+import { FunctionariesApi } from '../../functionaries/api/functionaries'
+import AddFunctionaryForm from '../../functionaries/components/addFunctionaryForm'
+import UpdateFunctionaryForm from '../../functionaries/components/updateFunctionaryForm'
 
 interface FunctionariesViewProps extends IFunctionary {
   name: string
@@ -68,8 +66,6 @@ const FunctionaryView = () => {
   )
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
-  const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } =
-    useDisclosure()
   const [selectedFunctionary, setSelectedFunctionary] = useState<IFunctionary>()
 
   const onOpenEditChange = (dni: string) => {
@@ -79,21 +75,8 @@ const FunctionaryView = () => {
     onOpenChangeEdit()
   }
 
-  const onOpenDeleteChange = (dni: string) => {
-    setSelectedFunctionary(
-      functionaries.find((functionary) => functionary.dni === dni),
-    )
-    onOpenChangeDelete()
-  }
-
   const resolveRowComponentByColumnKey = (
-    item: {
-      dni: string
-      name: string
-      googleEmail: string
-      outlookEmail: string
-      isActive: boolean
-    },
+    item: FunctionariesViewProps,
     columnKey: Key,
   ) => {
     switch (columnKey) {
@@ -141,7 +124,7 @@ const FunctionaryView = () => {
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
                   onClick={async () => {
-                    await FunctionaryServices.updateFunctionary(item.dni, {
+                    await FunctionaryServices.updateFunctionary(item.id!, {
                       isActive: !item.isActive,
                     })
                       .then((_) =>

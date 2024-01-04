@@ -23,9 +23,14 @@ export class FunctionariesApi {
     data: Partial<IFunctionary>,
   ): Promise<{ status: number }> => {
     const result = await AxiosClient.put(
-      API_ROUTES.FUNCTIONARIES.UPDATE.replace(':id', id),
+      API_ROUTES.FUNCTIONARIES.UPDATE,
       data,
+      {
+        id,
+      },
     )
+
+    console.log({ result })
 
     const { status } = result
 

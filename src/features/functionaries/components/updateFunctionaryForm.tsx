@@ -11,7 +11,7 @@ const UpdateFunctionaryForm = ({
   const { formik, setFunctionaryId } = useUpdateFunctionary()
 
   useEffect(() => {
-    setFunctionaryId(functionary.dni)
+    setFunctionaryId(functionary.id!)
   }, [])
 
   return (
