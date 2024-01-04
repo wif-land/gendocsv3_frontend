@@ -1,10 +1,6 @@
+'use client'
+
 import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   Table,
   TableBody,
   TableCell,
@@ -13,22 +9,21 @@ import {
   TableRow,
   getKeyValue,
   useDisclosure,
-  Input,
   Chip,
   ChipProps,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Switch,
+  Button,
 } from '@nextui-org/react'
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { CareerApi } from '../api/careersApi'
 import { ICareer } from '../interfaces/ICareer'
-import * as yup from 'yup'
-import { useFormik } from 'formik'
+import { useCareersStore } from '../../../shared/store/careerStore'
+import { CareersForm } from './CareersForm'
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',
@@ -42,7 +37,7 @@ const COLUMNS = [
   },
   {
     key: 'isActive',
-    label: 'Activo',
+    label: 'Estado',
   },
   {
     key: 'actions',
@@ -51,38 +46,9 @@ const COLUMNS = [
 ]
 
 const CareersView = () => {
-  const initialValues = {
-    name: '',
-    credits: 0,
-    menDegree: '',
-    womenDegree: '',
-    isActive: false,
-  }
-
-  const validationSchema = yup.object({
-    name: yup.string().required('Campo requerido'),
-    credits: yup.string().required('Campo requerido'),
-    menDegree: yup.string().required('Campo requerido'),
-    womenDegree: yup.string().required('Campo requerido'),
-  })
-
-  const onSubmit = (values: ICareer) => {
-    handleCreateCareer({
-      ...values,
-      credits: Number(values.credits),
-    })
-  }
-
-  const formik = useFormik({
-    initialValues,
-    onSubmit,
-    validationSchema,
-  })
-
-  const isSubmitting = formik.isSubmitting
-
-  const [careers, setCareers] = useState<ICareer[]>([])
+  const { careers, setCareers } = useCareersStore()
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+  const [selectedCareer, setSelectedCareer] = useState<ICareer | null>(null)
 
   const resolveRowComponentByColumnKey = (item: ICareer, columnKey: Key) => {
     switch (columnKey) {
@@ -96,7 +62,7 @@ const CareersView = () => {
                 size="sm"
                 variant="flat"
               >
-                {item.isActive ? 'Si' : 'No'}
+                {item.isActive ? 'Activado' : 'Desactivado'}
               </Chip>
             }
           </TableCell>
@@ -112,26 +78,34 @@ const CareersView = () => {
               </DropdownTrigger>
 
               <DropdownMenu aria-label="Static Actions">
-                <DropdownItem key="edit">Editar</DropdownItem>
+                <DropdownItem
+                  key="edit"
+                  onPress={() => {
+                    setSelectedCareer(item)
+                    onOpen()
+                  }}
+                >
+                  Editar
+                </DropdownItem>
                 <DropdownItem
                   key={item.isActive ? 'desactivate' : 'activate'}
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
-                  onClick={async () => {
-                    await CareerApi.update(item.id!, {
+                  onClick={() => {
+                    CareerApi.update(item.id!, {
                       isActive: !item.isActive,
                     })
                       .then((_) =>
                         setCareers(
-                          careers.map((user) => {
-                            if (user.id === item.id) {
+                          careers!.map((career) => {
+                            if (career.id === item.id) {
                               return {
-                                ...user,
-                                isActive: !user.isActive,
+                                ...career,
+                                isActive: !item.isActive,
                               }
                             }
 
-                            return user
+                            return career
                           }),
                         ),
                       )
@@ -151,21 +125,6 @@ const CareersView = () => {
     }
   }
 
-  const handleCreateCareer = async (values: ICareer) => {
-    const result = await CareerApi.create(values)
-
-    if (result.career) {
-      setCareers([...careers, result.career])
-      toast.success('Carrera creada exitosamente')
-      formik.resetForm()
-      onClose()
-    } else {
-      toast.error('Error al crear la carrera', {
-        closeButton: false,
-      })
-    }
-  }
-
   useEffect(() => {
     const fetchingUsers = async () => {
       const result = await CareerApi.getCareers()
@@ -180,7 +139,16 @@ const CareersView = () => {
 
   return (
     <div>
-      <Button onPress={onOpen}>Crear carrera</Button>
+      <Button
+        onPress={() => {
+          setSelectedCareer(null)
+          onOpen()
+        }}
+        radius="sm"
+        className="w-40 h-12 ml-6 border-2  bg-red-600 text-white"
+      >
+        Crear carrera
+      </Button>
 
       <div className="m-6">
         <Table aria-label="Example table with dynamic content">
@@ -189,129 +157,22 @@ const CareersView = () => {
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
           </TableHeader>
-          <TableBody items={careers}>
-            {(item) => (
+          <TableBody emptyContent={'No existen datos sobre carerras'}>
+            {careers!.map((item) => (
               <TableRow key={item.id}>
                 {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
       </div>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Crear Carrera
-              </ModalHeader>
-
-              <form
-                onSubmit={async (e) => {
-                  formik.handleSubmit(e)
-                }}
-              >
-                <ModalBody>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="name"
-                    label="Nombre"
-                    variant="underlined"
-                    placeholder="Eg. Ingeniería en Sistemas"
-                    className="w-full"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    size="lg"
-                    errorMessage={
-                      formik.touched.name && formik.errors.name
-                        ? formik.errors.name
-                        : ''
-                    }
-                  />
-                  <Input
-                    id="credits"
-                    name="credits"
-                    type="credits"
-                    label="Créditos"
-                    variant="underlined"
-                    placeholder="Eg. 240"
-                    className="w-full"
-                    value={formik.values.credits.toString()}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    size="lg"
-                    errorMessage={
-                      formik.touched.credits && formik.errors.credits
-                        ? formik.errors.credits
-                        : ''
-                    }
-                  />
-                  <Input
-                    id="menDegree"
-                    name="menDegree"
-                    type="menDegree"
-                    label="Título Masculino"
-                    variant="underlined"
-                    placeholder="Eg. Ingeniero en Sistemas"
-                    className="w-full"
-                    value={formik.values.menDegree}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    size="lg"
-                    errorMessage={
-                      formik.touched.menDegree && formik.errors.menDegree
-                        ? formik.errors.menDegree
-                        : ''
-                    }
-                  />
-                  <Input
-                    id="womenDegree"
-                    name="womenDegree"
-                    type="womenDegree"
-                    label="Título Femenino"
-                    variant="underlined"
-                    placeholder="Eg. Ingeniera en Sistemas"
-                    className="w-full"
-                    value={formik.values.womenDegree}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    size="lg"
-                    errorMessage={
-                      formik.touched.womenDegree && formik.errors.womenDegree
-                        ? formik.errors.womenDegree
-                        : ''
-                    }
-                  />
-                  <Switch
-                    defaultSelected
-                    aria-label="Automatic updates"
-                    onChange={async (e) => {
-                      await formik.setFieldValue('isActive', e.target.checked)
-                    }}
-                    checked={formik.values.isActive}
-                    onBlur={formik.handleBlur}
-                  >
-                    Activo
-                  </Switch>
-                </ModalBody>
-
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Cancelar
-                  </Button>
-
-                  <Button color="primary" disabled={isSubmitting} type="submit">
-                    Crear
-                  </Button>
-                </ModalFooter>
-              </form>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      <CareersForm
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+        values={selectedCareer || undefined}
+      />
     </div>
   )
 }
