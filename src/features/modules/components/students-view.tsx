@@ -31,6 +31,7 @@ import AddStudentForm from '@/features/students/components/AddStudentForm'
 import { MdMoreVert } from 'react-icons/md'
 import { StudentServices } from '../../students/services/studentServices'
 import { toast } from 'react-toastify'
+import { useStudentStore } from '@/shared/store/student'
 
 interface StudentsViewProps extends IStudent {
   name: string
@@ -87,6 +88,11 @@ const StudentsView = () => {
   const router = useRouter()
 
   const [students, setStudents] = useState<StudentsViewProps[]>([])
+  const {
+    students: StudentsStore,
+    setStudents: setStudentStore,
+    get,
+  } = useStudentStore()
 
   const resolveRowComponentByColumnKey = (
     item: {
@@ -133,7 +139,7 @@ const StudentsView = () => {
                     })
                       .then(() =>
                         setStudents(
-                          students.map((student) => {
+                          students?.map((student) => {
                             if (student.id === item.id) {
                               return {
                                 ...student,
@@ -150,7 +156,9 @@ const StudentsView = () => {
                       })
                   }}
                 >
-                  {item.isActive ? 'Desactivar usuario' : 'Activar usuario'}
+                  {item.isActive
+                    ? 'Desactivar estudiante'
+                    : 'Activar estudiante'}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -162,19 +170,17 @@ const StudentsView = () => {
   }
 
   useEffect(() => {
-    const fetchStudents = async () => {
-      const students = await StudentsApi.fetchStudents()
-      if (students.students) {
-        setStudents(
-          students.students.map((student) => ({
-            ...student,
-            name: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName}`,
-          })),
-        )
-      }
+    if (StudentsStore) {
+      setStudents(
+        StudentsStore.map((student) => ({
+          ...student,
+          name: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName}`,
+        })),
+      )
+    } else {
+      get()
     }
-    fetchStudents()
-  }, [])
+  }, [StudentsStore])
 
   return (
     <div className="m-10">

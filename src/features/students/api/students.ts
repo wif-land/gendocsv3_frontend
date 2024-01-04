@@ -10,6 +10,7 @@ export class StudentsApi {
   }> => {
     const result = await AxiosClient.get(API_ROUTES.STUDENTS.GET_ALL)
     const { status, data } = result
+    console.log(result)
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 
     return { status, students: data.content as IStudent[] }
@@ -28,11 +29,14 @@ export class StudentsApi {
   }
 
   static createStudent = async (
-    data: Partial<IStudent>,
-  ): Promise<{ status: number }> => {
-    const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE, data)
-    const { status } = result
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
-    return { status }
+    body: Partial<IStudent>,
+  ): Promise<{
+    status: number
+    data?: { message: string; content: unknown }
+  }> => {
+    const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE, body)
+    const { status, data } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, data }
+    return { status, data }
   }
 }

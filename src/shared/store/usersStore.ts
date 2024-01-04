@@ -1,0 +1,32 @@
+import { create, StateCreator } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { setCookie } from '../utils/CookiesUtil'
+import { IUser } from '../../features/auth/types/IUser'
+import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
+import { UsersApi } from '@/features/users/api/users'
+
+interface StoreState {
+  users: IUser[] | undefined
+  setUsers: (user: IUser[]) => void
+  load: () => void
+}
+
+export const useUsersStore = create<StoreState>(
+  persist(
+    (set, get) => ({
+      users: undefined,
+      setUsers: (users: IUser[]) => set({ users }),
+      logout: () => {
+        set({ users: undefined })
+        setCookie(ACCESS_TOKEN_COOKIE_NAME, null)
+      },
+      load: async () => {
+        const result = await UsersApi.get()
+        set({ users: result.users })
+      },
+    }),
+    {
+      name: 'users',
+    },
+  ) as StateCreator<StoreState>,
+)

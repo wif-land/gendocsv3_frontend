@@ -6,7 +6,7 @@ import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
 import { IUpdateUser } from '../types/IUserUpdate'
 
 export class UsersApi {
-  static fetchUsers = async (): Promise<{
+  static get = async (): Promise<{
     status: number
     users?: IUser[]
   }> => {
@@ -21,7 +21,7 @@ export class UsersApi {
 
   static updateUser = async (
     id: string,
-    data: IUpdateUser,
+    data: Partial<IUpdateUser>,
   ): Promise<{ status: number }> => {
     const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, data, {
       id,
@@ -29,7 +29,7 @@ export class UsersApi {
 
     const { status } = result
 
-    console.log(result)
+    console.log(data)
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 
@@ -45,6 +45,8 @@ export class UsersApi {
     const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, body)
 
     const { status, data } = result
+
+    console.log(data.content)
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
 

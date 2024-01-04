@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { IUser } from '../types/IUser'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { useUserStore } from '../../../shared/store/userStore'
+import { useUserStore } from '../../../shared/store/userProfileStore'
 import { appPublicRoutes } from '../../../shared/constants/appPublicRoutes'
 
 interface IAuth {

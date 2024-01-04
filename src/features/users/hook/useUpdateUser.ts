@@ -4,6 +4,7 @@ import * as yup from 'yup'
 import { UsersApi } from '../api/users'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { useUsersStore } from '@/shared/store/usersStore'
 
 interface IUpdateUserForm {
   firstName: '' | undefined
@@ -30,6 +31,7 @@ const validationSchema = yup.object().shape({
 
 export const useUpdateUser = () => {
   const [userId, setUserId] = useState('')
+  const { load } = useUsersStore()
   const onSubmit = async (form: IUpdateUserForm) => {
     console.log(form)
     console.log(userId)
@@ -37,6 +39,7 @@ export const useUpdateUser = () => {
 
     if (status === 200) {
       toast.success('Usuario actualizado con éxito!', { autoClose: 1800 })
+      load()
     } else {
       toast.error(
         'Error al actualizar el usuario, por favor intenta de nuevo.',
