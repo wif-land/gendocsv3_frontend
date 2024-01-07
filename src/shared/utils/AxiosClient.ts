@@ -122,7 +122,7 @@ export class AxiosClient {
   static async get<T>(path: string): Promise<AxiosClientResponse<T>> {
     try {
       const response = await this.getInstance().get(path)
-
+      console.log({ response })
       const { data, status } = response
 
       if (status === HTTP_STATUS_CODES.OK) {

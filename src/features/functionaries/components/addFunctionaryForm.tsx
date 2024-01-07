@@ -1,8 +1,8 @@
 import React from 'react'
 import { useAddFunctionary } from '../hooks/useAddFunctionary'
-import { Input, Switch } from '@nextui-org/react'
+import { Button, Input, Switch } from '@nextui-org/react'
 
-const AddFunctionaryForm = () => {
+const AddFunctionaryForm = ({ onClose }: { onClose: () => void }) => {
   const { formik } = useAddFunctionary()
 
   return (
@@ -244,12 +244,16 @@ const AddFunctionaryForm = () => {
           Usuario activo
         </Switch>
         <div className="flex justify-center">
-          <button
+          <Button
             type="submit"
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            size="lg"
+            className="w-56 m-1 bg-red-600 text-white"
+            radius="sm"
+            disabled={formik.isSubmitting}
+            onPress={onClose}
           >
             Guardar
-          </button>
+          </Button>
         </div>
       </form>
     </>

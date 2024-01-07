@@ -33,8 +33,6 @@ export const useUpdateUser = () => {
   const [userId, setUserId] = useState('')
   const { load } = useUsersStore()
   const onSubmit = async (form: IUpdateUserForm) => {
-    console.log(form)
-    console.log(userId)
     const { status } = await UsersApi.updateUser(userId, form)
 
     if (status === 200) {

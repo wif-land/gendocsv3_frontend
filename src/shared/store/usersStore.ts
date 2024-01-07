@@ -1,5 +1,5 @@
 import { create, StateCreator } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { setCookie } from '../utils/CookiesUtil'
 import { IUser } from '../../features/auth/types/IUser'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
@@ -26,7 +26,8 @@ export const useUsersStore = create<StoreState>(
       },
     }),
     {
-      name: 'users',
+      name: 'users-storage',
+      storage: createJSONStorage(() => sessionStorage),
     },
   ) as StateCreator<StoreState>,
 )

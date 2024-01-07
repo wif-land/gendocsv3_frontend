@@ -3,6 +3,8 @@ import * as yup from 'yup'
 import { FunctionariesApi } from '../api/functionaries'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { useFunctionaryStore } from '@/shared/store/functionaryStore'
 
 interface IFunctionaryForm {
   dni?: string
@@ -63,6 +65,7 @@ const validationSchema = yup.object().shape({
 })
 
 export const useUpdateFunctionary = () => {
+  const { get } = useFunctionaryStore()
   const [functionaryId, setFunctionaryId] = useState('')
 
   const onSubmit = async (form: IFunctionaryForm) => {
@@ -71,8 +74,9 @@ export const useUpdateFunctionary = () => {
       form,
     )
 
-    if (status === 201) {
+    if (status === HTTP_STATUS_CODES.OK) {
       toast.success('Funcionario editado con éxito!', { autoClose: 1800 })
+      get()
     } else {
       toast.error(
         'Error al editar el funcionario, por favor intenta de nuevo.',

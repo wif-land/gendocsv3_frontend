@@ -248,7 +248,10 @@ const UsersView = () => {
                 Edit User
               </ModalHeader>
               <ModalBody>
-                <UpdateUserForm user={selectedUser as IUser} />
+                <UpdateUserForm
+                  user={selectedUser as IUser}
+                  onClose={onClose}
+                />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

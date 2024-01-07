@@ -3,21 +3,28 @@ import cantones from '../data/canton'
 import { formatISO } from 'date-fns'
 
 import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
-import { useStudent } from '../hooks/useStudent'
+import { useUpdateStudent } from '../hooks/useUpdateStudent'
 import { ICareer } from '../../careers/types/ICareer'
 import { CareersApi } from '../../careers/api/carers'
+import { IStudent } from '../types/IStudent'
 
-const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
-  const { formik } = useStudent()
+const UpdateStudentForm = ({
+  student,
+  onClose,
+}: {
+  student: IStudent
+  onClose: () => void
+}) => {
+  const { formik, setStudentId } = useUpdateStudent()
   const [careers, setCareers] = useState<ICareer[]>([])
 
   const genders = [
     {
-      value: 'M',
+      defaultValue: 'M',
       label: 'Masculino',
     },
     {
-      value: 'F',
+      defaultValue: 'F',
       label: 'Femenino',
     },
   ]
@@ -29,10 +36,8 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
   }
 
   const handleDateChange = (e) => {
-    const { name, value } = e.target
-    // Convierte el valor de la fecha a ISO 8601 completo
-    const formattedDate = formatISO(new Date(value))
-    // Actualiza el valor de Formik para el campo de fecha
+    const { name, defaultValue } = e.target
+    const formattedDate = formatISO(new Date(defaultValue))
     formik.setFieldValue(name, formattedDate)
   }
 
@@ -51,6 +56,10 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
     fetchCareers()
   }, [])
 
+  useEffect(() => {
+    setStudentId(student.id)
+  }, [student])
+
   return (
     <>
       <form
@@ -65,7 +74,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="DNI"
             variant="underlined"
             placeholder="Ingrese un DNI"
-            value={formik.values.dni}
+            defaultValue={student.dni}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -81,7 +90,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Primer Nombre"
             variant="underlined"
             placeholder="Ingrese un primer nombre"
-            value={formik.values.firstName}
+            defaultValue={student.firstName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -99,7 +108,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Segundo Nombre"
             variant="underlined"
             placeholder="Ingrese un segundo nombre"
-            value={formik.values.secondName}
+            defaultValue={student.secondName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -117,7 +126,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Apellido"
             variant="underlined"
             placeholder="Ingrese un apellido"
-            value={formik.values.firstLastName}
+            defaultValue={student.firstLastName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -135,7 +144,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Segundo Apellido"
             variant="underlined"
             placeholder="Ingrese un segundo apellido"
-            value={formik.values.secondLastName}
+            defaultValue={student.secondLastName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -153,7 +162,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Correo Personal"
             variant="underlined"
             placeholder="Ingrese un email"
-            value={formik.values.googleEmail}
+            defaultValue={student.googleEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -171,7 +180,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Correo Institucional"
             variant="underlined"
             placeholder="Ingrese un email"
-            value={formik.values.outlookEmail}
+            defaultValue={student.outlookEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -189,7 +198,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Telefono Familiar"
             variant="underlined"
             placeholder="Ingrese un telefono"
-            value={formik.values.regularPhoneNumber}
+            defaultValue={student.regularPhoneNumber}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -209,7 +218,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Telefono Celular"
             variant="underlined"
             placeholder="Ingrese un telefono"
-            value={formik.values.phoneNumber}
+            defaultValue={student.phoneNumber}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -228,7 +237,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Matricula"
             variant="underlined"
             placeholder="Ingrese una matricula"
-            value={formik.values.registration}
+            defaultValue={student.registration}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -247,7 +256,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Folio"
             variant="underlined"
             placeholder="Ingrese un folio"
-            value={formik.values.folio}
+            defaultValue={student.folio}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
@@ -266,11 +275,11 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             label="Creditos Aprobados"
             variant="underlined"
             placeholder="Ingrese créditos aprobados"
-            value={formik.values.approvedCredits.toString()}
+            defaultValue={student.approvedCredits.toString()}
             onChange={(e) =>
               formik.setFieldValue(
                 'approvedCredits',
-                parseInt(e.target.value) || 0,
+                parseInt(e.target.defaultValue) || 0,
               )
             }
             onBlur={formik.handleBlur}
@@ -289,6 +298,7 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             placeholder="Ciudad de Residencia"
             variant="underlined"
             onChange={(e) => handleSelectChange('canton', e.target.value)}
+            defaultSelectedKeys={[student.canton]}
           >
             {cantones.map((canton) => (
               <SelectItem key={canton.name} value={canton.name}>
@@ -302,9 +312,10 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             placeholder="Genero"
             variant="underlined"
             onChange={(e) => handleSelectChange('gender', e.target.value)}
+            defaultSelectedKeys={student.gender || []}
           >
             {genders.map((gender) => (
-              <SelectItem key={gender.value} value={gender.value}>
+              <SelectItem key={gender.defaultValue} value={gender.defaultValue}>
                 {gender.label}
               </SelectItem>
             ))}
@@ -314,13 +325,13 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full"
             placeholder="Carrera"
             variant="underlined"
-            // Asegúrate de que el valor seleccionado sea un número
+            defaultSelectedKeys={[student.career?.id.toString() || '']}
             onChange={(e) =>
               handleSelectChange('careerId', parseInt(e.target.value) || 0)
             }
           >
             {careers.map((career) => (
-              <SelectItem key={career.id} value={career.id}>
+              <SelectItem key={career.id} value={career.id.toString()}>
                 {career.name}
               </SelectItem>
             ))}
@@ -329,23 +340,28 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             id="isActive"
             name="isActive"
             size="sm"
-            onValueChange={(value) => {
+            onValueChange={(defaultValue) => {
               const fakeEvent = {
                 target: {
                   name: 'isActive',
-                  value,
+                  defaultValue,
                 },
               }
               formik.handleChange(fakeEvent)
             }}
+            defaultChecked={student.isActive}
           >
             Estudiante Activo
           </Switch>
+
           <input
             type="date"
             id="birthdate"
             name="birthdate"
-            onChange={handleDateChange} // Usa el manejador personalizado aquí
+            onChange={handleDateChange}
+            defaultValue={
+              student.birthdate ? student.birthdate.split('T')[0] : ''
+            }
           />
         </div>
         <div className="m-1 w-full flex gap-4 justify-center">
@@ -355,17 +371,9 @@ const UpdateStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-56 m-1 bg-blue-700 text-white"
             radius="sm"
             disabled={formik.isSubmitting}
+            onClick={onClose}
           >
-            Crear
-          </Button>
-          <Button
-            size="lg"
-            className="w-56 m-1 bg-red-600 text-white"
-            radius="sm"
-            disabled={formik.isSubmitting}
-            onPress={onClose}
-          >
-            Close
+            Actualizar
           </Button>
         </div>
       </form>
