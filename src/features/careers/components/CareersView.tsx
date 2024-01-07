@@ -126,7 +126,7 @@ const CareersView = () => {
   }
 
   useEffect(() => {
-    const fetchingUsers = async () => {
+    const fetchingCarrers = async () => {
       const result = await CareerApi.getCareers()
 
       if (result.careers) {
@@ -134,7 +134,7 @@ const CareersView = () => {
       }
     }
 
-    fetchingUsers()
+    fetchingCarrers()
   }, [])
 
   return (

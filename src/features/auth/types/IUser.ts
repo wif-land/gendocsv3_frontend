@@ -1,4 +1,4 @@
-export type IRoleType = 'admin' | 'writer' | 'reader'
+export type IRoleType = 'ADMIN' | 'WRITER' | 'READER'
 
 export interface IUser {
   id: number
@@ -10,21 +10,20 @@ export interface IUser {
   googleEmail: string
   roles?: string[] | null
   isActive: boolean
-  accessModules?: AccessModulesEntity[] | null
+  accessModules?: number[] | null
 }
-export interface AccessModulesEntity {
-  id: number
-  createdAt: string
-  updatedAt: string
-  code: string
-  name: string
-  submodules?: (SubmodulesEntity | null)[] | null
-}
-export interface SubmodulesEntity {
-  id: number
-  createdAt: string
-  updatedAt: string
-  name: string
+
+export interface IUserPayload {
+  sub: number
+  firstName: string
+  secondName: string
+  firstLastName: string
+  secondLastName: string
+  outlookEmail: string
+  googleEmail: string
+  roles?: string[] | null
+  isActive: boolean
+  accessModules?: number[] | null
 }
 
 export interface ICreateUser {
@@ -36,6 +35,6 @@ export interface ICreateUser {
   googleEmail: string
   roles?: string[] | null
   isActive: boolean
-  // accessModules?: string[] | null
+  accessModules?: number[] | null
   password: string
 }

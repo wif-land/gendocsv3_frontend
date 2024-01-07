@@ -23,7 +23,7 @@ export class UsersApi {
   }
 
   static updateUser = async (
-    id: string,
+    id: number,
     body: Partial<IUpdateUser>,
   ): Promise<{ status: number; user?: IUser; message?: string }> => {
     const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, body, {
@@ -58,7 +58,7 @@ export class UsersApi {
   }
 
   static deleteUser = async (
-    id: string,
+    id: number,
   ): Promise<{ status: number; deleted?: boolean; message?: string }> => {
     const result = await AxiosClient.delete(API_ROUTES.USERS.DELETE, { id })
 

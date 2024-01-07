@@ -16,7 +16,9 @@ export const useUserStore = create<StoreState>(
     (set) => ({
       user: undefined,
       users: undefined,
-      setUser: (user?: IUser | undefined) => set({ user }),
+      setUser: (user?: IUser | undefined) => {
+        set({ user })
+      },
       logout: () => {
         set({ user: undefined })
         setCookie(ACCESS_TOKEN_COOKIE_NAME, null)

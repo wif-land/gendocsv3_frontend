@@ -20,18 +20,18 @@ const UpdateUserForm = ({
   user: IUser
   onClose: () => void
 }) => {
-  const [defaultValue, setValue] = React.useState<Selection>(new Set([]))
+  const [defaultValue, setValue] = React.useState<boolean>()
   const [modules, setModules] = useState<IModule[]>([]) // State para guardar los módulos
   const rolesArray = ['ADMIN', 'WRITTER', 'READER']
 
   const [selectedModules, setSelectedModules] = useState<Selection>(
-    new Set(user.accessModules?.map((mod) => mod.id.toString())),
+    new Set(user.accessModules?.map((module) => module.toString())),
   )
 
   useEffect(() => {
     if (user.accessModules) {
       setSelectedModules(
-        new Set(user.accessModules.map((mod) => mod.id.toString())),
+        new Set(user.accessModules.map((module) => module.toString())),
       )
     }
   }, [user.accessModules])
@@ -48,7 +48,6 @@ const UpdateUserForm = ({
       return parseInt(valueAsString, 10)
     })
 
-    setValue(new Set(numberArray))
     formik.setFieldValue(id, numberArray)
   }
 
@@ -67,6 +66,7 @@ const UpdateUserForm = ({
 
   useEffect(() => {
     setUserId(user.id)
+    setValue(user.isActive)
   }, [user.id])
 
   return (
@@ -198,6 +198,7 @@ const UpdateUserForm = ({
             id="isActive"
             name="isActive"
             size="sm"
+            isSelected={defaultValue}
             onValueChange={(defaultValue) => {
               const fakeEvent = {
                 target: {
@@ -205,6 +206,7 @@ const UpdateUserForm = ({
                   defaultValue,
                 },
               }
+              setValue(defaultValue)
               formik.handleChange(fakeEvent)
             }}
           >

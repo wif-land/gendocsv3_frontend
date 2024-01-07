@@ -1,11 +1,11 @@
 export interface IUpdateUser {
-  firstName: ''
-  secondName: ''
-  firstLastName: ''
-  secondLastName: ''
-  outlookEmail: ''
-  roles: []
-  isActive: false
-  password: ''
+  firstName: string
+  secondName: string
+  firstLastName: string
+  secondLastName: string
+  outlookEmail: string
+  roles: string[]
+  isActive: boolean
+  password: string
   accessModules: number[]
 }

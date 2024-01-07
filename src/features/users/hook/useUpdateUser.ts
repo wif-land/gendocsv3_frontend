@@ -1,20 +1,20 @@
 import { useFormik } from 'formik'
-import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import * as yup from 'yup'
 import { UsersApi } from '../api/users'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { useUsersStore } from '@/shared/store/usersStore'
+import { useUsersStore } from '../../../shared/store/usersStore'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 
 interface IUpdateUserForm {
-  firstName: '' | undefined
-  secondName: '' | undefined
-  firstLastName: '' | undefined
-  secondLastName: '' | undefined
-  outlookEmail: '' | undefined
-  roles: [] | undefined
-  isActive: false | undefined
-  password: '' | undefined
+  firstName: string | undefined
+  secondName: string | undefined
+  firstLastName: string | undefined
+  secondLastName: string | undefined
+  outlookEmail: string | undefined
+  roles: string[] | undefined
+  isActive: boolean | undefined
+  password: string | undefined
   accessModules: number[] | undefined
 }
 
@@ -27,15 +27,16 @@ const validationSchema = yup.object().shape({
   roles: yup.array().nullable(),
   isActive: yup.boolean().nullable(),
   password: yup.string().nullable(),
+  accessModules: yup.array().nullable(),
 })
 
 export const useUpdateUser = () => {
-  const [userId, setUserId] = useState('')
+  const [userId, setUserId] = useState<number>(0)
   const { load } = useUsersStore()
   const onSubmit = async (form: IUpdateUserForm) => {
     const { status } = await UsersApi.updateUser(userId, form)
 
-    if (status === 200) {
+    if (status === HTTP_STATUS_CODES.OK) {
       toast.success('Usuario actualizado con éxito!', { autoClose: 1800 })
       load()
     } else {
@@ -45,7 +46,6 @@ export const useUpdateUser = () => {
           autoClose: 1800,
         },
       )
-      console.log(status)
     }
   }
 
