@@ -20,7 +20,7 @@ const CareerModule = () => {
   }, [user])
 
   const onHandleClick = (moduleCode: string, submoduleName: string) => {
-    const itemKey = `${moduleCode}/${submoduleName}`
+    const itemKey = `${moduleCode.toLowerCase()}/${submoduleName}`
 
     setSelectedItem(itemKey)
 
