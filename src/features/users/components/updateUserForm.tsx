@@ -11,9 +11,15 @@ import {
 } from '@nextui-org/react'
 import { fetchModules } from '../../modules/api/modules'
 import { IModule } from '../../modules/types/IModule'
-import { IUser } from '@/features/auth/types/IUser'
+import { IUser } from '../../../features/auth/types/IUser'
 
-const UpdateUserForm = ({ user }: { user: IUser }) => {
+const UpdateUserForm = ({
+  user,
+  onClose,
+}: {
+  user: IUser
+  onClose: () => void
+}) => {
   const [defaultValue, setValue] = React.useState<Selection>(new Set([]))
   const [modules, setModules] = useState<IModule[]>([]) // State para guardar los módulos
   const rolesArray = ['ADMIN', 'WRITTER', 'READER']
@@ -229,6 +235,7 @@ const UpdateUserForm = ({ user }: { user: IUser }) => {
             size="lg"
             className="w-1/2"
             disabled={formik.isSubmitting}
+            onClick={onClose}
           >
             Actualizar
           </Button>

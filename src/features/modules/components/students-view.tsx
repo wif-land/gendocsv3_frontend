@@ -1,6 +1,4 @@
-import React, { Key, use, useEffect, useState } from 'react'
-import { StudentsApi } from '@/features/students/api/students'
-import { useStudent } from '../../students/hooks/useStudent'
+import React, { Key, useEffect, useState } from 'react'
 import {
   Button,
   Chip,
@@ -23,15 +21,13 @@ import {
   getKeyValue,
   useDisclosure,
 } from '@nextui-org/react'
-import { IStudent } from '@/features/students/types/IStudent'
-import { ICareer } from '@/features/careers/types/ICareer'
-import { useRouter } from 'next/navigation'
-import { CareersApi } from '@/features/careers/api/carers'
-import AddStudentForm from '@/features/students/components/AddStudentForm'
+import { IStudent } from '../../../features/students/types/IStudent'
+import AddStudentForm from '../../../features/students/components/AddStudentForm'
 import { MdMoreVert } from 'react-icons/md'
 import { StudentServices } from '../../students/services/studentServices'
 import { toast } from 'react-toastify'
-import { useStudentStore } from '@/shared/store/student'
+import { useStudentStore } from '../../../shared/store/studentStore'
+import UpdateStudentForm from '../../../features/students/components/UpdateStudentForm'
 
 interface StudentsViewProps extends IStudent {
   name: string
@@ -84,15 +80,26 @@ const COLUMNS = [
 ]
 
 const StudentsView = () => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const router = useRouter()
-
   const [students, setStudents] = useState<StudentsViewProps[]>([])
+  const [selectedStudent, setSelectedStudent] = useState<
+    StudentsViewProps | undefined
+  >(undefined)
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
+  const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } =
+    useDisclosure()
+
   const {
     students: StudentsStore,
     setStudents: setStudentStore,
     get,
   } = useStudentStore()
+
+  const onOpenEditChange = (id: string) => {
+    setSelectedStudent(students.find((student) => student.id === id))
+    onOpenChangeEdit()
+  }
 
   const resolveRowComponentByColumnKey = (
     item: {
@@ -128,7 +135,12 @@ const StudentsView = () => {
               </DropdownTrigger>
 
               <DropdownMenu aria-label="Static Actions">
-                <DropdownItem key="edit">Editar</DropdownItem>
+                <DropdownItem
+                  key="edit"
+                  onClick={() => onOpenEditChange(item.id)}
+                >
+                  Editar
+                </DropdownItem>
                 <DropdownItem
                   key={item.isActive ? 'desactivate' : 'activate'}
                   className={item.isActive ? 'text-danger' : 'text-success'}
@@ -138,7 +150,7 @@ const StudentsView = () => {
                       isActive: !item.isActive,
                     })
                       .then(() =>
-                        setStudents(
+                        setStudentStore(
                           students?.map((student) => {
                             if (student.id === item.id) {
                               return {
@@ -180,7 +192,7 @@ const StudentsView = () => {
     } else {
       get()
     }
-  }, [StudentsStore])
+  }, [StudentsStore, setStudentStore])
 
   return (
     <div className="m-10">
@@ -215,6 +227,38 @@ const StudentsView = () => {
               <ModalBody>
                 <AddStudentForm onClose={onClose} />
               </ModalBody>
+              <ModalFooter>
+                <Button
+                  size="lg"
+                  className="w-56 m-1 bg-red-600 text-white"
+                  radius="sm"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Editar estudiante
+              </ModalHeader>
+              <ModalBody>
+                <UpdateStudentForm
+                  student={selectedStudent as IStudent}
+                  onClose={onClose}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
             </>
           )}
         </ModalContent>

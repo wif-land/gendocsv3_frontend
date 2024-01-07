@@ -5,6 +5,8 @@ import { UsersApi } from '../api/users'
 import { toast } from 'react-toastify'
 import { useUsersStore } from '../../../shared/store/usersStore'
 import { IUser } from '../../../features/auth/types/IUser'
+import { HTTP_STATUS_CODES } from '@/shared/utils/app-enums'
+import { create } from 'zustand'
 
 interface IUserForm {
   firstName: ''
@@ -36,12 +38,12 @@ export const useAddUser = () => {
   const { setUsers, users } = useUsersStore()
   const onSubmit = async (form: IUserForm) => {
     console.log(form)
-    const { status, data } = await UsersApi.createUser(form)
+    const { status, user } = await UsersApi.createUser(form)
 
-    console.log(data)
+    console.log(user)
 
-    if (status === 201) {
-      setUsers([...(users || []), data?.content.data as IUser])
+    if (status === HTTP_STATUS_CODES.CREATED) {
+      setUsers([...(users || []), user as IUser])
       toast.success('Usuario creado con éxito!', { autoClose: 1800 })
     } else {
       toast.error('Error al crear el usuario, por favor intenta de nuevo.', {

@@ -1,5 +1,5 @@
 import { create, StateCreator } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { IStudent } from '../../features/students/types/IStudent'
 import { StudentsApi } from '../../features/students/api/students'
 
@@ -10,8 +10,6 @@ interface StoreState {
 }
 
 const STORE_NAME = 'students-store'
-const DEFAULT_CAREERS: IStudent[] = []
-
 export const useStudentStore = create<StoreState>(
   persist(
     (set) => ({
@@ -24,6 +22,7 @@ export const useStudentStore = create<StoreState>(
     }),
     {
       name: STORE_NAME,
+      storage: createJSONStorage(() => sessionStorage),
     },
   ) as StateCreator<StoreState>,
 )

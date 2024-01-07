@@ -8,46 +8,59 @@ export class FunctionariesApi {
   static fetchFunctionaries = async (): Promise<{
     status: number
     functionaries?: IFunctionary[]
+    message?: string
   }> => {
     const result = await AxiosClient.get(API_ROUTES.FUNCTIONARIES.GET_ALL)
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
 
     return { status, functionaries: data.content as IFunctionary[] }
   }
 
   static updateFunctionary = async (
     id: string,
-    data: Partial<IFunctionary>,
-  ): Promise<{ status: number }> => {
+    body: Partial<IFunctionary>,
+  ): Promise<{
+    status: number
+    functionary?: IFunctionary
+    message?: string
+  }> => {
     const result = await AxiosClient.put(
       API_ROUTES.FUNCTIONARIES.UPDATE,
-      data,
+      body,
       {
         id,
       },
     )
 
-    console.log({ result })
+    const { status, data } = result
 
-    const { status } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: result.data?.message }
+    }
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
-
-    return { status }
+    return { status, functionary: data.content as IFunctionary }
   }
 
   static createFunctionary = async (
-    data: IFunctionary,
-  ): Promise<{ status: number }> => {
-    const result = await AxiosClient.post(API_ROUTES.FUNCTIONARIES.CREATE, data)
+    body: IFunctionary,
+  ): Promise<{
+    status: number
+    functionary?: IFunctionary
+    message?: string
+  }> => {
+    const result = await AxiosClient.post(API_ROUTES.FUNCTIONARIES.CREATE, body)
 
-    const { status } = result
+    const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
 
-    return { status }
+    return { status, functionary: data.content as IFunctionary }
   }
 }

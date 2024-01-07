@@ -28,6 +28,8 @@ import { FunctionaryServices } from '../../functionaries/services/functionarySer
 import { FunctionariesApi } from '../../functionaries/api/functionaries'
 import AddFunctionaryForm from '../../functionaries/components/addFunctionaryForm'
 import UpdateFunctionaryForm from '../../functionaries/components/updateFunctionaryForm'
+import { useFunctionaryStore } from '@/shared/store/functionaryStore'
+import { set } from 'date-fns'
 
 interface FunctionariesViewProps extends IFunctionary {
   name: string
@@ -64,9 +66,16 @@ const FunctionaryView = () => {
   const [functionaries, setFunctionaries] = useState<FunctionariesViewProps[]>(
     [],
   )
+  const [selectedFunctionary, setSelectedFunctionary] = useState<IFunctionary>()
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
-  const [selectedFunctionary, setSelectedFunctionary] = useState<IFunctionary>()
+
+  const {
+    functionaries: FunctionariesStore,
+    setFunctionaries: setFunctionariesStore,
+    get,
+  } = useFunctionaryStore()
 
   const onOpenEditChange = (dni: string) => {
     setSelectedFunctionary(
@@ -112,13 +121,6 @@ const FunctionaryView = () => {
                 >
                   Editar
                 </DropdownItem>
-                {/* <DropdownItem
-                  key="delete"
-                  color="danger"
-                  onClick={() => onOpenDeleteChange(item.id)}
-                >
-                  Eliminar
-                </DropdownItem> */}
                 <DropdownItem
                   key={item.isActive ? 'desactivate' : 'activate'}
                   className={item.isActive ? 'text-danger' : 'text-success'}
@@ -128,8 +130,8 @@ const FunctionaryView = () => {
                       isActive: !item.isActive,
                     })
                       .then((_) =>
-                        setFunctionaries(
-                          functionaries.map((functionary) => {
+                        setFunctionariesStore(
+                          functionaries?.map((functionary) => {
                             if (functionary.dni === item.dni) {
                               return {
                                 ...functionary,
@@ -158,19 +160,17 @@ const FunctionaryView = () => {
   }
 
   useEffect(() => {
-    const getFunctionaries = async () => {
-      const functionaries = await FunctionariesApi.fetchFunctionaries()
-      if (functionaries.functionaries) {
-        setFunctionaries(
-          functionaries.functionaries.map((functionary) => ({
-            ...functionary,
-            name: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName}`,
-          })),
-        )
-      }
+    if (FunctionariesStore) {
+      setFunctionaries(
+        FunctionariesStore.map((functionary) => ({
+          ...functionary,
+          name: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName}`,
+        })),
+      )
+    } else {
+      get()
     }
-    getFunctionaries()
-  }, [])
+  }, [FunctionariesStore, setFunctionariesStore])
 
   return (
     <div>
@@ -200,10 +200,10 @@ const FunctionaryView = () => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Create User
+                Crear funcionario
               </ModalHeader>
               <ModalBody>
-                <AddFunctionaryForm />
+                <AddFunctionaryForm onClose={onClose} />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
@@ -219,16 +219,17 @@ const FunctionaryView = () => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Edit User
+                Editar Funcionario
               </ModalHeader>
               <ModalBody>
                 <UpdateFunctionaryForm
                   functionary={selectedFunctionary as IFunctionary}
+                  onClose={onClose}
                 />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
-                  Close
+                  Cerrar
                 </Button>
               </ModalFooter>
             </>

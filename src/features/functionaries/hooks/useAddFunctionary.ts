@@ -3,6 +3,9 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { FunctionariesApi } from '../api/functionaries'
 import { toast } from 'react-toastify'
+import { HTTP_STATUS_CODES } from '@/shared/utils/app-enums'
+import { useFunctionaryStore } from '@/shared/store/functionaryStore'
+import { IFunctionary } from '../types/IFunctionary'
 
 interface IFunctionaryForm {
   dni: string
@@ -16,58 +19,58 @@ interface IFunctionaryForm {
   regularPhoneNumber: string
   secondLevelDegree: string
   thirdLevelDegree: string
-  fourthLevelDegree: string // Corregido de 'forth' a 'fourth'
-  isActive: boolean // Agregado para reflejar el objeto JSON
+  fourthLevelDegree: string
+  isActive: boolean
 }
+const validationSchema = yup.object().shape({
+  // dni: yup
+  //   .string()
+  //   .required(VALIDATION_MESSAGES.required)
+  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+  // firstName: yup
+  //   .string()
+  //   .required(VALIDATION_MESSAGES.required)
+  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+  // secondName: yup
+  //   .string()
+  //   .required(VALIDATION_MESSAGES.required)
+  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+  // firstLastName: yup
+  //   .string()
+  //   .required(VALIDATION_MESSAGES.required)
+  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+  // secondLastName: yup
+  //   .string()
+  //   .required(VALIDATION_MESSAGES.required)
+  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
+  // outlookEmail: yup
+  //   .string()
+  //   .required(VALIDATION_MESSAGES.required)
+  //   .matches(
+  //     /^[A-Z0-9._%+-]+@outlook\.[A-Z]{2,4}$/i,
+  //     VALIDATION_MESSAGES.invalidFormat,
+  //   ),
+  // googleEmail: yup
+  //   .string()
+  //   .required(VALIDATION_MESSAGES.required)
+  //   .matches(
+  //     /^[A-Z0-9._%+-]+@gmail\.com$/i,
+  //     VALIDATION_MESSAGES.invalidFormat,
+  //   ),
+  // phoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
+  // regularPhoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
+  // secondLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
+  // thirdLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
+  // forthLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
+})
 export const useAddFunctionary = () => {
-  const validationSchema = yup.object().shape({
-    // dni: yup
-    //   .string()
-    //   .required(VALIDATION_MESSAGES.required)
-    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    // firstName: yup
-    //   .string()
-    //   .required(VALIDATION_MESSAGES.required)
-    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    // secondName: yup
-    //   .string()
-    //   .required(VALIDATION_MESSAGES.required)
-    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    // firstLastName: yup
-    //   .string()
-    //   .required(VALIDATION_MESSAGES.required)
-    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    // secondLastName: yup
-    //   .string()
-    //   .required(VALIDATION_MESSAGES.required)
-    //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-    // outlookEmail: yup
-    //   .string()
-    //   .required(VALIDATION_MESSAGES.required)
-    //   .matches(
-    //     /^[A-Z0-9._%+-]+@outlook\.[A-Z]{2,4}$/i,
-    //     VALIDATION_MESSAGES.invalidFormat,
-    //   ),
-    // googleEmail: yup
-    //   .string()
-    //   .required(VALIDATION_MESSAGES.required)
-    //   .matches(
-    //     /^[A-Z0-9._%+-]+@gmail\.com$/i,
-    //     VALIDATION_MESSAGES.invalidFormat,
-    //   ),
-    // phoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
-    // regularPhoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
-    // secondLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
-    // thirdLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
-    // forthLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
-  })
-
+  const { setFunctionaries, functionaries } = useFunctionaryStore()
   const onSubmit = async (form: IFunctionaryForm) => {
-    console.log(form)
+    const { status, functionary } =
+      await FunctionariesApi.createFunctionary(form)
 
-    const { status } = await FunctionariesApi.createFunctionary(form)
-
-    if (status === 201) {
+    if (status === HTTP_STATUS_CODES.CREATED) {
+      setFunctionaries([...(functionaries || []), functionary as IFunctionary])
       toast.success('Funcionario creado con éxito!', { autoClose: 1800 })
     } else {
       toast.error(
