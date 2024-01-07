@@ -12,13 +12,13 @@ const Page = () => {
 
   const resolveViewByRoute = (route: string) => {
     switch (route) {
-      case 'admin/Usuarios':
+      case 'admin/usuarios':
         return <UsersView />
-      case 'admin/Estudiantes':
+      case 'admin/estudiantes':
         return <StudentsView />
-      case 'admin/Carreras':
+      case 'admin/carreras':
         return <CareersView />
-      case 'admin/Funcionarios':
+      case 'admin/funcionarios':
         return <FunctionaryView />
       default:
         return <div>DEFAULT</div>

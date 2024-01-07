@@ -38,7 +38,7 @@ const layout: React.FC<LayoutProps> = ({ children }) => {
             </nav>
 
             <div className="flex mt-20 h-full w-full">
-              <aside className="max-w-fit bg-white h-full overflow-x-auto px-5">
+              <aside className="max-w-fit bg-white h-full overflow-x-auto px-3">
                 <ScrollShadow hideScrollBar className="h-full overflow-auto">
                   <ul>
                     <CareerModule />
