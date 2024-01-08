@@ -11,22 +11,38 @@ import {
 } from '@nextui-org/react'
 import { fetchModules } from '../../modules/api/modules'
 import { IModule } from '../../modules/types/IModule'
-import { IUser } from '@/features/auth/types/IUser'
+import { IUser } from '../../../features/auth/types/IUser'
 
-const UpdateUserForm = ({ user }: { user: IUser }) => {
-  const [defaultValue, setValue] = React.useState<Selection>(new Set([]))
+const UpdateUserForm = ({
+  user,
+  onClose,
+}: {
+  user: IUser
+  onClose: () => void
+}) => {
+  const [defaultValue, setValue] = React.useState<boolean>()
   const [modules, setModules] = useState<IModule[]>([]) // State para guardar los módulos
   const rolesArray = ['ADMIN', 'WRITTER', 'READER']
 
   const [selectedModules, setSelectedModules] = useState<Selection>(
-    new Set(user.accessModules?.map((mod) => mod.id.toString())),
+    new Set(user.accessModules?.map((module) => module.toString())),
   )
 
   useEffect(() => {
-    if (user.accessModules) {
-      setSelectedModules(
-        new Set(user.accessModules.map((mod) => mod.id.toString())),
-      )
+    let isMounted = true
+
+    const handleSetSelectedModules = () => {
+      if (user.accessModules && isMounted) {
+        setSelectedModules(
+          new Set(user.accessModules.map((module) => module.toString())),
+        )
+      }
+    }
+
+    handleSetSelectedModules()
+
+    return () => {
+      isMounted = false
     }
   }, [user.accessModules])
 
@@ -42,25 +58,43 @@ const UpdateUserForm = ({ user }: { user: IUser }) => {
       return parseInt(valueAsString, 10)
     })
 
-    setValue(new Set(numberArray))
     formik.setFieldValue(id, numberArray)
   }
 
   const { formik, setUserId } = useUpdateUser()
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchAndSetModules = async () => {
       const fetchedModules = await fetchModules()
-      if (fetchedModules.modules) {
+      if (fetchedModules.modules && isMounted) {
         setModules(fetchedModules.modules)
       }
     }
+
     fetchAndSetModules()
-    // console.log(user.id)
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   useEffect(() => {
-    setUserId(user.id)
+    let isMounted = true
+
+    const handleUserValues = () => {
+      if (user && isMounted) {
+        setUserId(user.id)
+        setValue(user.isActive)
+      }
+    }
+
+    handleUserValues()
+
+    return () => {
+      isMounted = false
+    }
   }, [user.id])
 
   return (
@@ -192,6 +226,7 @@ const UpdateUserForm = ({ user }: { user: IUser }) => {
             id="isActive"
             name="isActive"
             size="sm"
+            isSelected={defaultValue}
             onValueChange={(defaultValue) => {
               const fakeEvent = {
                 target: {
@@ -199,6 +234,7 @@ const UpdateUserForm = ({ user }: { user: IUser }) => {
                   defaultValue,
                 },
               }
+              setValue(defaultValue)
               formik.handleChange(fakeEvent)
             }}
           >
@@ -229,6 +265,7 @@ const UpdateUserForm = ({ user }: { user: IUser }) => {
             size="lg"
             className="w-1/2"
             disabled={formik.isSubmitting}
+            onClick={onClose}
           >
             Actualizar
           </Button>

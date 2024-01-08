@@ -3,9 +3,10 @@ import cantones from '../../../features/students/data/canton'
 import { formatISO } from 'date-fns'
 
 import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
-import { useStudent } from '../hooks/useStudent'
+import { useStudent } from '../hooks/useAddStudent'
 import { ICareer } from '../../../features/careers/types/ICareer'
 import { CareersApi } from '../../../features/careers/api/carers'
+import { on } from 'events'
 
 const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   const { formik } = useStudent()
@@ -37,9 +38,11 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   }
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchCareers = async () => {
       const careers = await CareersApi.fetchCareers()
-      if (careers.careers) {
+      if (careers.careers && isMounted) {
         setCareers(
           careers.careers.map((career) => ({
             ...career,
@@ -48,7 +51,12 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
         )
       }
     }
+
     fetchCareers()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (
@@ -314,7 +322,6 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full"
             placeholder="Carrera"
             variant="underlined"
-            // Asegúrate de que el valor seleccionado sea un número
             onChange={(e) =>
               handleSelectChange('careerId', parseInt(e.target.value) || 0)
             }
@@ -345,7 +352,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             type="date"
             id="birthdate"
             name="birthdate"
-            onChange={handleDateChange} // Usa el manejador personalizado aquí
+            onChange={formik.handleChange} // Usa el manejador personalizado aquí
           />
         </div>
         <div className="m-1 w-full flex gap-4 justify-center">
@@ -355,17 +362,9 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-56 m-1 bg-blue-700 text-white"
             radius="sm"
             disabled={formik.isSubmitting}
-          >
-            Crear
-          </Button>
-          <Button
-            size="lg"
-            className="w-56 m-1 bg-red-600 text-white"
-            radius="sm"
-            disabled={formik.isSubmitting}
             onPress={onClose}
           >
-            Close
+            Crear
           </Button>
         </div>
       </form>

@@ -20,7 +20,6 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  User,
 } from '@nextui-org/react'
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
@@ -29,7 +28,7 @@ import { toast } from 'react-toastify'
 import { IUser } from '../../auth/types/IUser'
 import UpdateUserForm from '../../users/components/updateUserForm'
 import AddUserForm from '../../../features/users/components/AddUserForm'
-import { useUsersStore } from '@/shared/store/usersStore'
+import { useUsersStore } from '../../../shared/store/usersStore'
 
 interface UsersViewProps extends IUser {
   name: string
@@ -74,21 +73,16 @@ const UsersView = () => {
   const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } =
     useDisclosure()
 
-  const onOpenEditChange = (id: string) => {
+  const onOpenEditChange = (id: number) => {
     setSelectedUser(users.find((user) => user.id === id))
     onOpenChangeEdit()
-  }
-
-  const onOpenDeleteChange = (id: string) => {
-    setSelectedUser(users.find((user) => user.id === id))
-    onOpenChangeDelete()
   }
 
   const { setUsers: setUserStore, users: UsersStore } = useUsersStore()
 
   const resolveRowComponentByColumnKey = (
     item: {
-      id: string
+      id: number
       name: string
       googleEmail: string
       outlookEmail: string
@@ -148,7 +142,7 @@ const UsersView = () => {
                         load()
                         setUsers(
                           users.map((user) => {
-                            if (user.id === item.id.toString()) {
+                            if (user.id === item.id) {
                               return {
                                 ...user,
                                 isActive: !user.isActive,
@@ -176,23 +170,33 @@ const UsersView = () => {
   }
 
   useEffect(() => {
-    if (UsersStore) {
-      setUsers(
-        UsersStore.map((user) => ({
-          ...user,
-          name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
-        })),
-      )
-    } else {
-      const fetchingUsers = async () => {
-        const result = await UsersApi.get()
+    let isMounted = true
 
-        if (result.users) {
-          setUserStore(result.users)
+    const handleSetStudents = () => {
+      if (UsersStore && isMounted) {
+        setUsers(
+          UsersStore.map((user) => ({
+            ...user,
+            name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
+          })),
+        )
+      } else {
+        const fetchingUsers = async () => {
+          const result = await UsersApi.get()
+
+          if (result.users && isMounted) {
+            setUserStore(result.users)
+          }
         }
-      }
 
-      fetchingUsers()
+        fetchingUsers()
+      }
+    }
+
+    handleSetStudents()
+
+    return () => {
+      isMounted = false
     }
   }, [UsersStore, setUserStore])
 
@@ -248,7 +252,10 @@ const UsersView = () => {
                 Edit User
               </ModalHeader>
               <ModalBody>
-                <UpdateUserForm user={selectedUser as IUser} />
+                <UpdateUserForm
+                  user={selectedUser as IUser}
+                  onClose={onClose}
+                />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
@@ -277,12 +284,10 @@ const UsersView = () => {
                   color="danger"
                   variant="light"
                   onPress={async () => {
-                    await UsersApi.deleteUser(selectedUser?.id as string)
+                    await UsersApi.deleteUser(selectedUser?.id as number)
                       .then((_) => {
                         setUsers(
-                          users.filter(
-                            (user) => user.id !== (selectedUser?.id as string),
-                          ),
+                          users.filter((user) => user.id !== selectedUser?.id),
                         )
                         onClose()
                       })

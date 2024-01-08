@@ -7,39 +7,50 @@ export class CareerApi {
   static getCareers = async (): Promise<{
     status: number
     careers?: ICareer[]
+    message?: string
   }> => {
     const result = await AxiosClient.get(API_ROUTES.CAREERS.GET_ALL)
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data.message }
+    }
 
     return { status, careers: data.content as ICareer[] }
   }
 
   static update = async (
     id: number,
-    data: Partial<ICareer>,
-  ): Promise<{ status: number }> => {
-    const result = await AxiosClient.put(API_ROUTES.CAREERS.UPDATE, data, {
+    body: Partial<ICareer>,
+  ): Promise<{
+    status: number
+    data?: ICareer
+    message?: string
+  }> => {
+    const result = await AxiosClient.put(API_ROUTES.CAREERS.UPDATE, body, {
       id,
     })
 
-    const { status } = result
+    const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
 
-    return { status }
+    return { status, data: data?.content as ICareer }
   }
 
   static create = async (
     careerData: ICareer,
-  ): Promise<{ status: number; career?: ICareer }> => {
+  ): Promise<{ status: number; career?: ICareer; message?: string }> => {
     const result = await AxiosClient.post(API_ROUTES.CAREERS.CREATE, careerData)
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
 
     return { status, career: data.content as ICareer }
   }

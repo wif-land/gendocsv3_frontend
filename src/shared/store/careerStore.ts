@@ -1,5 +1,5 @@
 import { create, StateCreator } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { ICareer } from '../../features/careers/interfaces/ICareer'
 
 interface StoreState {
@@ -18,6 +18,7 @@ export const useCareersStore = create<StoreState>(
     }),
     {
       name: STORE_NAME,
+      storage: createJSONStorage(() => sessionStorage),
     },
   ) as StateCreator<StoreState>,
 )

@@ -22,9 +22,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
   }
 
   const handleModuleChange = (id: string, value: Selection) => {
-    // Convertir cada valor del Set a número y luego actualizar el estado con el nuevo array
     const numberArray = Array.from(value).map((val) => {
-      // Asegúrate de que val sea tratado como una cadena si no es un número
       const valueAsString = typeof val === 'number' ? val.toString() : val
       return parseInt(valueAsString, 10)
     })
@@ -34,11 +32,21 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
   }
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchAndSetModules = async () => {
       const fetchedModules = await fetchModules()
-      setModules(fetchedModules.modules)
+
+      if (fetchedModules.modules && isMounted) {
+        setModules(fetchedModules.modules)
+      }
     }
+
     fetchAndSetModules()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (

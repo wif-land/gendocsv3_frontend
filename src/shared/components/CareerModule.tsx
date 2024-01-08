@@ -14,13 +14,23 @@ const CareerModule = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (user) {
-      setAccessModules(user.accessModulesIds)
+    let isMounted = true
+
+    const handleSetUserModules = () => {
+      if (user && user.accessModules) {
+        if (isMounted) {
+          setAccessModules(user.accessModules)
+        }
+      }
     }
-  }, [user])
+    handleSetUserModules()
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const onHandleClick = (moduleCode: string, submoduleName: string) => {
-    const itemKey = `${moduleCode}/${submoduleName}`
+    const itemKey = `${moduleCode.toLowerCase()}/${submoduleName.toLowerCase()}`
 
     setSelectedItem(itemKey)
 
@@ -31,7 +41,9 @@ const CareerModule = () => {
     <>
       {accessModules?.map((module: IModule) => (
         <ListboxWrapper key={module.id}>
-          <h1 className="ml-4 mb-2 text-gray-500">{module.name}</h1>
+          <h1 className="ml-4 mb-2 text-gray-500 bg-slate-200 rounded-md p-1 bg-opacity-80">
+            {module.name}
+          </h1>
           <Listbox aria-label="Actions" className="ml-6 mr-2 ">
             {module.submodules.map((submodule) => (
               <ListboxItem

@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react'
-import { Input, Switch } from '@nextui-org/react'
+import { Button, Input, Switch } from '@nextui-org/react'
 import { IFunctionary } from '../types/IFunctionary'
 import { useUpdateFunctionary } from '../hooks/useUpdateFunctionary'
 
 const UpdateFunctionaryForm = ({
   functionary,
+  onClose,
 }: {
   functionary: IFunctionary
+  onClose: () => void
 }) => {
   const { formik, setFunctionaryId } = useUpdateFunctionary()
 
@@ -253,12 +255,16 @@ const UpdateFunctionaryForm = ({
           Usuario activo
         </Switch>
         <div className="flex justify-center">
-          <button
+          <Button
             type="submit"
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            size="lg"
+            className="w-56 m-1 bg-red-600 text-white"
+            radius="sm"
+            disabled={formik.isSubmitting}
+            onPress={onClose}
           >
-            Guardar
-          </button>
+            Actualizar
+          </Button>
         </div>
       </form>
     </>

@@ -9,57 +9,65 @@ export class UsersApi {
   static get = async (): Promise<{
     status: number
     users?: IUser[]
+    message?: string
   }> => {
     const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data.message }
+    }
 
     return { status, users: data.content as IUser[] }
   }
 
   static updateUser = async (
-    id: string,
-    data: Partial<IUpdateUser>,
-  ): Promise<{ status: number }> => {
-    const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, data, {
+    id: number,
+    body: Partial<IUpdateUser>,
+  ): Promise<{ status: number; user?: IUser; message?: string }> => {
+    const result = await AxiosClient.put(API_ROUTES.USERS.UPDATE, body, {
       id,
     })
 
-    const { status } = result
+    const { status, data } = result
 
-    console.log(data)
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data.message }
+    }
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
-
-    return { status }
+    return { status, user: data.content as IUser }
   }
 
   static createUser = async (
     body: Partial<ICreateUser>,
   ): Promise<{
     status: number
-    data?: { message: string; content: unknown }
+    user?: IUser
+    message?: string
   }> => {
     const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, body)
 
     const { status, data } = result
 
-    console.log(data.content)
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data.message }
+    }
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
-
-    return { status, data }
+    return { status, user: data.content as IUser }
   }
 
-  static deleteUser = async (id: string): Promise<{ status: number }> => {
+  static deleteUser = async (
+    id: number,
+  ): Promise<{ status: number; deleted?: boolean; message?: string }> => {
     const result = await AxiosClient.delete(API_ROUTES.USERS.DELETE, { id })
 
-    const { status } = result
+    const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data.message }
+    }
 
-    return { status }
+    return { status, deleted: data.content as boolean }
   }
 }

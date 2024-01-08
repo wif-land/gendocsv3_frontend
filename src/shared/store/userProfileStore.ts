@@ -1,5 +1,5 @@
 import { create, StateCreator } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { setCookie } from '../utils/CookiesUtil'
 import { IUser } from '../../features/auth/types/IUser'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
@@ -16,7 +16,9 @@ export const useUserStore = create<StoreState>(
     (set) => ({
       user: undefined,
       users: undefined,
-      setUser: (user?: IUser | undefined) => set({ user }),
+      setUser: (user?: IUser | undefined) => {
+        set({ user })
+      },
       logout: () => {
         set({ user: undefined })
         setCookie(ACCESS_TOKEN_COOKIE_NAME, null)
@@ -25,6 +27,7 @@ export const useUserStore = create<StoreState>(
     }),
     {
       name: 'user',
+      storage: createJSONStorage(() => sessionStorage),
     },
   ) as StateCreator<StoreState>,
 )
