@@ -170,23 +170,33 @@ const UsersView = () => {
   }
 
   useEffect(() => {
-    if (UsersStore) {
-      setUsers(
-        UsersStore.map((user) => ({
-          ...user,
-          name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
-        })),
-      )
-    } else {
-      const fetchingUsers = async () => {
-        const result = await UsersApi.get()
+    let isMounted = true
 
-        if (result.users) {
-          setUserStore(result.users)
+    const handleSetStudents = () => {
+      if (UsersStore && isMounted) {
+        setUsers(
+          UsersStore.map((user) => ({
+            ...user,
+            name: `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`,
+          })),
+        )
+      } else {
+        const fetchingUsers = async () => {
+          const result = await UsersApi.get()
+
+          if (result.users && isMounted) {
+            setUserStore(result.users)
+          }
         }
-      }
 
-      fetchingUsers()
+        fetchingUsers()
+      }
+    }
+
+    handleSetStudents()
+
+    return () => {
+      isMounted = false
     }
   }, [UsersStore, setUserStore])
 

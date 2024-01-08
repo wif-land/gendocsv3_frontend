@@ -12,18 +12,22 @@ export const ModulesProvider = ({
   const { setModules } = useModulesStore()
 
   useEffect(() => {
+    let isMounted = true
     const modulesFetching = async () => {
       try {
         const modules = await fetchModules()
         if (!modules.modules) return console.log('No hay modulos')
-
-        setModules(modules.modules)
+        if (isMounted) {
+          setModules(modules.modules)
+        }
       } catch (error) {
         console.log(error)
       }
     }
-
     modulesFetching()
+    return () => {
+      isMounted = false
+    }
   }, [setModules])
 
   return <>{children}</>

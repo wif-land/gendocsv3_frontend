@@ -32,11 +32,21 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
   }
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchAndSetModules = async () => {
       const fetchedModules = await fetchModules()
-      setModules(fetchedModules.modules)
+
+      if (fetchedModules.modules && isMounted) {
+        setModules(fetchedModules.modules)
+      }
     }
+
     fetchAndSetModules()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (

@@ -42,9 +42,11 @@ const UpdateStudentForm = ({
   }
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchCareers = async () => {
       const careers = await CareersApi.fetchCareers()
-      if (careers.careers) {
+      if (careers.careers && isMounted) {
         setCareers(
           careers.careers.map((career) => ({
             ...career,
@@ -53,11 +55,28 @@ const UpdateStudentForm = ({
         )
       }
     }
+
     fetchCareers()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   useEffect(() => {
-    setStudentId(student.id)
+    let isMounted = true
+
+    const handleSetStudent = () => {
+      if (isMounted) {
+        setStudentId(student.id)
+      }
+    }
+
+    handleSetStudent()
+
+    return () => {
+      isMounted = false
+    }
   }, [student])
 
   return (

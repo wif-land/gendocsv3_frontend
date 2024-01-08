@@ -182,15 +182,25 @@ const StudentsView = () => {
   }
 
   useEffect(() => {
-    if (StudentsStore) {
-      setStudents(
-        StudentsStore.map((student) => ({
-          ...student,
-          name: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName}`,
-        })),
-      )
-    } else {
-      get()
+    let isMounted = true
+
+    const handleSetStudents = () => {
+      if (StudentsStore && isMounted) {
+        setStudents(
+          StudentsStore.map((student) => ({
+            ...student,
+            name: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName}`,
+          })),
+        )
+      } else {
+        get()
+      }
+    }
+
+    handleSetStudents()
+
+    return () => {
+      isMounted = false
     }
   }, [StudentsStore, setStudentStore])
 

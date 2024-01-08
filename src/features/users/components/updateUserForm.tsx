@@ -29,10 +29,20 @@ const UpdateUserForm = ({
   )
 
   useEffect(() => {
-    if (user.accessModules) {
-      setSelectedModules(
-        new Set(user.accessModules.map((module) => module.toString())),
-      )
+    let isMounted = true
+
+    const handleSetSelectedModules = () => {
+      if (user.accessModules && isMounted) {
+        setSelectedModules(
+          new Set(user.accessModules.map((module) => module.toString())),
+        )
+      }
+    }
+
+    handleSetSelectedModules()
+
+    return () => {
+      isMounted = false
     }
   }, [user.accessModules])
 
@@ -54,19 +64,37 @@ const UpdateUserForm = ({
   const { formik, setUserId } = useUpdateUser()
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchAndSetModules = async () => {
       const fetchedModules = await fetchModules()
-      if (fetchedModules.modules) {
+      if (fetchedModules.modules && isMounted) {
         setModules(fetchedModules.modules)
       }
     }
+
     fetchAndSetModules()
-    // console.log(user.id)
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   useEffect(() => {
-    setUserId(user.id)
-    setValue(user.isActive)
+    let isMounted = true
+
+    const handleUserValues = () => {
+      if (user && isMounted) {
+        setUserId(user.id)
+        setValue(user.isActive)
+      }
+    }
+
+    handleUserValues()
+
+    return () => {
+      isMounted = false
+    }
   }, [user.id])
 
   return (

@@ -38,9 +38,11 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   }
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchCareers = async () => {
       const careers = await CareersApi.fetchCareers()
-      if (careers.careers) {
+      if (careers.careers && isMounted) {
         setCareers(
           careers.careers.map((career) => ({
             ...career,
@@ -49,7 +51,12 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
         )
       }
     }
+
     fetchCareers()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (
