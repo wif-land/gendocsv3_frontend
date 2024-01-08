@@ -160,15 +160,25 @@ const FunctionaryView = () => {
   }
 
   useEffect(() => {
-    if (FunctionariesStore) {
-      setFunctionaries(
-        FunctionariesStore.map((functionary) => ({
-          ...functionary,
-          name: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName}`,
-        })),
-      )
-    } else {
-      get()
+    let isMounted = true
+
+    const handleSetFunctionaries = () => {
+      if (FunctionariesStore && isMounted) {
+        setFunctionaries(
+          FunctionariesStore.map((functionary) => ({
+            ...functionary,
+            name: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName}`,
+          })),
+        )
+      } else {
+        get()
+      }
+    }
+
+    handleSetFunctionaries()
+
+    return () => {
+      isMounted = false
     }
   }, [FunctionariesStore, setFunctionariesStore])
 

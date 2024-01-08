@@ -14,8 +14,18 @@ const CareerModule = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (user && user.accessModules) {
-      setAccessModules(user.accessModules)
+    let isMounted = true
+
+    const handleSetUserModules = () => {
+      if (user && user.accessModules) {
+        if (isMounted) {
+          setAccessModules(user.accessModules)
+        }
+      }
+    }
+    handleSetUserModules()
+    return () => {
+      isMounted = false
     }
   }, [])
 

@@ -43,7 +43,7 @@ export class CareerApi {
 
   static create = async (
     careerData: ICareer,
-  ): Promise<{ status: number; career?: ICareer; message: string }> => {
+  ): Promise<{ status: number; career?: ICareer; message?: string }> => {
     const result = await AxiosClient.post(API_ROUTES.CAREERS.CREATE, careerData)
 
     const { status, data } = result
