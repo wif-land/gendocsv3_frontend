@@ -28,7 +28,7 @@ import { StudentServices } from '../../students/services/studentServices'
 import { toast } from 'react-toastify'
 import { useStudentStore } from '../../../shared/store/studentStore'
 import UpdateStudentForm from '../../../features/students/components/UpdateStudentForm'
-import AddMultipleStudents from '@/features/students/components/AddMultipleStudents'
+import AddMultipleStudents from '../../../features/students/components/AddMultipleStudents'
 
 interface StudentsViewProps extends IStudent {
   name: string
