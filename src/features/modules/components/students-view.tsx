@@ -28,6 +28,7 @@ import { StudentServices } from '../../students/services/studentServices'
 import { toast } from 'react-toastify'
 import { useStudentStore } from '../../../shared/store/studentStore'
 import UpdateStudentForm from '../../../features/students/components/UpdateStudentForm'
+import AddMultipleStudents from '@/features/students/components/AddMultipleStudents'
 
 interface StudentsViewProps extends IStudent {
   name: string
@@ -87,9 +88,8 @@ const StudentsView = () => {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
-  const { isOpen: isOpenDelete, onOpenChange: onOpenChangeDelete } =
+  const { isOpen: isOpenAddMultiple, onOpenChange: onOpenChangeAddMultiple } =
     useDisclosure()
-
   const {
     students: StudentsStore,
     setStudents: setStudentStore,
@@ -202,6 +202,12 @@ const StudentsView = () => {
       >
         Crear Estudiante
       </Button>
+      <Button
+        className="min-w-40 h-12 ml-6 border-2  bg-blue-700   text-white"
+        onPress={onOpenChangeAddMultiple}
+      >
+        Agregar varios estudiantes
+      </Button>
 
       <Table aria-label="Example table with dynamic content" className="m-10">
         <TableHeader columns={COLUMNS}>
@@ -257,6 +263,34 @@ const StudentsView = () => {
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isOpenAddMultiple}
+        onOpenChange={onOpenChangeAddMultiple}
+        size="4xl"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Agregar varios estudiantes
+              </ModalHeader>
+              <ModalBody>
+                <AddMultipleStudents onClose={onClose} />
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  size="lg"
+                  className="w-56 m-1 bg-red-600 text-white"
+                  radius="sm"
+                  onPress={onClose}
+                >
+                  Close
                 </Button>
               </ModalFooter>
             </>
