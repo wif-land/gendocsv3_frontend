@@ -140,15 +140,16 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
         accept=".xlsx, .xls"
         onChange={handleFileUpload}
         ref={fileInputRef}
+        className='m-2 bg-white'
       />
       <br />
-      <Button onClick={handleReset}>Eliminar archivo</Button>
+      <Button onClick={handleReset} className='m-2 w-40 bg-red-700 text-white' radius='sm'>Eliminar archivo</Button>
       <br />
       <a href="/FormatoEstudiantes.xlsx" download="FormatoEstudiantes.xlsx">
-        <Button>Descargar formato</Button>
+        <Button className='m-2 w-40 bg-green-700 text-white' radius='sm'>Descargar formato</Button>
       </a>
       <br />
-      <Button onClick={handleSave}>
+      <Button onClick={handleSave} className='m-2 w-40 bg-blue-600 text-white' radius='sm'>
         Cargar {isValid ? students.length : ''} registros
       </Button>
     </div>

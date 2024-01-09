@@ -101,15 +101,15 @@ const UpdateUserForm = ({
     <>
       <form
         onSubmit={formik.handleSubmit}
-        className="w-full flex flex-col justify-center  items-center"
+        className="w-full justify-items-center "
       >
-        <div className="flex flex-col gap-4 justify-items-center ">
+        <div className="grid grid-cols-2 gap-4 w-6/6 justify-items-center">
           <Input
             id="firstName"
             name="firstName"
             type="firstName"
             label="Primer Nombre"
-            variant="bordered"
+            variant="underlined"
             defaultValue={user.firstName}
             onChange={formik.handleChange}
             size="lg"
@@ -125,7 +125,7 @@ const UpdateUserForm = ({
             name="secondName"
             type="secondName"
             label="Segundo Nombre"
-            variant="bordered"
+            variant="underlined"
             defaultValue={user.secondName}
             onChange={formik.handleChange}
             size="lg"
@@ -141,7 +141,7 @@ const UpdateUserForm = ({
             name="firstLastName"
             type="firstLastName"
             label="Primer Apellido"
-            variant="bordered"
+            variant="underlined"
             defaultValue={user.firstLastName}
             onChange={formik.handleChange}
             size="lg"
@@ -157,7 +157,7 @@ const UpdateUserForm = ({
             name="secondLastName"
             type="secondLastName"
             label="Segundo Apellido"
-            variant="bordered"
+            variant="underlined"
             defaultValue={user.secondLastName}
             onChange={formik.handleChange}
             size="lg"
@@ -174,7 +174,7 @@ const UpdateUserForm = ({
             name="outlookEmail"
             type="email"
             label="Outlook Email"
-            variant="bordered"
+            variant="underlined"
             defaultValue={user.outlookEmail}
             onChange={formik.handleChange}
             size="lg"
@@ -191,7 +191,7 @@ const UpdateUserForm = ({
             name="password"
             type="text"
             label="Contraseña"
-            variant="bordered"
+            variant="underlined"
             onChange={formik.handleChange}
             size="lg"
             errorMessage={
@@ -201,32 +201,54 @@ const UpdateUserForm = ({
             }
             className="w-full"
           />
+          <div className='w-full'>
+            <Select
+              id="accessModules"
+              name="accessModules"
+              label="Módulos de acceso"
+              variant="underlined"
+              placeholder="Selecciona los módulos"
+              selectionMode="multiple"
+              className='max-w-xs'
+              selectedKeys={selectedModules}
+              onSelectionChange={(value) => {
+                handleModuleChange('accessModules', value)
+                setSelectedModules(value)
+              }}
+            >
+              {modules?.map((module) => (
+                <SelectItem key={module.id} value={module.id.toString()}>
+                  {module.name}
+                </SelectItem>
+              ))}
+            </Select>
+            <p className='text-xs text-neutral-600'>Modulos seleccionados: {Array.from(selectedModules).join(', ')}</p>
+          </div>
+          
           <Select
-            id="accessModules"
-            name="accessModules"
-            label="Módulos de acceso"
-            variant="bordered"
-            placeholder="Selecciona los módulos"
-            description="Selecciona los módulos a los que tendrá acceso el usuario"
+            id="roles"
+            name="roles"
+            label="Roles"
+            variant="underlined"
+            placeholder="Selecciona los roles"
+            description="Selecciona los roles del usuario"
             selectionMode="multiple"
-            selectedKeys={selectedModules}
-            onSelectionChange={(value) => {
-              handleModuleChange('accessModules', value)
-              setSelectedModules(value)
-            }}
+            onSelectionChange={(value) => handleSelectChange('roles', value)}
+            defaultSelectedKeys={user.roles || []}
+            className="w-full"
           >
-            {modules?.map((module) => (
-              <SelectItem key={module.id} value={module.id.toString()}>
-                {module.name}
+            {rolesArray!.map((role) => (
+              <SelectItem key={role} value={role}>
+                {role}
               </SelectItem>
             ))}
           </Select>
-          <p>Modulos seleccionados: {Array.from(selectedModules).join(', ')}</p>
           <Switch
             id="isActive"
             name="isActive"
             size="sm"
             isSelected={defaultValue}
+            className='mb-4'
             onValueChange={(defaultValue) => {
               const fakeEvent = {
                 target: {
@@ -240,34 +262,29 @@ const UpdateUserForm = ({
           >
             Usuario activo
           </Switch>
-          <Select
-            id="roles"
-            name="roles"
-            label="Roles"
-            variant="bordered"
-            placeholder="Selecciona los roles"
-            description="Selecciona los roles del usuario"
-            selectionMode="multiple"
-            onSelectionChange={(value) => handleSelectChange('roles', value)}
-            defaultSelectedKeys={user.roles || []}
-            className="max-w-xs"
-          >
-            {rolesArray!.map((role) => (
-              <SelectItem key={role} value={role}>
-                {role}
-              </SelectItem>
-            ))}
-          </Select>
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center m-2">
           <Button
             type="submit"
             size="lg"
-            className="w-1/2"
+            radius='sm'
+            className="bg-blue-600 w-56 m-1 text-white"
             disabled={formik.isSubmitting}
             onClick={onClose}
           >
             Actualizar
+          </Button>
+          <Button
+            className='bg-red-600 w-56 m-1 text-white'
+            size="lg"
+            radius="sm"
+            disabled={formik.isSubmitting}
+            onPress={() => {
+              formik.resetForm()
+              onClose()
+            }}
+          >
+            Cancelar
           </Button>
         </div>
       </form>

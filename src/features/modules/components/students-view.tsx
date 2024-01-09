@@ -20,6 +20,7 @@ import {
   TableRow,
   getKeyValue,
   useDisclosure,
+  ScrollShadow
 } from '@nextui-org/react'
 import { IStudent } from '../../../features/students/types/IStudent'
 import AddStudentForm from '../../../features/students/components/AddStudentForm'
@@ -225,7 +226,7 @@ const StudentsView = () => {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={students}>
+        <TableBody items={students} emptyContent={'No existen datos sobre estudiantes'}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
@@ -233,8 +234,9 @@ const StudentsView = () => {
           )}
         </TableBody>
       </Table>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
-        <ModalContent>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" placement='top-center' >
+      <ScrollShadow >
+        <ModalContent >
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
@@ -243,21 +245,12 @@ const StudentsView = () => {
               <ModalBody>
                 <AddStudentForm onClose={onClose} />
               </ModalBody>
-              <ModalFooter>
-                <Button
-                  size="lg"
-                  className="w-56 m-1 bg-red-600 text-white"
-                  radius="sm"
-                  onPress={onClose}
-                >
-                  Close
-                </Button>
-              </ModalFooter>
             </>
           )}
         </ModalContent>
+        </ScrollShadow>
       </Modal>
-      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit}>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size='3xl'>
         <ModalContent>
           {(onClose) => (
             <>
@@ -270,11 +263,6 @@ const StudentsView = () => {
                   onClose={onClose}
                 />
               </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cerrar
-                </Button>
-              </ModalFooter>
             </>
           )}
         </ModalContent>
@@ -296,7 +284,8 @@ const StudentsView = () => {
               <ModalFooter>
                 <Button
                   size="lg"
-                  className="w-56 m-1 bg-red-600 text-white"
+                  color='danger'
+                  className='w-32'
                   radius="sm"
                   onPress={onClose}
                 >

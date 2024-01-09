@@ -230,6 +230,7 @@ const AddFunctionaryForm = ({ onClose }: { onClose: () => void }) => {
         <Switch
           id="isActive"
           name="isActive"
+          className='m-4'
           size="sm"
           onValueChange={(value) => {
             const fakeEvent = {
@@ -243,16 +244,28 @@ const AddFunctionaryForm = ({ onClose }: { onClose: () => void }) => {
         >
           Usuario activo
         </Switch>
-        <div className="flex justify-center">
+        <div className="flex justify-center m-4">
           <Button
             type="submit"
             size="lg"
-            className="w-56 m-1 bg-red-600 text-white"
+            className="w-56 m-1 bg-blue-700 text-white"
             radius="sm"
             disabled={formik.isSubmitting}
             onPress={onClose}
           >
             Guardar
+          </Button>
+          <Button
+            className='bg-red-600 w-56 m-1 text-white'
+            size="lg"
+            radius="sm"
+            disabled={formik.isSubmitting}
+            onPress={() => {
+              formik.resetForm()
+              onClose()
+            }}
+          >
+            Cancelar
           </Button>
         </div>
       </form>
