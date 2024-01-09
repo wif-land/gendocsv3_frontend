@@ -4,6 +4,7 @@ import UsersView from '../../../../features/modules/components/users-view'
 import CareersView from '../../../../features/careers/components/CareersView'
 import StudentsView from '../../../../features/modules/components/students-view'
 import FunctionaryView from '../../../../features/modules/components/functionary-view'
+import ProcessView from '../../../../features/modules/components/process-view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -20,6 +21,8 @@ const Page = () => {
         return <CareersView />
       case 'admin/funcionarios':
         return <FunctionaryView />
+      case 'facu/procesos':
+        return <ProcessView moduleId={codeModule} />
       default:
         return <div>DEFAULT</div>
     }
