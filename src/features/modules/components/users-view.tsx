@@ -225,7 +225,7 @@ const UsersView = () => {
           </TableBody>
         </Table>
       </div>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='3xl'>
         <ModalContent>
           {(onClose) => (
             <>
@@ -235,16 +235,11 @@ const UsersView = () => {
               <ModalBody>
                 <AddUserForm onClose={onClose} />
               </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
             </>
           )}
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit}>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size='3xl'>
         <ModalContent>
           {(onClose) => (
             <>
@@ -257,11 +252,6 @@ const UsersView = () => {
                   onClose={onClose}
                 />
               </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
             </>
           )}
         </ModalContent>

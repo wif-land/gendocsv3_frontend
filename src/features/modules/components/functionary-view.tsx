@@ -20,6 +20,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  ScrollShadow
 } from '@nextui-org/react'
 import { MdMoreVert } from 'react-icons/md'
 import { toast } from 'react-toastify'
@@ -148,7 +149,7 @@ const FunctionaryView = () => {
                       })
                   }}
                 >
-                  {item.isActive ? 'Desactivar usuario' : 'Activar usuario'}
+                  {item.isActive ? 'Desactivar funcionario' : 'Activar funcionario'}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -183,21 +184,22 @@ const FunctionaryView = () => {
   }, [FunctionariesStore, setFunctionariesStore])
 
   return (
-    <div>
+    <div className='m-10'>
       <Button
+        className="w-40 h-12 ml-6 border-2  bg-blue-700   text-white"
         onClick={() => {
           onOpen()
         }}
       >
         Crear funcionario
       </Button>
-      <Table aria-label="Example table with dynamic content">
+      <Table aria-label="Example table with dynamic content" className='m-10'>
         <TableHeader columns={COLUMNS} className="">
           {(column) => (
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={functionaries}>
+        <TableBody items={functionaries} emptyContent={'No existen datos sobre funcionarios'}>
           {(item) => (
             <TableRow key={item.dni}>
               {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
@@ -205,26 +207,23 @@ const FunctionaryView = () => {
           )}
         </TableBody>
       </Table>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Crear funcionario
-              </ModalHeader>
-              <ModalBody>
-                <AddFunctionaryForm onClose={onClose} />
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='4xl'>
+      < ScrollShadow >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Crear funcionario
+                </ModalHeader>
+                <ModalBody>
+                  <AddFunctionaryForm onClose={onClose} />
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </ScrollShadow>
       </Modal>
-      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit}>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size='4xl'>
         <ModalContent>
           {(onClose) => (
             <>
@@ -237,11 +236,6 @@ const FunctionaryView = () => {
                   onClose={onClose}
                 />
               </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cerrar
-                </Button>
-              </ModalFooter>
             </>
           )}
         </ModalContent>

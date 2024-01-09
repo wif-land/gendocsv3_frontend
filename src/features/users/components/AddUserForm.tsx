@@ -53,15 +53,15 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
     <>
       <form
         onSubmit={formik.handleSubmit}
-        className="flex flex-col items-center justify-center"
+        className="w-full justify-items-center "
       >
-        <div className=" flex flex-col gap-2 ">
+        <div className=" grid grid-cols-2 gap-4 w-6/6 justify-items-center ">
           <Input
             id="firstName"
             name="firstName"
             type="firstName"
             label="Primer Nombre"
-            variant="bordered"
+            variant="underlined"
             value={formik.values.firstName}
             onChange={formik.handleChange}
             size="lg"
@@ -77,7 +77,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             name="secondName"
             type="secondName"
             label="Segundo Nombre"
-            variant="bordered"
+            variant="underlined"
             value={formik.values.secondName}
             onChange={formik.handleChange}
             size="lg"
@@ -93,7 +93,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             name="firstLastName"
             type="firstLastName"
             label="Primer Apellido"
-            variant="bordered"
+            variant="underlined"
             value={formik.values.firstLastName}
             onChange={formik.handleChange}
             size="lg"
@@ -109,7 +109,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             name="secondLastName"
             type="secondLastName"
             label="Segundo Apellido"
-            variant="bordered"
+            variant="underlined"
             value={formik.values.secondLastName}
             onChange={formik.handleChange}
             size="lg"
@@ -125,7 +125,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             name="googleEmail"
             type="googleEmail"
             label="Google Email"
-            variant="bordered"
+            variant="underlined"
             value={formik.values.googleEmail}
             onChange={formik.handleChange}
             size="lg"
@@ -141,7 +141,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             name="outlookEmail"
             type="outlookEmail"
             label="Outlook Email"
-            variant="bordered"
+            variant="underlined"
             value={formik.values.outlookEmail}
             onChange={formik.handleChange}
             size="lg"
@@ -157,7 +157,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             name="password"
             type="text"
             label="Contraseña"
-            variant="bordered"
+            variant="underlined"
             value={formik.values.password}
             onChange={formik.handleChange}
             size="lg"
@@ -169,35 +169,11 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full"
           />
           <Select
-            id="accessModules"
-            name="accessModules"
-            label="Módulos de Acceso"
-            variant="bordered"
-            placeholder="Selecciona un módulo"
-            description="Selecciona los módulos a los que tendrá acceso el usuario"
-            selectionMode="multiple"
-            selectedKeys={Array.from(value).map(String)} // Convierte los números a cadenas si es necesario
-            onSelectionChange={(value) =>
-              handleModuleChange('accessModules', value)
-            }
-            className="max-w-xs"
-          >
-            {modules!.map((module) => (
-              <SelectItem key={module.id} textValue={module.name}>
-                {module.name}
-              </SelectItem>
-            ))}
-          </Select>
-          <p className="text-default-500 text-small">
-            Selected: {Array.from(value).join(', ')}
-          </p>
-          <Select
             id="roles"
             name="roles"
             label="Roles"
-            variant="bordered"
+            variant="underlined"
             placeholder="Selecciona los roles"
-            description="Selecciona los roles del usuario"
             selectionMode="multiple"
             onSelectionChange={(value) => handleSelectChange('roles', value)}
             className="w-full"
@@ -205,6 +181,25 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             {rolesArray!.map((role) => (
               <SelectItem key={role} value={role}>
                 {role}
+              </SelectItem>
+            ))}
+          </Select>
+          <Select
+            id="accessModules"
+            name="accessModules"
+            label="Módulos de Acceso"
+            variant="underlined"
+            placeholder="Selecciona un módulo"
+            selectionMode="multiple"
+            selectedKeys={Array.from(value).map(String)} // Convierte los números a cadenas si es necesario
+            onSelectionChange={(value) =>
+              handleModuleChange('accessModules', value)
+            }
+            className="w-full"
+          >
+            {modules!.map((module) => (
+              <SelectItem key={module.id} textValue={module.name}>
+                {module.name}
               </SelectItem>
             ))}
           </Select>
@@ -225,11 +220,12 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             Usuario activo
           </Switch>
         </div>
-        <div className="flex justify-center items center  m-2">
+        <div className="flex justify-center items center  m-4 ">
           <Button
             type="submit"
             size="lg"
-            className="w-1/2 m-4 bg-blue-600 text-white"
+            radius="sm"
+            className="w-56 m-1 bg-blue-600 text-white"
             disabled={
               formik.isSubmitting ||
               !formik.isValid ||
@@ -239,6 +235,18 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             onClick={onClose}
           >
             Crear
+          </Button>
+          <Button
+            className='bg-red-600 w-56 m-1 text-white'
+            size="lg"
+            radius="sm"
+            disabled={formik.isSubmitting}
+            onPress={() => {
+              formik.resetForm()
+              onClose()
+            }}
+          >
+            Cancelar
           </Button>
         </div>
       </form>

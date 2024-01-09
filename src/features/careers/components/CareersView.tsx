@@ -144,14 +144,14 @@ const CareersView = () => {
   }, [])
 
   return (
-    <div>
+    <div className='m-2'>
       <Button
         onPress={() => {
           setSelectedCareer(null)
           onOpen()
         }}
         radius="sm"
-        className="w-40 h-12 ml-6 border-2  bg-red-600 text-white"
+        className="w-40 h-12 ml-6 border-2  bg-blue-600 text-white"
       >
         Crear carrera
       </Button>

@@ -355,23 +355,7 @@ const UpdateStudentForm = ({
               </SelectItem>
             ))}
           </Select>
-          <Switch
-            id="isActive"
-            name="isActive"
-            size="sm"
-            onValueChange={(defaultValue) => {
-              const fakeEvent = {
-                target: {
-                  name: 'isActive',
-                  defaultValue,
-                },
-              }
-              formik.handleChange(fakeEvent)
-            }}
-            defaultChecked={student.isActive}
-          >
-            Estudiante Activo
-          </Switch>
+          
 
           <input
             type="date"
@@ -382,8 +366,26 @@ const UpdateStudentForm = ({
               student.birthdate ? student.birthdate.split('T')[0] : ''
             }
           />
+          <Switch
+          id="isActive"
+          name="isActive"
+          size="sm"
+          className='m-1'
+          onValueChange={(defaultValue) => {
+            const fakeEvent = {
+              target: {
+                name: 'isActive',
+                defaultValue,
+              },
+            }
+            formik.handleChange(fakeEvent)
+          }}
+          defaultChecked={student.isActive}
+        >
+          Estudiante Activo
+        </Switch>
         </div>
-        <div className="m-1 w-full flex gap-4 justify-center">
+        <div className="m-2 w-full flex gap-4 justify-center">
           <Button
             type="submit"
             size="lg"
@@ -393,6 +395,16 @@ const UpdateStudentForm = ({
             onClick={onClose}
           >
             Actualizar
+          </Button>
+          <Button
+            type="reset"
+            size="lg"
+            className="w-56 m-1 bg-red-600 text-white"
+            radius="sm"
+            disabled={formik.isSubmitting}
+            onClick={onClose}
+          >
+            Cancelar
           </Button>
         </div>
       </form>
