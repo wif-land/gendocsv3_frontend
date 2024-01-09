@@ -27,6 +27,9 @@ import { toast } from 'react-toastify'
 import { IProcess } from '../../../features/process/types/IProcess'
 import { useProcessesStore } from '../../../shared/store/processStore'
 import AddProcessForm from '../../../features/process/components/addProcessForm'
+import { ProcessApi } from '../../../features/process/api/processes'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import EditProcessForm from '@/features/process/components/editProcessForm'
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',
@@ -34,7 +37,7 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 }
 const COLUMNS = [
   {
-    key: 'processName',
+    key: 'name',
     label: 'Nombre',
   },
   {
@@ -55,14 +58,14 @@ const COLUMNS = [
   },
 ]
 
-const StudentsView = ({ moduleId }: { moduleId: string | string[] }) => {
+const StudentsView = ({ moduleId }: { moduleId: string }) => {
   const [selectedProcess, setSelectedProcess] = useState<IProcess | undefined>(
     undefined,
   )
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
-  const { processes, setProcesses, get } = useProcessesStore()
+  const { processes, setProcesses } = useProcessesStore()
 
   const onOpenEditChange = (id: string) => {
     setSelectedProcess(
@@ -116,7 +119,7 @@ const StudentsView = ({ moduleId }: { moduleId: string | string[] }) => {
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
                   onClick={async () => {
-                    await StudentServices.updateStudent(item.id, {
+                    await ProcessApi.updateProcess(+item.id, {
                       isActive: !item.isActive,
                     })
                       .then(() =>
@@ -152,9 +155,15 @@ const StudentsView = ({ moduleId }: { moduleId: string | string[] }) => {
   }
 
   useEffect(() => {
-    const handleSetProcesses = () => {
+    const handleSetProcesses = async () => {
       if (!processes) {
-        get()
+        const { status, processes } = await ProcessApi.fetchProcessesByModule(
+          moduleId.toUpperCase(),
+        )
+        if (status === HTTP_STATUS_CODES.OK) {
+          setProcesses(processes)
+        }
+        return
       }
     }
 
@@ -215,7 +224,11 @@ const StudentsView = ({ moduleId }: { moduleId: string | string[] }) => {
                 Editar Proceso
               </ModalHeader>
               <ModalBody>
-                <p>editar</p>
+                <EditProcessForm
+                  onClose={onClose}
+                  process={selectedProcess as IProcess}
+                  moduleId={moduleId}
+                />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

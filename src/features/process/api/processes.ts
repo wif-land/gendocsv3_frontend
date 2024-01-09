@@ -32,4 +32,41 @@ export class ProcessApi {
     }
     return { status, process: data.content as IProcess }
   }
+
+  static fetchProcessesByModule = async (
+    moduleCode: string | string[],
+  ): Promise<{
+    status: number
+    message?: string
+    processes?: IProcess[]
+  }> => {
+    const result = await AxiosClient.get(
+      `${API_ROUTES.PROCESSES.GET_BY_MODULE}${moduleCode}`,
+    )
+
+    const { status, data } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
+
+    return { status, processes: data.content as IProcess[] }
+  }
+
+  static updateProcess = async (
+    id: number,
+    body: Partial<IProcess>,
+  ): Promise<{
+    status: number
+    process?: IProcess
+    message?: string
+  }> => {
+    const result = await AxiosClient.patch(API_ROUTES.PROCESSES.UPDATE, body, {
+      id,
+    })
+    const { status, data } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
+    return { status, process: data.content as IProcess }
+  }
 }

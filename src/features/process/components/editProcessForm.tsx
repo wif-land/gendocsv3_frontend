@@ -1,17 +1,20 @@
 import { Button, Input, Switch } from '@nextui-org/react'
-import { useAddProcess } from '../hooks/useAddProcess'
 import React, { useEffect } from 'react'
 import { useUserStore } from '../../../shared/store/userProfileStore'
 import useModulesStore from '../../../shared/store/modulesStore'
+import { IProcess } from '../types/IProcess'
+import { useEditProcess } from '../hooks/useEditProcess'
 
-const AddProcessForm = ({
+const EditProcessForm = ({
   onClose,
   moduleId,
+  process,
 }: {
   onClose: () => void
   moduleId: string
+  process: IProcess
 }) => {
-  const { formik } = useAddProcess()
+  const { formik, setProcessId } = useEditProcess()
   const { user } = useUserStore()
   const { modules } = useModulesStore()
 
@@ -20,9 +23,13 @@ const AddProcessForm = ({
       (module) => module.code === moduleId.toUpperCase(),
     )
 
+    setProcessId(process?.id)
+
     formik.setFieldValue('moduleId', module?.id)
 
     formik.setFieldValue('userId', user?.id)
+
+    formik.setFieldValue('isActive', process?.isActive)
   }, [])
 
   return (
@@ -39,13 +46,13 @@ const AddProcessForm = ({
             label="Nombre del proceso"
             variant="bordered"
             onChange={formik.handleChange}
-            defaultValue={formik.values.name}
+            defaultValue={process?.name}
           />
           <Switch
             id="isActive"
             name="isActive"
             size="sm"
-            defaultChecked={true}
+            isSelected={formik.values.isActive}
             onValueChange={(value) => {
               const fakeEvent = {
                 target: {
@@ -58,6 +65,7 @@ const AddProcessForm = ({
           >
             Proceso Activo
           </Switch>
+
           <div className="flex gap-5">
             <Button
               type="submit"
@@ -71,7 +79,7 @@ const AddProcessForm = ({
               }
               onClick={onClose}
             >
-              Crear
+              Guardar
             </Button>
             <Button
               size="lg"
@@ -86,4 +94,4 @@ const AddProcessForm = ({
     </>
   )
 }
-export default AddProcessForm
+export default EditProcessForm

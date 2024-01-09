@@ -22,7 +22,7 @@ const Page = () => {
       case 'admin/funcionarios':
         return <FunctionaryView />
       case 'facu/procesos':
-        return <ProcessView moduleId={codeModule} />
+        return <ProcessView moduleId={codeModule as string} />
       default:
         return <div>DEFAULT</div>
     }
