@@ -1,16 +1,6 @@
-export type IRoleType = 'admin' | 'writer' | 'reader'
+export type IRoleType = 'ADMIN' | 'WRITER' | 'READER'
 
 export interface IUser {
-  exp: number
-  iat: number
-  platformPermission: string | null
-  roles: IRoleType[]
-  sub: number
-  username: string
-  accessModulesIds: number[]
-}
-
-export interface IResponseUser {
   id: number
   firstName: string
   secondName: string
@@ -19,21 +9,32 @@ export interface IResponseUser {
   outlookEmail: string
   googleEmail: string
   roles?: string[] | null
-  platformPermission?: null
   isActive: boolean
-  accessModules?: AccessModulesEntity[] | null
+  accessModules?: number[] | null
 }
-export interface AccessModulesEntity {
-  id: number
-  createdAt: string
-  updatedAt: string
-  code: string
-  name: string
-  submodules?: (SubmodulesEntity | null)[] | null
+
+export interface IUserPayload {
+  sub: number
+  firstName: string
+  secondName: string
+  firstLastName: string
+  secondLastName: string
+  outlookEmail: string
+  googleEmail: string
+  roles?: string[] | null
+  isActive: boolean
+  accessModules?: number[] | null
 }
-export interface SubmodulesEntity {
-  id: number
-  createdAt: string
-  updatedAt: string
-  name: string
+
+export interface ICreateUser {
+  firstName: string
+  secondName: string
+  firstLastName: string
+  secondLastName: string
+  outlookEmail: string
+  googleEmail: string
+  roles?: string[] | null
+  isActive: boolean
+  accessModules?: number[] | null
+  password: string
 }

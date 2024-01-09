@@ -1,9 +1,13 @@
 import 'dotenv/config'
 import { jwtDecode } from 'jwt-decode'
-import { IUser } from '../types/IUser'
+import { IUser, IUserPayload } from '../types/IUser'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { setCookie } from '../../../shared/utils/CookiesUtil'
+import {
+  ACCESS_TOKEN_COOKIE_NAME,
+  API_ROUTES,
+} from '../../../shared/constants/appApiRoutes'
 
 export const login = async (
   email: string,
@@ -15,7 +19,7 @@ export const login = async (
 }> => {
   const result = await AxiosClient.post<{
     accessToken: string
-  }>('/auth/login', { email, password })
+  }>(API_ROUTES.AUTH.LOGIN, { email, password })
 
   const {
     status,
@@ -24,9 +28,11 @@ export const login = async (
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
 
-  setCookie('access_token', content!.accessToken)
+  await setCookie(ACCESS_TOKEN_COOKIE_NAME, content!.accessToken)
 
-  const decoded: IUser = jwtDecode(content!.accessToken)
+  const userData: IUserPayload = jwtDecode(content!.accessToken)
 
-  return { status, decoded }
+  const { sub, ...userWithoutSub } = userData
+
+  return { status, decoded: { ...userWithoutSub, id: sub } }
 }

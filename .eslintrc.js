@@ -80,7 +80,6 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "error",
     "no-eval": "error",
     "no-extra-bind": "error",
-    "no-extra-parens": ["error", "all", { ignoreJSX: "multi-line" }],
     "no-multi-spaces": "error",
     "no-multi-str": "error",
     "no-multiple-empty-lines": "error",

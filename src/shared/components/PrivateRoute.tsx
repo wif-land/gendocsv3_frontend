@@ -1,7 +1,7 @@
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { useUserStore } from '../store/userStore'
+import { useUserStore } from '../store/userProfileStore'
 import { getCookie } from '../utils/CookiesUtil'
+import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 
 interface PrivateRouteProps {
   children: React.ReactNode
@@ -9,15 +9,30 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { user } = useUserStore()
-  const router = useRouter()
+  // const router = useRouter()
 
   useEffect(() => {
-    if (!user || getCookie('token') === null) {
-      router.push('/')
+    let isMounted = true
+
+    const handleGetCookies = () => {
+      if (
+        (getCookie(ACCESS_TOKEN_COOKIE_NAME) === null ||
+          user === null ||
+          !user) &&
+        isMounted
+      ) {
+        // router.push(appPublicRoutes.login)
+      }
+    }
+
+    handleGetCookies()
+
+    return () => {
+      isMounted = false
     }
   }, [])
 
-  if (!user) {
+  if (!user || user === null) {
     return null
   }
 

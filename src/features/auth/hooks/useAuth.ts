@@ -2,12 +2,12 @@ import { useFormik } from 'formik'
 import { login } from '../api/auth'
 import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import * as yup from 'yup'
-import { setCookie } from '../../../shared/utils/CookiesUtil'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { IUser } from '../types/IUser'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { useUserStore } from '../../../shared/store/userStore'
+import { useUserStore } from '../../../shared/store/userProfileStore'
+import { appPublicRoutes } from '../../../shared/constants/appPublicRoutes'
 
 interface IAuth {
   email: string
@@ -38,7 +38,7 @@ export const useAuth = () => {
 
     if (status === HTTP_STATUS_CODES.CREATED) {
       decoded && setUser(decoded)
-      toast.success(`Bienvenido de vuelta ${decoded!.username}!`, {
+      toast.success(`Bienvenido de vuelta ${decoded!.firstName}!`, {
         autoClose: 1800,
       })
       router.push('/dashboard')
@@ -50,12 +50,19 @@ export const useAuth = () => {
     }
   }
 
-  const logout = () => {
-    setCookie('access_token', null)
-    userStoreLogout()
-    toast.success('Hasta pronto!', { autoClose: 1800 })
+  const logout = async () => {
+    const TIME_TO_SLEEP = 250
 
-    router.push('/login')
+    new Promise((resolve) => setTimeout(resolve, TIME_TO_SLEEP))
+      .then(() => {
+        userStoreLogout()
+        toast.success('Hasta pronto!', { autoClose: 1800 })
+      })
+      .then(() => {
+        new Promise((resolve) => setTimeout(resolve, TIME_TO_SLEEP)).then(() =>
+          router.push(appPublicRoutes.login),
+        )
+      })
   }
 
   const formik = useFormik<IAuth>({
