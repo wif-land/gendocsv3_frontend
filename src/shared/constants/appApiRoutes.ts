@@ -41,4 +41,12 @@ export const API_ROUTES = {
     DELETE: '/functionaries/:id',
     CREATE: '/functionaries',
   },
+  PROCESSES: {
+    GET_ALL: '/processes',
+    GET_ONE: '/processes/:id',
+    UPDATE: '/processes',
+    DELETE: '/processes/:id',
+    CREATE: '/processes',
+    GET_BY_MODULE: '/processes/get-by-module?module-code=',
+  },
 }

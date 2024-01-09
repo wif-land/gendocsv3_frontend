@@ -1,6 +1,12 @@
 import React, { Key, useEffect, useState } from 'react'
 import {
   Button,
+  Chip,
+  ChipProps,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Modal,
   ModalBody,
   ModalContent,
@@ -14,24 +20,16 @@ import {
   TableRow,
   getKeyValue,
   useDisclosure,
-  Chip,
-  ChipProps,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
 } from '@nextui-org/react'
 import { MdMoreVert } from 'react-icons/md'
+import { StudentServices } from '../../students/services/studentServices'
 import { toast } from 'react-toastify'
-import { IFunctionary } from '../../functionaries/types/IFunctionary'
-import { FunctionaryServices } from '../../functionaries/services/functionaryServices'
-import AddFunctionaryForm from '../../functionaries/components/addFunctionaryForm'
-import UpdateFunctionaryForm from '../../functionaries/components/updateFunctionaryForm'
-import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
-
-interface FunctionariesViewProps extends IFunctionary {
-  name: string
-}
+import { IProcess } from '../../../features/process/types/IProcess'
+import { useProcessesStore } from '../../../shared/store/processStore'
+import AddProcessForm from '../../../features/process/components/addProcessForm'
+import { ProcessApi } from '../../../features/process/api/processes'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import EditProcessForm from '@/features/process/components/editProcessForm'
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',
@@ -43,12 +41,12 @@ const COLUMNS = [
     label: 'Nombre',
   },
   {
-    key: 'googleEmail',
-    label: 'Google email',
+    key: 'moduleId',
+    label: 'Modulo',
   },
   {
-    key: 'outlookEmail',
-    label: 'Outlook email',
+    key: 'userId',
+    label: 'Usuario',
   },
   {
     key: 'isActive',
@@ -60,30 +58,27 @@ const COLUMNS = [
   },
 ]
 
-const FunctionaryView = () => {
-  const [functionaries, setFunctionaries] = useState<FunctionariesViewProps[]>(
-    [],
+const StudentsView = ({ moduleId }: { moduleId: string }) => {
+  const [selectedProcess, setSelectedProcess] = useState<IProcess | undefined>(
+    undefined,
   )
-  const [selectedFunctionary, setSelectedFunctionary] = useState<IFunctionary>()
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
+  const { processes, setProcesses } = useProcessesStore()
 
-  const {
-    functionaries: FunctionariesStore,
-    setFunctionaries: setFunctionariesStore,
-    get,
-  } = useFunctionaryStore()
-
-  const onOpenEditChange = (dni: string) => {
-    setSelectedFunctionary(
-      functionaries.find((functionary) => functionary.dni === dni),
+  const onOpenEditChange = (id: string) => {
+    setSelectedProcess(
+      processes?.find((process) => process.id.toString() === id),
     )
     onOpenChangeEdit()
   }
 
   const resolveRowComponentByColumnKey = (
-    item: FunctionariesViewProps,
+    item: {
+      id: string
+      isActive: boolean
+    },
     columnKey: Key,
   ) => {
     switch (columnKey) {
@@ -115,7 +110,7 @@ const FunctionaryView = () => {
               <DropdownMenu aria-label="Static Actions">
                 <DropdownItem
                   key="edit"
-                  onClick={() => onOpenEditChange(item.dni)}
+                  onClick={() => onOpenEditChange(item.id)}
                 >
                   Editar
                 </DropdownItem>
@@ -124,20 +119,20 @@ const FunctionaryView = () => {
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
                   onClick={async () => {
-                    await FunctionaryServices.updateFunctionary(item.id!, {
+                    await ProcessApi.updateProcess(+item.id, {
                       isActive: !item.isActive,
                     })
-                      .then((_) =>
-                        setFunctionariesStore(
-                          functionaries?.map((functionary) => {
-                            if (functionary.dni === item.dni) {
+                      .then(() =>
+                        setProcesses(
+                          processes?.map((process) => {
+                            if (process.id.toString() === item.id) {
                               return {
-                                ...functionary,
-                                isActive: !functionary.isActive,
+                                ...process,
+                                isActive: !process.isActive,
                               }
                             }
 
-                            return functionary
+                            return process
                           }),
                         ),
                       )
@@ -146,7 +141,9 @@ const FunctionaryView = () => {
                       })
                   }}
                 >
-                  {item.isActive ? 'Desactivar usuario' : 'Activar usuario'}
+                  {item.isActive
+                    ? 'Desactivar estudiante'
+                    : 'Activar estudiante'}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -158,66 +155,63 @@ const FunctionaryView = () => {
   }
 
   useEffect(() => {
-    let isMounted = true
-
-    const handleSetFunctionaries = () => {
-      if (FunctionariesStore && isMounted) {
-        setFunctionaries(
-          FunctionariesStore.map((functionary) => ({
-            ...functionary,
-            name: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName}`,
-          })),
+    const handleSetProcesses = async () => {
+      if (!processes) {
+        const { status, processes } = await ProcessApi.fetchProcessesByModule(
+          moduleId.toUpperCase(),
         )
-      } else {
-        get()
+        if (status === HTTP_STATUS_CODES.OK) {
+          setProcesses(processes)
+        }
+        return
       }
     }
 
-    handleSetFunctionaries()
-
-    return () => {
-      isMounted = false
-    }
-  }, [FunctionariesStore, setFunctionariesStore])
+    handleSetProcesses()
+  }, [processes, setProcesses])
 
   return (
-    <div>
+    <div className="m-10">
       <Button
-        onClick={() => {
-          onOpen()
-        }}
+        className="w-40 h-12 ml-6 border-2  bg-blue-700   text-white"
+        onPress={onOpen}
       >
-        Crear funcionario
+        Crear Proceso
       </Button>
-      <Table aria-label="Example table with dynamic content">
-        <TableHeader columns={COLUMNS} className="">
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={functionaries}>
-          {(item) => (
-            <TableRow key={item.dni}>
-              {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+
+      {processes && processes.length > 0 ? (
+        <Table aria-label="Example table with dynamic content" className="m-10">
+          <TableHeader columns={COLUMNS}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={processes}>
+            {(item) => (
+              <TableRow key={item.id.toString()}>
+                {(columnKey) =>
+                  resolveRowComponentByColumnKey(
+                    { ...item, id: item.id.toString() },
+                    columnKey,
+                  )
+                }
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      ) : (
+        <p style={{ textAlign: 'center' }}>Sin registros</p>
+      )}
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Crear funcionario
+                Crear Proceso
               </ModalHeader>
               <ModalBody>
-                <AddFunctionaryForm onClose={onClose} />
+                <AddProcessForm onClose={onClose} moduleId={moduleId} />
               </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
             </>
           )}
         </ModalContent>
@@ -227,12 +221,13 @@ const FunctionaryView = () => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Editar Funcionario
+                Editar Proceso
               </ModalHeader>
               <ModalBody>
-                <UpdateFunctionaryForm
-                  functionary={selectedFunctionary as IFunctionary}
+                <EditProcessForm
                   onClose={onClose}
+                  process={selectedProcess as IProcess}
+                  moduleId={moduleId}
                 />
               </ModalBody>
               <ModalFooter>
@@ -248,4 +243,4 @@ const FunctionaryView = () => {
   )
 }
 
-export default FunctionaryView
+export default StudentsView

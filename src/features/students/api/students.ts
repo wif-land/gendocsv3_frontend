@@ -1,6 +1,6 @@
-import { API_ROUTES } from '@/shared/constants/appApiRoutes'
-import { AxiosClient } from '@/shared/utils/AxiosClient'
-import { HTTP_STATUS_CODES } from '@/shared/utils/app-enums'
+import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
+import { AxiosClient } from '../../../shared/utils/AxiosClient'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { IStudent } from '../types/IStudent'
 
 export class StudentsApi {
