@@ -15,7 +15,7 @@ export const useCouncilsForm = (
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
-    // Agrega más validaciones según tus necesidades
+    date: yup.date().required('La fecha es requerida'),
   })
 
   const formik = useFormik<ICouncil>({
@@ -26,6 +26,8 @@ export const useCouncilsForm = (
       type: initialValues.type || '',
       isActive: initialValues.isActive || false,
       isArchived: initialValues.isArchived || false,
+      moduleId: initialValues.moduleId || 0,
+      userId: initialValues.userId || 0,
     },
     validationSchema,
     onSubmit: async (values) => {

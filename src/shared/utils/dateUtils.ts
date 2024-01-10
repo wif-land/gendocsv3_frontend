@@ -3,7 +3,11 @@ export class DateUtils {
     return new Date()
   }
 
-  public static parseStringDateToISO(date: Date): string {
-    return date.toISOString()
+  public static parseStringDateToISO(date: Date | string): string {
+    if (typeof date === 'string') {
+      return date.split('T')[0]
+    }
+
+    return date.toISOString().split('T')[0]
   }
 }

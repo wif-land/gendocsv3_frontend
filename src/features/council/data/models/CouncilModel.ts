@@ -10,6 +10,8 @@ export class CouncilModel implements ICouncil {
   isArchived: boolean
   date: Date
   type: CouncilType
+  moduleId: number
+  userId: number
 
   constructor(props: ICouncil) {
     this.id = props.id || undefined
@@ -20,8 +22,9 @@ export class CouncilModel implements ICouncil {
     this.isArchived = props.isArchived || false
     this.date = props.date
     this.type = props.type
+    this.moduleId = props.moduleId
+    this.userId = props.userId
   }
-
   static fromJson(json: Record<string, any> | string): CouncilModel {
     if (typeof json === 'string') {
       return JSON.parse(json, CouncilModel.reviver)
@@ -35,6 +38,8 @@ export class CouncilModel implements ICouncil {
         isArchived: json.isArchived,
         date: json.date,
         type: json.type,
+        moduleId: json.moduleId,
+        userId: json.userId,
       })
 
       return career
@@ -55,6 +60,8 @@ export class CouncilModel implements ICouncil {
       isActive: this.isActive,
       isArchived: this.isArchived,
       type: this.type,
+      moduleId: this.moduleId,
+      userId: this.userId,
     }
   }
 }

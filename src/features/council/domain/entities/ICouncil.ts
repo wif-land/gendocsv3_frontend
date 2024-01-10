@@ -3,6 +3,11 @@ export enum CouncilType {
   ORDINARY = 'ORDINARY',
 }
 
+export const CouncilTypeLabels = {
+  [CouncilType.EXTRAORDINARY]: 'Extraordinaria',
+  [CouncilType.ORDINARY]: 'Ordinaria',
+}
+
 export interface ICouncil {
   id?: number
   createdAt?: Date
@@ -12,4 +17,6 @@ export interface ICouncil {
   isArchived: boolean
   date: Date
   type: CouncilType
+  moduleId: number
+  userId: number
 }

@@ -26,6 +26,7 @@ import { useCouncilStore } from '../store/councilsStore'
 import { CouncilsForm } from './CouncilsForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilType } from '../../domain/entities/ICouncil'
+import { DateUtils } from '../../../../shared/utils/dateUtils'
 
 const COLUMNS = [
   {
@@ -57,6 +58,8 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
     null,
   )
+  const moduleIdentifier =
+    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
   const resolveChipData = (isActive: boolean, isArchived: boolean) => {
     if (isArchived) {
@@ -173,6 +176,10 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
             </Chip>
           </TableCell>
         )
+      case 'date':
+        return (
+          <TableCell>{DateUtils.parseStringDateToISO(item.date)}</TableCell>
+        )
       default:
         return <TableCell>{getKeyValue(item, columnKey)}</TableCell>
     }
@@ -182,8 +189,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
     const fetchingCouncils = async () => {
       const result =
         await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
-          modules?.find((module) => module.code === moduleId.toUpperCase())
-            ?.id ?? 0,
+          moduleIdentifier,
         )
 
       if (result.councils) {
@@ -214,7 +220,10 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
           </TableHeader>
-          <TableBody emptyContent={'No existen datos sobre consejos'}>
+          <TableBody
+            emptyContent={'No existen datos sobre consejos'}
+            isLoading={!councils}
+          >
             {councils!.map((item) => (
               <TableRow key={item.id}>
                 {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
@@ -227,7 +236,13 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
       <CouncilsForm
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        values={selectedCareer ? selectedCareer : undefined}
+        values={
+          selectedCareer
+            ? selectedCareer
+            : CouncilModel.fromJson({
+                moduleId: moduleIdentifier,
+              })
+        }
       />
     </div>
   )
