@@ -186,7 +186,11 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   }
 
   useEffect(() => {
+    let isMounted = true
+
     const fetchingCouncils = async () => {
+      if (!isMounted) return
+
       const result =
         await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
           moduleIdentifier,
@@ -198,7 +202,11 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
     }
 
     fetchingCouncils()
-  }, [])
+
+    return () => {
+      isMounted = false
+    }
+  }, [moduleId])
 
   return (
     <div>
