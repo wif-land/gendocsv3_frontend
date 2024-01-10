@@ -2,6 +2,7 @@ import { CouncilModel } from '../models/CouncilModel'
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { ICouncil } from '../../domain/entities/ICouncil'
 
 export interface CouncilsDataSource {
   getAll(): Promise<{
@@ -19,9 +20,11 @@ export interface CouncilsDataSource {
     council: CouncilModel
   }>
 
-  update(council: CouncilModel): Promise<CouncilModel>
+  update(council: Partial<ICouncil>): Promise<{
+    status: number
+  }>
 
-  create(council: CouncilModel): Promise<{
+  create(council: ICouncil): Promise<{
     status: number
     council: CouncilModel
   }>
@@ -78,8 +81,21 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return { status, councils: data.content as CouncilModel[] }
   }
 
-  update = async (career: CouncilModel) => {
-    throw new Error(`Method not implemented. ${career}`)
+  update = async (career: ICouncil) => {
+    const { id, ...rest } = career
+
+    const result = await AxiosClient.patch(
+      API_ROUTES.COUNCILS.UPDATE.replace(':id', id?.toString() || ''),
+      rest,
+    )
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status }
+    }
+
+    return { status, council: data.content as CouncilModel }
   }
 
   getById = async (id: number) => {

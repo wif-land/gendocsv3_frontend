@@ -256,8 +256,6 @@ export class AxiosClient {
         params,
       })
 
-      console.log({ response })
-
       const { data, status } = response
 
       if (status === HTTP_STATUS_CODES.OK) {

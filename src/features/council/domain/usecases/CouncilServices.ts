@@ -1,9 +1,10 @@
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilRepositoryImpl } from '../../data/repositories/CouncilRepositoryImpl'
+import { ICouncil } from '../entities/ICouncil'
 import { CouncilRepository } from '../repositories/CouncilRepository'
 
 interface CouncilUseCases {
-  create(council: CouncilModel): Promise<{
+  create(council: ICouncil): Promise<{
     status: number
     council: CouncilModel
   }>
@@ -45,7 +46,7 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   private councilRepository: CouncilRepository =
     CouncilRepositoryImpl.getInstance()
 
-  create = async (career: CouncilModel) =>
+  create = async (career: ICouncil) =>
     await this.councilRepository.create(career)
 
   getAll = async () => await this.councilRepository.getAll()
@@ -55,7 +56,10 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   }
 
   update = async (id: number, career: Partial<CouncilModel>) =>
-    await this.councilRepository.update(id, career)
+    await this.councilRepository.update({
+      ...career,
+      id,
+    })
 
   getAllCouncilsByModuleId = async (moduleId: number) =>
     await this.councilRepository.getAllCouncilsByModuleId(moduleId)

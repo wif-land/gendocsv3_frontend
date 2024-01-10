@@ -1,101 +1,109 @@
 import * as yup from 'yup'
 import { toast } from 'react-toastify'
-
 import { useFormik } from 'formik'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useCouncilStore } from '../store/councilsStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { ICouncil } from '../../domain/entities/ICouncil'
 
-export const useCouncilsForm = (values: CouncilModel, onClose: () => void) => {
+export const useCouncilsForm = (
+  initialValues: ICouncil,
+  onClose: () => void,
+) => {
   const { councils, setCouncils } = useCouncilStore()
 
   const validationSchema = yup.object({
-    name: yup.string().required('Campo requerido'),
-    credits: yup.number().required('Campo requerido'),
-    menDegree: yup.string().required('Campo requerido'),
-    womenDegree: yup.string().required('Campo requerido'),
-    coordinator: yup.string().required('Campo requerido'),
-    internshipHours: yup.number().required('Campo requerido'),
-    vinculationHours: yup.number().required('Campo requerido'),
+    name: yup.string().required('El nombre es requerido'),
+    // Agrega más validaciones según tus necesidades
   })
 
-  const onSubmit = async (values: CouncilModel) => {
-    if (values.id) {
-      await handleUpdateCareer(values)
-      formik.resetForm()
-      return
-    }
-
-    await handleCreateCareer(
-      new CouncilModel({
-        ...values,
-      }),
-    )
-    formik.resetForm()
-  }
-
-  const formik = useFormik({
+  const formik = useFormik<ICouncil>({
     enableReinitialize: true,
-    initialValues: new CouncilModel({
-      name: values.name || '',
-      isActive: values.isActive || false,
-    }),
+    initialValues: {
+      name: initialValues.name || '',
+      date: initialValues.date || null,
+      type: initialValues.type || '',
+      isActive: initialValues.isActive || false,
+      isArchived: initialValues.isArchived || false,
+    },
     validationSchema,
-    onSubmit,
+    onSubmit: async (values) => {
+      if (!initialValues.id) {
+        await handleCreateCouncil(values)
+        onClose()
+        return
+      }
+
+      const editedFields: { [key: string]: unknown } = {}
+
+      Object.keys(initialValues).forEach((key) => {
+        if (
+          initialValues[key as keyof ICouncil] !== values[key as keyof ICouncil]
+        ) {
+          editedFields[key] = values[key as keyof ICouncil]
+        }
+      })
+
+      if (Object.keys(editedFields).length === 0) {
+        onClose()
+        return
+      }
+      await handleUpdateCouncil(initialValues.id, editedFields)
+      onClose()
+    },
   })
 
-  const handleCreateCareer = async (values: CouncilModel) => {
+  const handleCreateCouncil = async (values: ICouncil) => {
     try {
       const result = await CouncilsUseCasesImpl.getInstance().create(values)
 
       if (result.council) {
         setCouncils([...councils, result.council])
-        toast.success('Carrera creada exitosamente')
-        onClose()
+        toast.success('Consejo creado exitosamente')
+        formik.resetForm()
       } else {
-        toast.error('Error al crear la carrera', {
+        toast.error('Error al crear el consejo', {
           closeButton: false,
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al crear la carrera')
+      toast.error('Ocurrió un error al crear el consejo')
     }
   }
 
-  const handleUpdateCareer = async (values: CouncilModel) => {
+  const handleUpdateCouncil = async (
+    id: number,
+    editedFields: Partial<ICouncil>,
+  ) => {
     try {
       const { status } = await CouncilsUseCasesImpl.getInstance().update(
-        values.id!,
-        values,
+        id,
+        editedFields,
       )
 
       if (status === HTTP_STATUS_CODES.OK) {
         setCouncils(
-          councils!.map((career) => {
-            if (career.id === values.id) {
-              return new CouncilModel({
-                ...career,
-                ...values,
-              })
-            }
-
-            return career
-          }),
+          councils!.map((council) =>
+            council.id === id
+              ? new CouncilModel({
+                  ...council,
+                  ...editedFields,
+                })
+              : council,
+          ),
         )
-        toast.success('Carrera actualizada exitosamente')
-        onClose()
+        toast.success('Consejo actualizado exitosamente')
+        formik.resetForm()
       } else {
-        toast.error('Error al actualizar la carrera', {
+        toast.error('Error al actualizar el consejo', {
           closeButton: false,
         })
-        onClose()
       }
     } catch (error) {
-      toast.error('Ocurrió un error al actualizar la carrera')
-      onClose()
+      toast.error('Ocurrió un error al actualizar el consejo')
     }
   }
 
-  return { formik, careers: councils, setCareers: setCouncils }
+  return { formik, councils, setCouncils }
 }

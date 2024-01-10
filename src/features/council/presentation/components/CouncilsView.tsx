@@ -53,7 +53,7 @@ const COLUMNS = [
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const { modules } = useModulesStore()
   const { councils, setCouncils } = useCouncilStore()
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
     null,
   )
@@ -226,11 +226,8 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
       <CouncilsForm
         isOpen={isOpen}
-        onClose={onClose}
         onOpenChange={onOpenChange}
-        values={
-          selectedCareer ? CouncilModel.fromJson(selectedCareer) : undefined
-        }
+        values={selectedCareer ? selectedCareer : undefined}
       />
     </div>
   )

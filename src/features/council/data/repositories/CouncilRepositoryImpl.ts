@@ -1,5 +1,3 @@
-import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import { CouncilRepository } from '../../domain/repositories/CouncilRepository'
@@ -29,19 +27,10 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   getAll = async () => await this.datasource.getAll()
 
-  update = async (id: number, data: Partial<ICouncil>) => {
-    const result = await AxiosClient.put(API_ROUTES.CAREERS.UPDATE, data, {
-      id,
-    })
+  update = async (data: Partial<CouncilModel>) =>
+    await this.datasource.update(data)
 
-    const { status } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status }
-
-    return { status }
-  }
-
-  create = async (councilData: CouncilModel) => {
+  create = async (councilData: ICouncil) => {
     try {
       const result = await this.datasource.create(councilData)
       const { status } = result

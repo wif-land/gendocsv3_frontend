@@ -7,14 +7,11 @@ export interface CouncilRepository {
     councils: CouncilModel[]
   }>
 
-  update: (
-    id: number,
-    data: Partial<ICouncil>,
-  ) => Promise<{
+  update: (data: Partial<ICouncil>) => Promise<{
     status: number
   }>
 
-  create: (councilData: CouncilModel) => Promise<{
+  create: (councilData: ICouncil) => Promise<{
     status: number
     council: CouncilModel
   }>

@@ -9,35 +9,28 @@ import {
   Switch,
 } from '@nextui-org/react'
 import { useEffect } from 'react'
-import { CouncilModel } from '../../data/models/CouncilModel'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
-import { CouncilType } from '../../domain/entities/ICouncil'
+import { ICouncil } from '../../domain/entities/ICouncil'
 
 interface CouncilsFormProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
-  values?: CouncilModel
-  onClose: () => void
+  values?: ICouncil
   isSubmitting?: boolean
 }
 
 export const CouncilsForm = ({
   isOpen,
   onOpenChange,
-  values = new CouncilModel({
-    name: '',
-    isActive: false,
-    date: new Date(),
-    isArchived: false,
-    type: CouncilType.EXTRAORDINARY,
-  }),
-  onClose,
+  values,
 }: CouncilsFormProps) => {
-  const isAddMode = !values.id
-  const { formik } = useCouncilsForm(values, onClose)
+  const isAddMode = !values?.id
+  const { formik } = useCouncilsForm(values ?? ({} as ICouncil), () =>
+    onOpenChange(false),
+  )
 
   useEffect(() => {
-    if (!values.id) return
+    if (isAddMode) return
 
     formik.setValues(values)
   }, [values])
@@ -48,14 +41,10 @@ export const CouncilsForm = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              {!isAddMode ? 'Editar consejo' : 'Crear consejo'}
+              {isAddMode ? 'Crear consejo' : 'Editar consejo'}
             </ModalHeader>
 
-            <form
-              onSubmit={async (e) => {
-                formik.handleSubmit(e)
-              }}
-            >
+            <form onSubmit={formik.handleSubmit}>
               <ModalBody>
                 <Input
                   id="name"
@@ -65,7 +54,6 @@ export const CouncilsForm = ({
                   variant="underlined"
                   placeholder="Eg. Ingeniería en Sistemas"
                   className="w-full"
-                  defaultValue={values.name ? values.name : ''}
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -76,20 +64,14 @@ export const CouncilsForm = ({
                       : ''
                   }
                 />
+
                 {isAddMode && (
                   <Switch
-                    aria-label="Automatic updates"
+                    aria-label="Activo"
                     isSelected={formik.values.isActive}
-                    onValueChange={(value) => {
-                      const fakeEvent = {
-                        target: {
-                          name: 'isActive',
-                          value,
-                        },
-                      }
-
-                      formik.handleChange(fakeEvent)
-                    }}
+                    onValueChange={(value) =>
+                      formik.setFieldValue('isActive', value)
+                    }
                   >
                     Activo
                   </Switch>
@@ -110,7 +92,7 @@ export const CouncilsForm = ({
 
                 <Button
                   color="primary"
-                  disabled={formik.isSubmitting}
+                  isDisabled={formik.isSubmitting || !formik.isValid}
                   type="submit"
                 >
                   {isAddMode ? 'Crear' : 'Editar'}
