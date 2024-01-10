@@ -49,4 +49,11 @@ export const API_ROUTES = {
     CREATE: '/processes',
     GET_BY_MODULE: '/processes/get-by-module?module-code=',
   },
+  COUNCILS: {
+    GET_ALL: '/councils',
+    GET_ONE: '/councils/:id',
+    UPDATE: '/councils/:id',
+    DELETE: '/councils/:id',
+    CREATE: '/councils',
+  },
 }

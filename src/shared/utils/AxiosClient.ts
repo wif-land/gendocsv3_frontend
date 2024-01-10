@@ -1,5 +1,10 @@
 import { getCookie } from './CookiesUtil'
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios'
 import { HTTP_STATUS_CODES } from './app-enums'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 
@@ -119,9 +124,12 @@ export class AxiosClient {
     }
   }
 
-  static async get<T>(path: string): Promise<AxiosClientResponse<T>> {
+  static async get<T>(
+    path: string,
+    options?: AxiosRequestConfig,
+  ): Promise<AxiosClientResponse<T>> {
     try {
-      const response = await this.getInstance().get(path)
+      const response = await this.getInstance().get(path, options)
       console.log({ response })
       const { data, status } = response
 

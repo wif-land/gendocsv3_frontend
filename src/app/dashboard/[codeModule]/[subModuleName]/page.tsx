@@ -5,6 +5,7 @@ import CareersView from '../../../../features/careers/components/CareersView'
 import StudentsView from '../../../../features/modules/components/students-view'
 import FunctionaryView from '../../../../features/modules/components/functionary-view'
 import ProcessView from '../../../../features/modules/components/process-view'
+import CouncilsView from '../../../../features/council/presentation/components/CouncilsView'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -23,6 +24,8 @@ const Page = () => {
         return <FunctionaryView />
       case 'facu/procesos':
         return <ProcessView moduleId={codeModule as string} />
+      case RegExp('consejos').test(route) ? route : '':
+        return <CouncilsView moduleId={codeModule as string} />
       default:
         return <div>DEFAULT</div>
     }
