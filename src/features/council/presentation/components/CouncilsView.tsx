@@ -52,6 +52,7 @@ const COLUMNS = [
 ]
 
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
+  const [isFetching, setIsFetching] = useState(false)
   const { modules } = useModulesStore()
   const { councils, setCouncils } = useCouncilStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -190,7 +191,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
     const fetchingCouncils = async () => {
       if (!isMounted) return
-
+      setIsFetching(true)
       const result =
         await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
           moduleIdentifier,
@@ -198,6 +199,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
       if (result.councils) {
         setCouncils(result.councils)
+        setIsFetching(false)
       }
     }
 
@@ -230,7 +232,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
           </TableHeader>
           <TableBody
             emptyContent={'No existen datos sobre consejos'}
-            isLoading={!councils}
+            isLoading={isFetching}
           >
             {councils!.map((item) => (
               <TableRow key={item.id}>
