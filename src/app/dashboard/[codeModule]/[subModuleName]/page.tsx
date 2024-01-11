@@ -4,7 +4,7 @@ import UsersView from '../../../../features/modules/components/users-view'
 import CareersView from '../../../../features/careers/components/CareersView'
 import StudentsView from '../../../../features/modules/components/students-view'
 import FunctionaryView from '../../../../features/modules/components/functionary-view'
-import ProcessView from '../../../../features/modules/components/process-view'
+import ProcessView from '../../../../features/processes/presentation/components/ProcessesView'
 import CouncilsView from '../../../../features/council/presentation/components/CouncilsView'
 
 const Page = () => {
@@ -22,7 +22,7 @@ const Page = () => {
         return <CareersView />
       case 'admin/funcionarios':
         return <FunctionaryView />
-      case 'facu/procesos':
+      case RegExp('procesos').test(route) ? route : '':
         return <ProcessView moduleId={codeModule as string} />
       case RegExp('consejos').test(route) ? route : '':
         return <CouncilsView moduleId={codeModule as string} />
