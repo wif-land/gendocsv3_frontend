@@ -44,10 +44,10 @@ export const API_ROUTES = {
   PROCESSES: {
     GET_ALL: '/processes',
     GET_ONE: '/processes/:id',
-    UPDATE: '/processes',
+    UPDATE: '/processes/:id',
     DELETE: '/processes/:id',
     CREATE: '/processes',
-    GET_BY_MODULE: '/processes/get-by-module?module-code=',
+    GET_BY_MODULE: '/processes/get-by-module?module-code=:moduleCode',
   },
   COUNCILS: {
     GET_ALL: '/councils',
