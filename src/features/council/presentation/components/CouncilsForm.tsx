@@ -14,7 +14,7 @@ import {
   SelectItem,
   Switch,
 } from '@nextui-org/react'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
 import {
   CouncilType,
@@ -52,20 +52,20 @@ export const CouncilsForm = ({
     formik.setValues(values)
   }, [values])
 
-  const handleSelectChange = (name: string, value: any) => {
+  const handleSelectChange = useCallback((name: string, value: any) => {
     const numericValue = !isNaN(value) ? Number(value) : value
     formik.setFieldValue(name, numericValue)
-  }
+  }, [])
+
+  const onClose = useCallback(() => {
+    formik.resetForm()
+    onOpenChange(false)
+  }, [])
+
+  const councilTypes = useMemo(() => Object.keys(CouncilType), [])
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      onClose={() => {
-        formik.resetForm()
-        onOpenChange(false)
-      }}
-    >
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -155,7 +155,7 @@ export const CouncilsForm = ({
                   }
                   selectedKeys={[formik.values.type]}
                 >
-                  {Object.keys(CouncilType).map((type) => (
+                  {councilTypes.map((type) => (
                     <SelectItem key={type} value={type}>
                       {CouncilTypeLabels[type as keyof typeof CouncilType]}
                     </SelectItem>

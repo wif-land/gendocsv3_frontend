@@ -8,12 +8,12 @@ interface StoreState {
 }
 
 const STORE_NAME = 'councils-store'
-const DEFAULT_CAREERS: CouncilModel[] = []
+const DEFAULT_COUNCILS: CouncilModel[] = []
 
 export const useCouncilStore = create<StoreState>(
   persist(
     (set) => ({
-      councils: DEFAULT_CAREERS,
+      councils: DEFAULT_COUNCILS,
       setCouncils: (councils) => set({ councils }),
     }),
     {

@@ -6,6 +6,7 @@ import { useCouncilStore } from '../store/councilsStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil } from '../../domain/entities/ICouncil'
+import { useCallback } from 'react'
 
 export const useCouncilsForm = (
   initialValues: ICouncil,
@@ -18,46 +19,7 @@ export const useCouncilsForm = (
     date: yup.date().required('La fecha es requerida'),
   })
 
-  const formik = useFormik<ICouncil>({
-    enableReinitialize: true,
-    initialValues: {
-      name: initialValues.name || '',
-      date: initialValues.date || null,
-      type: initialValues.type || '',
-      isActive: initialValues.isActive || false,
-      isArchived: initialValues.isArchived || false,
-      moduleId: initialValues.moduleId || 0,
-      userId: initialValues.userId || 0,
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      if (!initialValues.id) {
-        await handleCreateCouncil(values)
-        onClose()
-        return
-      }
-
-      const editedFields: { [key: string]: unknown } = {}
-
-      Object.keys(initialValues).forEach((key) => {
-        if (
-          initialValues[key as keyof ICouncil] !== values[key as keyof ICouncil]
-        ) {
-          editedFields[key] = values[key as keyof ICouncil]
-        }
-      })
-
-      if (Object.keys(editedFields).length === 0) {
-        onClose()
-        return
-      }
-
-      await handleUpdateCouncil(initialValues.id, editedFields)
-      onClose()
-    },
-  })
-
-  const handleCreateCouncil = async (values: ICouncil) => {
+  const handleCreateCouncil = useCallback(async (values: ICouncil) => {
     try {
       const result = await CouncilsUseCasesImpl.getInstance().create(values)
 
@@ -73,7 +35,7 @@ export const useCouncilsForm = (
     } catch (error) {
       toast.error('Ocurrió un error al crear el consejo')
     }
-  }
+  }, [])
 
   const handleUpdateCouncil = async (
     id: number,
@@ -107,6 +69,49 @@ export const useCouncilsForm = (
       toast.error('Ocurrió un error al actualizar el consejo')
     }
   }
+
+  const formik = useFormik<ICouncil>({
+    enableReinitialize: true,
+    initialValues: {
+      name: initialValues.name || '',
+      date: initialValues.date || null,
+      type: initialValues.type || '',
+      isActive: initialValues.isActive || false,
+      isArchived: initialValues.isArchived || false,
+      moduleId: initialValues.moduleId || 0,
+      userId: initialValues.userId || 0,
+    },
+    validationSchema,
+    onSubmit: useCallback(
+      async (values) => {
+        if (!initialValues.id) {
+          await handleCreateCouncil(values)
+          onClose()
+          return
+        }
+
+        const editedFields: { [key: string]: unknown } = {}
+
+        Object.keys(initialValues).forEach((key) => {
+          if (
+            initialValues[key as keyof ICouncil] !==
+            values[key as keyof ICouncil]
+          ) {
+            editedFields[key] = values[key as keyof ICouncil]
+          }
+        })
+
+        if (Object.keys(editedFields).length === 0) {
+          onClose()
+          return
+        }
+
+        await handleUpdateCouncil(initialValues.id, editedFields)
+        onClose()
+      },
+      [initialValues, onClose, handleCreateCouncil, handleUpdateCouncil],
+    ),
+  })
 
   return { formik, councils, setCouncils }
 }
