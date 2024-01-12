@@ -8,8 +8,6 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-  Chip,
-  ChipProps,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -17,73 +15,29 @@ import {
   Button,
   getKeyValue,
 } from '@nextui-org/react'
-import { Key, memo, useEffect, useState } from 'react'
+import { Key, memo, useCallback } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { useCouncilStore } from '../store/councilsStore'
 import { CouncilsForm } from './CouncilsForm'
-import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilType } from '../../domain/entities/ICouncil'
 import { DateUtils } from '../../../../shared/utils/dateUtils'
-import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { LOADER_DELAY } from '../../../../shared/constants/common'
-
-const COLUMNS = [
-  {
-    key: 'name',
-    label: 'Nombre',
-  },
-  {
-    key: 'date',
-    label: 'Fecha de ejecución',
-  },
-  {
-    key: 'type',
-    label: 'Tipo',
-  },
-  {
-    key: 'isActive',
-    label: 'Estado',
-  },
-  {
-    key: 'actions',
-    label: 'Acciones',
-  },
-]
+import { COLUMNS, resolveChipData } from './enums'
+import { ChipComponent } from '../../../../shared/components/ChipComponent'
+import { useCouncilView } from '../hooks/useCouncilView'
 
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
-  const { modules } = useModulesStore()
-  const { councils, setCouncils } = useCouncilStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const { addLoaderItem, removeLoaderItem } = useLoaderStore()
-
-  const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
-    null,
-  )
-  const moduleIdentifier =
-    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
-
-  const resolveChipData = (isActive: boolean, isArchived: boolean) => {
-    if (isArchived) {
-      return {
-        color: 'danger',
-        label: 'Archivado',
-      }
-    }
-    if (isActive) {
-      return {
-        color: 'success',
-        label: 'Activado',
-      }
-    }
-
-    return {
-      color: 'warning',
-      label: 'Pausado',
-    }
-  }
+  const {
+    councils,
+    selectedCareer,
+    moduleIdentifier,
+    updateCouncils,
+    handleSelectedCouncil,
+  } = useCouncilView({
+    moduleId,
+  })
 
   const resolveRowComponentByColumnKey = (
     item: CouncilModel,
@@ -91,23 +45,13 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   ) => {
     switch (columnKey) {
       case 'isActive':
+        const chipData = resolveChipData(item.isActive, item.isArchived)
         return (
           <TableCell>
-            {
-              <Chip
-                className="capitalize"
-                color={
-                  resolveChipData(item.isActive, item.isArchived)
-                    .color as ChipProps['color']
-                }
-                size="sm"
-                variant="flat"
-              >
-                {resolveChipData(item.isActive, item.isArchived).label}
-              </Chip>
-            }
+            <ChipComponent {...chipData} />
           </TableCell>
         )
+
       case 'actions':
         return (
           <TableCell>
@@ -120,14 +64,24 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
               <DropdownMenu aria-label="Static Actions">
                 <DropdownItem
+                  key="see-attendees"
+                  onPress={() => {
+                    onOpen()
+                  }}
+                >
+                  Ver asistentes
+                </DropdownItem>
+
+                <DropdownItem
                   key="edit"
                   onPress={() => {
-                    setSelectedCareer(item)
+                    handleSelectedCouncil(item)
                     onOpen()
                   }}
                 >
                   Editar
                 </DropdownItem>
+
                 <DropdownItem
                   key={item.isActive ? 'desactivate' : 'activate'}
                   className={item.isActive ? 'text-danger' : 'text-success'}
@@ -137,20 +91,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
                       .update(item.id!, {
                         isActive: !item.isActive,
                       })
-                      .then((_) =>
-                        setCouncils(
-                          councils!.map((career) => {
-                            if (career.id === item.id) {
-                              return new CouncilModel({
-                                ...career,
-                                isActive: !item.isActive,
-                              })
-                            }
-
-                            return career
-                          }),
-                        ),
-                      )
+                      .then((_) => updateCouncils(item))
                       .catch((error) => {
                         toast.error(error.message)
                       })
@@ -164,22 +105,17 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
         )
 
       case 'type':
+        const color =
+          item.type === CouncilType.ORDINARY ? 'secondary' : 'primary'
+        const label =
+          item.type === CouncilType.ORDINARY ? 'Ordinario' : 'Extraordinario'
+
         return (
           <TableCell>
-            <Chip
-              className="capitalize"
-              color={
-                item.type === CouncilType.ORDINARY ? 'secondary' : 'primary'
-              }
-              size="sm"
-              variant="flat"
-            >
-              {item.type === CouncilType.ORDINARY
-                ? 'Ordinario'
-                : 'Extraordinario'}
-            </Chip>
+            <ChipComponent color={color} label={label} />
           </TableCell>
         )
+
       case 'date':
         return (
           <TableCell>{DateUtils.parseStringDateToISO(item.date)}</TableCell>
@@ -189,41 +125,15 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
     }
   }
 
-  useEffect(() => {
-    let isMounted = true
-
-    const fetchingCouncils = async () => {
-      if (!isMounted) return
-
-      addLoaderItem('council')
-      const result =
-        await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
-          moduleIdentifier,
-        )
-
-      if (result.councils) {
-        setCouncils(result.councils)
-      }
-
-      setTimeout(() => {
-        removeLoaderItem('council')
-      }, LOADER_DELAY)
-    }
-
-    fetchingCouncils()
-
-    return () => {
-      isMounted = false
-    }
+  const handleOpenCreateModal = useCallback(() => {
+    handleSelectedCouncil(null)
+    onOpen()
   }, [])
 
   return (
     <div key={moduleId}>
       <Button
-        onPress={() => {
-          setSelectedCareer(null)
-          onOpen()
-        }}
+        onPress={handleOpenCreateModal}
         radius="sm"
         className="w-40 h-12 ml-6 border-2  bg-red-600 text-white"
       >

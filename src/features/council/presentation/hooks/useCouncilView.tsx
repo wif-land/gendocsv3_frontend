@@ -1,0 +1,81 @@
+import { useCallback, useEffect, useState } from 'react'
+import { CouncilModel } from '../../data/models/CouncilModel'
+import { useCouncilStore } from '../store/councilsStore'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { LOADER_DELAY } from '../../../../shared/constants/common'
+
+export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
+  const { modules } = useModulesStore()
+  const { councils, setCouncils } = useCouncilStore()
+  const { addLoaderItem, removeLoaderItem } = useLoaderStore()
+
+  const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
+    null,
+  )
+
+  const moduleIdentifier =
+    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
+
+  const handleSelectedCouncil = useCallback(
+    (item: CouncilModel | null) => {
+      setSelectedCareer(item)
+    },
+    [councils],
+  )
+  const updateCouncils = useCallback(
+    (item: CouncilModel) => {
+      setCouncils(
+        councils!.map((career) => {
+          if (career.id === item.id) {
+            return new CouncilModel({
+              ...career,
+              isActive: !item.isActive,
+            })
+          }
+
+          return career
+        }),
+      )
+    },
+    [councils],
+  )
+
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchingCouncils = async () => {
+      if (!isMounted) return
+
+      addLoaderItem('council')
+      const result =
+        await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
+          moduleIdentifier,
+        )
+
+      if (result.councils) {
+        setCouncils(result.councils)
+      }
+
+      setTimeout(() => {
+        removeLoaderItem('council')
+      }, LOADER_DELAY)
+    }
+
+    fetchingCouncils()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  return {
+    councils,
+    selectedCareer,
+    moduleIdentifier,
+    handleSelectedCouncil,
+    setCouncils,
+    updateCouncils,
+  }
+}
