@@ -13,6 +13,7 @@ export const ModulesProvider = ({
 
   useEffect(() => {
     let isMounted = true
+
     const modulesFetching = async () => {
       try {
         if (currentModules?.length) return
@@ -24,10 +25,9 @@ export const ModulesProvider = ({
         if (isMounted) {
           setModules(modules.modules)
         }
-      } catch (error) {
-        console.log(error)
-      }
+      } catch (error) {}
     }
+
     modulesFetching()
     return () => {
       isMounted = false

@@ -27,6 +27,8 @@ import { CouncilsForm } from './CouncilsForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilType } from '../../domain/entities/ICouncil'
 import { DateUtils } from '../../../../shared/utils/dateUtils'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { LOADER_DELAY } from '../../../../shared/constants/common'
 
 const COLUMNS = [
   {
@@ -55,6 +57,8 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const { modules } = useModulesStore()
   const { councils, setCouncils } = useCouncilStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { addLoaderItem, removeLoaderItem } = useLoaderStore()
+
   const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
     null,
   )
@@ -190,6 +194,8 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
     const fetchingCouncils = async () => {
       if (!isMounted) return
+
+      addLoaderItem('council')
       const result =
         await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
           moduleIdentifier,
@@ -198,6 +204,10 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
       if (result.councils) {
         setCouncils(result.councils)
       }
+
+      setTimeout(() => {
+        removeLoaderItem('council')
+      }, LOADER_DELAY)
     }
 
     fetchingCouncils()
@@ -208,7 +218,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   }, [])
 
   return (
-    <div>
+    <div key={moduleId}>
       <Button
         onPress={() => {
           setSelectedCareer(null)

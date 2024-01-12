@@ -54,6 +54,7 @@ const CareerModule = () => {
 
               return (
                 <ListboxItem
+                  aria-label="Submodule"
                   key={submodule.name}
                   onClick={() => onHandleClick(module.code, submodule.name)}
                   className={
@@ -64,7 +65,6 @@ const CareerModule = () => {
                       : 'text-black'
                   }
                 >
-                  z
                   <IconComponent className="inline-block mr-2" />
                   {submodule.name}
                 </ListboxItem>
