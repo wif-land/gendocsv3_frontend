@@ -1,4 +1,5 @@
 'use client'
+
 import { Button } from '@nextui-org/react'
 
 interface IProps {
@@ -7,16 +8,16 @@ interface IProps {
   color?: string
   size?: 'sm' | 'md' | 'lg'
   className?: string
-  onclick?: () => void
+  onClick?: () => void
 }
 
 export const ButtonComponent = ({
-  label = 'Aceptar',
-  disabled = true,
-  color = 'bg-red-800',
-  size = 'sm',
+  label,
+  color,
+  size,
   className,
-  onclick,
+  disabled,
+  onClick,
 }: IProps) => {
   if (disabled) {
     return (
@@ -28,7 +29,7 @@ export const ButtonComponent = ({
 
   return (
     <Button
-      onPress={onclick}
+      onClick={onClick}
       radius="sm"
       className={`w-40 h-12 ml-6 border-2  bg-red-600 text-white ${className}`}
     >

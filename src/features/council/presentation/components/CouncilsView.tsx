@@ -20,7 +20,6 @@ import { MdMoreVert } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { CouncilsForm } from './CouncilsForm'
 import { CouncilType } from '../../domain/entities/ICouncil'
 import { DateUtils } from '../../../../shared/utils/dateUtils'
 import { COLUMNS, resolveChipData } from './enums'
@@ -28,6 +27,7 @@ import { ChipComponent } from '../../../../shared/components/ChipComponent'
 import { useCouncilView } from '../hooks/useCouncilView'
 import { ButtonComponent } from '../../../../shared/components/Button'
 import { FormActionsProps } from '../../../../shared/constants/common'
+import { CouncilsForm } from './CouncilsForm'
 
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -49,14 +49,14 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
       {
         label: 'Ver asistentes',
         key: 'see-attendees',
-        onPress: () => {
+        onClick: () => {
           onOpen()
         },
       },
       {
         label: 'Editar',
         key: 'edit',
-        onPress: () => {
+        onClick: () => {
           handleSelectedCouncil(item)
           onOpen()
         },
@@ -141,7 +141,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
   return (
     <div key={moduleId}>
-      <ButtonComponent label="Crear consejo" onclick={handleOpenCreateModal} />
+      <ButtonComponent label="Crear consejo" onClick={handleOpenCreateModal} />
 
       <div className="m-6">
         <Table aria-label="Example table with dynamic content">
