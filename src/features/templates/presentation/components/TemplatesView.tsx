@@ -25,11 +25,14 @@ import useModulesStore from '../../../../shared/store/modulesStore'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
 import { toast } from 'react-toastify'
+import { ProcessModel } from '@/features/processes/data/models/ProcessesModel'
+
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',
   paused: 'danger',
 }
+
 const COLUMNS = [
   {
     key: 'name',
@@ -52,17 +55,16 @@ const COLUMNS = [
     label: 'Acciones',
   },
 ]
-const ProcessesView = ({ moduleId }: { moduleId: string }) => {
+const ProcessesView = ({ processId }: { processId: string }) => {
   const [processUpdate, setProcessUpdate] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const { modules } = useModulesStore()
   const { processes, setProcesses } = useProcessStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [selectedProcess, setSelectedProcess] = useState<TemplateModel | null>(
+  const [ templates, setTemplates ] = useState<TemplateModel[]>([])
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateModel | null>(
     null,
   )
-  const moduleIdentifier =
-    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
   const resolveRowComponentByColumnKey = (
     item: TemplateModel,
@@ -98,7 +100,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
                 <DropdownItem
                   key="edit"
                   onPress={() => {
-                    setSelectedProcess(item)
+                    setSelectedTemplate(item)
                     onOpen()
                   }}
                 >
@@ -114,17 +116,17 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
                         isActive: !item.isActive,
                       })
                       .then((_) => {
-                        setProcesses(
-                          processes!.map((process) => {
-                            if (process.id === item.id) {
-                              return new TemplateModel({
-                                ...process,
-                                isActive: !item.isActive,
-                              })
-                            }
-                            return process
-                          }),
-                        )
+                        // setProcesses(
+                        //   processes!.map((process) => {
+                        //     if (process.id === item.id) {
+                        //       return new TemplateModel({
+                        //         ...process,
+                        //         isActive: !item.isActive,
+                        //       })
+                        //     }
+                        //     return process
+                        //   }),
+                        // )
                         // Establece el estado para actualizar la lista de procesos
                         setProcessUpdate(true)
                       })
@@ -147,40 +149,31 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
   useEffect(() => {
     let isMounted = true
 
-    const fetchingProcesses = async () => {
-      if (!isMounted) return
-      setIsFetching(true)
-      const result =
-        await TemplatesUseCasesImpl.getInstance().getAllProcessesByModuleId(
-          moduleIdentifier,
-        )
-
-      if (result.processes) {
-        setProcesses(result.processes)
-        setIsFetching(false)
+    const fetchingTemplates =  () => {
+      const process: ProcessModel | undefined = processes?.find((process) => process.id === +processId)
+      if (process) {
+        setTemplates(process.templateProcesses as TemplateModel[])
       }
     }
-
-    fetchingProcesses()
-
+    fetchingTemplates()
     setProcessUpdate(false)
 
     return () => {
       isMounted = false
     }
-  }, [moduleId, processUpdate])
+  }, [ processes , processUpdate])
 
   return (
     <div>
       <Button
         onPress={() => {
-          setSelectedProcess(null)
+          setSelectedTemplate(null)
           onOpen()
         }}
         radius="sm"
         className="w-40 h-12 ml-6 border-2  bg-red-600 text-white"
       >
-        Crear proceso
+        Agregar plantilla
       </Button>
 
       <div className="m-6">
@@ -194,9 +187,9 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
             emptyContent={'No existen datos sobre procesos'}
             isLoading={isFetching}
           >
-            {processes!.map((item) => (
+            {templates!.map((item) => (
               <TableRow key={item.id}>
-                {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
+                {(columnKey) => resolveRowComponentByColumnKey(item, columnKey  )}
               </TableRow>
             ))}
           </TableBody>
@@ -207,10 +200,10 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         values={
-          selectedProcess
-            ? selectedProcess
+          selectedTemplate
+            ? selectedTemplate
             : TemplateModel.fromJson({
-                moduleId: moduleIdentifier,
+                processId: +processId,
               })
         }
       />

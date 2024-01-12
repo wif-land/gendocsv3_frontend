@@ -1,6 +1,7 @@
 import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { ProcessModel, TemplateModel } from '../../data/models/TemplatesModel'
+import { TemplateModel } from '../../data/models/TemplatesModel'
+import { ProcessModel } from '@/features/processes/data/models/ProcessesModel'
 
 interface StoreState {
   processes: ProcessModel[]
