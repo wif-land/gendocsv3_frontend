@@ -51,6 +51,7 @@ export const useCouncilsForm = (
         onClose()
         return
       }
+
       await handleUpdateCouncil(initialValues.id, editedFields)
       onClose()
     },

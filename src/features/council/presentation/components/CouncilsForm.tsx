@@ -102,14 +102,13 @@ export const CouncilsForm = ({
                       type="date"
                       label="Fecha de ejecución"
                       variant="underlined"
-                      placeholder="Presione para seleccionar una fecha"
                       className={`font-normal ${
                         !formik.values.date && 'text-muted-foreground'
                       }`}
                       value={
                         formik.values.date
                           ? DateUtils.parseStringDateToISO(formik.values.date)
-                          : undefined
+                          : ''
                       }
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}

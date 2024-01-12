@@ -130,7 +130,7 @@ export class AxiosClient {
   ): Promise<AxiosClientResponse<T>> {
     try {
       const response = await this.getInstance().get(path, options)
-      console.log({ response })
+      console.log({ response, path })
       const { data, status } = response
 
       if (status === HTTP_STATUS_CODES.OK) {
