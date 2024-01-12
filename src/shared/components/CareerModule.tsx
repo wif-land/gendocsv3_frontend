@@ -21,8 +21,6 @@ const CareerModule = () => {
     let isMounted = true
 
     if (user && user.accessModules) {
-      if (user.accessModules.length !== 0) return
-
       if (isMounted) {
         setAccessModules(user.accessModules)
       }

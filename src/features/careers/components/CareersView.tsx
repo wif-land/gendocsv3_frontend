@@ -144,7 +144,7 @@ const CareersView = () => {
   }, [])
 
   return (
-    <div className='m-2'>
+    <div className="m-2">
       <Button
         onPress={() => {
           setSelectedCareer(null)
