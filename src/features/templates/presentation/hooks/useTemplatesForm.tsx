@@ -3,12 +3,12 @@ import { toast } from 'react-toastify'
 import { useFormik } from 'formik'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useProcessStore } from '../store/processesStore'
-import { IProcess } from '../../domain/entities/ITemplate'
+import { ITemplate } from '../../domain/entities/ITemplate'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
-import { ProcessModel } from '../../data/models/TemplatesModel'
+import { TemplateModel } from '../../data/models/TemplatesModel'
 
 export const useProcessesForm = (
-  initialValues: IProcess,
+  initialValues: ITemplate,
   onClose: () => void,
 ) => {
   const { processes, setProcesses } = useProcessStore()
@@ -17,18 +17,20 @@ export const useProcessesForm = (
     name: yup.string().required('El nombre es requerido'),
   })
 
-  const formik = useFormik<IProcess>({
+  const formik = useFormik<ITemplate>({
     enableReinitialize: true,
     initialValues: {
       name: initialValues.name || '',
       isActive: initialValues.isActive || false,
-      moduleId: initialValues.moduleId || 0,
+      hasStudent: initialValues.hasStudent || false,
+      hasFunctionary: initialValues.hasFunctionary || false,
+      processId: initialValues.processId || 0,
       userId: initialValues.userId || 0,
     },
     validationSchema,
     onSubmit: async (values) => {
       if (!initialValues.id) {
-        await handleCreateProcess(values)
+        await handleCreateTemplate(values)
         onClose()
         return
       }
@@ -37,9 +39,10 @@ export const useProcessesForm = (
 
       Object.keys(initialValues).forEach((key) => {
         if (
-          initialValues[key as keyof IProcess] !== values[key as keyof IProcess]
+          initialValues[key as keyof ITemplate] !==
+          values[key as keyof ITemplate]
         ) {
-          editedFields[key] = values[key as keyof IProcess]
+          editedFields[key] = values[key as keyof ITemplate]
         }
       })
 
@@ -52,13 +55,16 @@ export const useProcessesForm = (
     },
   })
 
-  const handleCreateProcess = async (values: IProcess) => {
+  const handleCreateTemplate = async (values: ITemplate) => {
     try {
       const result = await TemplatesUseCasesImpl.getInstance().create(values)
+      const processToChange = processes?.find(
+        (process) => process.id === values.processId,
+      )
 
-      if (result.process) {
-        setProcesses([...processes, result.process])
-        toast.success('Consejo creado exitosamente')
+      if (result.template) {
+        setProcesses([...processes, result.template])
+        toast.success('Plantilla creado exitosamente')
         formik.resetForm()
       } else {
         toast.error('Error al crear el consejo', {
@@ -72,7 +78,7 @@ export const useProcessesForm = (
 
   const handleUpdateProcess = async (
     id: number,
-    editedFields: Partial<IProcess>,
+    editedFields: Partial<ITemplate>,
   ) => {
     try {
       const { status } = await TemplatesUseCasesImpl.getInstance().update(
@@ -84,7 +90,7 @@ export const useProcessesForm = (
         setProcesses(
           processes!.map((process) =>
             process.id === id
-              ? new ProcessModel({
+              ? new TemplateModel({
                   ...process,
                   ...editedFields,
                 })

@@ -1,5 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation'
+import TemplateView from '../../../features/templates/presentation/components/TemplatesView'
 
 const Page = () => {
   const { subModuleName, id } = useParams()
@@ -7,7 +8,7 @@ const Page = () => {
   const resolveViewBySubModule = () => {
     switch (subModuleName as string) {
       case 'procesos':
-        return <p>soy un proceso dinámico con id {id}</p>
+        return <TemplateView id={id as string} />
 
       default:
         return <div>DEFAULT</div>

@@ -20,7 +20,7 @@ import {
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { useProcessStore } from '../store/processesStore'
-import { ProcessesForm } from './ProcessesForm'
+import { ProcessesForm } from './TemplatesForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'

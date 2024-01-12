@@ -10,25 +10,27 @@ import {
   Switch,
 } from '@nextui-org/react'
 import { useEffect } from 'react'
-import { useProcessesForm } from '../hooks/useProcessesForm'
+import { useProcessesForm } from '../hooks/useTemplatesForm'
 import { useUserStore } from '../../../../shared/store/userProfileStore'
-import { IProcess } from '../../domain/entities/ITemplate'
+import { ITemplate } from '../../domain/entities/ITemplate'
 
 interface ProcessesFormProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
-  values?: IProcess
+  values?: ITemplate
   isSubmitting?: boolean
+  processId?: number
 }
 
 export const ProcessesForm = ({
   isOpen,
   onOpenChange,
   values,
+  processId,
 }: ProcessesFormProps) => {
   const { user } = useUserStore()
   const isAddMode = !values?.id
-  const { formik } = useProcessesForm(values ?? ({} as IProcess), () =>
+  const { formik } = useProcessesForm(values ?? ({} as ITemplate), () =>
     onOpenChange(false),
   )
 
