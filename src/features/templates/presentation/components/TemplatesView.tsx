@@ -22,10 +22,9 @@ import { MdMoreVert } from 'react-icons/md'
 import { useProcessStore } from '../store/processesStore'
 import { ProcessesForm } from './ProcessesForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
-import { ProcessModel } from '../../data/models/ProcessesModel'
-import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
+import { TemplateModel } from '../../data/models/TemplatesModel'
+import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',
@@ -54,20 +53,19 @@ const COLUMNS = [
   },
 ]
 const ProcessesView = ({ moduleId }: { moduleId: string }) => {
-  const router = useRouter()
   const [processUpdate, setProcessUpdate] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const { modules } = useModulesStore()
   const { processes, setProcesses } = useProcessStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [selectedProcess, setSelectedProcess] = useState<ProcessModel | null>(
+  const [selectedProcess, setSelectedProcess] = useState<TemplateModel | null>(
     null,
   )
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
   const resolveRowComponentByColumnKey = (
-    item: ProcessModel,
+    item: TemplateModel,
     columnKey: Key,
   ) => {
     switch (columnKey) {
@@ -98,13 +96,6 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
 
               <DropdownMenu aria-label="Static Actions">
                 <DropdownItem
-                  onClick={() => {
-                    router.push(`procesos/${item.id as unknown as string}`)
-                  }}
-                >
-                  Plantillas
-                </DropdownItem>
-                <DropdownItem
                   key="edit"
                   onPress={() => {
                     setSelectedProcess(item)
@@ -118,7 +109,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
                   onClick={() => {
-                    ProcessesUseCasesImpl.getInstance()
+                    TemplatesUseCasesImpl.getInstance()
                       .update(item.id!, {
                         isActive: !item.isActive,
                       })
@@ -126,7 +117,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
                         setProcesses(
                           processes!.map((process) => {
                             if (process.id === item.id) {
-                              return new ProcessModel({
+                              return new TemplateModel({
                                 ...process,
                                 isActive: !item.isActive,
                               })
@@ -134,6 +125,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
                             return process
                           }),
                         )
+                        // Establece el estado para actualizar la lista de procesos
                         setProcessUpdate(true)
                       })
                       .catch((error) => {
@@ -159,7 +151,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
       if (!isMounted) return
       setIsFetching(true)
       const result =
-        await ProcessesUseCasesImpl.getInstance().getAllProcessesByModuleId(
+        await TemplatesUseCasesImpl.getInstance().getAllProcessesByModuleId(
           moduleIdentifier,
         )
 
@@ -217,7 +209,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
         values={
           selectedProcess
             ? selectedProcess
-            : ProcessModel.fromJson({
+            : TemplateModel.fromJson({
                 moduleId: moduleIdentifier,
               })
         }
