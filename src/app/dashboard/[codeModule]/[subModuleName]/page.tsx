@@ -1,4 +1,5 @@
 'use client'
+
 import { useParams } from 'next/navigation'
 import UsersView from '../../../../features/modules/components/users-view'
 import CareersView from '../../../../features/careers/components/CareersView'
@@ -12,26 +13,25 @@ const Page = () => {
 
   const route = `${codeModule}/${subModuleName}`
 
-  const resolveViewByRoute = (route: string) => {
-    switch (route) {
-      case 'admin/usuarios':
-        return <UsersView />
-      case 'admin/estudiantes':
-        return <StudentsView />
-      case 'admin/carreras':
-        return <CareersView />
-      case 'admin/funcionarios':
-        return <FunctionaryView />
-      case RegExp('procesos').test(route) ? route : '':
-        return <ProcessView moduleId={codeModule as string} />
-      case RegExp('consejos').test(route) ? route : '':
-        return <CouncilsView moduleId={codeModule as string} />
-      default:
-        return <div>DEFAULT</div>
-    }
+  const routeToComponent = {
+    ['admin/usuarios']: <UsersView />,
+    ['admin/estudiantes']: <StudentsView />,
+    ['admin/carreras']: <CareersView />,
+    ['admin/funcionarios']: <FunctionaryView />,
+    procesos: <ProcessView moduleId={codeModule as string} />,
+    consejos: <CouncilsView moduleId={codeModule as string} />,
   }
 
-  return resolveViewByRoute(route)
+  const defaultComponent = <div>DEFAULT</div>
+
+  const matchedRoute = Object.keys(routeToComponent).find((key) =>
+    RegExp(key).test(route),
+  )
+
+  return (
+    routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
+    defaultComponent
+  )
 }
 
 export default Page

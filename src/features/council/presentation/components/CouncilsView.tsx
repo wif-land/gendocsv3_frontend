@@ -17,7 +17,7 @@ import {
   Button,
   getKeyValue,
 } from '@nextui-org/react'
-import { Key, useEffect, useState } from 'react'
+import { Key, memo, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { CouncilModel } from '../../data/models/CouncilModel'
@@ -27,6 +27,8 @@ import { CouncilsForm } from './CouncilsForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilType } from '../../domain/entities/ICouncil'
 import { DateUtils } from '../../../../shared/utils/dateUtils'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { LOADER_DELAY } from '../../../../shared/constants/common'
 
 const COLUMNS = [
   {
@@ -52,10 +54,11 @@ const COLUMNS = [
 ]
 
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
-  const [isFetching, setIsFetching] = useState(false)
   const { modules } = useModulesStore()
   const { councils, setCouncils } = useCouncilStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { addLoaderItem, removeLoaderItem } = useLoaderStore()
+
   const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
     null,
   )
@@ -191,7 +194,8 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
     const fetchingCouncils = async () => {
       if (!isMounted) return
-      setIsFetching(true)
+
+      addLoaderItem('council')
       const result =
         await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
           moduleIdentifier,
@@ -199,8 +203,11 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
       if (result.councils) {
         setCouncils(result.councils)
-        setIsFetching(false)
       }
+
+      setTimeout(() => {
+        removeLoaderItem('council')
+      }, LOADER_DELAY)
     }
 
     fetchingCouncils()
@@ -208,10 +215,10 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
     return () => {
       isMounted = false
     }
-  }, [moduleId])
+  }, [])
 
   return (
-    <div>
+    <div key={moduleId}>
       <Button
         onPress={() => {
           setSelectedCareer(null)
@@ -230,10 +237,8 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
               <TableColumn key={column.key}>{column.label}</TableColumn>
             )}
           </TableHeader>
-          <TableBody
-            emptyContent={'No existen datos sobre consejos'}
-            isLoading={isFetching}
-          >
+
+          <TableBody emptyContent={'No existen datos sobre consejos'}>
             {councils!.map((item) => (
               <TableRow key={item.id}>
                 {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
@@ -258,4 +263,4 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   )
 }
 
-export default CouncilsView
+export default memo(CouncilsView)
