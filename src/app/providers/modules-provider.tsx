@@ -9,14 +9,18 @@ export const ModulesProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const { setModules } = useModulesStore()
+  const { setModules, modules: currentModules } = useModulesStore()
 
   useEffect(() => {
     let isMounted = true
     const modulesFetching = async () => {
       try {
+        if (currentModules?.length) return
+
         const modules = await fetchModules()
-        if (!modules.modules) return console.log('No hay modulos')
+
+        if (!modules.modules) return
+
         if (isMounted) {
           setModules(modules.modules)
         }
