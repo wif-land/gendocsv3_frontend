@@ -20,7 +20,7 @@ import {
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { useProcessStore } from '../store/processesStore'
-import { ProcessesForm } from './TemplatesForm'
+import { TemplatesForm } from './TemplatesForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
@@ -203,7 +203,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
         </Table>
       </div>
 
-      <ProcessesForm
+      <TemplatesForm
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         values={

@@ -2,16 +2,15 @@ import * as yup from 'yup'
 import { toast } from 'react-toastify'
 import { useFormik } from 'formik'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { useProcessStore } from '../store/processesStore'
+import { useProcessStore } from '../../../processes/presentation/store/processesStore'
 import { ITemplate } from '../../domain/entities/ITemplate'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
-import { TemplateModel } from '../../data/models/TemplatesModel'
 
-export const useProcessesForm = (
+export const useTemplatesForm = (
   initialValues: ITemplate,
   onClose: () => void,
 ) => {
-  const { processes, setProcesses } = useProcessStore()
+  const { addTemplateToProcess, updateTemplate } = useProcessStore()
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
@@ -50,7 +49,7 @@ export const useProcessesForm = (
         onClose()
         return
       }
-      await handleUpdateProcess(initialValues.id, editedFields)
+      await handleUpdateTemplate(initialValues, editedFields)
       onClose()
     },
   })
@@ -58,56 +57,48 @@ export const useProcessesForm = (
   const handleCreateTemplate = async (values: ITemplate) => {
     try {
       const result = await TemplatesUseCasesImpl.getInstance().create(values)
-      const processToChange = processes?.find(
-        (process) => process.id === values.processId,
-      )
 
       if (result.template) {
-        setProcesses([...processes, result.template])
+        addTemplateToProcess(result.template, values.processId as number)
         toast.success('Plantilla creado exitosamente')
         formik.resetForm()
       } else {
-        toast.error('Error al crear el consejo', {
+        toast.error('Error al crear el plantilla', {
           closeButton: false,
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al crear el consejo')
+      toast.error('Ocurrió un error al crear el plantilla')
     }
   }
 
-  const handleUpdateProcess = async (
-    id: number,
+  const handleUpdateTemplate = async (
+    initialValues: ITemplate,
     editedFields: Partial<ITemplate>,
   ) => {
     try {
       const { status } = await TemplatesUseCasesImpl.getInstance().update(
-        id,
+        initialValues.id as number,
         editedFields,
       )
 
       if (status === HTTP_STATUS_CODES.OK) {
-        setProcesses(
-          processes!.map((process) =>
-            process.id === id
-              ? new TemplateModel({
-                  ...process,
-                  ...editedFields,
-                })
-              : process,
-          ),
+        updateTemplate(
+          initialValues.processId as number,
+          initialValues.id as number,
+          editedFields,
         )
-        toast.success('Consejo actualizado exitosamente')
+        toast.success('Planitlla actualizado exitosamente')
         formik.resetForm()
       } else {
-        toast.error('Error al actualizar el consejo', {
+        toast.error('Error al actualizar el plantilla', {
           closeButton: false,
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al actualizar el consejo')
+      toast.error('Ocurrió un error al actualizar el plantilla')
     }
   }
 
-  return { formik, processes, setProcesses }
+  return { formik }
 }

@@ -10,7 +10,7 @@ import {
   Switch,
 } from '@nextui-org/react'
 import { useEffect } from 'react'
-import { useProcessesForm } from '../hooks/useTemplatesForm'
+import { useTemplatesForm } from '../hooks/useTemplatesForm'
 import { useUserStore } from '../../../../shared/store/userProfileStore'
 import { ITemplate } from '../../domain/entities/ITemplate'
 
@@ -22,21 +22,20 @@ interface ProcessesFormProps {
   processId?: number
 }
 
-export const ProcessesForm = ({
+export const TemplatesForm = ({
   isOpen,
   onOpenChange,
   values,
-  processId,
 }: ProcessesFormProps) => {
   const { user } = useUserStore()
   const isAddMode = !values?.id
-  const { formik } = useProcessesForm(values ?? ({} as ITemplate), () =>
+  const { formik } = useTemplatesForm(values ?? ({} as ITemplate), () =>
     onOpenChange(false),
   )
 
   useEffect(() => {
     formik.setFieldValue('userId', user?.id)
-    formik.setFieldValue('moduleId', values?.moduleId)
+    formik.setFieldValue('processId', values?.processId)
 
     if (isAddMode) return
     formik.setValues(values)
@@ -55,7 +54,7 @@ export const ProcessesForm = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              {isAddMode ? 'Crear proceso' : 'Editar proceso'}
+              {isAddMode ? 'Crear plantilla' : 'Editar plantilla'}
             </ModalHeader>
 
             <form onSubmit={formik.handleSubmit}>
@@ -78,7 +77,6 @@ export const ProcessesForm = ({
                       : ''
                   }
                 />
-
                 {isAddMode && (
                   <Switch
                     id="isActive"
@@ -90,6 +88,32 @@ export const ProcessesForm = ({
                     }
                   >
                     Activo
+                  </Switch>
+                )}
+                {isAddMode && (
+                  <Switch
+                    id="hasStudent"
+                    name="hasStudent"
+                    aria-label="Activo"
+                    isSelected={formik.values.hasStudent}
+                    onValueChange={(value) =>
+                      formik.setFieldValue('hasStudent', value)
+                    }
+                  >
+                    Participan estudiantes
+                  </Switch>
+                )}
+                {isAddMode && (
+                  <Switch
+                    id="hasFunctionary"
+                    name="hasFunctionary"
+                    aria-label="Activo"
+                    isSelected={formik.values.hasFunctionary}
+                    onValueChange={(value) =>
+                      formik.setFieldValue('hasFunctionary', value)
+                    }
+                  >
+                    Participan funcionarios
                   </Switch>
                 )}
               </ModalBody>

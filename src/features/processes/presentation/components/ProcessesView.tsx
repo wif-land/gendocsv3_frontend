@@ -141,7 +141,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
                       })
                   }}
                 >
-                  {item.isActive ? 'Desactivar carrera' : 'Activar carrera'}
+                  {item.isActive ? 'Desactivar proceso' : 'Activar proceso'}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>

@@ -58,15 +58,15 @@ export const useProcessesForm = (
 
       if (result.process) {
         setProcesses([...processes, result.process])
-        toast.success('Consejo creado exitosamente')
+        toast.success('Proceso creado exitosamente')
         formik.resetForm()
       } else {
-        toast.error('Error al crear el consejo', {
+        toast.error('Error al crear el proceso', {
           closeButton: false,
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al crear el consejo')
+      toast.error('Ocurrió un error al crear el proceso')
     }
   }
 
@@ -91,15 +91,15 @@ export const useProcessesForm = (
               : process,
           ),
         )
-        toast.success('Consejo actualizado exitosamente')
+        toast.success('Proceso actualizado exitosamente')
         formik.resetForm()
       } else {
-        toast.error('Error al actualizar el consejo', {
+        toast.error('Error al actualizar el proceso', {
           closeButton: false,
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al actualizar el consejo')
+      toast.error('Ocurrió un error al actualizar el proceso')
     }
   }
 
