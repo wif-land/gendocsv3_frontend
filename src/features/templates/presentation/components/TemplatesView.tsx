@@ -19,14 +19,12 @@ import {
 } from '@nextui-org/react'
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
-import { useProcessStore } from '../store/processesStore'
+import { useProcessStore } from '../../../processes/presentation/store/processesStore'
 import { TemplatesForm } from './TemplatesForm'
-import useModulesStore from '../../../../shared/store/modulesStore'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
 import { toast } from 'react-toastify'
-import { ProcessModel } from '@/features/processes/data/models/ProcessesModel'
-
+import { ProcessModel } from '../../../../features/processes/data/models/ProcessesModel'
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',
@@ -39,12 +37,12 @@ const COLUMNS = [
     label: 'Nombre',
   },
   {
-    key: 'moduleId',
-    label: 'Modulo',
+    key: 'hasStudent',
+    label: 'Tiene estudiante',
   },
   {
-    key: 'userId',
-    label: 'Usuario',
+    key: 'hasFunctionary',
+    label: 'Tiene funcionario',
   },
   {
     key: 'isActive',
@@ -56,15 +54,12 @@ const COLUMNS = [
   },
 ]
 const ProcessesView = ({ processId }: { processId: string }) => {
-  const [processUpdate, setProcessUpdate] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
-  const { modules } = useModulesStore()
-  const { processes, setProcesses } = useProcessStore()
+  const { processes } = useProcessStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [ templates, setTemplates ] = useState<TemplateModel[]>([])
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateModel | null>(
-    null,
-  )
+  const [templates, setTemplates] = useState<TemplateModel[]>([])
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<TemplateModel | null>(null)
 
   const resolveRowComponentByColumnKey = (
     item: TemplateModel,
@@ -72,16 +67,18 @@ const ProcessesView = ({ processId }: { processId: string }) => {
   ) => {
     switch (columnKey) {
       case 'isActive':
+      case 'hasStudent':
+      case 'hasFunctionary':
         return (
           <TableCell>
             {
               <Chip
                 className="capitalize"
-                color={statusColorMap[item.isActive ? 'active' : 'paused']}
+                color={statusColorMap[item[columnKey] ? 'active' : 'paused']}
                 size="sm"
                 variant="flat"
               >
-                {item.isActive ? 'Si' : 'No'}
+                {item[columnKey] ? 'Si' : 'No'}
               </Chip>
             }
           </TableCell>
@@ -111,31 +108,28 @@ const ProcessesView = ({ processId }: { processId: string }) => {
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
                   onClick={() => {
+                    setIsFetching(true) // Opcional: para mostrar animación de carga si tiene una
                     TemplatesUseCasesImpl.getInstance()
                       .update(item.id!, {
                         isActive: !item.isActive,
                       })
                       .then((_) => {
-                        // setProcesses(
-                        //   processes!.map((process) => {
-                        //     if (process.id === item.id) {
-                        //       return new TemplateModel({
-                        //         ...process,
-                        //         isActive: !item.isActive,
-                        //       })
-                        //     }
-                        //     return process
-                        //   }),
-                        // )
-                        // Establece el estado para actualizar la lista de procesos
-                        setProcessUpdate(true)
+                        useProcessStore
+                          .getState()
+                          .updateTemplate(+processId, item.id as number, {
+                            isActive: !item.isActive,
+                          })
+                        toast.success('Plantilla actualizada exitosamente')
                       })
                       .catch((error) => {
                         toast.error(error.message)
                       })
+                      .finally(() => {
+                        setIsFetching(false)
+                      })
                   }}
                 >
-                  {item.isActive ? 'Desactivar carrera' : 'Activar carrera'}
+                  {item.isActive ? 'Desactivar plantilla' : 'Activar plantilla'}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -147,21 +141,13 @@ const ProcessesView = ({ processId }: { processId: string }) => {
   }
 
   useEffect(() => {
-    let isMounted = true
-
-    const fetchingTemplates =  () => {
-      const process: ProcessModel | undefined = processes?.find((process) => process.id === +processId)
-      if (process) {
-        setTemplates(process.templateProcesses as TemplateModel[])
-      }
+    const process: ProcessModel | undefined = processes.find(
+      (p) => p.id === +processId,
+    )
+    if (process) {
+      setTemplates(process.templateProcesses as TemplateModel[])
     }
-    fetchingTemplates()
-    setProcessUpdate(false)
-
-    return () => {
-      isMounted = false
-    }
-  }, [ processes , processUpdate])
+  }, [processes, processId])
 
   return (
     <div>
@@ -189,7 +175,7 @@ const ProcessesView = ({ processId }: { processId: string }) => {
           >
             {templates!.map((item) => (
               <TableRow key={item.id}>
-                {(columnKey) => resolveRowComponentByColumnKey(item, columnKey  )}
+                {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
               </TableRow>
             ))}
           </TableBody>

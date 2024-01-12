@@ -77,45 +77,39 @@ export const TemplatesForm = ({
                       : ''
                   }
                 />
-                {isAddMode && (
-                  <Switch
-                    id="isActive"
-                    name="isActive"
-                    aria-label="Activo"
-                    isSelected={formik.values.isActive}
-                    onValueChange={(value) =>
-                      formik.setFieldValue('isActive', value)
-                    }
-                  >
-                    Activo
-                  </Switch>
-                )}
-                {isAddMode && (
-                  <Switch
-                    id="hasStudent"
-                    name="hasStudent"
-                    aria-label="Activo"
-                    isSelected={formik.values.hasStudent}
-                    onValueChange={(value) =>
-                      formik.setFieldValue('hasStudent', value)
-                    }
-                  >
-                    Participan estudiantes
-                  </Switch>
-                )}
-                {isAddMode && (
-                  <Switch
-                    id="hasFunctionary"
-                    name="hasFunctionary"
-                    aria-label="Activo"
-                    isSelected={formik.values.hasFunctionary}
-                    onValueChange={(value) =>
-                      formik.setFieldValue('hasFunctionary', value)
-                    }
-                  >
-                    Participan funcionarios
-                  </Switch>
-                )}
+                <Switch
+                  id="isActive"
+                  name="isActive"
+                  aria-label="Activo"
+                  isSelected={formik.values.isActive}
+                  onValueChange={(value) =>
+                    formik.setFieldValue('isActive', value)
+                  }
+                >
+                  Activo
+                </Switch>
+                <Switch
+                  id="hasStudent"
+                  name="hasStudent"
+                  aria-label="Activo"
+                  isSelected={formik.values.hasStudent}
+                  onValueChange={(value) =>
+                    formik.setFieldValue('hasStudent', value)
+                  }
+                >
+                  Participan estudiantes
+                </Switch>
+                <Switch
+                  id="hasFunctionary"
+                  name="hasFunctionary"
+                  aria-label="Activo"
+                  isSelected={formik.values.hasFunctionary}
+                  onValueChange={(value) =>
+                    formik.setFieldValue('hasFunctionary', value)
+                  }
+                >
+                  Participan funcionarios
+                </Switch>
               </ModalBody>
 
               <ModalFooter>

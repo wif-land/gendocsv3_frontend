@@ -27,7 +27,7 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
   }
 
   create = async (template: TemplateModel) => {
-    const result = await AxiosClient.post(API_ROUTES.PROCESSES.CREATE, template)
+    const result = await AxiosClient.post(API_ROUTES.TEMPLATES.CREATE, template)
 
     const { status, data } = result
 
@@ -42,7 +42,7 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
     const { id, ...rest } = template
 
     const result = await AxiosClient.patch(
-      API_ROUTES.PROCESSES.UPDATE.replace(':id', id?.toString() || ''),
+      API_ROUTES.TEMPLATES.UPDATE.replace(':id', id?.toString() || ''),
       rest,
     )
 

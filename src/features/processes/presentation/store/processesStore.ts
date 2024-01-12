@@ -2,6 +2,7 @@ import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { TemplateModel } from '../../../templates/data/models/TemplatesModel'
+import { ITemplate } from '../../../templates/domain/entities/ITemplate'
 
 interface StoreState {
   processes: ProcessModel[]
@@ -85,7 +86,17 @@ export const useProcessStore = create<StoreState>(
 
         const updatedTemplates = templates.map((template, index) => {
           if (index === templateIndex) {
-            return { ...template, ...updatedTemplateData }
+            const updatedTemplate = { ...template }
+            Object.keys(updatedTemplateData).forEach((key) => {
+              const keyOfTemplate = key as keyof ITemplate
+              const value = updatedTemplateData[keyOfTemplate]
+
+              if (value !== undefined) {
+                updatedTemplate[keyOfTemplate] = value
+              }
+            })
+
+            return updatedTemplate
           }
           return template
         })
