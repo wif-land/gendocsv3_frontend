@@ -1,10 +1,10 @@
 import { Listbox, ListboxItem } from '@nextui-org/react'
 import { ListboxWrapper } from './ListboxWrapper'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
 import { useUserStore } from '../store/userProfileStore'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   submoduleIcons,
   defaultIcon,
@@ -13,9 +13,9 @@ import {
 const CareerModule = () => {
   const { user } = useUserStore()
   const { accessModules, setAccessModules } = useModulesStore()
-  const [selectedItem, setSelectedItem] = useState('')
 
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     let isMounted = true
@@ -33,8 +33,6 @@ const CareerModule = () => {
 
   const onHandleClick = (moduleCode: string, submoduleName: string) => {
     const itemKey = `${moduleCode.toLowerCase()}/${submoduleName.toLowerCase()}`
-
-    setSelectedItem(itemKey)
 
     router.push(`/dashboard/${itemKey}`)
   }
@@ -59,11 +57,14 @@ const CareerModule = () => {
                   key={submodule.name}
                   onClick={() => onHandleClick(module.code, submodule.name)}
                   className={
-                    selectedItem === submodule.name
+                    pathname.includes(
+                      `${module.code.toLowerCase()}/${submodule.name.toLowerCase()}`,
+                    )
                       ? 'text-gray-400'
                       : 'text-black'
                   }
                 >
+                  z
                   <IconComponent className="inline-block mr-2" />
                   {submodule.name}
                 </ListboxItem>
