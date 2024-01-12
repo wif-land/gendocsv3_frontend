@@ -12,7 +12,7 @@ export const useCouncilsForm = (
   initialValues: ICouncil,
   onClose: () => void,
 ) => {
-  const { councils, setCouncils } = useCouncilStore()
+  const { councils, addCouncil, setCouncils } = useCouncilStore()
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
@@ -24,7 +24,7 @@ export const useCouncilsForm = (
       const result = await CouncilsUseCasesImpl.getInstance().create(values)
 
       if (result.council) {
-        setCouncils([...councils, result.council])
+        addCouncil(result.council)
         toast.success('Consejo creado exitosamente')
         formik.resetForm()
       } else {

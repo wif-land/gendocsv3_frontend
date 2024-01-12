@@ -5,6 +5,7 @@ import { CouncilModel } from '../../data/models/CouncilModel'
 interface StoreState {
   councils: CouncilModel[]
   setCouncils: (careers: CouncilModel[]) => void
+  addCouncil: (career: CouncilModel) => void
 }
 
 const STORE_NAME = 'councils-store'
@@ -15,6 +16,8 @@ export const useCouncilStore = create<StoreState>(
     (set) => ({
       councils: DEFAULT_COUNCILS,
       setCouncils: (councils) => set({ councils }),
+      addCouncil: (council: CouncilModel) =>
+        set((state) => ({ councils: [...state.councils, council] })),
     }),
     {
       name: STORE_NAME,

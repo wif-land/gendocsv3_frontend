@@ -153,14 +153,17 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
               )}
             </TableHeader>
 
-            <TableBody emptyContent={'No existen datos sobre consejos'}>
-              {councils!.map((item) => (
+            <TableBody
+              emptyContent={'No existen datos sobre consejos'}
+              items={councils}
+            >
+              {(item) => (
                 <TableRow key={item.id}>
                   {(columnKey) =>
                     resolveRowComponentByColumnKey(item, columnKey)
                   }
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         )}
