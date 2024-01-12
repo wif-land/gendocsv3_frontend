@@ -2,39 +2,37 @@
 import { Button } from '@nextui-org/react'
 
 interface IProps {
-  text?: string
-  onclick?: () => void
+  label: string
   disabled?: boolean
   color?: string
   size?: 'sm' | 'md' | 'lg'
   className?: string
+  onclick?: () => void
 }
 
-const Buttons = ({
-  text = 'Aceptar',
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onclick = () => {},
+export const ButtonComponent = ({
+  label = 'Aceptar',
   disabled = true,
   color = 'bg-red-800',
   size = 'sm',
   className,
+  onclick,
 }: IProps) => {
   if (disabled) {
     return (
       <Button className={`text-white font-semibold ${color}`} size={size}>
-        {text}
+        {label}
       </Button>
     )
   }
+
   return (
     <Button
-      className={`text-white font-semibold ${color} ${className}`}
-      onClick={onclick}
-      isDisabled
-      size={size}
+      onPress={onclick}
+      radius="sm"
+      className={`w-40 h-12 ml-6 border-2  bg-red-600 text-white ${className}`}
     >
-      {text}
+      {label}
     </Button>
   )
 }
-export default Buttons

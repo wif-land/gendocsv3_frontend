@@ -11,12 +11,12 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   const { councils, setCouncils } = useCouncilStore()
   const { addLoaderItem, removeLoaderItem } = useLoaderStore()
 
+  const moduleIdentifier =
+    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
+
   const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
     null,
   )
-
-  const moduleIdentifier =
-    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
   const handleSelectedCouncil = useCallback(
     (item: CouncilModel | null) => {
@@ -24,6 +24,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     },
     [councils],
   )
+
   const updateCouncils = useCallback(
     (item: CouncilModel) => {
       setCouncils(

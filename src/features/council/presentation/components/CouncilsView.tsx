@@ -26,6 +26,8 @@ import { DateUtils } from '../../../../shared/utils/dateUtils'
 import { COLUMNS, resolveChipData } from './enums'
 import { ChipComponent } from '../../../../shared/components/ChipComponent'
 import { useCouncilView } from '../hooks/useCouncilView'
+import { ButtonComponent } from '../../../../shared/components/Button'
+import { FormActionsProps } from '../../../../shared/constants/common'
 
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -43,6 +45,40 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
     item: CouncilModel,
     columnKey: Key,
   ) => {
+    const ACTIONS_DATA: FormActionsProps[] = [
+      {
+        label: 'Ver asistentes',
+        key: 'see-attendees',
+        onPress: () => {
+          onOpen()
+        },
+      },
+      {
+        label: 'Editar',
+        key: 'edit',
+        onPress: () => {
+          handleSelectedCouncil(item)
+          onOpen()
+        },
+      },
+      {
+        label: item.isActive ? 'Desactivar carrera' : 'Activar carrera',
+        key: item.isActive ? 'desactivate' : 'activate',
+        className: item.isActive ? 'text-danger' : 'text-success',
+        color: item.isActive ? 'danger' : 'success',
+        onClick: () => {
+          CouncilsUseCasesImpl.getInstance()
+            .update(item.id!, {
+              isActive: !item.isActive,
+            })
+            .then((_) => updateCouncils(item))
+            .catch((error) => {
+              toast.error(error.message)
+            })
+        },
+      },
+    ]
+
     switch (columnKey) {
       case 'isActive':
         const chipData = resolveChipData(item.isActive, item.isArchived)
@@ -63,42 +99,15 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
               </DropdownTrigger>
 
               <DropdownMenu aria-label="Static Actions">
-                <DropdownItem
-                  key="see-attendees"
-                  onPress={() => {
-                    onOpen()
-                  }}
-                >
-                  Ver asistentes
-                </DropdownItem>
-
-                <DropdownItem
-                  key="edit"
-                  onPress={() => {
-                    handleSelectedCouncil(item)
-                    onOpen()
-                  }}
-                >
-                  Editar
-                </DropdownItem>
-
-                <DropdownItem
-                  key={item.isActive ? 'desactivate' : 'activate'}
-                  className={item.isActive ? 'text-danger' : 'text-success'}
-                  color={item.isActive ? 'danger' : 'success'}
-                  onClick={() => {
-                    CouncilsUseCasesImpl.getInstance()
-                      .update(item.id!, {
-                        isActive: !item.isActive,
-                      })
-                      .then((_) => updateCouncils(item))
-                      .catch((error) => {
-                        toast.error(error.message)
-                      })
-                  }}
-                >
-                  {item.isActive ? 'Desactivar carrera' : 'Activar carrera'}
-                </DropdownItem>
+                {ACTIONS_DATA.map((action) => (
+                  <DropdownItem
+                    key={action.key}
+                    className={action.className}
+                    onClick={action.onClick}
+                  >
+                    {action.label}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
           </TableCell>
@@ -132,13 +141,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
 
   return (
     <div key={moduleId}>
-      <Button
-        onPress={handleOpenCreateModal}
-        radius="sm"
-        className="w-40 h-12 ml-6 border-2  bg-red-600 text-white"
-      >
-        Crear consejo
-      </Button>
+      <ButtonComponent label="Crear consejo" onclick={handleOpenCreateModal} />
 
       <div className="m-6">
         <Table aria-label="Example table with dynamic content">
