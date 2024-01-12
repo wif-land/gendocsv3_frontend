@@ -32,6 +32,7 @@ import { CouncilsForm } from './CouncilsForm'
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const {
+    loader,
     councils,
     selectedCareer,
     moduleIdentifier,
@@ -144,21 +145,25 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
       <ButtonComponent label="Crear consejo" onClick={handleOpenCreateModal} />
 
       <div className="m-6">
-        <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={COLUMNS}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
+        {!loader.length && (
+          <Table aria-label="Example table with dynamic content">
+            <TableHeader columns={COLUMNS}>
+              {(column) => (
+                <TableColumn key={column.key}>{column.label}</TableColumn>
+              )}
+            </TableHeader>
 
-          <TableBody emptyContent={'No existen datos sobre consejos'}>
-            {councils!.map((item) => (
-              <TableRow key={item.id}>
-                {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            <TableBody emptyContent={'No existen datos sobre consejos'}>
+              {councils!.map((item) => (
+                <TableRow key={item.id}>
+                  {(columnKey) =>
+                    resolveRowComponentByColumnKey(item, columnKey)
+                  }
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       <CouncilsForm

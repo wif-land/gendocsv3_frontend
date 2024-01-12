@@ -9,7 +9,7 @@ import { LOADER_DELAY } from '../../../../shared/constants/common'
 export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   const { modules } = useModulesStore()
   const { councils, setCouncils } = useCouncilStore()
-  const { addLoaderItem, removeLoaderItem } = useLoaderStore()
+  const { addLoaderItem, removeLoaderItem, loader } = useLoaderStore()
 
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
@@ -72,6 +72,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   }, [])
 
   return {
+    loader,
     councils,
     selectedCareer,
     moduleIdentifier,

@@ -1,12 +1,30 @@
 'use client'
 
+import { Suspense, lazy } from 'react'
 import { useParams } from 'next/navigation'
-import UsersView from '../../../../features/modules/components/users-view'
-import CareersView from '../../../../features/careers/components/CareersView'
-import StudentsView from '../../../../features/modules/components/students-view'
-import FunctionaryView from '../../../../features/modules/components/functionary-view'
-import ProcessView from '../../../../features/processes/presentation/components/ProcessesView'
-import CouncilsView from '../../../../features/council/presentation/components/CouncilsView'
+
+const UsersView = lazy(
+  () => import('../../../../features/modules/components/users-view'),
+)
+const CareersView = lazy(
+  () => import('../../../../features/careers/components/CareersView'),
+)
+const StudentsView = lazy(
+  () => import('../../../../features/modules/components/students-view'),
+)
+const FunctionaryView = lazy(
+  () => import('../../../../features/modules/components/functionary-view'),
+)
+const ProcessView = lazy(
+  () =>
+    import(
+      '../../../../features/processes/presentation/components/ProcessesView'
+    ),
+)
+const CouncilsView = lazy(
+  () =>
+    import('../../../../features/council/presentation/components/CouncilsView'),
+)
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -14,23 +32,28 @@ const Page = () => {
   const route = `${codeModule}/${subModuleName}`
 
   const routeToComponent = {
-    ['admin/usuarios']: <UsersView />,
-    ['admin/estudiantes']: <StudentsView />,
-    ['admin/carreras']: <CareersView />,
-    ['admin/funcionarios']: <FunctionaryView />,
-    procesos: <ProcessView moduleId={codeModule as string} />,
-    consejos: <CouncilsView moduleId={codeModule as string} />,
+    ['admin/usuarios']: UsersView,
+    ['admin/estudiantes']: StudentsView,
+    ['admin/carreras']: CareersView,
+    ['admin/funcionarios']: FunctionaryView,
+    procesos: ProcessView,
+    consejos: CouncilsView,
   }
 
-  const defaultComponent = <div>DEFAULT</div>
+  const defaultComponent = <h1>DEFAULT</h1>
 
   const matchedRoute = Object.keys(routeToComponent).find((key) =>
     RegExp(key).test(route),
   )
 
-  return (
+  const Component =
     routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
     defaultComponent
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Component moduleId={codeModule as string} />
+    </Suspense>
   )
 }
 
