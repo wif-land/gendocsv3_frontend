@@ -1,3 +1,5 @@
+import { ITemplate } from '../../../templates/domain/entities/ITemplate'
+
 export interface IProcess {
   id?: number
   createdAt?: Date
@@ -8,4 +10,5 @@ export interface IProcess {
   userId: number
   moduleId: number
   submoduleYearModuleId?: number
+  templateProcesses?: ITemplate[]
 }

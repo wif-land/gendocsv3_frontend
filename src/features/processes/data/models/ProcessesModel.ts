@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ITemplate } from '../../../templates/domain/entities/ITemplate'
 import { IProcess } from '../../domain/entities/IProcess'
 
 export class ProcessModel implements IProcess {
@@ -6,11 +7,12 @@ export class ProcessModel implements IProcess {
   createdAt?: Date
   updatedAt?: Date
   name: string
-  driveId: string
+  driveId?: string
   isActive: boolean
   userId: number
   moduleId: number
-  submoduleYearModuleId: number
+  submoduleYearModuleId?: number
+  templateProcesses?: ITemplate[] | undefined
 
   constructor(props: IProcess) {
     this.id = props.id || undefined
@@ -22,6 +24,7 @@ export class ProcessModel implements IProcess {
     this.userId = props.userId
     this.moduleId = props.moduleId
     this.submoduleYearModuleId = props.submoduleYearModuleId
+    this.templateProcesses = props.templateProcesses
   }
   static fromJson(json: Record<string, any> | string): ProcessModel {
     if (typeof json === 'string') {

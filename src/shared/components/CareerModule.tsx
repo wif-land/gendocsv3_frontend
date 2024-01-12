@@ -4,11 +4,11 @@ import { useEffect } from 'react'
 import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
 import { useUserStore } from '../store/userProfileStore'
-import { usePathname, useRouter } from 'next/navigation'
 import {
   submoduleIcons,
   defaultIcon,
 } from '../../shared/constants/submodulesIcons'
+import { usePathname, useRouter } from 'next/navigation'
 
 const CareerModule = () => {
   const { user } = useUserStore()
@@ -51,10 +51,9 @@ const CareerModule = () => {
             {module.submodules.map((submodule) => {
               const IconComponent =
                 submoduleIcons[submodule.name] || defaultIcon
-
               return (
                 <ListboxItem
-                  aria-label="Submodule"
+                  textValue={submodule.name}
                   key={submodule.name}
                   onClick={() => onHandleClick(module.code, submodule.name)}
                   className={
