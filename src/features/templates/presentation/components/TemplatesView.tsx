@@ -25,6 +25,7 @@ import { TemplateModel } from '../../data/models/TemplatesModel'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
 import { toast } from 'react-toastify'
 import { ProcessModel } from '../../../../features/processes/data/models/ProcessesModel'
+import { useRouter } from 'next/navigation'
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',
@@ -52,6 +53,10 @@ const COLUMNS = [
     key: 'actions',
     label: 'Acciones',
   },
+  {
+    key: 'view',
+    label: 'Ver',
+  },
 ]
 const ProcessesView = ({ processId }: { processId: string }) => {
   const [isFetching, setIsFetching] = useState(false)
@@ -60,12 +65,27 @@ const ProcessesView = ({ processId }: { processId: string }) => {
   const [templates, setTemplates] = useState<TemplateModel[]>([])
   const [selectedTemplate, setSelectedTemplate] =
     useState<TemplateModel | null>(null)
+  const router = useRouter()
 
   const resolveRowComponentByColumnKey = (
     item: TemplateModel,
     columnKey: Key,
   ) => {
     switch (columnKey) {
+      case 'view':
+        return (
+          <TableCell>
+            <Button
+              variant="light"
+              onClick={() => {
+                setSelectedTemplate(item)
+                router.push(`${processId}/view/${item.driveId}`)
+              }}
+            >
+              Ver
+            </Button>
+          </TableCell>
+        )
       case 'isActive':
       case 'hasStudent':
       case 'hasFunctionary':
@@ -99,6 +119,7 @@ const ProcessesView = ({ processId }: { processId: string }) => {
                   onPress={() => {
                     setSelectedTemplate(item)
                     onOpen()
+                    router
                   }}
                 >
                   Editar
@@ -173,11 +194,14 @@ const ProcessesView = ({ processId }: { processId: string }) => {
             emptyContent={'No existen datos sobre procesos'}
             isLoading={isFetching}
           >
-            {templates!.map((item) => (
-              <TableRow key={item.id}>
-                {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
-              </TableRow>
-            ))}
+            {templates &&
+              templates!.map((item) => (
+                <TableRow key={item.id}>
+                  {(columnKey) =>
+                    resolveRowComponentByColumnKey(item, columnKey)
+                  }
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>
