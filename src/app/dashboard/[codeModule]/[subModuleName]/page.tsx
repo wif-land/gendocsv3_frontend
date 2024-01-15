@@ -40,7 +40,7 @@ const Page = () => {
     consejos: CouncilsView,
   }
 
-  const defaultComponent = <h1>DEFAULT</h1>
+  const defaultComponent = () => <div>DEFAULT</div>
 
   const matchedRoute = Object.keys(routeToComponent).find((key) =>
     RegExp(key).test(route),
