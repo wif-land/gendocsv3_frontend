@@ -41,9 +41,7 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return CouncilsDataSourceImpl.instance
   }
 
-  async getAllCouncilsByModuleId(
-    moduleId: number,
-  ): Promise<{ status: number; councils: CouncilModel[] }> {
+  async getAllCouncilsByModuleId(moduleId: number) {
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL, {
       params: { moduleId },
     })

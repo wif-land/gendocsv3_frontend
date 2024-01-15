@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { setCookie } from '../utils/CookiesUtil'
 import { IUser } from '../../features/auth/types/IUser'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
-import { UsersApi } from '@/features/users/api/users'
+import { UsersApi } from '../../features/users/api/users'
 
 interface StoreState {
   users: IUser[] | undefined
@@ -13,7 +13,7 @@ interface StoreState {
 
 export const useUsersStore = create<StoreState>(
   persist(
-    (set, get) => ({
+    (set) => ({
       users: undefined,
       setUsers: (users: IUser[]) => set({ users }),
       logout: () => {
