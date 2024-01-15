@@ -4,11 +4,11 @@ import { useEffect } from 'react'
 import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
 import { useUserStore } from '../store/userProfileStore'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   submoduleIcons,
   defaultIcon,
 } from '../../shared/constants/submodulesIcons'
-import { usePathname, useRouter } from 'next/navigation'
 
 const CareerModule = () => {
   const { user } = useUserStore()
