@@ -162,17 +162,15 @@ export const CouncilsForm = ({
                   ))}
                 </Select>
 
-                {isAddMode && (
-                  <Switch
-                    aria-label="Activo"
-                    isSelected={formik.values.isActive}
-                    onValueChange={(value) =>
-                      formik.setFieldValue('isActive', value)
-                    }
-                  >
-                    Activo
-                  </Switch>
-                )}
+                <Switch
+                  aria-label="Activo"
+                  isSelected={formik.values.isActive}
+                  onValueChange={(value) =>
+                    formik.setFieldValue('isActive', value)
+                  }
+                >
+                  Activo
+                </Switch>
               </ModalBody>
 
               <ModalFooter>
