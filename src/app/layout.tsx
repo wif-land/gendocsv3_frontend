@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import { ModulesProvider } from './providers/modules-provider'
 import LoaderView from '../shared/components/LoaderView'
+import ThemeProvider from '../core/theme'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,11 +21,13 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => (
       <ToastContainer />
       <LoaderView />
 
-      <Providers>
-        <ModulesProvider>
-          <main>{children}</main>
-        </ModulesProvider>
-      </Providers>
+      <ThemeProvider>
+        <Providers>
+          <ModulesProvider>
+            <main>{children}</main>
+          </ModulesProvider>
+        </Providers>
+      </ThemeProvider>
     </body>
   </html>
 )

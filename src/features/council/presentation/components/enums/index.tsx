@@ -1,4 +1,4 @@
-import { ChipProps } from '@nextui-org/react'
+import { ChipComponentProps } from '../../../../../shared/components/ChipComponent'
 
 export const COLUMNS = [
   {
@@ -26,26 +26,23 @@ export const COLUMNS = [
 export const resolveChipData = (
   isActive: boolean,
   isArchived: boolean,
-): {
-  color: ChipProps['color']
-  label: string
-} => {
+): ChipComponentProps => {
   if (isArchived) {
     return {
-      color: 'danger',
+      color: 'secondary',
       label: 'Archivado',
     }
   }
 
   if (isActive) {
     return {
-      color: 'success',
+      color: 'primary',
       label: 'Activado',
     }
   }
 
   return {
-    color: 'warning',
+    color: 'primary',
     label: 'Pausado',
   }
 }

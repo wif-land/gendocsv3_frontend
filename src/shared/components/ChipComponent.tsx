@@ -1,12 +1,10 @@
-import { Chip, ChipProps } from '@nextui-org/react'
+import { Chip } from '@mui/material'
 
-interface ChipComponentProps {
-  color: ChipProps['color']
+export interface ChipComponentProps {
+  color: 'primary' | 'secondary'
   label: string
 }
 
 export const ChipComponent = ({ color, label }: ChipComponentProps) => (
-  <Chip className="capitalize" color={color} size="sm" variant="flat">
-    {label}
-  </Chip>
+  <Chip label={label} color={color} />
 )

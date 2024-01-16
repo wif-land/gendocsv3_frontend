@@ -4,6 +4,7 @@ import { Avatar, AvatarIcon, ScrollShadow, Divider } from '@nextui-org/react'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import CareerModule from '../../shared/components/CareerModule'
 import React, { Suspense } from 'react'
+import { LoadingScreen } from '../../shared/components/loading-screen'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -17,7 +18,7 @@ const layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<LoadingScreen />}>
         <PrivateRoute>
           <div className="h-screen flex">
             <nav className="fixed top-0 z-50 py-5 w-full bg-red-800 flex justify-end items-center px-10">

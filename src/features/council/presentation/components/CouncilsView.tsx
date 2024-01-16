@@ -1,20 +1,5 @@
 'use client'
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  useDisclosure,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-  getKeyValue,
-} from '@nextui-org/react'
 import { Key, memo, useCallback } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { CouncilModel } from '../../data/models/CouncilModel'
@@ -27,6 +12,26 @@ import { ButtonComponent } from '../../../../shared/components/Button'
 import { FormActionsProps } from '../../../../shared/constants/common'
 import { CouncilsForm } from './CouncilsForm'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+} from '@mui/material'
+import { useDisclosure } from '@nextui-org/react'
+
+const createData = (
+  name: string,
+  calories: number,
+  fat: number,
+  carbs: number,
+  protein: number,
+) => ({ name, calories, fat, carbs, protein })
 
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -142,6 +147,63 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
       <ButtonComponent label="Crear consejo" onClick={handleOpenCreateModal} />
 
       <div className="m-6">
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                {COLUMNS.map((column) => (
+                  <TableCell key={column.key}>{column.label}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {councils.map((row) => (
+                <TableRow
+                  key={row.name}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  title="Click para ver asistentes"
+                >
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell>
+                    {row.createdAt?.toString() || new Date().toISOString()}
+                  </TableCell>
+                  <TableCell>{row.type}</TableCell>
+                  <TableCell>
+                    {row.isActive ? 'Activo' : 'Desactivado'}
+                  </TableCell>
+                  <TableCell>
+                    {row.isActive ? 'Activo' : 'Desactivado'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+
+      <Box sx={{ position: 'relative' }}>
+        <TablePagination
+          count={councils.length}
+          page={0}
+          onPageChange={() => {
+            console.log('onPageChange')
+          }}
+          onRowsPerPageChange={() => {
+            console.log('onRowsPerPageChange')
+          }}
+          rowsPerPage={5}
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          sx={{
+            borderTopColor: 'transparent',
+          }}
+        />
+      </Box>
+
+      {/* <div className="m-6">
         {!loader.length && (
           <Table aria-label="Example table with dynamic content">
             <TableHeader columns={COLUMNS}>
@@ -164,7 +226,7 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
             </TableBody>
           </Table>
         )}
-      </div>
+      </div> */}
 
       <CouncilsForm
         isOpen={isOpen}

@@ -2,6 +2,9 @@
 
 import { Suspense, lazy } from 'react'
 import { useParams } from 'next/navigation'
+import { Stack } from '@mui/material'
+import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
+import { LoadingScreen } from '../../../../shared/components/loading-screen'
 
 const UsersView = lazy(
   () => import('../../../../features/modules/components/users-view'),
@@ -40,7 +43,12 @@ const Page = () => {
     consejos: CouncilsView,
   }
 
-  const defaultComponent = () => <div>DEFAULT</div>
+  const defaultComponent = () => (
+    <Stack spacing={1} alignItems="center">
+      <StaticDatePicker orientation="landscape" />
+      <TimePicker label="Basic time picker" />
+    </Stack>
+  )
 
   const matchedRoute = Object.keys(routeToComponent).find((key) =>
     RegExp(key).test(route),
@@ -51,7 +59,7 @@ const Page = () => {
     defaultComponent
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingScreen />}>
       <Component moduleId={codeModule as string} />
     </Suspense>
   )
