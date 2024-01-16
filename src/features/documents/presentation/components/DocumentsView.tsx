@@ -30,20 +30,12 @@ import { useRouter } from 'next/navigation'
 // }
 const COLUMNS = [
   {
-    key: 'name',
-    label: 'Nombre',
+    key: 'number',
+    label: 'Número',
   },
   {
-    key: 'moduleId',
-    label: 'Modulo',
-  },
-  {
-    key: 'userId',
-    label: 'Usuario',
-  },
-  {
-    key: 'isActive',
-    label: 'Activo',
+    key: 'description',
+    label: 'Descripción',
   },
   {
     key: 'actions',
@@ -72,21 +64,6 @@ const DocumentsView = ({ moduleId }: { moduleId: string }) => {
     columnKey: Key,
   ) => {
     switch (columnKey) {
-      // case 'isActive':
-      //   return (
-      //     <TableCell>
-      //       {
-      //         <Chip
-      //           className="capitalize"
-      //           color={statusColorMap[item.isActive ? 'active' : 'paused']}
-      //           size="sm"
-      //           variant="flat"
-      //         >
-      //           {item.isActive ? 'Si' : 'No'}
-      //         </Chip>
-      //       }
-      //     </TableCell>
-      //   )
       case 'view':
         return (
           <TableCell>
@@ -94,7 +71,7 @@ const DocumentsView = ({ moduleId }: { moduleId: string }) => {
               variant="light"
               onClick={() => {
                 setSelectedProcess(item)
-                router.push(`${moduleId}/view/${item.id}`)
+                router.push(`documentos/${moduleId}/view/${item.driveId}`)
               }}
             >
               Ver
@@ -120,6 +97,16 @@ const DocumentsView = ({ moduleId }: { moduleId: string }) => {
                   }}
                 >
                   Editar
+                </DropdownItem>
+                <DropdownItem
+                  key="delete"
+                  onPress={() => {
+                    DocumentsUseCasesImpl.getInstance().deleteById(
+                      item.id as number,
+                    )
+                  }}
+                >
+                  Eliminar
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>

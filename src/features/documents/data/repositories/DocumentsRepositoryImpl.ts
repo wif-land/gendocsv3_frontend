@@ -44,4 +44,17 @@ export class ModelsRepositoryImpl implements ModelsRepository {
       return { status: 500, process: {} as DocumentModel }
     }
   }
+
+  deleteById = async (id: number) => {
+    try {
+      const result = await this.datasource.deleteById(id)
+      const { status } = result
+      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        return { status }
+      }
+      return { status }
+    } catch (error) {
+      return { status: 500 }
+    }
+  }
 }

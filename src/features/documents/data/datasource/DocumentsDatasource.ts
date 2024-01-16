@@ -28,6 +28,10 @@ export interface DocumentsDataSource {
     status: number
     process: DocumentModel
   }>
+
+  deleteById(id: number): Promise<{
+    status: number
+  }>
 }
 
 export class DocumentsDataSourceImpl implements DocumentsDataSource {
@@ -100,5 +104,19 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
 
   getById = async (id: number) => {
     throw new Error(`Method not implemented.${id}`)
+  }
+
+  deleteById = async (id: number) => {
+    const result = await AxiosClient.delete(
+      API_ROUTES.DOCUMENTS.DELETE.replace(':id', id.toString()),
+    )
+
+    const { status } = result
+
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status }
+    }
+
+    return { status }
   }
 }

@@ -20,4 +20,8 @@ export interface ModelsRepository {
     status: number
     processes: DocumentModel[]
   }>
+
+  deleteById: (id: number) => Promise<{
+    status: number
+  }>
 }

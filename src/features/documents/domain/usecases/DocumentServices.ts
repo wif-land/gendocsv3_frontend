@@ -43,24 +43,27 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
     return DocumentsUseCasesImpl.instance
   }
 
-  private processRepository: ModelsRepository =
-    ModelsRepositoryImpl.getInstance()
+  private modelRepository: ModelsRepository = ModelsRepositoryImpl.getInstance()
 
   create = async (process: IDocument) =>
-    await this.processRepository.create(process)
+    await this.modelRepository.create(process)
 
-  getAll = async () => await this.processRepository.getAll()
+  getAll = async () => await this.modelRepository.getAll()
 
   getById = async (id: number) => {
     throw new Error(`Method not implemented.${id}`)
   }
 
   update = async (id: number, process: Partial<DocumentModel>) =>
-    await this.processRepository.update({
+    await this.modelRepository.update({
       ...process,
       id,
     })
 
   getAllProcessesByModuleId = async (moduleId: number) =>
-    await this.processRepository.getAllDocumentsByModuleId(moduleId)
+    await this.modelRepository.getAllDocumentsByModuleId(moduleId)
+
+  deleteById = async (id: number) => {
+    await this.modelRepository.deleteById(id)
+  }
 }

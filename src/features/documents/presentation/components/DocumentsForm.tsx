@@ -75,184 +75,213 @@ export const DocumentsForm = ({
             </ModalHeader>
 
             <form onSubmit={formik.handleSubmit}>
-              <ModalBody>
-                <Select
-                  name="councilId"
-                  label="Consejo"
-                  className="w-full"
-                  placeholder="Consejo"
-                  variant="underlined"
-                  onSelectionChange={(value: any) => {
-                    if (value.size === 0) {
-                      setCouncilSelected(false)
-                      return
-                    }
-                    formik.setFieldValue('councilId', Number(value.currentKey))
-                    setCouncilSelected(true)
-                  }}
-                >
-                  {councils! &&
-                    councils.map((council) => (
-                      <SelectItem
-                        key={council.id as number}
-                        value={council.id as number}
+              {isAddMode ? (
+                <ModalBody>
+                  <Select
+                    name="councilId"
+                    label="Consejo"
+                    className="w-full"
+                    placeholder="Consejo"
+                    variant="underlined"
+                    onSelectionChange={(value: any) => {
+                      if (value.size === 0) {
+                        setCouncilSelected(false)
+                        return
+                      }
+                      formik.setFieldValue(
+                        'councilId',
+                        Number(value.currentKey),
+                      )
+                      setCouncilSelected(true)
+                    }}
+                  >
+                    {councils! &&
+                      councils.map((council) => (
+                        <SelectItem
+                          key={council.id as number}
+                          value={council.id as number}
+                        >
+                          {council.name}
+                        </SelectItem>
+                      ))}
+                  </Select>
+                  {councilSelected && (
+                    <>
+                      <Select
+                        name="process"
+                        label="Proceso"
+                        className="w-full"
+                        placeholder="Proceso"
+                        variant="underlined"
+                        onSelectionChange={(value: any) => {
+                          setSelectedProcess(
+                            processes?.find(
+                              (process) =>
+                                process.id?.toString() === value.currentKey,
+                            ),
+                          )
+                        }}
                       >
-                        {council.name}
-                      </SelectItem>
-                    ))}
-                </Select>
-                {councilSelected && (
-                  <>
-                    <Select
-                      name="process"
-                      label="Proceso"
-                      className="w-full"
-                      placeholder="Proceso"
-                      variant="underlined"
-                      onSelectionChange={(value: any) => {
-                        setSelectedProcess(
-                          processes?.find(
-                            (process) =>
-                              process.id?.toString() === value.currentKey,
-                          ),
-                        )
-                      }}
-                    >
-                      {processes! &&
-                        processes.map((process) => (
-                          <SelectItem
-                            key={process.id as number}
-                            value={process.id as number}
-                          >
-                            {process.name}
-                          </SelectItem>
-                        ))}
-                    </Select>
-                    <Select
-                      name="templateId"
-                      label="Plantilla"
-                      className="w-full"
-                      placeholder="Plantilla"
-                      variant="underlined"
-                      onSelectionChange={(value: any) => {
-                        if (value.size === 0) {
-                          setTemplateSelected(false)
-                          return
-                        }
-                        formik.setFieldValue(
-                          'templateId',
-                          Number(value.currentKey),
-                        )
-                        setTemplateSelected(true)
-                      }}
-                    >
-                      {selectedProcess! &&
-                        (selectedProcess?.templateProcesses || []).map(
-                          (template) => (
+                        {processes! &&
+                          processes.map((process) => (
                             <SelectItem
-                              key={template.id as number}
-                              value={template.id as number}
+                              key={process.id as number}
+                              value={process.id as number}
                             >
-                              {template.name}
+                              {process.name}
                             </SelectItem>
-                          ),
-                        )}
-                    </Select>
-                    {templateSelected && (
-                      <>
-                        <Input
-                          id="number"
-                          name="number"
-                          type="number"
-                          label="Número"
-                          variant="underlined"
-                          className="w-full"
-                          value={formik.values.number.toString()}
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                          size="lg"
-                          errorMessage={
-                            formik.touched.number && formik.errors.number
-                              ? formik.errors.number
-                              : ''
+                          ))}
+                      </Select>
+                      <Select
+                        name="templateId"
+                        label="Plantilla"
+                        className="w-full"
+                        placeholder="Plantilla"
+                        variant="underlined"
+                        onSelectionChange={(value: any) => {
+                          if (value.size === 0) {
+                            setTemplateSelected(false)
+                            return
                           }
-                        />
-                        <Autocomplete
-                          name="studentId"
-                          label="Estudiante"
-                          className="w-full"
-                          placeholder="Estudiante"
-                          variant="underlined"
-                          onSelectionChange={(value) => {
-                            formik.setFieldValue('studentId', Number(value))
-                          }}
-                        >
-                          {students! &&
-                            students.map(
-                              (student) => (
-                                (studentFullName = `${student.firstLastName} ${student.secondLastName} ${student.firstName} ${student.secondName} | ${student.dni}`),
-                                (
-                                  <AutocompleteItem
-                                    key={student.id}
-                                    value={student.id}
-                                  >
-                                    {studentFullName}
-                                  </AutocompleteItem>
-                                )
-                              ),
-                            )}
-                        </Autocomplete>
-                        <Select
-                          selectionMode="multiple"
-                          name="functionariesIds"
-                          label="Funcionarios"
-                          className="w-full"
-                          placeholder="Funcionarios"
-                          variant="underlined"
-                          onSelectionChange={(value) => {
-                            const valueArray: number[] =
-                              Array.from(value).map(Number)
-                            formik.setFieldValue('functionariesIds', valueArray)
-                          }}
-                        >
-                          {functionaries! &&
-                            functionaries.map(
-                              (functionaries) => (
-                                (functionaryFullName = `${functionaries.firstLastName} ${functionaries.secondLastName} ${functionaries.firstName} ${functionaries.secondName} | ${functionaries.dni}`),
-                                (
-                                  <SelectItem
-                                    key={functionaries.id!}
-                                    value={functionaries.id}
-                                  >
-                                    {functionaryFullName}
-                                  </SelectItem>
-                                )
-                              ),
-                            )}
-                        </Select>
-                        <Textarea
-                          id="description"
-                          name="description"
-                          type="textarea"
-                          label="Descripción"
-                          variant="underlined"
-                          className="w-full"
-                          value={formik.values.description.toString()}
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                          size="lg"
-                          errorMessage={
-                            formik.touched.description &&
-                            formik.errors.description
-                              ? formik.errors.description
-                              : ''
-                          }
-                        />
-                      </>
-                    )}
-                  </>
-                )}
-              </ModalBody>
+                          formik.setFieldValue(
+                            'templateId',
+                            Number(value.currentKey),
+                          )
+                          setTemplateSelected(true)
+                        }}
+                      >
+                        {selectedProcess! &&
+                          (selectedProcess?.templateProcesses || []).map(
+                            (template) => (
+                              <SelectItem
+                                key={template.id as number}
+                                value={template.id as number}
+                              >
+                                {template.name}
+                              </SelectItem>
+                            ),
+                          )}
+                      </Select>
+                      {templateSelected && (
+                        <>
+                          <Input
+                            id="number"
+                            name="number"
+                            type="number"
+                            label="Número"
+                            variant="underlined"
+                            className="w-full"
+                            value={formik.values.number.toString()}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            size="lg"
+                            errorMessage={
+                              formik.touched.number && formik.errors.number
+                                ? formik.errors.number
+                                : ''
+                            }
+                          />
+                          <Autocomplete
+                            name="studentId"
+                            label="Estudiante"
+                            className="w-full"
+                            placeholder="Estudiante"
+                            variant="underlined"
+                            onSelectionChange={(value) => {
+                              formik.setFieldValue('studentId', Number(value))
+                            }}
+                          >
+                            {students! &&
+                              students.map(
+                                (student) => (
+                                  (studentFullName = `${student.firstLastName} ${student.secondLastName} ${student.firstName} ${student.secondName} | ${student.dni}`),
+                                  (
+                                    <AutocompleteItem
+                                      key={student.id}
+                                      value={student.id}
+                                    >
+                                      {studentFullName}
+                                    </AutocompleteItem>
+                                  )
+                                ),
+                              )}
+                          </Autocomplete>
+                          <Select
+                            selectionMode="multiple"
+                            name="functionariesIds"
+                            label="Funcionarios"
+                            className="w-full"
+                            placeholder="Funcionarios"
+                            variant="underlined"
+                            onSelectionChange={(value) => {
+                              const valueArray: number[] =
+                                Array.from(value).map(Number)
+                              formik.setFieldValue(
+                                'functionariesIds',
+                                valueArray,
+                              )
+                            }}
+                          >
+                            {functionaries! &&
+                              functionaries.map(
+                                (functionaries) => (
+                                  (functionaryFullName = `${functionaries.firstLastName} ${functionaries.secondLastName} ${functionaries.firstName} ${functionaries.secondName} | ${functionaries.dni}`),
+                                  (
+                                    <SelectItem
+                                      key={functionaries.id!}
+                                      value={functionaries.id}
+                                    >
+                                      {functionaryFullName}
+                                    </SelectItem>
+                                  )
+                                ),
+                              )}
+                          </Select>
+                          <Textarea
+                            id="description"
+                            name="description"
+                            type="textarea"
+                            label="Descripción"
+                            variant="underlined"
+                            className="w-full"
+                            value={formik.values.description.toString()}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            size="lg"
+                            errorMessage={
+                              formik.touched.description &&
+                              formik.errors.description
+                                ? formik.errors.description
+                                : ''
+                            }
+                          />
+                        </>
+                      )}
+                    </>
+                  )}
+                </ModalBody>
+              ) : (
+                <ModalBody>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    type="textarea"
+                    label="Descripción"
+                    variant="underlined"
+                    className="w-full"
+                    value={formik.values.description.toString()}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    size="lg"
+                    errorMessage={
+                      formik.touched.description && formik.errors.description
+                        ? formik.errors.description
+                        : ''
+                    }
+                  />
+                </ModalBody>
+              )}
+
               <ModalFooter>
                 <Button
                   color="danger"
