@@ -1,7 +1,5 @@
-import { Theme } from '@mui/material/styles';
-import { DialogProps } from '@mui/material/Dialog';
-
-// ----------------------------------------------------------------------
+import { Theme } from '@mui/material/styles'
+import { DialogProps } from '@mui/material/Dialog'
 
 export default function Dialog(theme: Theme) {
   return {
@@ -51,5 +49,5 @@ export default function Dialog(theme: Theme) {
         },
       },
     },
-  };
+  }
 }

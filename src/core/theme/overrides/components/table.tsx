@@ -1,8 +1,6 @@
-import { Theme, alpha } from '@mui/material/styles';
-import { tableCellClasses } from '@mui/material/TableCell';
-import { tableRowClasses } from '@mui/material/TableRow';
-
-// ----------------------------------------------------------------------
+import { Theme, alpha } from '@mui/material/styles'
+import { tableCellClasses } from '@mui/material/TableCell'
+import { tableRowClasses } from '@mui/material/TableRow'
 
 export default function Table(theme: Theme) {
   return {
@@ -83,5 +81,5 @@ export default function Table(theme: Theme) {
         },
       },
     },
-  };
+  }
 }

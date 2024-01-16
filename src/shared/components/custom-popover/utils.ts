@@ -1,6 +1,4 @@
-// ----------------------------------------------------------------------
-
-export const getPosition = (arrow: string) => {
+export function getPosition(arrow: string) {
   let props
 
   switch (arrow) {

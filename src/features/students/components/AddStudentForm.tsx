@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react'
 import cantones from '../../../features/students/data/canton'
 import { formatISO } from 'date-fns'
 
-import { Button, Input, Select, SelectItem, Switch, ScrollShadow} from '@nextui-org/react'
+import {
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Switch,
+  ScrollShadow,
+} from '@nextui-org/react'
 import { useStudent } from '../hooks/useAddStudent'
 import { ICareer } from '../../../features/careers/types/ICareer'
 import { CareersApi } from '../../../features/careers/api/carers'
@@ -61,7 +68,6 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-    
       <form
         onSubmit={formik.handleSubmit}
         className="w-full justify-items-center "
@@ -337,7 +343,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             id="isActive"
             name="isActive"
             size="sm"
-            className='m-2'
+            className="m-2"
             onValueChange={(value) => {
               const fakeEvent = {
                 target: {
@@ -354,7 +360,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             type="date"
             id="birthdate"
             name="birthdate"
-            onChange={formik.handleChange} 
+            onChange={formik.handleChange}
           />
         </div>
         <div className="m-1 w-full flex gap-4 justify-center">
@@ -369,7 +375,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             Crear
           </Button>
           <Button
-            className='bg-red-600 w-56 m-1 text-white'
+            className="bg-red-600 w-56 m-1 text-white"
             size="lg"
             radius="sm"
             disabled={formik.isSubmitting}
@@ -382,7 +388,6 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
           </Button>
         </div>
       </form>
-
     </>
   )
 }

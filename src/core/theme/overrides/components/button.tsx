@@ -1,47 +1,54 @@
-import { alpha, Theme } from '@mui/material/styles';
-import { ButtonProps, buttonClasses } from '@mui/material/Button';
+import { alpha, Theme } from '@mui/material/styles'
+import { ButtonProps, buttonClasses } from '@mui/material/Button'
 
-// ----------------------------------------------------------------------
-
-const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
+const COLORS = [
+  'primary',
+  'secondary',
+  'info',
+  'success',
+  'warning',
+  'error',
+] as const
 
 // NEW VARIANT
 declare module '@mui/material/Button' {
   interface ButtonPropsVariantOverrides {
-    soft: true;
+    soft: true
   }
 }
 
-// ----------------------------------------------------------------------
-
 export default function Button(theme: Theme) {
-  const isLight = theme.palette.mode === 'light';
+  const isLight = theme.palette.mode === 'light'
 
   const rootStyles = (ownerState: ButtonProps) => {
-    const inheritColor = ownerState.color === 'inherit';
+    const inheritColor = ownerState.color === 'inherit'
 
-    const containedVariant = ownerState.variant === 'contained';
+    const containedVariant = ownerState.variant === 'contained'
 
-    const outlinedVariant = ownerState.variant === 'outlined';
+    const outlinedVariant = ownerState.variant === 'outlined'
 
-    const textVariant = ownerState.variant === 'text';
+    const textVariant = ownerState.variant === 'text'
 
-    const softVariant = ownerState.variant === 'soft';
+    const softVariant = ownerState.variant === 'soft'
 
-    const smallSize = ownerState.size === 'small';
+    const smallSize = ownerState.size === 'small'
 
-    const mediumSize = ownerState.size === 'medium';
+    const mediumSize = ownerState.size === 'medium'
 
-    const largeSize = ownerState.size === 'large';
+    const largeSize = ownerState.size === 'large'
 
     const defaultStyle = {
       ...(inheritColor && {
         // CONTAINED
         ...(containedVariant && {
           color: isLight ? theme.palette.common.white : theme.palette.grey[800],
-          backgroundColor: isLight ? theme.palette.grey[800] : theme.palette.common.white,
+          backgroundColor: isLight
+            ? theme.palette.grey[800]
+            : theme.palette.common.white,
           '&:hover': {
-            backgroundColor: isLight ? theme.palette.grey[700] : theme.palette.grey[400],
+            backgroundColor: isLight
+              ? theme.palette.grey[700]
+              : theme.palette.grey[400],
           },
         }),
         // OUTLINED
@@ -72,7 +79,7 @@ export default function Button(theme: Theme) {
           boxShadow: '0 0 0 0.5px currentColor',
         },
       }),
-    };
+    }
 
     const colorStyle = COLORS.map((color) => ({
       ...(ownerState.color === color && {
@@ -91,7 +98,7 @@ export default function Button(theme: Theme) {
           },
         }),
       }),
-    }));
+    }))
 
     const disabledState = {
       [`&.${buttonClasses.disabled}`]: {
@@ -100,7 +107,7 @@ export default function Button(theme: Theme) {
           backgroundColor: theme.palette.action.disabledBackground,
         }),
       },
-    };
+    }
 
     const size = {
       ...(smallSize && {
@@ -131,10 +138,10 @@ export default function Button(theme: Theme) {
           paddingRight: 10,
         }),
       }),
-    };
+    }
 
-    return [defaultStyle, ...colorStyle, disabledState, size];
-  };
+    return [defaultStyle, ...colorStyle, disabledState, size]
+  }
 
   return {
     MuiButton: {
@@ -144,8 +151,9 @@ export default function Button(theme: Theme) {
       },
 
       styleOverrides: {
-        root: ({ ownerState }: { ownerState: ButtonProps }) => rootStyles(ownerState),
+        root: ({ ownerState }: { ownerState: ButtonProps }) =>
+          rootStyles(ownerState),
       },
     },
-  };
+  }
 }

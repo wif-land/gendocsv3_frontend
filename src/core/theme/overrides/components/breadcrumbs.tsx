@@ -1,6 +1,4 @@
-import { Theme } from '@mui/material/styles';
-
-// ----------------------------------------------------------------------
+import { Theme } from '@mui/material/styles'
 
 export default function Breadcrumbs(theme: Theme) {
   return {
@@ -19,5 +17,5 @@ export default function Breadcrumbs(theme: Theme) {
         },
       },
     },
-  };
+  }
 }

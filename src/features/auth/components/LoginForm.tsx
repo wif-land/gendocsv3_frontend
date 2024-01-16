@@ -1,7 +1,7 @@
-import { Button, Input } from '@nextui-org/react'
 import React from 'react'
 import { useAuth } from '../hooks/useAuth'
 import FondoFISEI from '../../../../public/bannerfiseicorreos.png'
+import { Button, TextField } from '@mui/material'
 
 export const LoginForm = () => {
   const { formik } = useAuth()
@@ -30,49 +30,32 @@ export const LoginForm = () => {
             className="w-1/2 justify-items-center pl-16 pb-32"
           >
             <div className="grid w-6/6 justify-items-center ">
-              <Input
+              <TextField
                 id="email"
                 name="email"
                 type="email"
-                label="Email"
-                variant="underlined"
                 placeholder="Ingrese un correo"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                size="lg"
-                errorMessage={
-                  formik.touched.email && formik.errors.email
-                    ? formik.errors.email
-                    : ''
-                }
+                error={formik.touched.email && Boolean(formik.errors.email)}
                 className="w-full"
               />
-              <Input
+              <TextField
                 id="password"
                 name="password"
                 type="password"
                 label="Password"
-                variant="underlined"
                 placeholder="Ingrese una contraseña"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                size="lg"
-                errorMessage={
-                  formik.touched.password && formik.errors.password
-                    ? formik.errors.password
-                    : ''
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
                 }
               />
 
-              <Button
-                type="submit"
-                size="lg"
-                disabled={submitting}
-                radius="none"
-                className="w-3/4 m-7 bg-red-800 text-white font-semibold justify-center"
-              >
+              <Button variant="text" disabled={submitting} type="submit">
                 Ingresar
               </Button>
             </div>

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { Stack } from '@mui/material'
 import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
 import { LoadingScreen } from '../../../../shared/components/loading-screen'
+import { CouncilListView } from '../../../../features/council/presentation/view'
 
 const UsersView = lazy(
   () => import('../../../../features/modules/components/users-view'),
@@ -24,10 +25,6 @@ const ProcessView = lazy(
       '../../../../features/processes/presentation/components/ProcessesView'
     ),
 )
-const CouncilsView = lazy(
-  () =>
-    import('../../../../features/council/presentation/components/CouncilsView'),
-)
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -40,7 +37,7 @@ const Page = () => {
     ['admin/carreras']: CareersView,
     ['admin/funcionarios']: FunctionaryView,
     procesos: ProcessView,
-    consejos: CouncilsView,
+    consejos: CouncilListView,
   }
 
   const defaultComponent = () => (

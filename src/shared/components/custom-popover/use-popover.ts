@@ -7,7 +7,7 @@ type ReturnType = {
   setOpen: React.Dispatch<React.SetStateAction<HTMLElement | null>>
 }
 
-const usePopover = (): ReturnType => {
+export default function usePopover(): ReturnType {
   const [open, setOpen] = useState<HTMLElement | null>(null)
 
   const onOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
@@ -25,5 +25,3 @@ const usePopover = (): ReturnType => {
     setOpen,
   }
 }
-
-export default usePopover

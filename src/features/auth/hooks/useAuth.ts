@@ -8,6 +8,8 @@ import { IUser } from '../types/IUser'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useUserStore } from '../../../shared/store/userProfileStore'
 import { appPublicRoutes } from '../../../shared/constants/appPublicRoutes'
+import { enqueueSnackbar } from 'notistack'
+import useModulesStore from '../../../shared/store/modulesStore'
 
 interface IAuth {
   email: string
@@ -17,6 +19,7 @@ interface IAuth {
 export const useAuth = () => {
   const router = useRouter()
   const { setUser, logout: userStoreLogout } = useUserStore()
+  const { setAccessModules } = useModulesStore()
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -38,14 +41,14 @@ export const useAuth = () => {
 
     if (status === HTTP_STATUS_CODES.CREATED) {
       decoded && setUser(decoded)
-      toast.success(`Bienvenido de vuelta ${decoded!.firstName}!`, {
-        autoClose: 1800,
-      })
+      decoded && setAccessModules(decoded.accessModules as number[])
+
+      enqueueSnackbar(`Bienvenido de vuelta ${decoded!.firstName}!`)
+
       router.push('/dashboard')
     } else {
-      toast.error(
+      enqueueSnackbar(
         'Error al iniciar sesión, por favor verifica tus credenciales.',
-        { autoClose: 1800 },
       )
     }
   }

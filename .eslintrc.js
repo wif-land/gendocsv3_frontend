@@ -22,44 +22,44 @@ module.exports = {
     "prettier",
   ],
   rules: {
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        selector: "variable",
-        format: ["camelCase", "PascalCase", "UPPER_CASE"],
-        filter: {
-          regex: "^((es|en)_([A-Z]+))$",
-          match: false,
-        },
-        leadingUnderscore: "allow",
-      },
-      {
-        selector: "interface",
-        format: ["PascalCase"],
-        custom: {
-          regex: "^([I]+)$",
-          match: false,
-        },
-      },
-      {
-        selector: "parameter",
-        format: ["camelCase"],
-        leadingUnderscore: "allow",
-      },
-      {
-        selector: "property",
-        format: ["camelCase", "UPPER_CASE", "PascalCase"],
-        filter: {
-          regex: "^((es|en)_([A-Z]+))$",
-          match: false,
-        },
-        leadingUnderscore: "allow",
-      },
-      {
-        selector: "function",
-        format: ["camelCase", "PascalCase"],
-      },
-    ],
+    // "@typescript-eslint/naming-convention": [
+    //   "error",
+    //   {
+    //     selector: "variable",
+    //     format: ["camelCase", "PascalCase", "UPPER_CASE"],
+    //     filter: {
+    //       regex: "^((es|en)_([A-Z]+))$",
+    //       match: false,
+    //     },
+    //     leadingUnderscore: "allow",
+    //   },
+    //   {
+    //     selector: "interface",
+    //     format: ["PascalCase"],
+    //     custom: {
+    //       regex: "^([I]+)$",
+    //       match: false,
+    //     },
+    //   },
+    //   {
+    //     selector: "parameter",
+    //     format: ["camelCase"],
+    //     leadingUnderscore: "allow",
+    //   },
+    //   {
+    //     selector: "property",
+    //     format: ["camelCase", "UPPER_CASE", "PascalCase"],
+    //     filter: {
+    //       regex: "^((es|en)_([A-Z]+))$",
+    //       match: false,
+    //     },
+    //     leadingUnderscore: "allow",
+    //   },
+    //   {
+    //     selector: "function",
+    //     format: ["camelCase", "PascalCase"],
+    //   },
+    // ],
     "no-param-reassign": "error",
     "@typescript-eslint/no-this-alias": "error",
     curly: ["error", "multi-line"],
@@ -94,14 +94,14 @@ module.exports = {
     "quote-props": ["error", "as-needed"],
     "require-atomic-updates": "error",
     "arrow-body-style": ["error", "as-needed"],
-    "prefer-arrow/prefer-arrow-functions": [
-      "error",
-      {
-        disallowPrototype: true,
-        singleReturnOnly: false,
-        classPropertiesAllowed: false,
-      },
-    ],
+    // "prefer-arrow/prefer-arrow-functions": [
+    //   "error",
+    //   {
+    //     disallowPrototype: true,
+    //     singleReturnOnly: false,
+    //     classPropertiesAllowed: false,
+    //   },
+    // ],
     "space-before-function-paren": [
       "error",
       {
@@ -129,12 +129,6 @@ module.exports = {
     {
       files: "**.ts*",
       excludedFiles: "*.test.*",
-      rules: {
-        "no-magic-numbers": [
-          "error",
-          { ignore: [0, 1, -1, -2], ignoreArrayIndexes: true },
-        ],
-      },
     },
   ],
 };

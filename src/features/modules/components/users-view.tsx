@@ -225,7 +225,7 @@ const UsersView = () => {
           </TableBody>
         </Table>
       </div>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='3xl'>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
         <ModalContent>
           {(onClose) => (
             <>
@@ -239,7 +239,7 @@ const UsersView = () => {
           )}
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size='3xl'>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size="3xl">
         <ModalContent>
           {(onClose) => (
             <>

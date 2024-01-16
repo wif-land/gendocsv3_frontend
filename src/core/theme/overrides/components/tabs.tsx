@@ -1,7 +1,5 @@
-import { Theme } from '@mui/material/styles';
-import { tabClasses } from '@mui/material/Tab';
-
-// ----------------------------------------------------------------------
+import { Theme } from '@mui/material/styles'
+import { tabClasses } from '@mui/material/Tab'
 
 export default function Tabs(theme: Theme) {
   return {
@@ -45,5 +43,5 @@ export default function Tabs(theme: Theme) {
         },
       },
     },
-  };
+  }
 }

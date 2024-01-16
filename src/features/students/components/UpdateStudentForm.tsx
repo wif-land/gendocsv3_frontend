@@ -355,7 +355,6 @@ const UpdateStudentForm = ({
               </SelectItem>
             ))}
           </Select>
-          
 
           <input
             type="date"
@@ -367,23 +366,23 @@ const UpdateStudentForm = ({
             }
           />
           <Switch
-          id="isActive"
-          name="isActive"
-          size="sm"
-          className='m-1'
-          onValueChange={(defaultValue) => {
-            const fakeEvent = {
-              target: {
-                name: 'isActive',
-                defaultValue,
-              },
-            }
-            formik.handleChange(fakeEvent)
-          }}
-          defaultChecked={student.isActive}
-        >
-          Estudiante Activo
-        </Switch>
+            id="isActive"
+            name="isActive"
+            size="sm"
+            className="m-1"
+            onValueChange={(defaultValue) => {
+              const fakeEvent = {
+                target: {
+                  name: 'isActive',
+                  defaultValue,
+                },
+              }
+              formik.handleChange(fakeEvent)
+            }}
+            defaultChecked={student.isActive}
+          >
+            Estudiante Activo
+          </Switch>
         </div>
         <div className="m-2 w-full flex gap-4 justify-center">
           <Button

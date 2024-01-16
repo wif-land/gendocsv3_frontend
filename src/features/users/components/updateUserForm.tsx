@@ -201,7 +201,7 @@ const UpdateUserForm = ({
             }
             className="w-full"
           />
-          <div className='w-full'>
+          <div className="w-full">
             <Select
               id="accessModules"
               name="accessModules"
@@ -209,7 +209,7 @@ const UpdateUserForm = ({
               variant="underlined"
               placeholder="Selecciona los módulos"
               selectionMode="multiple"
-              className='max-w-xs'
+              className="max-w-xs"
               selectedKeys={selectedModules}
               onSelectionChange={(value) => {
                 handleModuleChange('accessModules', value)
@@ -222,9 +222,11 @@ const UpdateUserForm = ({
                 </SelectItem>
               ))}
             </Select>
-            <p className='text-xs text-neutral-600'>Modulos seleccionados: {Array.from(selectedModules).join(', ')}</p>
+            <p className="text-xs text-neutral-600">
+              Modulos seleccionados: {Array.from(selectedModules).join(', ')}
+            </p>
           </div>
-          
+
           <Select
             id="roles"
             name="roles"
@@ -248,7 +250,7 @@ const UpdateUserForm = ({
             name="isActive"
             size="sm"
             isSelected={defaultValue}
-            className='mb-4'
+            className="mb-4"
             onValueChange={(defaultValue) => {
               const fakeEvent = {
                 target: {
@@ -267,7 +269,7 @@ const UpdateUserForm = ({
           <Button
             type="submit"
             size="lg"
-            radius='sm'
+            radius="sm"
             className="bg-blue-600 w-56 m-1 text-white"
             disabled={formik.isSubmitting}
             onClick={onClose}
@@ -275,7 +277,7 @@ const UpdateUserForm = ({
             Actualizar
           </Button>
           <Button
-            className='bg-red-600 w-56 m-1 text-white'
+            className="bg-red-600 w-56 m-1 text-white"
             size="lg"
             radius="sm"
             disabled={formik.isSubmitting}

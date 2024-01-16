@@ -61,9 +61,6 @@ export const menuItem = (theme: Theme) => ({
     margin: theme.spacing(0.5, 0),
   },
 })
-
-// ----------------------------------------------------------------------
-
 type BgBlurProps = {
   blur?: number
   opacity?: number
@@ -103,8 +100,6 @@ export const bgBlur = (props?: BgBlurProps) => {
   }
 }
 
-// ----------------------------------------------------------------------
-
 type BgGradientProps = {
   direction?: string
   color?: string
@@ -113,7 +108,7 @@ type BgGradientProps = {
   imgUrl?: string
 }
 
-export function bgGradient(props?: BgGradientProps) {
+export const bgGradient = (props?: BgGradientProps) => {
   const direction = props?.direction || 'to bottom'
   const startColor = props?.startColor
   const endColor = props?.endColor
@@ -135,18 +130,11 @@ export function bgGradient(props?: BgGradientProps) {
     background: `linear-gradient(${direction}, ${startColor}, ${endColor})`,
   }
 }
-
-// ----------------------------------------------------------------------
-
-export function textGradient(value: string) {
-  return {
-    background: `-webkit-linear-gradient(${value})`,
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  }
-}
-
-// ----------------------------------------------------------------------
+export const textGradient = (value: string) => ({
+  background: `-webkit-linear-gradient(${value})`,
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+})
 
 export const hideScroll = {
   x: {

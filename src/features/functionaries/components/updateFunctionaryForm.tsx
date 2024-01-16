@@ -242,7 +242,7 @@ const UpdateFunctionaryForm = ({
           id="isActive"
           name="isActive"
           size="sm"
-          className='m-4'
+          className="m-4"
           onValueChange={(defaultValue) => {
             const fakeEvent = {
               target: {
@@ -267,7 +267,7 @@ const UpdateFunctionaryForm = ({
             Actualizar
           </Button>
           <Button
-            className='bg-red-600 w-56 m-1 text-white'
+            className="bg-red-600 w-56 m-1 text-white"
             size="lg"
             radius="sm"
             disabled={formik.isSubmitting}

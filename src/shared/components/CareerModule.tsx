@@ -5,10 +5,7 @@ import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
 import { useUserStore } from '../store/userProfileStore'
 import { usePathname, useRouter } from 'next/navigation'
-import {
-  submoduleIcons,
-  defaultIcon,
-} from '../../shared/constants/submodulesIcons'
+import { submoduleIcons, defaultIcon } from '../constants/submodulesIcons'
 
 const CareerModule = () => {
   const { user } = useUserStore()

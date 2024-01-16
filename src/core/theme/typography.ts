@@ -1,4 +1,4 @@
-// ----------------------------------------------------------------------
+
 
 export function remToPx(value: string) {
   return Math.round(parseFloat(value) * 16);
@@ -31,7 +31,7 @@ declare module '@mui/material/styles' {
 const primaryFont = 'Public Sans, sans-serif'; // Google Font
 // const secondaryFont = 'CircularStd, sans-serif'; // Local Font
 
-// ----------------------------------------------------------------------
+
 
 export const typography = {
   fontFamily: primaryFont,

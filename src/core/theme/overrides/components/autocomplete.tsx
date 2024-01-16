@@ -4,8 +4,6 @@ import SvgIcon, { SvgIconProps, svgIconClasses } from '@mui/material/SvgIcon'
 //
 import { paper, menuItem } from '../../css'
 
-// ----------------------------------------------------------------------
-
 export default function Autocomplete(theme: Theme) {
   const Icon = (props: SvgIconProps) => (
     <SvgIcon {...props}>

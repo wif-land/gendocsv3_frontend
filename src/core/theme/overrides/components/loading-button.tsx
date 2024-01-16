@@ -1,7 +1,8 @@
-import { Theme } from '@mui/material/styles';
-import { loadingButtonClasses, LoadingButtonProps } from '@mui/lab/LoadingButton';
-
-// ----------------------------------------------------------------------
+import { Theme } from '@mui/material/styles'
+import {
+  loadingButtonClasses,
+  LoadingButtonProps,
+} from '@mui/lab/LoadingButton'
 
 export default function LoadingButton(theme: Theme) {
   return {
@@ -27,5 +28,5 @@ export default function LoadingButton(theme: Theme) {
         }),
       },
     },
-  };
+  }
 }

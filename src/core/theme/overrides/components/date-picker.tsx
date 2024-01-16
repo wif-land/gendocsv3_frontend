@@ -3,8 +3,6 @@ import { buttonClasses } from '@mui/material/Button'
 // components
 import Iconify from '../../../iconify'
 
-// ----------------------------------------------------------------------
-
 const dateList = [
   'DatePicker',
   'DateTimePicker',

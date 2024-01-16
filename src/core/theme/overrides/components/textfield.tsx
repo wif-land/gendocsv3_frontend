@@ -1,22 +1,20 @@
-import { alpha, Theme } from '@mui/material/styles';
-import { inputBaseClasses } from '@mui/material/InputBase';
-import { inputLabelClasses } from '@mui/material/InputLabel';
-import { filledInputClasses } from '@mui/material/FilledInput';
-import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-
-// ----------------------------------------------------------------------
+import { alpha, Theme } from '@mui/material/styles'
+import { inputBaseClasses } from '@mui/material/InputBase'
+import { inputLabelClasses } from '@mui/material/InputLabel'
+import { filledInputClasses } from '@mui/material/FilledInput'
+import { outlinedInputClasses } from '@mui/material/OutlinedInput'
 
 export default function TextField(theme: Theme) {
   const color = {
     focused: theme.palette.text.primary,
     active: theme.palette.text.secondary,
     placeholder: theme.palette.text.disabled,
-  };
+  }
 
   const font = {
     label: theme.typography.body1,
     value: theme.typography.body2,
-  };
+  }
 
   return {
     // HELPER
@@ -63,7 +61,7 @@ export default function TextField(theme: Theme) {
       styleOverrides: {
         root: {
           [`&.${inputBaseClasses.disabled}`]: {
-            '& svg': {
+            ['& svg']: {
               color: theme.palette.text.disabled,
             },
           },
@@ -148,5 +146,5 @@ export default function TextField(theme: Theme) {
         },
       },
     },
-  };
+  }
 }

@@ -22,8 +22,6 @@ declare module '@mui/material/styles/createPalette' {
   }
 }
 
-// SETUP COLORS
-
 const GREY = {
   0: '#FFFFFF',
   100: '#F9FAFB',
@@ -38,29 +36,29 @@ const GREY = {
 }
 
 const PRIMARY = {
-  lighter: '#C8FAD6',
-  light: '#5BE49B',
-  main: '#00A76F',
-  dark: '#007867',
-  darker: '#004B50',
+  lighter: '#FFCCD1',
+  light: '#FF7587',
+  main: '#FF003F',
+  dark: '#CC002E',
+  darker: '#99001F',
   contrastText: '#FFFFFF',
 }
 
 const SECONDARY = {
-  lighter: '#EFD6FF',
-  light: '#C684FF',
-  main: '#8E33FF',
-  dark: '#5119B7',
-  darker: '#27097A',
+  lighter: '#FFD6D6',
+  light: '#FF8C8C',
+  main: '#FF4747',
+  dark: '#CC3131',
+  darker: '#991A1A',
   contrastText: '#FFFFFF',
 }
 
 const INFO = {
-  lighter: '#CAFDF5',
-  light: '#61F3F3',
-  main: '#00B8D9',
-  dark: '#006C9C',
-  darker: '#003768',
+  lighter: '#FFE9E9',
+  light: '#FFB2B2',
+  main: '#FF7A7A',
+  dark: '#CC5252',
+  darker: '#992B2B',
   contrastText: '#FFFFFF',
 }
 

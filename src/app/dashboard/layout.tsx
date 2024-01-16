@@ -5,6 +5,7 @@ import { useAuth } from '../../features/auth/hooks/useAuth'
 import CareerModule from '../../shared/components/CareerModule'
 import React, { Suspense } from 'react'
 import { LoadingScreen } from '../../shared/components/loading-screen'
+import DashboardLayout from '../../core/layout/dashboard/layout'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -18,6 +19,8 @@ const layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div>
+      <DashboardLayout>{children}</DashboardLayout>
+      {/*
       <Suspense fallback={<LoadingScreen />}>
         <PrivateRoute>
           <div className="h-screen flex">
@@ -52,7 +55,7 @@ const layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </div>
         </PrivateRoute>
-      </Suspense>
+      </Suspense> */}
     </div>
   )
 }

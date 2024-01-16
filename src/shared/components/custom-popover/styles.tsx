@@ -1,7 +1,6 @@
 import { styled, alpha } from '@mui/material/styles'
 import { MenuPopoverArrowValue } from './types'
 import { bgBlur } from '../../../core/theme/css'
-
 export const StyledArrow = styled('span')<{ arrow: MenuPopoverArrowValue }>(({
   arrow,
   theme,

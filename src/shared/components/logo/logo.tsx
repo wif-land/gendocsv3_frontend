@@ -1,14 +1,10 @@
 import { forwardRef } from 'react'
-// @mui
 import { useTheme } from '@mui/material/styles'
 import Link from '@mui/material/Link'
-import Box, { BoxProps } from '@mui/material/Box'
+import Box from '@mui/material/Box'
+import { RouterLink } from '../../../core/routes/components'
 
-export interface LogoProps extends BoxProps {
-  disabledLink?: boolean
-}
-
-const Logo = forwardRef<HTMLDivElement, LogoProps>(
+const Logo = forwardRef<HTMLDivElement, any>(
   ({ disabledLink = false, sx, ...other }, ref) => {
     const theme = useTheme()
 
@@ -17,16 +13,6 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
     const PRIMARY_MAIN = theme.palette.primary.main
 
     const PRIMARY_DARK = theme.palette.primary.dark
-
-    // OR using local (public folder)
-    // -------------------------------------------------------
-    // const logo = (
-    //   <Box
-    //     component="img"
-    //     src="/logo/logo_single.svg" => your path
-    //     sx={{ width: 40, height: 40, cursor: 'pointer', ...sx }}
-    //   />
-    // );
 
     const logo = (
       <Box
@@ -91,7 +77,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
     }
 
     return (
-      <Link href="/" sx={{ display: 'contents' }}>
+      <Link component={RouterLink} href="/" sx={{ display: 'contents' }}>
         {logo}
       </Link>
     )

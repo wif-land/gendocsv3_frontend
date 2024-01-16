@@ -1,6 +1,7 @@
 'use client'
 import { useParams } from 'next/navigation'
 import TemplateView from '../../../../../features/templates/presentation/components/TemplatesView'
+import CouncilDetailsView from '../../../../../features/council/presentation/view/council-detail-view'
 
 const Page = () => {
   const { subModuleName, id } = useParams()
@@ -9,6 +10,8 @@ const Page = () => {
     switch (subModuleName as string) {
       case 'procesos':
         return <TemplateView processId={id as string} />
+      case 'consejos':
+        return <CouncilDetailsView />
       default:
         return <div>DEFAULT</div>
     }

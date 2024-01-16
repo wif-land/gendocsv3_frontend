@@ -26,7 +26,7 @@ export const login = async (
     data: { message, content },
   } = result
 
-  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) return { status, message }
+  if (status !== HTTP_STATUS_CODES.CREATED) return { status, message }
 
   await setCookie(ACCESS_TOKEN_COOKIE_NAME, content!.accessToken)
 

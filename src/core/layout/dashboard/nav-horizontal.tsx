@@ -1,0 +1,46 @@
+import { memo } from 'react'
+import { useTheme } from '@mui/material/styles'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import { HEADER } from '../config-layout'
+import { useNavData } from './config-navigation'
+import { HeaderShadow } from '../_common'
+import { useMockedUser } from '../../../shared/hooks/use-mocked-user'
+import { bgBlur } from '../../theme/css'
+import NavSectionHorizontal from '../../../shared/components/nav-section/horizontal/nav-section-horizontal'
+
+const NavHorizontal = () => {
+  const theme = useTheme()
+
+  const { user } = useMockedUser()
+
+  const navData = useNavData()
+
+  return (
+    <AppBar
+      component="nav"
+      sx={{
+        top: HEADER.H_DESKTOP_OFFSET,
+      }}
+    >
+      <Toolbar
+        sx={{
+          ...bgBlur({
+            color: theme.palette.background.default,
+          }),
+        }}
+      >
+        <NavSectionHorizontal
+          data={navData}
+          config={{
+            currentRole: user?.role || 'admin',
+          }}
+        />
+      </Toolbar>
+
+      <HeaderShadow />
+    </AppBar>
+  )
+}
+
+export default memo(NavHorizontal)
