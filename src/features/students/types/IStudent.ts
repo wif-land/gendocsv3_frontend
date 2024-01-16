@@ -1,7 +1,7 @@
 import { ICareer } from '../../careers/interfaces/ICareer'
 
 export interface IStudent {
-  id: string
+  id: number
   dni: string
   firstName: string
   secondName: string

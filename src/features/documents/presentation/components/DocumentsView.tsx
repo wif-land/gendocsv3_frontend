@@ -8,8 +8,6 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-  Chip,
-  ChipProps,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -19,18 +17,17 @@ import {
 } from '@nextui-org/react'
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
-import { useProcessStore } from '../store/processesStore'
-import { ProcessesForm } from './ProcessesForm'
+import { useDocumentStore } from '../store/documentsStore'
+import { DocumentsForm } from './DocumentsForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
-import { ProcessModel } from '../../data/models/ProcessesModel'
-import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
-import { toast } from 'react-toastify'
+import { DocumentModel } from '../../data/models/DocumentsModel'
+import { DocumentsUseCasesImpl } from '../../domain/usecases/DocumentServices'
 import { useRouter } from 'next/navigation'
 
-const statusColorMap: Record<string, ChipProps['color']> = {
-  active: 'success',
-  paused: 'danger',
-}
+// const statusColorMap: Record<string, ChipProps['color']> = {
+//   active: 'success',
+//   paused: 'danger',
+// }
 const COLUMNS = [
   {
     key: 'name',
@@ -52,38 +49,56 @@ const COLUMNS = [
     key: 'actions',
     label: 'Acciones',
   },
+  {
+    key: 'view',
+    label: 'Ver',
+  },
 ]
-const ProcessesView = ({ moduleId }: { moduleId: string }) => {
+const DocumentsView = ({ moduleId }: { moduleId: string }) => {
   const router = useRouter()
   const [processUpdate, setProcessUpdate] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const { modules } = useModulesStore()
-  const { processes, setProcesses } = useProcessStore()
+  const { documents, setDocuments } = useDocumentStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [selectedProcess, setSelectedProcess] = useState<ProcessModel | null>(
+  const [selectedProcess, setSelectedProcess] = useState<DocumentModel | null>(
     null,
   )
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
   const resolveRowComponentByColumnKey = (
-    item: ProcessModel,
+    item: DocumentModel,
     columnKey: Key,
   ) => {
     switch (columnKey) {
-      case 'isActive':
+      // case 'isActive':
+      //   return (
+      //     <TableCell>
+      //       {
+      //         <Chip
+      //           className="capitalize"
+      //           color={statusColorMap[item.isActive ? 'active' : 'paused']}
+      //           size="sm"
+      //           variant="flat"
+      //         >
+      //           {item.isActive ? 'Si' : 'No'}
+      //         </Chip>
+      //       }
+      //     </TableCell>
+      //   )
+      case 'view':
         return (
           <TableCell>
-            {
-              <Chip
-                className="capitalize"
-                color={statusColorMap[item.isActive ? 'active' : 'paused']}
-                size="sm"
-                variant="flat"
-              >
-                {item.isActive ? 'Si' : 'No'}
-              </Chip>
-            }
+            <Button
+              variant="light"
+              onClick={() => {
+                setSelectedProcess(item)
+                router.push(`${moduleId}/view/${item.id}`)
+              }}
+            >
+              Ver
+            </Button>
           </TableCell>
         )
       case 'actions':
@@ -98,13 +113,6 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
 
               <DropdownMenu aria-label="Static Actions">
                 <DropdownItem
-                  onClick={() => {
-                    router.push(`procesos/${item.id as unknown as string}`)
-                  }}
-                >
-                  Plantillas
-                </DropdownItem>
-                <DropdownItem
                   key="edit"
                   onPress={() => {
                     setSelectedProcess(item)
@@ -112,36 +120,6 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
                   }}
                 >
                   Editar
-                </DropdownItem>
-                <DropdownItem
-                  key={item.isActive ? 'desactivate' : 'activate'}
-                  className={item.isActive ? 'text-danger' : 'text-success'}
-                  color={item.isActive ? 'danger' : 'success'}
-                  onClick={() => {
-                    ProcessesUseCasesImpl.getInstance()
-                      .update(item.id!, {
-                        isActive: !item.isActive,
-                      })
-                      .then((_) => {
-                        setProcesses(
-                          processes!.map((process) => {
-                            if (process.id === item.id) {
-                              return new ProcessModel({
-                                ...process,
-                                isActive: !item.isActive,
-                              })
-                            }
-                            return process
-                          }),
-                        )
-                        setProcessUpdate(true)
-                      })
-                      .catch((error) => {
-                        toast.error(error.message)
-                      })
-                  }}
-                >
-                  {item.isActive ? 'Desactivar proceso' : 'Activar proceso'}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -159,12 +137,12 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
       if (!isMounted) return
       setIsFetching(true)
       const result =
-        await ProcessesUseCasesImpl.getInstance().getAllProcessesByModuleId(
+        await DocumentsUseCasesImpl.getInstance().getAllProcessesByModuleId(
           moduleIdentifier,
         )
 
       if (result.processes) {
-        setProcesses(result.processes)
+        setDocuments(result.processes)
         setIsFetching(false)
       }
     }
@@ -188,7 +166,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
         radius="sm"
         className="w-40 h-12 ml-6 border-2  bg-red-600 text-white"
       >
-        Crear proceso
+        Crear documento
       </Button>
 
       <div className="m-6">
@@ -202,7 +180,7 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
             emptyContent={'No existen datos sobre procesos'}
             isLoading={isFetching}
           >
-            {processes!.map((item) => (
+            {documents!.map((item) => (
               <TableRow key={item.id}>
                 {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
               </TableRow>
@@ -211,13 +189,13 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
         </Table>
       </div>
 
-      <ProcessesForm
+      <DocumentsForm
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         values={
           selectedProcess
             ? selectedProcess
-            : ProcessModel.fromJson({
+            : DocumentModel.fromJson({
                 moduleId: moduleIdentifier,
               })
         }
@@ -226,4 +204,4 @@ const ProcessesView = ({ moduleId }: { moduleId: string }) => {
   )
 }
 
-export default ProcessesView
+export default DocumentsView

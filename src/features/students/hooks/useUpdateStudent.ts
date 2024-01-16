@@ -17,7 +17,7 @@ interface IStudentForm {
   gender: string | undefined
   birthdate: Date | undefined
   canton: string | undefined
-  googleEmail: string | undefined
+  personalEmail: string | undefined
   outlookEmail: string | undefined
   regularPhoneNumber: string | undefined
   phoneNumber: string | undefined
@@ -84,7 +84,7 @@ const validationSchema = yup.object().shape({
 })
 export const useUpdateStudent = () => {
   const { get } = useStudentStore()
-  const [studentId, setStudentId] = useState('')
+  const [studentId, setStudentId] = useState(0)
 
   const onSubmit = async (form: IStudentForm) => {
     const { status } = await StudentsApi.updateStudent(
@@ -115,7 +115,7 @@ export const useUpdateStudent = () => {
       gender: undefined,
       birthdate: undefined,
       canton: undefined,
-      googleEmail: undefined,
+      personalEmail: undefined,
       outlookEmail: undefined,
       regularPhoneNumber: undefined,
       phoneNumber: undefined,
