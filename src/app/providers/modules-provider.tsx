@@ -27,7 +27,6 @@ export const ModulesProvider = ({
         }
       } catch (error) {}
     }
-
     modulesFetching()
     return () => {
       isMounted = false

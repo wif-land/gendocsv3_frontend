@@ -6,63 +6,29 @@ import { useCouncilStore } from '../store/councilsStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil } from '../../domain/entities/ICouncil'
+import { useCallback } from 'react'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { LOADER_DELAY } from '../../../../shared/constants/common'
 
 export const useCouncilsForm = (
   initialValues: ICouncil,
   onClose: () => void,
 ) => {
-  const { councils, setCouncils } = useCouncilStore()
+  const { councils, addCouncil, setCouncils } = useCouncilStore()
+  const { addLoaderItem, removeLoaderItem } = useLoaderStore()
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
     date: yup.date().required('La fecha es requerida'),
   })
 
-  const formik = useFormik<ICouncil>({
-    enableReinitialize: true,
-    initialValues: {
-      name: initialValues.name || '',
-      date: initialValues.date || null,
-      type: initialValues.type || '',
-      isActive: initialValues.isActive || false,
-      isArchived: initialValues.isArchived || false,
-      moduleId: initialValues.moduleId || 0,
-      userId: initialValues.userId || 0,
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      if (!initialValues.id) {
-        await handleCreateCouncil(values)
-        onClose()
-        return
-      }
-
-      const editedFields: { [key: string]: unknown } = {}
-
-      Object.keys(initialValues).forEach((key) => {
-        if (
-          initialValues[key as keyof ICouncil] !== values[key as keyof ICouncil]
-        ) {
-          editedFields[key] = values[key as keyof ICouncil]
-        }
-      })
-
-      if (Object.keys(editedFields).length === 0) {
-        onClose()
-        return
-      }
-
-      await handleUpdateCouncil(initialValues.id, editedFields)
-      onClose()
-    },
-  })
-
-  const handleCreateCouncil = async (values: ICouncil) => {
+  const handleCreateCouncil = useCallback(async (values: ICouncil) => {
     try {
+      addLoaderItem('councils-form')
       const result = await CouncilsUseCasesImpl.getInstance().create(values)
 
       if (result.council) {
-        setCouncils([...councils, result.council])
+        addCouncil(result.council)
         toast.success('Consejo creado exitosamente')
         formik.resetForm()
       } else {
@@ -72,14 +38,17 @@ export const useCouncilsForm = (
       }
     } catch (error) {
       toast.error('Ocurrió un error al crear el consejo')
+    } finally {
+      setTimeout(() => removeLoaderItem('councils-form'), LOADER_DELAY)
     }
-  }
+  }, [])
 
   const handleUpdateCouncil = async (
     id: number,
     editedFields: Partial<ICouncil>,
   ) => {
     try {
+      addLoaderItem('councils-form')
       const { status } = await CouncilsUseCasesImpl.getInstance().update(
         id,
         editedFields,
@@ -105,8 +74,53 @@ export const useCouncilsForm = (
       }
     } catch (error) {
       toast.error('Ocurrió un error al actualizar el consejo')
+    } finally {
+      setTimeout(() => removeLoaderItem('councils-form'), LOADER_DELAY)
     }
   }
 
-  return { formik, councils, setCouncils }
+  const formik = useFormik<ICouncil>({
+    enableReinitialize: true,
+    initialValues: {
+      name: initialValues.name || '',
+      date: initialValues.date || null,
+      type: initialValues.type || '',
+      isActive: initialValues.isActive || false,
+      isArchived: initialValues.isArchived || false,
+      moduleId: initialValues.moduleId || 0,
+      userId: initialValues.userId || 0,
+    },
+    validationSchema,
+    onSubmit: useCallback(
+      async (values) => {
+        if (!initialValues.id) {
+          await handleCreateCouncil(values)
+          onClose()
+          return
+        }
+
+        const editedFields: { [key: string]: unknown } = {}
+
+        Object.keys(initialValues).forEach((key) => {
+          if (
+            initialValues[key as keyof ICouncil] !==
+            values[key as keyof ICouncil]
+          ) {
+            editedFields[key] = values[key as keyof ICouncil]
+          }
+        })
+
+        if (Object.keys(editedFields).length === 0) {
+          onClose()
+          return
+        }
+
+        await handleUpdateCouncil(initialValues.id, editedFields)
+        onClose()
+      },
+      [initialValues, onClose, handleCreateCouncil, handleUpdateCouncil],
+    ),
+  })
+
+  return { formik, councils, setCouncils, handleUpdateCouncil }
 }
