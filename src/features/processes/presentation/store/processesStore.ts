@@ -92,6 +92,9 @@ export const useProcessStore = create<StoreState>(
               const value = updatedTemplateData[keyOfTemplate]
 
               if (value !== undefined) {
+                const updatedTemplate: {
+                  [key: string]: string | number | boolean | Date
+                } = { ...template }
                 updatedTemplate[keyOfTemplate] = value
               }
             })

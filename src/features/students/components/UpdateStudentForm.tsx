@@ -29,12 +29,12 @@ const UpdateStudentForm = ({
     },
   ]
 
-  const handleSelectChange = (name, value) => {
+  const handleSelectChange = (name: string, value: number) => {
     const numericValue = !isNaN(value) ? Number(value) : value
     formik.setFieldValue(name, numericValue)
   }
 
-  const handleDateChange = (e) => {
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, defaultValue } = e.target
     const formattedDate = formatISO(new Date(defaultValue))
     formik.setFieldValue(name, formattedDate)
@@ -315,7 +315,7 @@ const UpdateStudentForm = ({
             className="w-full"
             placeholder="Ciudad de Residencia"
             variant="underlined"
-            onChange={(e) => handleSelectChange('canton', e.target.value)}
+            onChange={(e) => handleSelectChange('canton', +e.target.value)}
             defaultSelectedKeys={[student.canton]}
           >
             {cantones.map((canton) => (
@@ -329,7 +329,7 @@ const UpdateStudentForm = ({
             className="w-full"
             placeholder="Genero"
             variant="underlined"
-            onChange={(e) => handleSelectChange('gender', e.target.value)}
+            onChange={(e) => handleSelectChange('gender', +e.target.value)}
             defaultSelectedKeys={student.gender || []}
           >
             {genders.map((gender) => (
