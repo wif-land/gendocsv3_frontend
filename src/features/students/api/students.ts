@@ -19,10 +19,10 @@ export class StudentsApi {
   }
 
   static updateStudent = async (
-    id: string,
+    id: number,
     data: Partial<IStudent>,
   ): Promise<{ status: number; student?: IStudent; message?: string }> => {
-    const urlWithId = API_ROUTES.STUDENTS.UPDATE.replace(':id', id)
+    const urlWithId = API_ROUTES.STUDENTS.UPDATE.replace(':id', id.toString())
     const result = await AxiosClient.patch(urlWithId, data, {
       id,
     })
@@ -46,5 +46,24 @@ export class StudentsApi {
       return { status, message: data?.message }
     }
     return { status, student: data.content as IStudent }
+  }
+
+  static createManyStudents = async (
+    body: Partial<IStudent>[],
+  ): Promise<{
+    status: number
+    studentsAdded?: boolean
+    message?: string
+  }> => {
+    const transformedBody = { students: body }
+    const result = await AxiosClient.post(
+      API_ROUTES.STUDENTS.CREATE_MANY,
+      transformedBody,
+    )
+    const { status, data } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
+    return { status, studentsAdded: data.content as boolean }
   }
 }

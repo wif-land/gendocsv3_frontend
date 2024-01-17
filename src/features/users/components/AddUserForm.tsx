@@ -237,7 +237,7 @@ const AddUserForm = ({ onClose }: { onClose: () => void }) => {
             Crear
           </Button>
           <Button
-            className='bg-red-600 w-56 m-1 text-white'
+            className="bg-red-600 w-56 m-1 text-white"
             size="lg"
             radius="sm"
             disabled={formik.isSubmitting}

@@ -8,7 +8,7 @@ const Page = () => {
 
   return (
     <div>
-      <iframe src={documentURL} width="100%" height="600px" />
+      <iframe src={documentURL} width="100%" height="850px" />
     </div>
   )
 }

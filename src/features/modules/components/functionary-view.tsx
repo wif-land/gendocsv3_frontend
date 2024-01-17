@@ -4,7 +4,6 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   Table,
   TableBody,
@@ -20,7 +19,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  ScrollShadow
+  ScrollShadow,
 } from '@nextui-org/react'
 import { MdMoreVert } from 'react-icons/md'
 import { toast } from 'react-toastify'
@@ -44,7 +43,7 @@ const COLUMNS = [
     label: 'Nombre',
   },
   {
-    key: 'googleEmail',
+    key: 'personalEmail',
     label: 'Google email',
   },
   {
@@ -147,7 +146,9 @@ const FunctionaryView = () => {
                       })
                   }}
                 >
-                  {item.isActive ? 'Desactivar funcionario' : 'Activar funcionario'}
+                  {item.isActive
+                    ? 'Desactivar funcionario'
+                    : 'Activar funcionario'}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -182,7 +183,7 @@ const FunctionaryView = () => {
   }, [FunctionariesStore, setFunctionariesStore])
 
   return (
-    <div className='m-10'>
+    <div className="m-10">
       <Button
         className="w-40 h-12 ml-6 border-2  bg-blue-700   text-white"
         onClick={() => {
@@ -191,13 +192,16 @@ const FunctionaryView = () => {
       >
         Crear funcionario
       </Button>
-      <Table aria-label="Example table with dynamic content" className='m-10'>
+      <Table aria-label="Example table with dynamic content" className="m-10">
         <TableHeader columns={COLUMNS} className="">
           {(column) => (
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={functionaries} emptyContent={'No existen datos sobre funcionarios'}>
+        <TableBody
+          items={functionaries}
+          emptyContent={'No existen datos sobre funcionarios'}
+        >
           {(item) => (
             <TableRow key={item.dni}>
               {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
@@ -205,8 +209,8 @@ const FunctionaryView = () => {
           )}
         </TableBody>
       </Table>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='4xl'>
-      < ScrollShadow >
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
+        <ScrollShadow>
           <ModalContent>
             {(onClose) => (
               <>
@@ -221,7 +225,7 @@ const FunctionaryView = () => {
           </ModalContent>
         </ScrollShadow>
       </Modal>
-      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size='4xl'>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size="4xl">
         <ModalContent>
           {(onClose) => (
             <>

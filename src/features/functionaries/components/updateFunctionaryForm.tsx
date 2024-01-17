@@ -127,19 +127,19 @@ const UpdateFunctionaryForm = ({
             className="w-full"
           />
           <Input
-            id="googleEmail"
-            name="googleEmail"
-            type="googleEmail"
+            id="personalEmail"
+            name="personalEmail"
+            type="personalEmail"
             label="Correo Google"
             variant="underlined"
             placeholder="Ingrese un correo Google"
-            defaultValue={functionary.googleEmail}
+            defaultValue={functionary.personalEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
             errorMessage={
-              formik.touched.googleEmail && formik.errors.googleEmail
-                ? formik.errors.googleEmail
+              formik.touched.personalEmail && formik.errors.personalEmail
+                ? formik.errors.personalEmail
                 : ''
             }
             className="w-full"
@@ -242,7 +242,7 @@ const UpdateFunctionaryForm = ({
           id="isActive"
           name="isActive"
           size="sm"
-          className='m-4'
+          className="m-4"
           onValueChange={(defaultValue) => {
             const fakeEvent = {
               target: {
@@ -267,7 +267,7 @@ const UpdateFunctionaryForm = ({
             Actualizar
           </Button>
           <Button
-            className='bg-red-600 w-56 m-1 text-white'
+            className="bg-red-600 w-56 m-1 text-white"
             size="lg"
             radius="sm"
             disabled={formik.isSubmitting}

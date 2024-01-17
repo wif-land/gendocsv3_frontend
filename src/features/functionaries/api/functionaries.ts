@@ -22,7 +22,7 @@ export class FunctionariesApi {
   }
 
   static updateFunctionary = async (
-    id: string,
+    id: number,
     body: Partial<IFunctionary>,
   ): Promise<{
     status: number

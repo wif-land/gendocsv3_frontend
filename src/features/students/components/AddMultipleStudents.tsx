@@ -12,8 +12,7 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
   const [students, setStudents] = useState<IStudent[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { careers } = useCareersStore()
-  const { students: studentsStore, setStudents: setStudentsStore } =
-    useStudentStore()
+  const { get: getStudents } = useStudentStore()
   let isValid = true
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +31,7 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
         !item['Folio'] ||
         !item['registration'] ||
         !item['outlookEmail'] ||
-        !item['googleEmail'] ||
+        !item['personalEmail'] ||
         !item['Primer Apellido'] ||
         !item['Segundo Apellido'] ||
         !item['Segundo Nombre'] ||
@@ -57,7 +56,7 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
         firstLastName: item['Primer Apellido'],
         secondLastName: item['Segundo Apellido'],
         outlookEmail: item['outlookEmail'],
-        googleEmail: item['googleEmail'],
+        personalEmail: item['personalEmail'],
         phoneNumber: item['Número celular'],
         regularPhoneNumber: item['Teléfono convencional'],
         dni: item['Cédula'].toString(),
@@ -102,31 +101,30 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
   }
 
   const handleSave = async () => {
-    const newStudents: IStudent[] = []
-
-    for (const item of students) {
-      try {
-        const { status, student } = await StudentsApi.createStudent(item)
-        if (status === HTTP_STATUS_CODES.CREATED) {
-          newStudents.push(student as IStudent)
-        } else {
-          toast.error('Error al crear los estudiantes!', { autoClose: 1800 })
-          break
-        }
-      } catch (error) {
-        toast.error('Error al crear los estudiantes!', { autoClose: 1800 })
-        break
-      }
-    }
+    let newStudents: boolean = false
 
     if (!isValid) {
       setStudents([])
     } else {
-      setStudents(newStudents)
+      try {
+        if (!students) {
+          return
+        }
+
+        const { status, studentsAdded } =
+          await StudentsApi.createManyStudents(students)
+        if (status === HTTP_STATUS_CODES.CREATED) {
+          getStudents()
+          newStudents = studentsAdded as boolean
+        } else {
+          toast.error('Error al crear los estudiantes!', { autoClose: 1800 })
+        }
+      } catch (error) {
+        toast.error('Error al crear los estudiantes!', { autoClose: 1800 })
+      }
     }
 
-    if (newStudents.length > 0) {
-      setStudentsStore([...(studentsStore || []), ...newStudents])
+    if (newStudents) {
       toast.success('Proceso completado', { autoClose: 1800 })
     }
 
@@ -140,16 +138,28 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
         accept=".xlsx, .xls"
         onChange={handleFileUpload}
         ref={fileInputRef}
-        className='m-2 bg-white'
+        className="m-2 bg-white"
       />
       <br />
-      <Button onClick={handleReset} className='m-2 w-40 bg-red-700 text-white' radius='sm'>Eliminar archivo</Button>
+      <Button
+        onClick={handleReset}
+        className="m-2 w-40 bg-red-700 text-white"
+        radius="sm"
+      >
+        Eliminar archivo
+      </Button>
       <br />
       <a href="/FormatoEstudiantes.xlsx" download="FormatoEstudiantes.xlsx">
-        <Button className='m-2 w-40 bg-green-700 text-white' radius='sm'>Descargar formato</Button>
+        <Button className="m-2 w-40 bg-green-700 text-white" radius="sm">
+          Descargar formato
+        </Button>
       </a>
       <br />
-      <Button onClick={handleSave} className='m-2 w-40 bg-blue-600 text-white' radius='sm'>
+      <Button
+        onClick={handleSave}
+        className="m-2 w-40 bg-blue-600 text-white"
+        radius="sm"
+      >
         Cargar {isValid ? students.length : ''} registros
       </Button>
     </div>

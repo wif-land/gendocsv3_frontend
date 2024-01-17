@@ -4,7 +4,7 @@ import { FunctionariesApi } from '../api/functionaries'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { useFunctionaryStore } from '@/shared/store/functionaryStore'
+import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
 
 interface IFunctionaryForm {
   dni?: string
@@ -13,7 +13,7 @@ interface IFunctionaryForm {
   firstLastName?: string
   secondLastName?: string
   outlookEmail?: string
-  googleEmail?: string
+  personalEmail?: string
   phoneNumber?: string
   regularPhoneNumber?: string
   secondLevelDegree?: string
@@ -66,7 +66,7 @@ const validationSchema = yup.object().shape({
 
 export const useUpdateFunctionary = () => {
   const { get } = useFunctionaryStore()
-  const [functionaryId, setFunctionaryId] = useState('')
+  const [functionaryId, setFunctionaryId] = useState(0)
 
   const onSubmit = async (form: IFunctionaryForm) => {
     const { status } = await FunctionariesApi.updateFunctionary(
@@ -95,7 +95,7 @@ export const useUpdateFunctionary = () => {
       firstLastName: undefined,
       secondLastName: undefined,
       outlookEmail: undefined,
-      googleEmail: undefined,
+      personalEmail: undefined,
       phoneNumber: undefined,
       regularPhoneNumber: undefined,
       secondLevelDegree: undefined,

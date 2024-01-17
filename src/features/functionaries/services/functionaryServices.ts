@@ -3,7 +3,7 @@ import { FunctionariesApi } from '../api/functionaries'
 
 export class FunctionaryServices {
   static async updateFunctionary(
-    id: string,
+    id: number,
     data: Partial<IUser>,
   ): Promise<void> {
     await FunctionariesApi.updateFunctionary(id, data)

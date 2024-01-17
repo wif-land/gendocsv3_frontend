@@ -1,10 +1,8 @@
 export interface ICareer {
   id: number
   name: string
-  credits: number,
+  credits: number
   menDegree: string
   womenDegree: string
   isActive: boolean
-
-      
 }
