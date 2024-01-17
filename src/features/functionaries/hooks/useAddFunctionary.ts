@@ -23,21 +23,11 @@ interface IFunctionaryForm {
   isActive: boolean
 }
 const validationSchema = yup.object().shape({
-  dni: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  firstName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  secondName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  firstLastName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  secondLastName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
+  dni: yup.string().required(VALIDATION_MESSAGES.required),
+  firstName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondName: yup.string().required(VALIDATION_MESSAGES.required),
+  firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
   outlookEmail: yup
     .string()
     .required(VALIDATION_MESSAGES.required)

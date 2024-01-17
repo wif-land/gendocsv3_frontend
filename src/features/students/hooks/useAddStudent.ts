@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { useStudentStore } from '../../../shared/store/studentStore'
 import { IStudent } from '../types/IStudent'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 
 interface IStudentForm {
   dni: string
@@ -26,21 +27,11 @@ interface IStudentForm {
 }
 
 const validationSchema = yup.object().shape({
-  dni: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  firstName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  secondName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  firstLastName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
-  secondLastName: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required),
+  dni: yup.string().required(VALIDATION_MESSAGES.required),
+  firstName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondName: yup.string().required(VALIDATION_MESSAGES.required),
+  firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
   personalEmail: yup
     .string()
     .required(VALIDATION_MESSAGES.required)
@@ -64,7 +55,12 @@ const validationSchema = yup.object().shape({
     .required(VALIDATION_MESSAGES.required)
     .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
   registration: yup.string().required(VALIDATION_MESSAGES.required),
-  approvedCredits: yup.number().required(VALIDATION_MESSAGES.required).max(140).min(0),
+  approvedCredits: yup
+    .number()
+    .required(VALIDATION_MESSAGES.required)
+    // eslint-disable-next-line no-magic-numbers
+    .max(140)
+    .min(0),
   folio: yup.string().required(VALIDATION_MESSAGES.required),
   careerId: yup.number().required(VALIDATION_MESSAGES.required),
 })

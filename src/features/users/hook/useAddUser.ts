@@ -25,14 +25,17 @@ const validationSchema = yup.object().shape({
   secondName: yup.string().required(VALIDATION_MESSAGES.required),
   firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
   secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
-  outlookEmail: yup.string().required(VALIDATION_MESSAGES.required).matches(
-    /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
-    VALIDATION_MESSAGES.invalidFormat,
-  ),
-  googleEmail: yup.string().required(VALIDATION_MESSAGES.required).matches(
-    /^[A-Z0-9._%+-]+@gmail\.com$/i,
-    VALIDATION_MESSAGES.invalidFormat,
-  ),
+  outlookEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(
+      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
+      VALIDATION_MESSAGES.invalidFormat,
+    ),
+  googleEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^[A-Z0-9._%+-]+@gmail\.com$/i, VALIDATION_MESSAGES.invalidFormat),
   roles: yup.array().required(VALIDATION_MESSAGES.required),
   isActive: yup.boolean().required(VALIDATION_MESSAGES.required),
   password: yup.string().required(VALIDATION_MESSAGES.required),

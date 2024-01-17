@@ -18,10 +18,11 @@ export interface IStudent {
   approvedCredits: number
   career: ICareer
   updatedAt: string
-  personalEmail?: string
+  personalEmail: string
   outlookEmail: string
   phoneNumber: string
   name: string
+  createdAt: string
 }
 
 export interface ICreateStudent {

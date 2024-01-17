@@ -6,6 +6,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
   Switch,
 } from '@nextui-org/react'
 import * as yup from 'yup'
@@ -16,6 +18,7 @@ import { useCareersStore } from '../../../shared/store/careerStore'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useFormik } from 'formik'
 import { useEffect } from 'react'
+import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
 
 export const CareersForm = ({
   isOpen,
@@ -26,7 +29,7 @@ export const CareersForm = ({
     menDegree: '',
     womenDegree: '',
     isActive: true,
-    coordinator: '',
+    coordinator: 0,
     internshipHours: 0,
     vinculationHours: 0,
   },
@@ -40,15 +43,19 @@ export const CareersForm = ({
 }) => {
   const isAddMode = !values.id
   const { careers, setCareers } = useCareersStore()
+  const { functionaries } = useFunctionaryStore()
 
   const validationSchema = yup.object({
     name: yup.string().required('Campo requerido'),
+    // eslint-disable-next-line no-magic-numbers
     credits: yup.number().required('Campo requerido').max(140).min(130),
     menDegree: yup.string().required('Campo requerido'),
     womenDegree: yup.string().required('Campo requerido'),
     coordinator: yup.string().required('Campo requerido'),
-    internshipHours: yup.number().required('Campo requerido').max(230).min(250),
-    vinculationHours: yup.number().required('Campo requerido').max(80).min(95),
+    // eslint-disable-next-line no-magic-numbers
+    internshipHours: yup.number().required('Campo requerido').max(250).min(230),
+    // eslint-disable-next-line no-magic-numbers
+    vinculationHours: yup.number().required('Campo requerido').max(95).min(80),
   })
 
   const onSubmit = async (values: ICareer) => {
@@ -73,7 +80,7 @@ export const CareersForm = ({
       menDegree: values.menDegree || '',
       womenDegree: values.womenDegree || '',
       isActive: values.isActive,
-      coordinator: values.coordinator || '',
+      coordinator: values.coordinator || 0,
       internshipHours: values.internshipHours || 0,
       vinculationHours: values.vinculationHours || 0,
     },
@@ -237,7 +244,12 @@ export const CareersForm = ({
                     formik.values.internshipHours.toString() ??
                     values.internshipHours
                   }
-                  onChange={formik.handleChange}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      'internshipHours',
+                      Number(e.target.value),
+                    )
+                  }
                   onBlur={formik.handleBlur}
                   size="lg"
                   errorMessage={
@@ -259,7 +271,12 @@ export const CareersForm = ({
                     formik.values.vinculationHours.toString() ??
                     values.vinculationHours
                   }
-                  onChange={formik.handleChange}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      'vinculationHours',
+                      Number(e.target.value),
+                    )
+                  }
                   onBlur={formik.handleBlur}
                   size="lg"
                   errorMessage={
@@ -269,24 +286,31 @@ export const CareersForm = ({
                       : ''
                   }
                 />
-                <Input
-                  id="coordinator"
-                  name="coordinator"
-                  type="coordinator"
-                  label="Coordinador"
-                  variant="underlined"
-                  placeholder="Eg. Ing. Juan Pérez"
+
+                <Select
+                  label="Funcionario"
                   className="w-full"
-                  value={formik.values.coordinator ?? values.coordinator}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  size="lg"
-                  errorMessage={
-                    formik.touched.coordinator && formik.errors.coordinator
-                      ? formik.errors.coordinator
-                      : ''
+                  placeholder="Coordinador"
+                  variant="underlined"
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  defaultSelectedKeys={[(formik.values.coordinator as any).id]}
+                  onChange={(e) =>
+                    formik.setFieldValue('coordinator', Number(e.target.value))
                   }
-                />
+                >
+                  {functionaries! &&
+                    functionaries?.map((functionary) => {
+                      const functionaryName = `${functionary.firstName} ${functionary.firstLastName}`
+                      return (
+                        <SelectItem
+                          key={functionary.id as number}
+                          value={functionary.id as number}
+                        >
+                          {functionaryName}
+                        </SelectItem>
+                      )
+                    })}
+                </Select>
 
                 {isAddMode && (
                   <Switch

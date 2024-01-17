@@ -283,7 +283,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             onChange={(e) => formik.setFieldValue('canton', e.target.value)}
           >
             {cantones.map((canton) => (
-              <SelectItem key={canton.id} value={canton.name}>
+              <SelectItem key={canton.name} value={canton.name}>
                 {canton.name}
               </SelectItem>
             ))}

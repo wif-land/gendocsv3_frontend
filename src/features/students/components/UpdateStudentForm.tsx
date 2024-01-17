@@ -41,6 +41,14 @@ const UpdateStudentForm = ({
   }
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, career, createdAt, updatedAt, name, ...restStudent } = student
+    formik.setValues({
+      ...restStudent,
+      careerId: student.career?.id,
+      birthdate: new Date(student.birthdate),
+      regularPhoneNumber: student.regularPhoneNumber?.toString(),
+    })
     let isMounted = true
 
     const fetchCareers = async () => {
