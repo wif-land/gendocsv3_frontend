@@ -48,7 +48,7 @@ const COLUMNS = [
     label: 'Nombre',
   },
   {
-    key: 'googleEmail',
+    key: 'personalEmail',
     label: 'Correo Personal',
   },
   {
