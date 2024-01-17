@@ -52,11 +52,10 @@ export class StudentsApi {
     body: Partial<IStudent>[],
   ): Promise<{
     status: number
-    studentsAdded?: IStudent[]
+    studentsAdded?: boolean
     message?: string
   }> => {
     const transformedBody = { students: body }
-    console.log(transformedBody)
     const result = await AxiosClient.post(
       API_ROUTES.STUDENTS.CREATE_MANY,
       transformedBody,
@@ -65,6 +64,6 @@ export class StudentsApi {
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
       return { status, message: data?.message }
     }
-    return { status, studentsAdded: data.content as IStudent[] }
+    return { status, studentsAdded: data.content as boolean }
   }
 }

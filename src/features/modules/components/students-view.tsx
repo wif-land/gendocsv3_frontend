@@ -20,7 +20,7 @@ import {
   TableRow,
   getKeyValue,
   useDisclosure,
-  ScrollShadow
+  ScrollShadow,
 } from '@nextui-org/react'
 import { IStudent } from '../../../features/students/types/IStudent'
 import AddStudentForm from '../../../features/students/components/AddStudentForm'
@@ -48,7 +48,7 @@ const COLUMNS = [
     label: 'Nombre',
   },
   {
-    key: 'googleEmail',
+    key: 'personalEmail',
     label: 'Correo Personal',
   },
   {
@@ -87,6 +87,8 @@ const StudentsView = () => {
     StudentsViewProps | undefined
   >(undefined)
 
+  const [firsLoad, setFirstLoad] = useState<boolean>(true)
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
   const { isOpen: isOpenAddMultiple, onOpenChange: onOpenChangeAddMultiple } =
@@ -94,17 +96,17 @@ const StudentsView = () => {
   const {
     students: StudentsStore,
     setStudents: setStudentStore,
-    get,
+    get: getStudents,
   } = useStudentStore()
 
-  const onOpenEditChange = (id: string) => {
-    setSelectedStudent(students.find((student) => student.id === id))
+  const onOpenEditChange = (id: number) => {
+    setSelectedStudent(students.find((student) => student.id === +id))
     onOpenChangeEdit()
   }
 
   const resolveRowComponentByColumnKey = (
     item: {
-      id: string
+      id: number
       isActive: boolean
     },
     columnKey: Key,
@@ -147,13 +149,13 @@ const StudentsView = () => {
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
                   onClick={async () => {
-                    await StudentServices.updateStudent(item.id, {
+                    await StudentServices.updateStudent(+item.id, {
                       isActive: !item.isActive,
                     })
                       .then(() =>
                         setStudentStore(
                           students?.map((student) => {
-                            if (student.id === item.id) {
+                            if (student.id === +item.id) {
                               return {
                                 ...student,
                                 isActive: !student.isActive,
@@ -194,7 +196,7 @@ const StudentsView = () => {
           })),
         )
       } else {
-        get()
+        getStudents()
       }
     }
 
@@ -204,6 +206,16 @@ const StudentsView = () => {
       isMounted = false
     }
   }, [StudentsStore, setStudentStore])
+
+  useEffect(() => {
+    if (firsLoad) {
+      setFirstLoad(false)
+      getStudents()
+    } else {
+      getStudents()
+      setFirstLoad(true)
+    }
+  }, [])
 
   return (
     <div className="m-10">
@@ -226,7 +238,10 @@ const StudentsView = () => {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-        <TableBody items={students} emptyContent={'No existen datos sobre estudiantes'}>
+        <TableBody
+          items={students}
+          emptyContent={'No existen datos sobre estudiantes'}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => resolveRowComponentByColumnKey(item, columnKey)}
@@ -234,23 +249,28 @@ const StudentsView = () => {
           )}
         </TableBody>
       </Table>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" placement='top-center' >
-      <ScrollShadow >
-        <ModalContent >
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Crear Estudiante
-              </ModalHeader>
-              <ModalBody>
-                <AddStudentForm onClose={onClose} />
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="5xl"
+        placement="top-center"
+      >
+        <ScrollShadow>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Crear Estudiante
+                </ModalHeader>
+                <ModalBody>
+                  <AddStudentForm onClose={onClose} />
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
         </ScrollShadow>
       </Modal>
-      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size='3xl'>
+      <Modal isOpen={isOpenEdit} onOpenChange={onOpenChangeEdit} size="3xl">
         <ModalContent>
           {(onClose) => (
             <>
@@ -284,8 +304,8 @@ const StudentsView = () => {
               <ModalFooter>
                 <Button
                   size="lg"
-                  color='danger'
-                  className='w-32'
+                  color="danger"
+                  className="w-32"
                   radius="sm"
                   onPress={onClose}
                 >

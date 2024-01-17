@@ -12,8 +12,7 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
   const [students, setStudents] = useState<IStudent[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { careers } = useCareersStore()
-  const { students: studentsStore, setStudents: setStudentsStore } =
-    useStudentStore()
+  const { get: getStudents } = useStudentStore()
   let isValid = true
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +88,6 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
       const worksheet = workbook.Sheets[worksheetName]
       const data = XLSX.utils.sheet_to_json(worksheet)
       const transformedData = transformData(data)
-      console.log(transformedData)
       setStudents(transformedData)
     }
     reader.readAsBinaryString(file)
@@ -103,7 +101,8 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
   }
 
   const handleSave = async () => {
-    let newStudents: IStudent[] = []
+    let newStudents: boolean = false
+
     if (!isValid) {
       setStudents([])
     } else {
@@ -115,8 +114,8 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
         const { status, studentsAdded } =
           await StudentsApi.createManyStudents(students)
         if (status === HTTP_STATUS_CODES.CREATED) {
-          newStudents = studentsAdded as IStudent[]
-          setStudents(newStudents)
+          getStudents()
+          newStudents = studentsAdded as boolean
         } else {
           toast.error('Error al crear los estudiantes!', { autoClose: 1800 })
         }
@@ -125,8 +124,7 @@ const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
       }
     }
 
-    if (newStudents.length > 0) {
-      setStudentsStore([...(studentsStore || []), ...newStudents])
+    if (newStudents) {
       toast.success('Proceso completado', { autoClose: 1800 })
     }
 
