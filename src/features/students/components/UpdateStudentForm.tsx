@@ -29,19 +29,26 @@ const UpdateStudentForm = ({
     },
   ]
 
-  const handleSelectChange = (name, value) => {
-    // Si el valor es numérico, conviértelo a un número, de lo contrario, déjalo como está.
+  const handleSelectChange = (name: string, value: number) => {
     const numericValue = !isNaN(value) ? Number(value) : value
     formik.setFieldValue(name, numericValue)
   }
 
-  const handleDateChange = (e) => {
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, defaultValue } = e.target
     const formattedDate = formatISO(new Date(defaultValue))
     formik.setFieldValue(name, formattedDate)
   }
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, career, createdAt, updatedAt, name, ...restStudent } = student
+    formik.setValues({
+      ...restStudent,
+      careerId: student.career?.id,
+      birthdate: new Date(student.birthdate),
+      regularPhoneNumber: student.regularPhoneNumber?.toString(),
+    })
     let isMounted = true
 
     const fetchCareers = async () => {
@@ -175,19 +182,19 @@ const UpdateStudentForm = ({
             className="w-full"
           />
           <Input
-            id="googleEmail"
-            name="googleEmail"
-            type="googleEmail"
+            id="personalEmail"
+            name="personalEmail"
+            type="personalEmail"
             label="Correo Personal"
             variant="underlined"
             placeholder="Ingrese un email"
-            defaultValue={student.googleEmail}
+            defaultValue={student.personalEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
             errorMessage={
-              formik.touched.googleEmail && formik.errors.googleEmail
-                ? formik.errors.googleEmail
+              formik.touched.personalEmail && formik.errors.personalEmail
+                ? formik.errors.personalEmail
                 : ''
             }
             className="w-full"
@@ -316,7 +323,7 @@ const UpdateStudentForm = ({
             className="w-full"
             placeholder="Ciudad de Residencia"
             variant="underlined"
-            onChange={(e) => handleSelectChange('canton', e.target.value)}
+            onChange={(e) => handleSelectChange('canton', +e.target.value)}
             defaultSelectedKeys={[student.canton]}
           >
             {cantones.map((canton) => (
@@ -330,7 +337,7 @@ const UpdateStudentForm = ({
             className="w-full"
             placeholder="Genero"
             variant="underlined"
-            onChange={(e) => handleSelectChange('gender', e.target.value)}
+            onChange={(e) => handleSelectChange('gender', +e.target.value)}
             defaultSelectedKeys={student.gender || []}
           >
             {genders.map((gender) => (
@@ -344,7 +351,7 @@ const UpdateStudentForm = ({
             className="w-full"
             placeholder="Carrera"
             variant="underlined"
-            defaultSelectedKeys={[student.career?.id.toString() || '']}
+            defaultSelectedKeys={[student.career?.id?.toString() || '']}
             onChange={(e) =>
               handleSelectChange('careerId', parseInt(e.target.value) || 0)
             }

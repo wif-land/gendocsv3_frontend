@@ -3,8 +3,8 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { FunctionariesApi } from '../api/functionaries'
 import { toast } from 'react-toastify'
-import { HTTP_STATUS_CODES } from '@/shared/utils/app-enums'
-import { useFunctionaryStore } from '@/shared/store/functionaryStore'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
 import { IFunctionary } from '../types/IFunctionary'
 
 interface IFunctionaryForm {
@@ -14,7 +14,7 @@ interface IFunctionaryForm {
   firstLastName: string
   secondLastName: string
   outlookEmail: string
-  googleEmail: string
+  personalEmail: string
   phoneNumber: string
   regularPhoneNumber: string
   secondLevelDegree: string
@@ -23,45 +23,30 @@ interface IFunctionaryForm {
   isActive: boolean
 }
 const validationSchema = yup.object().shape({
-  // dni: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-  // firstName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-  // secondName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-  // firstLastName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-  // secondLastName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.noSpaces),
-  // outlookEmail: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(
-  //     /^[A-Z0-9._%+-]+@outlook\.[A-Z]{2,4}$/i,
-  //     VALIDATION_MESSAGES.invalidFormat,
-  //   ),
-  // googleEmail: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(
-  //     /^[A-Z0-9._%+-]+@gmail\.com$/i,
-  //     VALIDATION_MESSAGES.invalidFormat,
-  //   ),
-  // phoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
-  // regularPhoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
-  // secondLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
-  // thirdLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
-  // forthLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
+  dni: yup.string().required(VALIDATION_MESSAGES.required),
+  firstName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondName: yup.string().required(VALIDATION_MESSAGES.required),
+  firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  outlookEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(
+      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
+      VALIDATION_MESSAGES.invalidFormat,
+    ),
+  personalEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(
+      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
+      VALIDATION_MESSAGES.invalidFormat,
+    ),
+  phoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
+  regularPhoneNumber: yup.string().required(VALIDATION_MESSAGES.required),
+  secondLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
+  thirdLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
+  fourthLevelDegree: yup.string().required(VALIDATION_MESSAGES.required),
 })
 export const useAddFunctionary = () => {
   const { setFunctionaries, functionaries } = useFunctionaryStore()
@@ -90,7 +75,7 @@ export const useAddFunctionary = () => {
       firstLastName: '',
       secondLastName: '',
       outlookEmail: '',
-      googleEmail: '',
+      personalEmail: '',
       phoneNumber: '',
       regularPhoneNumber: '',
       secondLevelDegree: '',

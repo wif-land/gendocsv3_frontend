@@ -48,7 +48,7 @@ const COLUMNS = [
     label: 'Nombre',
   },
   {
-    key: 'googleEmail',
+    key: 'personalEmail',
     label: 'Correo Personal',
   },
   {
@@ -87,6 +87,8 @@ const StudentsView = () => {
     StudentsViewProps | undefined
   >(undefined)
 
+  const [firsLoad, setFirstLoad] = useState<boolean>(true)
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { isOpen: isOpenEdit, onOpenChange: onOpenChangeEdit } = useDisclosure()
   const { isOpen: isOpenAddMultiple, onOpenChange: onOpenChangeAddMultiple } =
@@ -94,17 +96,17 @@ const StudentsView = () => {
   const {
     students: StudentsStore,
     setStudents: setStudentStore,
-    get,
+    get: getStudents,
   } = useStudentStore()
 
-  const onOpenEditChange = (id: string) => {
-    setSelectedStudent(students.find((student) => student.id === id))
+  const onOpenEditChange = (id: number) => {
+    setSelectedStudent(students.find((student) => student.id === +id))
     onOpenChangeEdit()
   }
 
   const resolveRowComponentByColumnKey = (
     item: {
-      id: string
+      id: number
       isActive: boolean
     },
     columnKey: Key,
@@ -147,13 +149,13 @@ const StudentsView = () => {
                   className={item.isActive ? 'text-danger' : 'text-success'}
                   color={item.isActive ? 'danger' : 'success'}
                   onClick={async () => {
-                    await StudentServices.updateStudent(item.id, {
+                    await StudentServices.updateStudent(+item.id, {
                       isActive: !item.isActive,
                     })
                       .then(() =>
                         setStudentStore(
                           students?.map((student) => {
-                            if (student.id === item.id) {
+                            if (student.id === +item.id) {
                               return {
                                 ...student,
                                 isActive: !student.isActive,
@@ -194,7 +196,7 @@ const StudentsView = () => {
           })),
         )
       } else {
-        get()
+        getStudents()
       }
     }
 
@@ -204,6 +206,16 @@ const StudentsView = () => {
       isMounted = false
     }
   }, [StudentsStore, setStudentStore])
+
+  useEffect(() => {
+    if (firsLoad) {
+      setFirstLoad(false)
+      getStudents()
+    } else {
+      getStudents()
+      setFirstLoad(true)
+    }
+  }, [])
 
   return (
     <div className="m-10">

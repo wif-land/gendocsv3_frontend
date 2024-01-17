@@ -26,6 +26,13 @@ const ProcessView = lazy(
     ),
 )
 
+const DocumentsView = lazy(
+  () =>
+    import(
+      '../../../../features/documents/presentation/components/DocumentsView'
+    ),
+)
+
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
 
@@ -38,6 +45,7 @@ const Page = () => {
     ['admin/funcionarios']: FunctionaryView,
     procesos: ProcessView,
     consejos: CouncilListView,
+    documentos: DocumentsView,
   }
 
   const defaultComponent = () => (

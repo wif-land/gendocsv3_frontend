@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import cantones from '../../../features/students/data/canton'
-import { formatISO } from 'date-fns'
 
-import {
-  Button,
-  Input,
-  Select,
-  SelectItem,
-  Switch,
-  ScrollShadow,
-} from '@nextui-org/react'
+import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
 import { useStudent } from '../hooks/useAddStudent'
 import { ICareer } from '../../../features/careers/types/ICareer'
 import { CareersApi } from '../../../features/careers/api/carers'
-import { on } from 'events'
 
 const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   const { formik } = useStudent()
@@ -29,20 +20,6 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
       label: 'Femenino',
     },
   ]
-
-  const handleSelectChange = (name, value) => {
-    // Si el valor es numérico, conviértelo a un número, de lo contrario, déjalo como está.
-    const numericValue = !isNaN(value) ? Number(value) : value
-    formik.setFieldValue(name, numericValue)
-  }
-
-  const handleDateChange = (e) => {
-    const { name, value } = e.target
-    // Convierte el valor de la fecha a ISO 8601 completo
-    const formattedDate = formatISO(new Date(value))
-    // Actualiza el valor de Formik para el campo de fecha
-    formik.setFieldValue(name, formattedDate)
-  }
 
   useEffect(() => {
     let isMounted = true
@@ -162,19 +139,19 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full"
           />
           <Input
-            id="googleEmail"
-            name="googleEmail"
-            type="googleEmail"
+            id="personalEmail"
+            name="personalEmail"
+            type="personalEmail"
             label="Correo Personal"
             variant="underlined"
             placeholder="Ingrese un email"
-            value={formik.values.googleEmail}
+            value={formik.values.personalEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
             errorMessage={
-              formik.touched.googleEmail && formik.errors.googleEmail
-                ? formik.errors.googleEmail
+              formik.touched.personalEmail && formik.errors.personalEmail
+                ? formik.errors.personalEmail
                 : ''
             }
             className="w-full"
@@ -303,7 +280,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full"
             placeholder="Ciudad de Residencia"
             variant="underlined"
-            onChange={(e) => handleSelectChange('canton', e.target.value)}
+            onChange={(e) => formik.setFieldValue('canton', e.target.value)}
           >
             {cantones.map((canton) => (
               <SelectItem key={canton.name} value={canton.name}>
@@ -316,7 +293,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full"
             placeholder="Genero"
             variant="underlined"
-            onChange={(e) => handleSelectChange('gender', e.target.value)}
+            onChange={(e) => formik.setFieldValue('gender', e.target.value)}
           >
             {genders.map((gender) => (
               <SelectItem key={gender.value} value={gender.value}>
@@ -330,7 +307,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             placeholder="Carrera"
             variant="underlined"
             onChange={(e) =>
-              handleSelectChange('careerId', parseInt(e.target.value) || 0)
+              formik.setFieldValue('careerId', Number(e.target.value))
             }
           >
             {careers.map((career) => (

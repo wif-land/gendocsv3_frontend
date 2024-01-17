@@ -33,6 +33,7 @@ export const API_ROUTES = {
     UPDATE: '/students/:id',
     DELETE: '/students/:id',
     CREATE: '/students',
+    CREATE_MANY: '/students/bulk',
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
@@ -62,5 +63,15 @@ export const API_ROUTES = {
     UPDATE: '/templates/:id',
     DELETE: '/templates/:id',
     CREATE: '/templates',
+  },
+  DOCUMENTS: {
+    GET_ALL: '/documents',
+    GET_ONE: '/documents/:id',
+    UPDATE: '/documents/:id',
+    DELETE: '/documents/:id',
+    CREATE: '/documents',
+  },
+  DOCUMENT_NUMERATION: {
+    GET_BY_COUNCIL: '/numeration-document/by-council',
   },
 }

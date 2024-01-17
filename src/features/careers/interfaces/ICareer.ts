@@ -9,5 +9,5 @@ export interface ICareer {
   isActive: boolean
   internshipHours: number
   vinculationHours: number
-  coordinator: string
+  coordinator: number
 }

@@ -28,7 +28,7 @@ import { useProcessesStore } from '../../../shared/store/processStore'
 import AddProcessForm from '../../../features/process/components/addProcessForm'
 import { ProcessApi } from '../../../features/process/api/processes'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import EditProcessForm from '@/features/process/components/editProcessForm'
+import EditProcessForm from '../../../features/process/components/editProcessForm'
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   active: 'success',

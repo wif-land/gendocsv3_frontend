@@ -1,7 +1,7 @@
 import { ICareer } from '../../careers/interfaces/ICareer'
 
 export interface IStudent {
-  id: string
+  id: number
   dni: string
   firstName: string
   secondName: string
@@ -10,8 +10,6 @@ export interface IStudent {
   gender: string
   birthdate: string
   canton: string
-  personalEmail?: string
-  institutionalEmail?: string
   regularPhoneNumber?: string
   cellphone?: string
   folio: string
@@ -20,10 +18,11 @@ export interface IStudent {
   approvedCredits: number
   career: ICareer
   updatedAt: string
-  googleEmail?: string
+  personalEmail: string
   outlookEmail: string
   phoneNumber: string
   name: string
+  createdAt: string
 }
 
 export interface ICreateStudent {
@@ -36,7 +35,7 @@ export interface ICreateStudent {
   birthDate: Date
   canton: string
   personalEmail: string
-  institutionalEmail: string
+  outlookEmail: string
   regularPhoneNumber: string
   cellphone: string
   folio: string

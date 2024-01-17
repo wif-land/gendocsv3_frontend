@@ -1,4 +1,3 @@
-import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { StudentsApi } from '../api/students'
@@ -6,6 +5,7 @@ import { toast } from 'react-toastify'
 import { useStudentStore } from '../../../shared/store/studentStore'
 import { IStudent } from '../types/IStudent'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 
 interface IStudentForm {
   dni: string
@@ -16,7 +16,7 @@ interface IStudentForm {
   gender: string
   birthdate: Date
   canton: string
-  googleEmail: string
+  personalEmail: string
   outlookEmail: string
   regularPhoneNumber: string
   phoneNumber: string
@@ -27,59 +27,42 @@ interface IStudentForm {
 }
 
 const validationSchema = yup.object().shape({
-  // dni: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.invalidFormat),
-  // firstName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.invalidFormat),
-  // secondName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.invalidFormat),
-  // firstLastName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.invalidFormat),
-  // secondLastName: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^[^\s]*$/, VALIDATION_MESSAGES.invalidFormat),
-  // gender: yup.string().required(VALIDATION_MESSAGES.required),
-  // birthDate: yup.date().required(VALIDATION_MESSAGES.required),
-  // canton: yup.string().required(VALIDATION_MESSAGES.required),
-  // googleEmail: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(
-  //     /^[A-Z0-9._%+-]+@gmail\.com$/i,
-  //     VALIDATION_MESSAGES.invalidFormat,
-  //   ),
-  // outlookEmail: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(
-  //     /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
-  //     VALIDATION_MESSAGES.invalidFormat,
-  //   ),
-  // regularPhoneNumber: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
-  // phoneNumber: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
-  // cellphone: yup
-  //   .string()
-  //   .required(VALIDATION_MESSAGES.required)
-  //   .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
-  // registration: yup.string().required(VALIDATION_MESSAGES.required),
-  // approvedCredits: yup.number().required(VALIDATION_MESSAGES.required),
-  // folio: yup.string().required(VALIDATION_MESSAGES.required),
-  // careerId: yup.number().required(VALIDATION_MESSAGES.required),
+  dni: yup.string().required(VALIDATION_MESSAGES.required),
+  firstName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondName: yup.string().required(VALIDATION_MESSAGES.required),
+  firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  personalEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(
+      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
+      VALIDATION_MESSAGES.invalidFormat,
+    ),
+  outlookEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(
+      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
+      VALIDATION_MESSAGES.invalidFormat,
+    ),
+  regularPhoneNumber: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
+  phoneNumber: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
+  registration: yup.string().required(VALIDATION_MESSAGES.required),
+  approvedCredits: yup
+    .number()
+    .required(VALIDATION_MESSAGES.required)
+    // eslint-disable-next-line no-magic-numbers
+    .max(140)
+    .min(0),
+  folio: yup.string().required(VALIDATION_MESSAGES.required),
+  careerId: yup.number().required(VALIDATION_MESSAGES.required),
 })
 export const useStudent = () => {
   const { setStudents, students } = useStudentStore()
@@ -106,7 +89,7 @@ export const useStudent = () => {
       gender: '',
       birthdate: new Date(),
       canton: '',
-      googleEmail: '',
+      personalEmail: '',
       outlookEmail: '',
       regularPhoneNumber: '',
       phoneNumber: '',
