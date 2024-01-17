@@ -1,10 +1,9 @@
-import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { FunctionariesApi } from '../api/functionaries'
 import { toast } from 'react-toastify'
-import { HTTP_STATUS_CODES } from '@/shared/utils/app-enums'
-import { useFunctionaryStore } from '@/shared/store/functionaryStore'
+import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
+import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
 import { IFunctionary } from '../types/IFunctionary'
 
 interface IFunctionaryForm {
@@ -14,7 +13,7 @@ interface IFunctionaryForm {
   firstLastName: string
   secondLastName: string
   outlookEmail: string
-  googleEmail: string
+  personalEmail: string
   phoneNumber: string
   regularPhoneNumber: string
   secondLevelDegree: string
@@ -90,7 +89,7 @@ export const useAddFunctionary = () => {
       firstLastName: '',
       secondLastName: '',
       outlookEmail: '',
-      googleEmail: '',
+      personalEmail: '',
       phoneNumber: '',
       regularPhoneNumber: '',
       secondLevelDegree: '',

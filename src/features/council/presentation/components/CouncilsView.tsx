@@ -17,9 +17,7 @@ import {
 } from '@nextui-org/react'
 import { Key, memo, useCallback } from 'react'
 import { MdMoreVert } from 'react-icons/md'
-import { toast } from 'react-toastify'
 import { CouncilModel } from '../../data/models/CouncilModel'
-import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { CouncilType } from '../../domain/entities/ICouncil'
 import { DateUtils } from '../../../../shared/utils/dateUtils'
 import { COLUMNS, resolveChipData } from './enums'
@@ -28,6 +26,7 @@ import { useCouncilView } from '../hooks/useCouncilView'
 import { ButtonComponent } from '../../../../shared/components/Button'
 import { FormActionsProps } from '../../../../shared/constants/common'
 import { CouncilsForm } from './CouncilsForm'
+import { useCouncilsForm } from '../hooks/useCouncilsForm'
 
 const CouncilsView = ({ moduleId }: { moduleId: string }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -36,11 +35,14 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
     councils,
     selectedCareer,
     moduleIdentifier,
-    updateCouncils,
     handleSelectedCouncil,
   } = useCouncilView({
     moduleId,
   })
+  const { handleUpdateCouncil } = useCouncilsForm(
+    CouncilModel.fromJson({}),
+    onOpenChange,
+  )
 
   const resolveRowComponentByColumnKey = (
     item: CouncilModel,
@@ -67,15 +69,10 @@ const CouncilsView = ({ moduleId }: { moduleId: string }) => {
         key: item.isActive ? 'desactivate' : 'activate',
         className: item.isActive ? 'text-danger' : 'text-success',
         color: item.isActive ? 'danger' : 'success',
-        onClick: () => {
-          CouncilsUseCasesImpl.getInstance()
-            .update(item.id!, {
-              isActive: !item.isActive,
-            })
-            .then((_) => updateCouncils(item))
-            .catch((error) => {
-              toast.error(error.message)
-            })
+        onClick: async () => {
+          await handleUpdateCouncil(item.id!, {
+            isActive: !item.isActive,
+          })
         },
       },
     ]

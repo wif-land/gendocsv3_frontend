@@ -19,10 +19,10 @@ export class StudentsApi {
   }
 
   static updateStudent = async (
-    id: string,
+    id: number,
     data: Partial<IStudent>,
   ): Promise<{ status: number; student?: IStudent; message?: string }> => {
-    const urlWithId = API_ROUTES.STUDENTS.UPDATE.replace(':id', id)
+    const urlWithId = API_ROUTES.STUDENTS.UPDATE.replace(':id', id.toString())
     const result = await AxiosClient.patch(urlWithId, data, {
       id,
     })

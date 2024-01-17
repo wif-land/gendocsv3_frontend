@@ -16,7 +16,7 @@ interface IStudentForm {
   gender: string
   birthdate: Date
   canton: string
-  googleEmail: string
+  personalEmail: string
   outlookEmail: string
   regularPhoneNumber: string
   phoneNumber: string
@@ -106,7 +106,7 @@ export const useStudent = () => {
       gender: '',
       birthdate: new Date(),
       canton: '',
-      googleEmail: '',
+      personalEmail: '',
       outlookEmail: '',
       regularPhoneNumber: '',
       phoneNumber: '',

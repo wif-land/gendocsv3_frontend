@@ -25,24 +25,6 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     [councils],
   )
 
-  const updateCouncils = useCallback(
-    (item: CouncilModel) => {
-      setCouncils(
-        councils!.map((career) => {
-          if (career.id === item.id) {
-            return new CouncilModel({
-              ...career,
-              isActive: !item.isActive,
-            })
-          }
-
-          return career
-        }),
-      )
-    },
-    [councils],
-  )
-
   useEffect(() => {
     let isMounted = true
 
@@ -78,6 +60,5 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     moduleIdentifier,
     handleSelectedCouncil,
     setCouncils,
-    updateCouncils,
   }
 }

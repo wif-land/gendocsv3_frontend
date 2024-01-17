@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react'
 import cantones from '../../../features/students/data/canton'
 import { formatISO } from 'date-fns'
 
-import { Button, Input, Select, SelectItem, Switch, ScrollShadow} from '@nextui-org/react'
+import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
 import { useStudent } from '../hooks/useAddStudent'
 import { ICareer } from '../../../features/careers/types/ICareer'
 import { CareersApi } from '../../../features/careers/api/carers'
-import { on } from 'events'
 
 const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   const { formik } = useStudent()
@@ -61,7 +60,6 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-    
       <form
         onSubmit={formik.handleSubmit}
         className="w-full justify-items-center "
@@ -156,19 +154,19 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full"
           />
           <Input
-            id="googleEmail"
-            name="googleEmail"
-            type="googleEmail"
+            id="personalEmail"
+            name="personalEmail"
+            type="personalEmail"
             label="Correo Personal"
             variant="underlined"
             placeholder="Ingrese un email"
-            value={formik.values.googleEmail}
+            value={formik.values.personalEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
             errorMessage={
-              formik.touched.googleEmail && formik.errors.googleEmail
-                ? formik.errors.googleEmail
+              formik.touched.personalEmail && formik.errors.personalEmail
+                ? formik.errors.personalEmail
                 : ''
             }
             className="w-full"
@@ -337,7 +335,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             id="isActive"
             name="isActive"
             size="sm"
-            className='m-2'
+            className="m-2"
             onValueChange={(value) => {
               const fakeEvent = {
                 target: {
@@ -354,7 +352,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             type="date"
             id="birthdate"
             name="birthdate"
-            onChange={formik.handleChange} 
+            onChange={formik.handleChange}
           />
         </div>
         <div className="m-1 w-full flex gap-4 justify-center">
@@ -369,7 +367,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             Crear
           </Button>
           <Button
-            className='bg-red-600 w-56 m-1 text-white'
+            className="bg-red-600 w-56 m-1 text-white"
             size="lg"
             radius="sm"
             disabled={formik.isSubmitting}
@@ -382,7 +380,6 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
           </Button>
         </div>
       </form>
-
     </>
   )
 }

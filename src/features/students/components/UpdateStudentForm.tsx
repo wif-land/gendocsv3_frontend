@@ -30,7 +30,6 @@ const UpdateStudentForm = ({
   ]
 
   const handleSelectChange = (name, value) => {
-    // Si el valor es numérico, conviértelo a un número, de lo contrario, déjalo como está.
     const numericValue = !isNaN(value) ? Number(value) : value
     formik.setFieldValue(name, numericValue)
   }
@@ -175,19 +174,19 @@ const UpdateStudentForm = ({
             className="w-full"
           />
           <Input
-            id="googleEmail"
-            name="googleEmail"
-            type="googleEmail"
+            id="personalEmail"
+            name="personalEmail"
+            type="personalEmail"
             label="Correo Personal"
             variant="underlined"
             placeholder="Ingrese un email"
-            defaultValue={student.googleEmail}
+            defaultValue={student.personalEmail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="lg"
             errorMessage={
-              formik.touched.googleEmail && formik.errors.googleEmail
-                ? formik.errors.googleEmail
+              formik.touched.personalEmail && formik.errors.personalEmail
+                ? formik.errors.personalEmail
                 : ''
             }
             className="w-full"
@@ -344,7 +343,7 @@ const UpdateStudentForm = ({
             className="w-full"
             placeholder="Carrera"
             variant="underlined"
-            defaultSelectedKeys={[student.career?.id.toString() || '']}
+            defaultSelectedKeys={[student.career?.id?.toString() || '']}
             onChange={(e) =>
               handleSelectChange('careerId', parseInt(e.target.value) || 0)
             }
@@ -355,7 +354,6 @@ const UpdateStudentForm = ({
               </SelectItem>
             ))}
           </Select>
-          
 
           <input
             type="date"
@@ -367,23 +365,23 @@ const UpdateStudentForm = ({
             }
           />
           <Switch
-          id="isActive"
-          name="isActive"
-          size="sm"
-          className='m-1'
-          onValueChange={(defaultValue) => {
-            const fakeEvent = {
-              target: {
-                name: 'isActive',
-                defaultValue,
-              },
-            }
-            formik.handleChange(fakeEvent)
-          }}
-          defaultChecked={student.isActive}
-        >
-          Estudiante Activo
-        </Switch>
+            id="isActive"
+            name="isActive"
+            size="sm"
+            className="m-1"
+            onValueChange={(defaultValue) => {
+              const fakeEvent = {
+                target: {
+                  name: 'isActive',
+                  defaultValue,
+                },
+              }
+              formik.handleChange(fakeEvent)
+            }}
+            defaultChecked={student.isActive}
+          >
+            Estudiante Activo
+          </Switch>
         </div>
         <div className="m-2 w-full flex gap-4 justify-center">
           <Button

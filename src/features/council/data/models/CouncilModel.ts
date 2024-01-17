@@ -18,7 +18,7 @@ export class CouncilModel implements ICouncil {
     this.createdAt = props.createdAt
     this.updatedAt = props.createdAt
     this.name = props.name
-    this.isActive = props.isActive || true
+    this.isActive = props.isActive || false
     this.isArchived = props.isArchived || false
     this.date = props.date
     this.type = props.type

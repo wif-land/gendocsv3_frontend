@@ -7,12 +7,15 @@ import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import { useCallback } from 'react'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { LOADER_DELAY } from '../../../../shared/constants/common'
 
 export const useCouncilsForm = (
   initialValues: ICouncil,
   onClose: () => void,
 ) => {
   const { councils, addCouncil, setCouncils } = useCouncilStore()
+  const { addLoaderItem, removeLoaderItem } = useLoaderStore()
 
   const validationSchema = yup.object({
     name: yup.string().required('El nombre es requerido'),
@@ -21,6 +24,7 @@ export const useCouncilsForm = (
 
   const handleCreateCouncil = useCallback(async (values: ICouncil) => {
     try {
+      addLoaderItem('councils-form')
       const result = await CouncilsUseCasesImpl.getInstance().create(values)
 
       if (result.council) {
@@ -34,6 +38,8 @@ export const useCouncilsForm = (
       }
     } catch (error) {
       toast.error('Ocurrió un error al crear el consejo')
+    } finally {
+      setTimeout(() => removeLoaderItem('councils-form'), LOADER_DELAY)
     }
   }, [])
 
@@ -42,6 +48,7 @@ export const useCouncilsForm = (
     editedFields: Partial<ICouncil>,
   ) => {
     try {
+      addLoaderItem('councils-form')
       const { status } = await CouncilsUseCasesImpl.getInstance().update(
         id,
         editedFields,
@@ -67,6 +74,8 @@ export const useCouncilsForm = (
       }
     } catch (error) {
       toast.error('Ocurrió un error al actualizar el consejo')
+    } finally {
+      setTimeout(() => removeLoaderItem('councils-form'), LOADER_DELAY)
     }
   }
 
@@ -113,5 +122,5 @@ export const useCouncilsForm = (
     ),
   })
 
-  return { formik, councils, setCouncils }
+  return { formik, councils, setCouncils, handleUpdateCouncil }
 }
