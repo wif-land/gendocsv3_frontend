@@ -1,23 +1,23 @@
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IDocument } from '../../domain/entities/IDocument'
-import { ModelsRepository } from '../../domain/repositories/DocumentsRepository'
+import { DocumentsRepository } from '../../domain/repositories/DocumentsRepository'
 import {
   DocumentsDataSource,
   DocumentsDataSourceImpl,
 } from '../datasource/DocumentsDatasource'
 import { DocumentModel } from '../models/DocumentsModel'
 
-export class ModelsRepositoryImpl implements ModelsRepository {
-  static instance: ModelsRepositoryImpl
+export class DocumentsRepositoryImpl implements DocumentsRepository {
+  static instance: DocumentsRepositoryImpl
 
-  static getInstance = (): ModelsRepositoryImpl => {
-    if (!ModelsRepositoryImpl.instance) {
-      ModelsRepositoryImpl.instance = new ModelsRepositoryImpl(
+  static getInstance = (): DocumentsRepositoryImpl => {
+    if (!DocumentsRepositoryImpl.instance) {
+      DocumentsRepositoryImpl.instance = new DocumentsRepositoryImpl(
         DocumentsDataSourceImpl.getInstance(),
       )
     }
 
-    return ModelsRepositoryImpl.instance
+    return DocumentsRepositoryImpl.instance
   }
 
   private constructor(private readonly datasource: DocumentsDataSource) {}
@@ -57,4 +57,7 @@ export class ModelsRepositoryImpl implements ModelsRepository {
       return { status: 500 }
     }
   }
+
+  getNumerationByCouncil = async (councilId: number) =>
+    await this.datasource.getNumerationByCouncil(councilId)
 }

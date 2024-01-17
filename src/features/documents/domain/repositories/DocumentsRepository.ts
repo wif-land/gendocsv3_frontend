@@ -1,7 +1,8 @@
 import { DocumentModel } from '../../data/models/DocumentsModel'
+import { NumerationModel } from '../../data/models/NumerationModel'
 import { IDocument } from '../entities/IDocument'
 
-export interface ModelsRepository {
+export interface DocumentsRepository {
   getAll: () => Promise<{
     status: number
     processes: DocumentModel[]
@@ -23,5 +24,10 @@ export interface ModelsRepository {
 
   deleteById: (id: number) => Promise<{
     status: number
+  }>
+
+  getNumerationByCouncil: (councilId: number) => Promise<{
+    status: number
+    process: NumerationModel
   }>
 }

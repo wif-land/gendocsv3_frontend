@@ -1,7 +1,8 @@
 import { DocumentModel } from '../../data/models/DocumentsModel'
-import { ModelsRepositoryImpl } from '../../data/repositories/DocumentsRepositoryImpl'
+import { NumerationModel } from '../../data/models/NumerationModel'
+import { DocumentsRepositoryImpl } from '../../data/repositories/DocumentsRepositoryImpl'
 import { IDocument } from '../entities/IDocument'
-import { ModelsRepository } from '../repositories/DocumentsRepository'
+import { DocumentsRepository } from '../repositories/DocumentsRepository'
 
 interface DocumentUseCases {
   create(process: IDocument): Promise<{
@@ -30,6 +31,15 @@ interface DocumentUseCases {
     status: number
     processes: DocumentModel[]
   }>
+
+  deleteById(id: number): Promise<{
+    status: number
+  }>
+
+  getNumerationByCouncil(councilId: number): Promise<{
+    status: number
+    process: NumerationModel
+  }>
 }
 
 export class DocumentsUseCasesImpl implements DocumentUseCases {
@@ -43,7 +53,8 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
     return DocumentsUseCasesImpl.instance
   }
 
-  private modelRepository: ModelsRepository = ModelsRepositoryImpl.getInstance()
+  private modelRepository: DocumentsRepository =
+    DocumentsRepositoryImpl.getInstance()
 
   create = async (process: IDocument) =>
     await this.modelRepository.create(process)
@@ -63,7 +74,8 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
   getAllProcessesByModuleId = async (moduleId: number) =>
     await this.modelRepository.getAllDocumentsByModuleId(moduleId)
 
-  deleteById = async (id: number) => {
-    await this.modelRepository.deleteById(id)
-  }
+  deleteById = async (id: number) => await this.modelRepository.deleteById(id)
+
+  getNumerationByCouncil = async (councilId: number) =>
+    await this.modelRepository.getNumerationByCouncil(councilId)
 }

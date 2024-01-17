@@ -12,6 +12,7 @@ import {
   Select,
   SelectItem,
   Textarea,
+  useDisclosure,
 } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
@@ -22,6 +23,9 @@ import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
 import { useCouncilStore } from '.././../../../features/council/presentation/store/councilsStore'
 import { useProcessStore } from '../../../../features/processes/presentation/store/processesStore'
 import { ProcessModel } from '../../../../features/processes/data/models/ProcessesModel'
+import { DocumentsUseCasesImpl } from '../../domain/usecases/DocumentServices'
+import { NumerationModel } from '../../data/models/NumerationModel'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 // import { TemplateModel } from '../../../../features/templates/data/models/TemplatesModel'
 
 interface ProcessesFormProps {
@@ -48,15 +52,38 @@ export const DocumentsForm = ({
   const [selectedProcess, setSelectedProcess] = useState<ProcessModel>()
   const [councilSelected, setCouncilSelected] = useState(false)
   const [templateSelected, setTemplateSelected] = useState(false)
+  const [numbers, setNumbers] = useState<NumerationModel>()
+  const {
+    isOpen: isNumerationOpen,
+    onOpen: onOpenNumeration,
+    onOpenChange: onOpenChangeNumeration,
+  } = useDisclosure()
   // const [selectedTemplate, setSelectedTemplate] = useState<TemplateModel>()
   let studentFullName = ''
   let functionaryFullName = ''
+
+  const handleCouncilSelection = async (value: any) => {
+    if (value.size === 0) {
+      setCouncilSelected(false)
+      return
+    }
+    const { status, process } =
+      await DocumentsUseCasesImpl.getInstance().getNumerationByCouncil(
+        Number(value.currentKey),
+      )
+    if (status === HTTP_STATUS_CODES.OK) {
+      setNumbers(process)
+    }
+    formik.setFieldValue('councilId', Number(value.currentKey))
+    formik.setFieldValue('number', process.nextAvailableNumber)
+    setCouncilSelected(true)
+  }
 
   useEffect(() => {
     formik.setFieldValue('userId', Number(user?.id))
     if (isAddMode) return
     formik.setValues(values)
-  }, [values])
+  }, [values, councilSelected])
 
   return (
     <Modal
@@ -84,15 +111,7 @@ export const DocumentsForm = ({
                     placeholder="Consejo"
                     variant="underlined"
                     onSelectionChange={(value: any) => {
-                      if (value.size === 0) {
-                        setCouncilSelected(false)
-                        return
-                      }
-                      formik.setFieldValue(
-                        'councilId',
-                        Number(value.currentKey),
-                      )
-                      setCouncilSelected(true)
+                      handleCouncilSelection(value)
                     }}
                   >
                     {councils! &&
@@ -164,23 +183,94 @@ export const DocumentsForm = ({
                       </Select>
                       {templateSelected && (
                         <>
-                          <Input
-                            id="number"
-                            name="number"
-                            type="number"
-                            label="Número"
-                            variant="underlined"
-                            className="w-full"
-                            value={formik.values.number.toString()}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            size="lg"
-                            errorMessage={
-                              formik.touched.number && formik.errors.number
-                                ? formik.errors.number
-                                : ''
-                            }
-                          />
+                          <Modal
+                            isOpen={isNumerationOpen}
+                            onOpenChange={onOpenChangeNumeration}
+                          >
+                            <ModalContent>
+                              {(onClose) => (
+                                <>
+                                  <ModalHeader className=" text-xl">
+                                    Numeración
+                                  </ModalHeader>
+                                  <ModalBody>
+                                    <h1 className="text-lg font-semibold">
+                                      Número actual
+                                    </h1>
+                                    <p className="text-gray-500">
+                                      {numbers?.nextAvailableNumber.toString()}
+                                    </p>
+                                    <h1 className="text-lg font-semibold">
+                                      Números Reservados
+                                    </h1>
+                                    <p className="text-gray-500">
+                                      {numbers!.reservedNumbers.length > 0
+                                        ? numbers?.reservedNumbers.toString()
+                                        : 'Sin numeros reservados'}
+                                    </p>
+                                    <h1 className="text-lg font-semibold">
+                                      Números encolados
+                                    </h1>
+                                    <p className="text-gray-500">
+                                      {numbers!.enqueuedNumbers.length > 0
+                                        ? numbers?.enqueuedNumbers.toString()
+                                        : 'Sin numeros encolados'}
+                                    </p>
+                                    <h1 className="text-lg font-semibold">
+                                      Números utilizados
+                                    </h1>
+                                    <p className="text-gray-500">
+                                      {numbers!.usedNumbers.length > 0
+                                        ? numbers?.usedNumbers.toString()
+                                        : 'Sin numeros utilizados'}
+                                    </p>
+                                  </ModalBody>
+                                  <ModalFooter>
+                                    <Button
+                                      color="danger"
+                                      variant="light"
+                                      onPress={onClose}
+                                    >
+                                      Close
+                                    </Button>
+                                    <Button color="primary" onPress={onClose}>
+                                      Action
+                                    </Button>
+                                  </ModalFooter>
+                                </>
+                              )}
+                            </ModalContent>
+                          </Modal>
+                          <div className="flex gap-4 items-end">
+                            <Input
+                              id="number"
+                              name="number"
+                              type="number"
+                              label="Número"
+                              variant="underlined"
+                              className="w-full flex-1"
+                              defaultValue={numbers?.nextAvailableNumber.toString()}
+                              // value={formik.values.number.toString()}
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              size="lg"
+                              errorMessage={
+                                formik.touched.number && formik.errors.number
+                                  ? formik.errors.number
+                                  : ''
+                              }
+                            />
+                            <Button
+                              color="primary"
+                              variant="solid"
+                              className="flex-3"
+                              onClick={() => {
+                                onOpenNumeration()
+                              }}
+                            >
+                              Numeración
+                            </Button>
+                          </div>
                           <Autocomplete
                             name="studentId"
                             label="Estudiante"
@@ -287,6 +377,9 @@ export const DocumentsForm = ({
                   color="danger"
                   variant="light"
                   onPress={() => {
+                    setCouncilSelected(false)
+                    setTemplateSelected(false)
+                    setNumbers(undefined)
                     formik.resetForm()
                     onClose()
                   }}

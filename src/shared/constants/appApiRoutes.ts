@@ -70,4 +70,7 @@ export const API_ROUTES = {
     DELETE: '/documents/:id',
     CREATE: '/documents',
   },
+  DOCUMENT_NUMERATION: {
+    GET_BY_COUNCIL: '/numeration-document/by-council',
+  },
 }

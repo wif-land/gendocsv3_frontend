@@ -3,6 +3,7 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IDocument } from '../../domain/entities/IDocument'
+import { NumerationModel } from '../models/NumerationModel'
 
 export interface DocumentsDataSource {
   getAll(): Promise<{
@@ -31,6 +32,11 @@ export interface DocumentsDataSource {
 
   deleteById(id: number): Promise<{
     status: number
+  }>
+
+  getNumerationByCouncil(councilId: number): Promise<{
+    status: number
+    process: NumerationModel
   }>
 }
 
@@ -118,5 +124,22 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     }
 
     return { status }
+  }
+
+  getNumerationByCouncil = async (councilId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.DOCUMENT_NUMERATION.GET_BY_COUNCIL,
+      {
+        params: { councilId },
+      },
+    )
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, process: {} as NumerationModel }
+    }
+
+    return { status, process: data.content as NumerationModel }
   }
 }
