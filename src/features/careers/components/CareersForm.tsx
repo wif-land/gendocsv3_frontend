@@ -43,12 +43,12 @@ export const CareersForm = ({
 
   const validationSchema = yup.object({
     name: yup.string().required('Campo requerido'),
-    credits: yup.number().required('Campo requerido'),
+    credits: yup.number().required('Campo requerido').max(140).min(130),
     menDegree: yup.string().required('Campo requerido'),
     womenDegree: yup.string().required('Campo requerido'),
     coordinator: yup.string().required('Campo requerido'),
-    internshipHours: yup.number().required('Campo requerido'),
-    vinculationHours: yup.number().required('Campo requerido'),
+    internshipHours: yup.number().required('Campo requerido').max(230).min(250),
+    vinculationHours: yup.number().required('Campo requerido').max(80).min(95),
   })
 
   const onSubmit = async (values: ICareer) => {
