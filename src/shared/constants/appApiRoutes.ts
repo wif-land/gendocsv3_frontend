@@ -33,6 +33,7 @@ export const API_ROUTES = {
     UPDATE: '/students/:id',
     DELETE: '/students/:id',
     CREATE: '/students',
+    CREATE_MANY: '/students/bulk',
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',

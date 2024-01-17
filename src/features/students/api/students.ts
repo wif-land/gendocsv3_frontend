@@ -47,4 +47,24 @@ export class StudentsApi {
     }
     return { status, student: data.content as IStudent }
   }
+
+  static createManyStudents = async (
+    body: Partial<IStudent>[],
+  ): Promise<{
+    status: number
+    studentsAdded?: IStudent[]
+    message?: string
+  }> => {
+    const transformedBody = { students: body }
+    console.log(transformedBody)
+    const result = await AxiosClient.post(
+      API_ROUTES.STUDENTS.CREATE_MANY,
+      transformedBody,
+    )
+    const { status, data } = result
+    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+      return { status, message: data?.message }
+    }
+    return { status, studentsAdded: data.content as IStudent[] }
+  }
 }
