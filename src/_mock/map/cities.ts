@@ -179,4 +179,4 @@ export const cities = [
     latitude: 31.8484,
     longitude: -106.427,
   },
-];
+]

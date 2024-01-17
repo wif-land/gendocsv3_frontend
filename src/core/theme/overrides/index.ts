@@ -46,8 +46,6 @@ import MuiDatePicker from './components/date-picker'
 import ToggleButton from './components/toggle-button'
 import LoadingButton from './components/loading-button'
 
-
-
 export const componentsOverrides = (theme: Theme) => {
   const components = merge(
     Fab(theme),

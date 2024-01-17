@@ -1,17 +1,20 @@
-import axios from 'axios';
+import axios from 'axios'
 // config
-import { HOST_API } from '../../..config-global';
+import { HOST_API } from '../../..config-global'
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: HOST_API });
+const axiosInstance = axios.create({ baseURL: HOST_API })
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
-);
+  (error) =>
+    Promise.reject(
+      (error.response && error.response.data) || 'Something went wrong',
+    ),
+)
 
-export default axiosInstance;
+export default axiosInstance
 
 export const API_ENDPOINTS = {
   chat: '/api/chat',
@@ -38,4 +41,4 @@ export const API_ENDPOINTS = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
-};
+}

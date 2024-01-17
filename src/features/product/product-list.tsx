@@ -1,18 +1,18 @@
 // @mui
-import Box, { BoxProps } from '@mui/material/Box';
-import Pagination, { paginationClasses } from '@mui/material/Pagination';
+import Box, { BoxProps } from '@mui/material/Box'
+import Pagination, { paginationClasses } from '@mui/material/Pagination'
 // types
-import { IProduct } from '../../..types/product';
+import { IProduct } from '../../..types/product'
 //
-import ProductItem from './product-item';
-import { ProductItemSkeleton } from './product-skeleton';
+import ProductItem from './product-item'
+import { ProductItemSkeleton } from './product-skeleton'
 
 // ----------------------------------------------------------------------
 
 type Props = BoxProps & {
-  products: IProduct[];
-  loading?: boolean;
-};
+  products: IProduct[]
+  loading?: boolean
+}
 
 export default function ProductList({ products, loading, ...other }: Props) {
   const renderSkeleton = (
@@ -21,7 +21,7 @@ export default function ProductList({ products, loading, ...other }: Props) {
         <ProductItemSkeleton key={index} />
       ))}
     </>
-  );
+  )
 
   const renderList = (
     <>
@@ -29,7 +29,7 @@ export default function ProductList({ products, loading, ...other }: Props) {
         <ProductItem key={product.id} product={product} />
       ))}
     </>
-  );
+  )
 
   return (
     <>
@@ -59,5 +59,5 @@ export default function ProductList({ products, loading, ...other }: Props) {
         />
       )}
     </>
-  );
+  )
 }

@@ -1,26 +1,26 @@
 // @mui
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Stack, { StackProps } from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles'
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+import Stack, { StackProps } from '@mui/material/Stack'
 // types
-import { IProductFilters, IProductFilterValue } from '../../..types/product';
+import { IProductFilters, IProductFilterValue } from '../../..types/product'
 // components
-import Iconify from '../../..components/iconify';
+import Iconify from '../../..components/iconify'
 
 // ----------------------------------------------------------------------
 
 type Props = StackProps & {
-  filters: IProductFilters;
-  onFilters: (name: string, value: IProductFilterValue) => void;
+  filters: IProductFilters
+  onFilters: (name: string, value: IProductFilterValue) => void
   //
-  canReset: boolean;
-  onResetFilters: VoidFunction;
+  canReset: boolean
+  onResetFilters: VoidFunction
   //
-  results: number;
-};
+  results: number
+}
 
 export default function ProductFiltersResult({
   filters,
@@ -33,26 +33,28 @@ export default function ProductFiltersResult({
   ...other
 }: Props) {
   const handleRemoveGender = (inputValue: string) => {
-    const newValue = filters.gender.filter((item) => item !== inputValue);
-    onFilters('gender', newValue);
-  };
+    const newValue = filters.gender.filter((item) => item !== inputValue)
+    onFilters('gender', newValue)
+  }
 
   const handleRemoveCategory = () => {
-    onFilters('category', 'all');
-  };
+    onFilters('category', 'all')
+  }
 
   const handleRemoveColor = (inputValue: string | string[]) => {
-    const newValue = filters.colors.filter((item: string) => item !== inputValue);
-    onFilters('colors', newValue);
-  };
+    const newValue = filters.colors.filter(
+      (item: string) => item !== inputValue,
+    )
+    onFilters('colors', newValue)
+  }
 
   const handleRemovePrice = () => {
-    onFilters('priceRange', [0, 200]);
-  };
+    onFilters('priceRange', [0, 200])
+  }
 
   const handleRemoveRating = () => {
-    onFilters('rating', '');
-  };
+    onFilters('rating', '')
+  }
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -63,7 +65,13 @@ export default function ProductFiltersResult({
         </Box>
       </Box>
 
-      <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
+      <Stack
+        flexGrow={1}
+        spacing={1}
+        direction="row"
+        flexWrap="wrap"
+        alignItems="center"
+      >
         {!!filters.gender.length && (
           <Block label="Gender:">
             {filters.gender.map((item) => (
@@ -79,7 +87,11 @@ export default function ProductFiltersResult({
 
         {filters.category !== 'all' && (
           <Block label="Category:">
-            <Chip size="small" label={filters.category} onDelete={handleRemoveCategory} />
+            <Chip
+              size="small"
+              label={filters.category}
+              onDelete={handleRemoveCategory}
+            />
           </Block>
         )}
 
@@ -97,7 +109,8 @@ export default function ProductFiltersResult({
                       height: 18,
                       bgcolor: item,
                       borderRadius: '50%',
-                      border: (theme) => `solid 1px ${alpha(theme.palette.common.white, 0.24)}`,
+                      border: (theme) =>
+                        `solid 1px ${alpha(theme.palette.common.white, 0.24)}`,
                     }}
                   />
                 }
@@ -119,7 +132,11 @@ export default function ProductFiltersResult({
 
         {!!filters.rating && (
           <Block label="Rating:">
-            <Chip size="small" label={filters.rating} onDelete={handleRemoveRating} />
+            <Chip
+              size="small"
+              label={filters.rating}
+              onDelete={handleRemoveRating}
+            />
           </Block>
         )}
 
@@ -134,14 +151,14 @@ export default function ProductFiltersResult({
         )}
       </Stack>
     </Stack>
-  );
+  )
 }
 
 // ----------------------------------------------------------------------
 
 type BlockProps = StackProps & {
-  label: string;
-};
+  label: string
+}
 
 function Block({ label, children, sx, ...other }: BlockProps) {
   return (
@@ -167,5 +184,5 @@ function Block({ label, children, sx, ...other }: BlockProps) {
         {children}
       </Stack>
     </Stack>
-  );
+  )
 }

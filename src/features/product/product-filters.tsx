@@ -1,48 +1,48 @@
-import { useCallback } from 'react';
+import { useCallback } from 'react'
 // @mui
-import { alpha } from '@mui/material/styles';
-import Radio from '@mui/material/Radio';
-import Stack from '@mui/material/Stack';
-import Badge from '@mui/material/Badge';
-import Drawer from '@mui/material/Drawer';
-import Rating from '@mui/material/Rating';
-import Button from '@mui/material/Button';
-import Slider from '@mui/material/Slider';
-import Divider from '@mui/material/Divider';
-import Tooltip from '@mui/material/Tooltip';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
+import { alpha } from '@mui/material/styles'
+import Radio from '@mui/material/Radio'
+import Stack from '@mui/material/Stack'
+import Badge from '@mui/material/Badge'
+import Drawer from '@mui/material/Drawer'
+import Rating from '@mui/material/Rating'
+import Button from '@mui/material/Button'
+import Slider from '@mui/material/Slider'
+import Divider from '@mui/material/Divider'
+import Tooltip from '@mui/material/Tooltip'
+import Checkbox from '@mui/material/Checkbox'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import InputBase, { inputBaseClasses } from '@mui/material/InputBase'
 // types
-import { IProductFilters, IProductFilterValue } from '../../..types/product';
+import { IProductFilters, IProductFilterValue } from '../../..types/product'
 // components
-import Iconify from '../../..components/iconify';
-import Scrollbar from '../../..components/scrollbar';
-import { ColorPicker } from '../../..components/color-utils';
+import Iconify from '../../..components/iconify'
+import Scrollbar from '../../..components/scrollbar'
+import { ColorPicker } from '../../..components/color-utils'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  open: boolean;
-  onOpen: VoidFunction;
-  onClose: VoidFunction;
+  open: boolean
+  onOpen: VoidFunction
+  onClose: VoidFunction
   //
-  filters: IProductFilters;
-  onFilters: (name: string, value: IProductFilterValue) => void;
+  filters: IProductFilters
+  onFilters: (name: string, value: IProductFilterValue) => void
   //
-  canReset: boolean;
-  onResetFilters: VoidFunction;
+  canReset: boolean
+  onResetFilters: VoidFunction
   //
   genderOptions: {
-    value: string;
-    label: string;
-  }[];
-  categoryOptions: string[];
-  ratingOptions: string[];
-  colorOptions: string[];
-};
+    value: string
+    label: string
+  }[]
+  categoryOptions: string[]
+  ratingOptions: string[]
+  colorOptions: string[]
+}
 
 export default function ProductFilters({
   open,
@@ -61,53 +61,53 @@ export default function ProductFilters({
   categoryOptions,
 }: Props) {
   const marksLabel = [...Array(21)].map((_, index) => {
-    const value = index * 10;
+    const value = index * 10
 
-    const firstValue = index === 0 ? `$${value}` : `${value}`;
+    const firstValue = index === 0 ? `$${value}` : `${value}`
 
     return {
       value,
       label: index % 4 ? '' : firstValue,
-    };
-  });
+    }
+  })
 
   const handleFilterGender = useCallback(
     (newValue: string) => {
       const checked = filters.gender.includes(newValue)
         ? filters.gender.filter((value) => value !== newValue)
-        : [...filters.gender, newValue];
-      onFilters('gender', checked);
+        : [...filters.gender, newValue]
+      onFilters('gender', checked)
     },
-    [filters.gender, onFilters]
-  );
+    [filters.gender, onFilters],
+  )
 
   const handleFilterCategory = useCallback(
     (newValue: string) => {
-      onFilters('category', newValue);
+      onFilters('category', newValue)
     },
-    [onFilters]
-  );
+    [onFilters],
+  )
 
   const handleFilterColors = useCallback(
     (newValue: string | string[]) => {
-      onFilters('colors', newValue);
+      onFilters('colors', newValue)
     },
-    [onFilters]
-  );
+    [onFilters],
+  )
 
   const handleFilterPriceRange = useCallback(
     (event: Event, newValue: number | number[]) => {
-      onFilters('priceRange', newValue as number[]);
+      onFilters('priceRange', newValue as number[])
     },
-    [onFilters]
-  );
+    [onFilters],
+  )
 
   const handleFilterRating = useCallback(
     (newValue: string) => {
-      onFilters('rating', newValue);
+      onFilters('rating', newValue)
     },
-    [onFilters]
-  );
+    [onFilters],
+  )
 
   const renderHead = (
     <Stack
@@ -132,7 +132,7 @@ export default function ProductFilters({
         <Iconify icon="mingcute:close-line" />
       </IconButton>
     </Stack>
-  );
+  )
 
   const renderGender = (
     <Stack>
@@ -152,7 +152,7 @@ export default function ProductFilters({
         />
       ))}
     </Stack>
-  );
+  )
 
   const renderCategory = (
     <Stack>
@@ -177,7 +177,7 @@ export default function ProductFilters({
         />
       ))}
     </Stack>
-  );
+  )
 
   const renderColor = (
     <Stack>
@@ -191,7 +191,7 @@ export default function ProductFilters({
         limit={6}
       />
     </Stack>
-  );
+  )
 
   const renderPrice = (
     <Stack>
@@ -200,8 +200,16 @@ export default function ProductFilters({
       </Typography>
 
       <Stack direction="row" spacing={5} sx={{ my: 2 }}>
-        <InputRange type="min" value={filters.priceRange} onFilters={onFilters} />
-        <InputRange type="max" value={filters.priceRange} onFilters={onFilters} />
+        <InputRange
+          type="min"
+          value={filters.priceRange}
+          onFilters={onFilters}
+        />
+        <InputRange
+          type="max"
+          value={filters.priceRange}
+          onFilters={onFilters}
+        />
       </Stack>
 
       <Slider
@@ -219,7 +227,7 @@ export default function ProductFilters({
         }}
       />
     </Stack>
-  );
+  )
 
   const renderRating = (
     <Stack spacing={2} alignItems="flex-start">
@@ -247,7 +255,7 @@ export default function ProductFilters({
         </Stack>
       ))}
     </Stack>
-  );
+  )
 
   return (
     <>
@@ -294,39 +302,44 @@ export default function ProductFilters({
         </Scrollbar>
       </Drawer>
     </>
-  );
+  )
 }
 
 // ----------------------------------------------------------------------
 
 type InputRangeProps = {
-  type: 'min' | 'max';
-  value: number[];
-  onFilters: (name: string, value: IProductFilterValue) => void;
-};
+  type: 'min' | 'max'
+  value: number[]
+  onFilters: (name: string, value: IProductFilterValue) => void
+}
 
 function InputRange({ type, value, onFilters }: InputRangeProps) {
-  const min = value[0];
+  const min = value[0]
 
-  const max = value[1];
+  const max = value[1]
 
   const handleBlurInputRange = useCallback(() => {
     if (min < 0) {
-      onFilters('priceRange', [0, max]);
+      onFilters('priceRange', [0, max])
     }
     if (min > 200) {
-      onFilters('priceRange', [200, max]);
+      onFilters('priceRange', [200, max])
     }
     if (max < 0) {
-      onFilters('priceRange', [min, 0]);
+      onFilters('priceRange', [min, 0])
     }
     if (max > 200) {
-      onFilters('priceRange', [min, 200]);
+      onFilters('priceRange', [min, 200])
     }
-  }, [max, min, onFilters]);
+  }, [max, min, onFilters])
 
   return (
-    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: 1 }}>
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      sx={{ width: 1 }}
+    >
       <Typography
         variant="caption"
         sx={{
@@ -368,5 +381,5 @@ function InputRange({ type, value, onFilters }: InputRangeProps) {
         }}
       />
     </Stack>
-  );
+  )
 }

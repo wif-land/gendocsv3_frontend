@@ -1,4 +1,4 @@
-import { _mock } from '../_mock';
+import { _mock } from '../_mock'
 
 // ----------------------------------------------------------------------
 
@@ -83,4 +83,4 @@ export const countries = [
     capital: 'Harare',
     photoUrl: _mock.image.cover(10),
   },
-];
+]

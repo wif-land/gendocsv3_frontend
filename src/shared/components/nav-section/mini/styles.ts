@@ -1,25 +1,25 @@
 // @mui
-import { alpha, styled } from '@mui/material/styles';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemButton from '@mui/material/ListItemButton';
+import { alpha, styled } from '@mui/material/styles'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemButton from '@mui/material/ListItemButton'
 //
-import { NavItemProps, NavConfigProps } from '../types';
-
-
+import { NavItemProps, NavConfigProps } from '../types'
 
 type StyledItemProps = Omit<NavItemProps, 'item'> & {
-  config: NavConfigProps;
-};
+  config: NavConfigProps
+}
 
 export const StyledItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'active',
 })<StyledItemProps>(({ active, open, depth, config, theme }) => {
-  const subItem = depth !== 1;
+  const subItem = depth !== 1
 
   const activeStyles = {
     root: {
       color:
-        theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.primary.light,
+        theme.palette.mode === 'light'
+          ? theme.palette.primary.main
+          : theme.palette.primary.light,
       backgroundColor: alpha(theme.palette.primary.main, 0.08),
       '&:hover': {
         backgroundColor: alpha(theme.palette.primary.main, 0.16),
@@ -32,7 +32,7 @@ export const StyledItem = styled(ListItemButton, {
         backgroundColor: theme.palette.action.hover,
       },
     },
-  };
+  }
 
   return {
     // Root item
@@ -70,17 +70,15 @@ export const StyledItem = styled(ListItemButton, {
         color: theme.palette.text.primary,
         backgroundColor: theme.palette.action.hover,
       }),
-  };
-});
-
-
+  }
+})
 
 type StyledIconProps = {
-  size?: number;
-};
+  size?: number
+}
 
 export const StyledIcon = styled(ListItemIcon)<StyledIconProps>(({ size }) => ({
   width: size,
   height: size,
   marginRight: 0,
-}));
+}))

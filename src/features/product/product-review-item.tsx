@@ -1,25 +1,33 @@
 // @mui
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Rating from '@mui/material/Rating';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import ListItemText from '@mui/material/ListItemText';
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Rating from '@mui/material/Rating'
+import Avatar from '@mui/material/Avatar'
+import Typography from '@mui/material/Typography'
+import ListItemText from '@mui/material/ListItemText'
 // utils
-import { fDate } from '../../..utils/format-time';
+import { fDate } from '../../..utils/format-time'
 // types
-import { IProductReview } from '../../..types/product';
+import { IProductReview } from '../../..types/product'
 // components
-import Iconify from '../../..components/iconify';
+import Iconify from '../../..components/iconify'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  review: IProductReview;
-};
+  review: IProductReview
+}
 
 export default function ProductReviewItem({ review }: Props) {
-  const { name, rating, comment, postedAt, avatarUrl, attachments, isPurchased } = review;
+  const {
+    name,
+    rating,
+    comment,
+    postedAt,
+    avatarUrl,
+    attachments,
+    isPurchased,
+  } = review
 
   const renderInfo = (
     <Stack
@@ -45,11 +53,19 @@ export default function ProductReviewItem({ review }: Props) {
       <ListItemText
         primary={name}
         secondary={fDate(postedAt)}
-        primaryTypographyProps={{ noWrap: true, typography: 'subtitle2', mb: 0.5 }}
-        secondaryTypographyProps={{ noWrap: true, typography: 'caption', component: 'span' }}
+        primaryTypographyProps={{
+          noWrap: true,
+          typography: 'subtitle2',
+          mb: 0.5,
+        }}
+        secondaryTypographyProps={{
+          noWrap: true,
+          typography: 'caption',
+          component: 'span',
+        }}
       />
     </Stack>
-  );
+  )
 
   const renderContent = (
     <Stack spacing={1} flexGrow={1}>
@@ -86,18 +102,26 @@ export default function ProductReviewItem({ review }: Props) {
       )}
 
       <Stack direction="row" spacing={2} sx={{ pt: 1.5 }}>
-        <Stack direction="row" alignItems="center" sx={{ typography: 'caption' }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{ typography: 'caption' }}
+        >
           <Iconify icon="solar:like-outline" width={16} sx={{ mr: 0.5 }} />
           123
         </Stack>
 
-        <Stack direction="row" alignItems="center" sx={{ typography: 'caption' }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{ typography: 'caption' }}
+        >
           <Iconify icon="solar:dislike-outline" width={16} sx={{ mr: 0.5 }} />
           34
         </Stack>
       </Stack>
     </Stack>
-  );
+  )
 
   return (
     <Stack
@@ -112,5 +136,5 @@ export default function ProductReviewItem({ review }: Props) {
 
       {renderContent}
     </Stack>
-  );
+  )
 }

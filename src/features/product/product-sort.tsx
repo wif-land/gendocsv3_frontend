@@ -1,26 +1,26 @@
 // @mui
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
 // components
-import Iconify from '../../..components/iconify';
-import CustomPopover, { usePopover } from '../../..components/custom-popover';
+import Iconify from '../../..components/iconify'
+import CustomPopover, { usePopover } from '../../..components/custom-popover'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  sort: string;
-  onSort: (newValue: string) => void;
+  sort: string
+  onSort: (newValue: string) => void
   sortOptions: {
-    value: string;
-    label: string;
-  }[];
-};
+    value: string
+    label: string
+  }[]
+}
 
 export default function ProductSort({ sort, onSort, sortOptions }: Props) {
-  const popover = usePopover();
+  const popover = usePopover()
 
-  const sortLabel = sortOptions.find((option) => option.value === sort)?.label;
+  const sortLabel = sortOptions.find((option) => option.value === sort)?.label
 
   return (
     <>
@@ -30,7 +30,11 @@ export default function ProductSort({ sort, onSort, sortOptions }: Props) {
         onClick={popover.onOpen}
         endIcon={
           <Iconify
-            icon={popover.open ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
+            icon={
+              popover.open
+                ? 'eva:arrow-ios-upward-fill'
+                : 'eva:arrow-ios-downward-fill'
+            }
           />
         }
         sx={{ fontWeight: 'fontWeightSemiBold' }}
@@ -41,14 +45,18 @@ export default function ProductSort({ sort, onSort, sortOptions }: Props) {
         </Box>
       </Button>
 
-      <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 140 }}>
+      <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        sx={{ width: 140 }}
+      >
         {sortOptions.map((option) => (
           <MenuItem
             key={option.value}
             selected={option.value === sort}
             onClick={() => {
-              popover.onClose();
-              onSort(option.value);
+              popover.onClose()
+              onSort(option.value)
             }}
           >
             {option.label}
@@ -56,5 +64,5 @@ export default function ProductSort({ sort, onSort, sortOptions }: Props) {
         ))}
       </CustomPopover>
     </>
-  );
+  )
 }

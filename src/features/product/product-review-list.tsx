@@ -1,15 +1,15 @@
 // @mui
-import Pagination, { paginationClasses } from '@mui/material/Pagination';
+import Pagination, { paginationClasses } from '@mui/material/Pagination'
 // types
-import { IProductReview } from '../../..types/product';
+import { IProductReview } from '../../..types/product'
 //
-import ProductReviewItem from './product-review-item';
+import ProductReviewItem from './product-review-item'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  reviews: IProductReview[];
-};
+  reviews: IProductReview[]
+}
 
 export default function ProductReviewList({ reviews }: Props) {
   return (
@@ -30,5 +30,5 @@ export default function ProductReviewList({ reviews }: Props) {
         }}
       />
     </>
-  );
+  )
 }

@@ -1,34 +1,42 @@
-import { m } from 'framer-motion';
+import { m } from 'framer-motion'
 // @mui
-import { Theme, SxProps } from '@mui/material/styles';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
+import { Theme, SxProps } from '@mui/material/styles'
+import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
 // hooks
-import { useMockedUser } from '../../..hooks/use-mocked-user';
+import { useMockedUser } from '../../..hooks/use-mocked-user'
 // assets
-import { ForbiddenIllustration } from '../../..assets/illustrations';
+import { ForbiddenIllustration } from '../../..assets/illustrations'
 // components
-import { MotionContainer, varBounce } from '../../..components/animate';
+import { MotionContainer, varBounce } from '../../..components/animate'
 
 // ----------------------------------------------------------------------
 
 type RoleBasedGuardProp = {
-  hasContent?: boolean;
-  roles?: string[];
-  children: React.ReactNode;
-  sx?: SxProps<Theme>;
-};
+  hasContent?: boolean
+  roles?: string[]
+  children: React.ReactNode
+  sx?: SxProps<Theme>
+}
 
-export default function RoleBasedGuard({ hasContent, roles, children, sx }: RoleBasedGuardProp) {
+export default function RoleBasedGuard({
+  hasContent,
+  roles,
+  children,
+  sx,
+}: RoleBasedGuardProp) {
   // Logic here to get current user role
-  const { user } = useMockedUser();
+  const { user } = useMockedUser()
 
   // const currentRole = 'user';
-  const currentRole = user?.role; // admin;
+  const currentRole = user?.role // admin;
 
   if (typeof roles !== 'undefined' && !roles.includes(currentRole)) {
     return hasContent ? (
-      <Container component={MotionContainer} sx={{ textAlign: 'center', ...sx }}>
+      <Container
+        component={MotionContainer}
+        sx={{ textAlign: 'center', ...sx }}
+      >
         <m.div variants={varBounce().in}>
           <Typography variant="h3" paragraph>
             Permission Denied
@@ -50,8 +58,8 @@ export default function RoleBasedGuard({ hasContent, roles, children, sx }: Role
           />
         </m.div>
       </Container>
-    ) : null;
+    ) : null
   }
 
-  return <> {children} </>;
+  return <> {children} </>
 }

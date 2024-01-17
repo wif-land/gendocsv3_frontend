@@ -1,30 +1,30 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react'
 // routes
-import { paths } from '../../..routes/paths';
-import { useRouter } from '../../..routes/hook';
+import { paths } from '../../..routes/paths'
+import { useRouter } from '../../..routes/hook'
 //
-import { useAuthContext } from '../hooks';
+import { useAuthContext } from '../hooks'
 
 // ----------------------------------------------------------------------
 
 type GuestGuardProps = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 export default function GuestGuard({ children }: GuestGuardProps) {
-  const router = useRouter();
+  const router = useRouter()
 
-  const { authenticated } = useAuthContext();
+  const { authenticated } = useAuthContext()
 
   const check = useCallback(() => {
     if (authenticated) {
-      router.replace(paths.dashboard.root);
+      router.replace(paths.dashboard.root)
     }
-  }, [authenticated, router]);
+  }, [authenticated, router])
 
   useEffect(() => {
-    check();
-  }, [check]);
+    check()
+  }, [check])
 
-  return <>{children}</>;
+  return <>{children}</>
 }

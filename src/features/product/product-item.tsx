@@ -1,38 +1,48 @@
 // @mui
-import Fab from '@mui/material/Fab';
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
+import Fab from '@mui/material/Fab'
+import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
+import Card from '@mui/material/Card'
+import Stack from '@mui/material/Stack'
 // routes
-import { paths } from '../../..routes/paths';
-import { RouterLink } from '../../..routes/components';
+import { paths } from '../../..routes/paths'
+import { RouterLink } from '../../..routes/components'
 // utils
-import { fCurrency } from '../../..utils/format-number';
+import { fCurrency } from '../../..utils/format-number'
 // redux
-import { useDispatch } from '../../..redux/store';
-import { addToCart } from '../../..redux/slices/product';
+import { useDispatch } from '../../..redux/store'
+import { addToCart } from '../../..redux/slices/product'
 // types
-import { IProduct } from '../../..types/product';
+import { IProduct } from '../../..types/product'
 // components
-import Label from '../../..components/label';
-import Image from '../../..components/image';
-import Iconify from '../../..components/iconify';
-import { ColorPreview } from '../../..components/color-utils';
+import Label from '../../..components/label'
+import Image from '../../..components/image'
+import Iconify from '../../..components/iconify'
+import { ColorPreview } from '../../..components/color-utils'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  product: IProduct;
-};
+  product: IProduct
+}
 
 export default function ProductItem({ product }: Props) {
-  const { id, name, coverUrl, price, colors, available, sizes, priceSale, newLabel, saleLabel } =
-    product;
+  const {
+    id,
+    name,
+    coverUrl,
+    price,
+    colors,
+    available,
+    sizes,
+    priceSale,
+    newLabel,
+    saleLabel,
+  } = product
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const linkTo = paths.product.details(id);
+  const linkTo = paths.product.details(id)
 
   const handleAddCart = async () => {
     const newProduct = {
@@ -44,13 +54,13 @@ export default function ProductItem({ product }: Props) {
       colors: [colors[0]],
       size: sizes[0],
       quantity: 1,
-    };
-    try {
-      dispatch(addToCart(newProduct));
-    } catch (error) {
-      console.error(error);
     }
-  };
+    try {
+      dispatch(addToCart(newProduct))
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
     <Stack
@@ -70,7 +80,7 @@ export default function ProductItem({ product }: Props) {
         </Label>
       )}
     </Stack>
-  );
+  )
 
   const renderImg = (
     <Box sx={{ position: 'relative', p: 1 }}>
@@ -97,11 +107,17 @@ export default function ProductItem({ product }: Props) {
 
       <Image alt={name} src={coverUrl} ratio="1/1" sx={{ borderRadius: 1.5 }} />
     </Box>
-  );
+  )
 
   const renderContent = (
     <Stack spacing={2.5} sx={{ p: 3, pt: 2 }}>
-      <Link component={RouterLink} href={linkTo} color="inherit" variant="subtitle2" noWrap>
+      <Link
+        component={RouterLink}
+        href={linkTo}
+        color="inherit"
+        variant="subtitle2"
+        noWrap
+      >
         {name}
       </Link>
 
@@ -110,7 +126,10 @@ export default function ProductItem({ product }: Props) {
 
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
           {priceSale && (
-            <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
+            <Box
+              component="span"
+              sx={{ color: 'text.disabled', textDecoration: 'line-through' }}
+            >
               {fCurrency(priceSale)}
             </Box>
           )}
@@ -119,7 +138,7 @@ export default function ProductItem({ product }: Props) {
         </Stack>
       </Stack>
     </Stack>
-  );
+  )
 
   return (
     <Card
@@ -135,5 +154,5 @@ export default function ProductItem({ product }: Props) {
 
       {renderContent}
     </Card>
-  );
+  )
 }

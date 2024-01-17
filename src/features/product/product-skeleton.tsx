@@ -1,8 +1,8 @@
 // @mui
-import Stack from '@mui/material/Stack';
-import Skeleton from '@mui/material/Skeleton';
-import Paper, { PaperProps } from '@mui/material/Paper';
-import Grid, { Grid2Props } from '@mui/material/Unstable_Grid2';
+import Stack from '@mui/material/Stack'
+import Skeleton from '@mui/material/Skeleton'
+import Paper, { PaperProps } from '@mui/material/Paper'
+import Grid, { Grid2Props } from '@mui/material/Unstable_Grid2'
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +22,11 @@ export function ProductItemSkeleton({ sx, ...other }: PaperProps) {
 
       <Stack spacing={2} sx={{ p: 3, pt: 2 }}>
         <Skeleton sx={{ width: 0.5, height: 16 }} />
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Stack direction="row">
             <Skeleton variant="circular" sx={{ width: 16, height: 16 }} />
             <Skeleton variant="circular" sx={{ width: 16, height: 16 }} />
@@ -32,7 +36,7 @@ export function ProductItemSkeleton({ sx, ...other }: PaperProps) {
         </Stack>
       </Stack>
     </Paper>
-  );
+  )
 }
 
 // ----------------------------------------------------------------------
@@ -72,5 +76,5 @@ export function ProductDetailsSkeleton({ ...other }: Grid2Props) {
         </Stack>
       </Grid>
     </Grid>
-  );
+  )
 }
