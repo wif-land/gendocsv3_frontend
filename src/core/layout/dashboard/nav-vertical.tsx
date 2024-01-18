@@ -7,26 +7,23 @@ import Drawer from '@mui/material/Drawer'
 import { NAV } from '../config-layout'
 import { useNavData } from './config-navigation'
 import { NavToggleButton, NavUpgrade } from '../_common'
-import { useMockedUser } from '../../../shared/hooks/use-mocked-user'
 import { usePathname } from 'next/navigation'
 import { useResponsive } from '../../../shared/hooks/use-responsive'
 import Scrollbar from '../../../shared/components/scrollbar'
 import Logo from '../../../shared/components/logo'
 import NavSectionVertical from '../../../shared/components/nav-section/vertical/nav-section-vertical'
+import { useUserStore } from '../../../shared/store/userProfileStore'
 
 type Props = {
   openNav: boolean
   onCloseNav: VoidFunction
+  navData: any
 }
 
-export default function NavVertical({ openNav, onCloseNav }: Props) {
-  const { user } = useMockedUser()
-
+export default function NavVertical({ openNav, onCloseNav, navData }: Props) {
   const pathname = usePathname()
 
   const lgUp = useResponsive('up', 'lg')
-
-  const navData = useNavData()
 
   useEffect(() => {
     if (openNav) {
@@ -50,7 +47,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
       <NavSectionVertical
         data={navData}
         config={{
-          currentRole: user?.role || 'admin',
+          currentRole: 'admin',
         }}
       />
 

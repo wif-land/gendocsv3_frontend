@@ -39,7 +39,6 @@ export const SettingsProvider = ({
     setSettings(defaultSettings)
   }, [defaultSettings, setSettings])
 
-  // Drawer
   const onToggleDrawer = useCallback(() => {
     setOpenDrawer((prev) => !prev)
   }, [])
@@ -54,12 +53,9 @@ export const SettingsProvider = ({
     () => ({
       ...settings,
       onUpdate,
-      // Direction
       onChangeDirectionByLang,
-      // Reset
       canReset,
       onReset,
-      // Drawer
       open: openDrawer,
       onToggle: onToggleDrawer,
       onClose: onCloseDrawer,

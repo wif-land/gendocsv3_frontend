@@ -4,7 +4,7 @@ import cantones from '../../../features/students/data/canton'
 import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
 import { useStudent } from '../hooks/useAddStudent'
 import { ICareer } from '../../../features/careers/types/ICareer'
-import { CareersApi } from '../../../features/careers/api/carers'
+import { CareersUseCasesImpl } from '../../careers/domain/usecases/CareerServices'
 
 const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   const { formik } = useStudent()
@@ -25,7 +25,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
     let isMounted = true
 
     const fetchCareers = async () => {
-      const careers = await CareersApi.fetchCareers()
+      const careers = await CareersUseCasesImpl.getInstance().getAll()
       if (careers.careers && isMounted) {
         setCareers(
           careers.careers.map((career) => ({
@@ -311,7 +311,7 @@ const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
             }
           >
             {careers.map((career) => (
-              <SelectItem key={career.id} value={career.id}>
+              <SelectItem key={career.id!} value={career.id}>
                 {career.name}
               </SelectItem>
             ))}

@@ -1,4 +1,3 @@
-
 import Box, { BoxProps } from '@mui/material/Box'
 import LinearProgress from '@mui/material/LinearProgress'
 

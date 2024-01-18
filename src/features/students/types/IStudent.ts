@@ -1,4 +1,4 @@
-import { ICareer } from '../../careers/interfaces/ICareer'
+import { ICareer } from '../../careers/domain/entities/ICareer'
 
 export interface IStudent {
   id: number

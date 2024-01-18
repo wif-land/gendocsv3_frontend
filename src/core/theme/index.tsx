@@ -15,9 +15,7 @@ import { componentsOverrides } from './overrides'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
-const ThemeProvider = ({ children }: {
-  children: any
-}) => {
+const ThemeProvider = ({ children }: { children: any }) => {
   const memoizedValue = useMemo(
     () => ({
       palette: palette('light'), // or palette('dark')

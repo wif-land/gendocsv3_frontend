@@ -7,6 +7,7 @@ import NavHorizontal from './nav-horizontal'
 import { useSettingsContext } from '../../../shared/components/settings'
 import { useResponsive } from '../../../shared/hooks/use-responsive'
 import { useBoolean } from '../../../shared/hooks/use-boolean'
+import { useNavData } from './config-navigation'
 
 type Props = {
   children: React.ReactNode
@@ -16,6 +17,7 @@ export default function DashboardLayout({ children }: Props) {
   const settings = useSettingsContext()
   const lgUp = useResponsive('up', 'lg')
   const nav = useBoolean()
+  const navData = useNavData()
 
   const isHorizontal = settings.themeLayout === 'horizontal'
 
@@ -23,10 +25,14 @@ export default function DashboardLayout({ children }: Props) {
 
   const renderNavMini = <NavMini />
 
-  const renderHorizontal = <NavHorizontal />
+  const renderHorizontal = <NavHorizontal navData={navData} />
 
   const renderNavVertical = (
-    <NavVertical openNav={nav.value} onCloseNav={nav.onFalse} />
+    <NavVertical
+      openNav={nav.value}
+      onCloseNav={nav.onFalse}
+      navData={navData}
+    />
   )
 
   if (isHorizontal) {

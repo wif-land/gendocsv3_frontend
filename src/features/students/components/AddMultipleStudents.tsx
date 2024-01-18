@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react'
 import * as XLSX from 'xlsx'
-import { useCareersStore } from '../../../shared/store/careerStore'
 import { StudentsApi } from '../api/students'
 import { IStudent } from '../types/IStudent'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { toast } from 'react-toastify'
 import { useStudentStore } from '../../../shared/store/studentStore'
 import { Button } from '@nextui-org/react'
+import { useCareersStore } from '../../careers/presentation/state/careerStore'
 
 const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
   const [students, setStudents] = useState<IStudent[]>([])

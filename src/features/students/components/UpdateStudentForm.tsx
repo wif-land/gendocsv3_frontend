@@ -5,8 +5,8 @@ import { formatISO } from 'date-fns'
 import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
 import { useUpdateStudent } from '../hooks/useUpdateStudent'
 import { ICareer } from '../../careers/types/ICareer'
-import { CareersApi } from '../../careers/api/carers'
 import { IStudent } from '../types/IStudent'
+import { CareersUseCasesImpl } from '../../careers/domain/usecases/CareerServices'
 
 const UpdateStudentForm = ({
   student,
@@ -52,7 +52,7 @@ const UpdateStudentForm = ({
     let isMounted = true
 
     const fetchCareers = async () => {
-      const careers = await CareersApi.fetchCareers()
+      const careers = await CareersUseCasesImpl.getInstance().getAll()
       if (careers.careers && isMounted) {
         setCareers(
           careers.careers.map((career) => ({
@@ -357,7 +357,7 @@ const UpdateStudentForm = ({
             }
           >
             {careers.map((career) => (
-              <SelectItem key={career.id} value={career.id.toString()}>
+              <SelectItem key={career.id!} value={career.id!.toString()}>
                 {career.name}
               </SelectItem>
             ))}

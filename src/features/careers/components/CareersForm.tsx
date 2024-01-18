@@ -11,14 +11,14 @@ import {
   Switch,
 } from '@nextui-org/react'
 import * as yup from 'yup'
-import { ICareer } from '../interfaces/ICareer'
+import { ICareer } from '../domain/entities/ICareer'
 import { CareerApi } from '../api/careersApi'
 import { toast } from 'react-toastify'
-import { useCareersStore } from '../../../shared/store/careerStore'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useFormik } from 'formik'
 import { useEffect } from 'react'
 import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
+import { useCareersStore } from '../presentation/state/careerStore'
 
 export const CareersForm = ({
   isOpen,
@@ -47,14 +47,11 @@ export const CareersForm = ({
 
   const validationSchema = yup.object({
     name: yup.string().required('Campo requerido'),
-    // eslint-disable-next-line no-magic-numbers
     credits: yup.number().required('Campo requerido').max(140).min(130),
     menDegree: yup.string().required('Campo requerido'),
     womenDegree: yup.string().required('Campo requerido'),
     coordinator: yup.string().required('Campo requerido'),
-    // eslint-disable-next-line no-magic-numbers
     internshipHours: yup.number().required('Campo requerido').max(250).min(230),
-    // eslint-disable-next-line no-magic-numbers
     vinculationHours: yup.number().required('Campo requerido').max(95).min(80),
   })
 

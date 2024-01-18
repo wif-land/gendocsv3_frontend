@@ -19,7 +19,6 @@ interface IAuth {
 export const useAuth = () => {
   const router = useRouter()
   const { setUser, logout: userStoreLogout } = useUserStore()
-  const { setAccessModules } = useModulesStore()
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -41,7 +40,6 @@ export const useAuth = () => {
 
     if (status === HTTP_STATUS_CODES.CREATED) {
       decoded && setUser(decoded)
-      decoded && setAccessModules(decoded.accessModules as number[])
 
       enqueueSnackbar(`Bienvenido de vuelta ${decoded!.firstName}!`)
 

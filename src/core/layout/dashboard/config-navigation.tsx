@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import useModulesStore from '../../../shared/store/modulesStore'
+import { useUserStore } from '../../../shared/store/userProfileStore'
 import Iconify from '../../iconify'
 
 interface IRoute {
@@ -30,7 +32,16 @@ const ICONS: {
 }
 
 export const useNavData = () => {
-  const { accessModules } = useModulesStore()
+  const { user } = useUserStore()
+  const { accessModules, setAccessModules } = useModulesStore()
+
+  useEffect(() => {
+    if (user && user.accessModules) {
+      setAccessModules(user.accessModules)
+    }
+  }, [user])
+
+  console.log({ accessModules, user })
 
   const actualModules = accessModules?.map<INavItem>((module) => ({
     subheader: module.name,

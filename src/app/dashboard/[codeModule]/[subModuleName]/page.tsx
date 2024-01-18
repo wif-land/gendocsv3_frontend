@@ -6,13 +6,12 @@ import { Stack } from '@mui/material'
 import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
 import { LoadingScreen } from '../../../../shared/components/loading-screen'
 import { CouncilListView } from '../../../../features/council/presentation/view'
+import { CareerListView } from '../../../../features/careers/presentation/view'
 
 const UsersView = lazy(
   () => import('../../../../features/modules/components/users-view'),
 )
-const CareersView = lazy(
-  () => import('../../../../features/careers/components/CareersView'),
-)
+
 const StudentsView = lazy(
   () => import('../../../../features/modules/components/students-view'),
 )
@@ -41,7 +40,7 @@ const Page = () => {
   const routeToComponent = {
     ['admin/usuarios']: UsersView,
     ['admin/estudiantes']: StudentsView,
-    ['admin/carreras']: CareersView,
+    ['admin/carreras']: CareerListView,
     ['admin/funcionarios']: FunctionaryView,
     procesos: ProcessView,
     consejos: CouncilListView,

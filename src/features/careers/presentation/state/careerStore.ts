@@ -1,6 +1,6 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { ICareer } from '../../features/careers/interfaces/ICareer'
+import { ICareer } from '../../types/ICareer'
 
 interface StoreState {
   careers: ICareer[] | undefined

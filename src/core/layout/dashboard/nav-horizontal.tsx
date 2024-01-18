@@ -5,16 +5,11 @@ import Toolbar from '@mui/material/Toolbar'
 import { HEADER } from '../config-layout'
 import { useNavData } from './config-navigation'
 import { HeaderShadow } from '../_common'
-import { useMockedUser } from '../../../shared/hooks/use-mocked-user'
 import { bgBlur } from '../../theme/css'
 import NavSectionHorizontal from '../../../shared/components/nav-section/horizontal/nav-section-horizontal'
 
-const NavHorizontal = () => {
+const NavHorizontal = ({ navData }: { navData: any }) => {
   const theme = useTheme()
-
-  const { user } = useMockedUser()
-
-  const navData = useNavData()
 
   return (
     <AppBar
@@ -33,7 +28,7 @@ const NavHorizontal = () => {
         <NavSectionHorizontal
           data={navData}
           config={{
-            currentRole: user?.role || 'admin',
+            currentRole: 'admin',
           }}
         />
       </Toolbar>
