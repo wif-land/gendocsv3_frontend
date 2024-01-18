@@ -2,7 +2,7 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { CareerModel } from '../models/CareerModel'
-import { ICareer } from '../../types/ICareer'
+import { ICareer } from '../../domain/entities/ICareer'
 
 export interface CareerDataSource {
   getAll(): Promise<{

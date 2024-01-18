@@ -1,6 +1,6 @@
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { ICareer } from '../../domain/entities/ICareer'
 import { CareerRepository } from '../../domain/repositories/CareerRepository'
-import { ICareer } from '../../types/ICareer'
 import {
   CareerDataSource,
   CareersDataSourceImpl,

@@ -7,7 +7,7 @@ export class CareerModel implements ICareer {
   womenDegree: string
   internshipHours: number
   vinculationHours: number
-  coordinator: ICareerCoordinator | number
+  coordinator: ICareerCoordinator | number | string
   createdAt?: Date
   updatedAt?: Date
   name: string
