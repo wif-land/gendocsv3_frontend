@@ -1,10 +1,6 @@
-// @mui
 import { useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
-// routes
-import { RouterLink } from '../../..routes/components'
-//
 import Image from '../../image'
 import TextMaxLine from '../../text-max-line'
 import Carousel, {
@@ -12,8 +8,8 @@ import Carousel, {
   CarouselArrows,
   useCarousel,
 } from '../../carousel'
-//
 import { MenuCarouselProps } from '../types'
+import { RouterLink } from '../../../../core/routes/components'
 export default function MenuCarousel({
   products,
   numberShow,

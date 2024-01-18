@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-// @mui
+
 import Box, { BoxProps } from '@mui/material/Box'
 export interface SvgColorProps extends BoxProps {
   src: string

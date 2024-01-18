@@ -1,4 +1,4 @@
-// @mui
+
 import { StackProps } from '@mui/material/Stack'
 
 export interface ColorPreviewProps extends StackProps {

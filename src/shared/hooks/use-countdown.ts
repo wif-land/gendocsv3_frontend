@@ -9,7 +9,7 @@ type ReturnDateType = {
   seconds: string
 }
 
-export function useCountdownDate(date: Date): ReturnDateType {
+export const useCountdownDate = (date: Date): ReturnDateType => {
   const [countdown, setCountdown] = useState({
     days: '00',
     hours: '00',
@@ -20,7 +20,6 @@ export function useCountdownDate(date: Date): ReturnDateType {
   useEffect(() => {
     const interval = setInterval(() => setNewTime(), 1000)
     return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const setNewTime = () => {
@@ -70,7 +69,9 @@ type ReturnSecondsType = {
   setCountdown: React.Dispatch<React.SetStateAction<number>>
 }
 
-export function useCountdownSeconds(initCountdown: number): ReturnSecondsType {
+export const useCountdownSeconds = (
+  initCountdown: number,
+): ReturnSecondsType => {
   const [countdown, setCountdown] = useState(initCountdown)
 
   const startCountdown = useCallback(() => {

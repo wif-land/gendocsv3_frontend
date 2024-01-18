@@ -1,5 +1,4 @@
 import { useState, useEffect, forwardRef, useCallback } from 'react'
-// @mui
 import Box from '@mui/material/Box'
 import List from '@mui/material/List'
 import Link from '@mui/material/Link'
@@ -12,15 +11,12 @@ import Typography from '@mui/material/Typography'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemButton from '@mui/material/ListItemButton'
-// routes
 import { usePathname } from 'next/navigation'
-import { RouterLink } from '../../..routes/components'
-//
 import Logo from '../logo'
 import Iconify from '../iconify'
 import Scrollbar from '../scrollbar'
-//
 import { ParentItemProps, MegaMenuItemProps } from './types'
+import { RouterLink } from '../../../core/routes/components'
 
 type Props = {
   data: MegaMenuItemProps[]

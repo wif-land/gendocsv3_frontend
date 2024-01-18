@@ -1,11 +1,8 @@
-// @mui
 import Link from '@mui/material/Link'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-// routes
-import { RouterLink } from '../../..routes/components'
-//
 import { MenuHotProductsProps } from '../types'
+import { RouterLink } from '../../../../core/routes/components'
 export default function MenuHotProducts({
   tags,
   ...other

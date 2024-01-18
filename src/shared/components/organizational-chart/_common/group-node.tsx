@@ -1,16 +1,12 @@
-// @mui
 import { alpha, Theme, useTheme, SxProps } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
-// theme
-import { ColorSchema } from '../../..theme/palette'
-//
 import Label from '../../label'
-//
 import { ItemProps } from '../types'
+import { ColorSchema } from '../../../../core/theme/palette'
 
 type Props = {
   node: ItemProps

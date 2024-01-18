@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useRef } from 'react'
 
 type Props = {
@@ -6,7 +7,11 @@ type Props = {
   doubleClick: (e: React.SyntheticEvent) => void
 }
 
-export function useDoubleClick({ click, doubleClick, timeout = 250 }: Props) {
+export const useDoubleClick = ({
+  click,
+  doubleClick,
+  timeout = 250,
+}: Props) => {
   const clickTimeout = useRef<any>()
 
   const clearClickTimeout = () => {

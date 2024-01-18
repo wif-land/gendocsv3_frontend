@@ -1,4 +1,4 @@
-// @mui
+
 import { PopoverProps } from '@mui/material/Popover'
 
 export type MenuPopoverArrowValue =

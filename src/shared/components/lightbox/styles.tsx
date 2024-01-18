@@ -1,4 +1,4 @@
-// @mui
+
 import { useTheme, alpha } from '@mui/material/styles'
 import GlobalStyles from '@mui/material/GlobalStyles'
 

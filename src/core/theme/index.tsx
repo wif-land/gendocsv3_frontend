@@ -1,5 +1,3 @@
-// src/theme/index.js
-
 'use client'
 
 import PropTypes from 'prop-types'
@@ -17,7 +15,9 @@ import { componentsOverrides } from './overrides'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
-const ThemeProvider = ({ children }) => {
+const ThemeProvider = ({ children }: {
+  children: any
+}) => {
   const memoizedValue = useMemo(
     () => ({
       palette: palette('light'), // or palette('dark')
@@ -29,7 +29,7 @@ const ThemeProvider = ({ children }) => {
     [],
   )
 
-  const theme = createTheme(memoizedValue)
+  const theme = createTheme(memoizedValue as any)
 
   theme.components = componentsOverrides(theme)
 

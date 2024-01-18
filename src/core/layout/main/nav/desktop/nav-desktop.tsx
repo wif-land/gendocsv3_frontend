@@ -1,10 +1,6 @@
-// @mui
 import Stack from '@mui/material/Stack'
-//
 import { NavProps } from '../types'
 import NavList from './nav-list'
-
-// ----------------------------------------------------------------------
 
 export default function NavDesktop({ offsetTop, data }: NavProps) {
   return (

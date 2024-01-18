@@ -1,4 +1,4 @@
-// @mui
+
 import { useTheme } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Iconify from '../iconify'

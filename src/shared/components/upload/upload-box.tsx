@@ -1,5 +1,5 @@
 import { useDropzone } from 'react-dropzone'
-// @mui
+
 import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 //

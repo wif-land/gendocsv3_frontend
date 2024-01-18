@@ -1,6 +1,5 @@
 import { isBefore, isSameDay, isSameMonth, getYear } from 'date-fns'
-// utils
-import { fDate } from '../../..utils/format-time'
+import { fDate } from '../../../core/utils/format-time'
 
 type DateType = Date | string | number | null
 

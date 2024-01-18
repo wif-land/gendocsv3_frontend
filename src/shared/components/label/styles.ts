@@ -1,4 +1,4 @@
-// @mui
+
 import { alpha, Theme, styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 //

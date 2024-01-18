@@ -1,4 +1,4 @@
-// @mui
+
 import { useTheme, styled, alpha } from '@mui/material/styles'
 import Stack, { StackProps } from '@mui/material/Stack'
 import IconButton, { IconButtonProps } from '@mui/material/IconButton'

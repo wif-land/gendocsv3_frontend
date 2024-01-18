@@ -1,9 +1,9 @@
+/* eslint-disable func-style */
 import { RefObject, useEffect, useRef, useLayoutEffect } from 'react'
 
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
-// Window Event based useEventListener interface
 export function useEventListener<K extends keyof WindowEventMap>(
   eventName: K,
   handler: (event: WindowEventMap[K]) => void,
@@ -11,7 +11,6 @@ export function useEventListener<K extends keyof WindowEventMap>(
   options?: boolean | AddEventListenerOptions,
 ): void
 
-// Element Event based useEventListener interface
 export function useEventListener<
   K extends keyof HTMLElementEventMap,
   T extends HTMLElement = HTMLDivElement,
@@ -42,7 +41,6 @@ export function useEventListener<
   element?: RefObject<T>,
   options?: boolean | AddEventListenerOptions,
 ) {
-  // Create a ref that stores handler
   const savedHandler = useRef(handler)
 
   useIsomorphicLayoutEffect(() => {
@@ -50,19 +48,15 @@ export function useEventListener<
   }, [handler])
 
   useEffect(() => {
-    // Define the listening target
     const targetElement: T | Window = element?.current || window
     if (!(targetElement && targetElement.addEventListener)) {
       return
     }
 
-    // Create event listener that calls handler function stored in ref
     const eventListener: typeof handler = (event) => savedHandler.current(event)
 
     targetElement.addEventListener(eventName, eventListener, options)
 
-    // Remove event listener on cleanup
-    // eslint-disable-next-line consistent-return
     return () => {
       targetElement.removeEventListener(eventName, eventListener)
     }

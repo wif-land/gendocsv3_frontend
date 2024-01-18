@@ -1,4 +1,4 @@
-// @mui
+
 import { Theme, SxProps } from '@mui/material/styles'
 import Card from '@mui/material/Card'
 import Avatar from '@mui/material/Avatar'

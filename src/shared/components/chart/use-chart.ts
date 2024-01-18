@@ -1,6 +1,5 @@
 import merge from 'lodash/merge'
 import { ApexOptions } from 'apexcharts'
-// @mui
 import { useTheme, alpha } from '@mui/material/styles'
 export default function useChart(options?: ApexOptions) {
   const theme = useTheme()
@@ -23,7 +22,6 @@ export default function useChart(options?: ApexOptions) {
   }
 
   const baseOptions = {
-    // Colors
     colors: [
       theme.palette.primary.main,
       theme.palette.warning.main,

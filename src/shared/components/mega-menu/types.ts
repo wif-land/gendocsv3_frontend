@@ -1,4 +1,3 @@
-// @mui
 import { Theme, SxProps } from '@mui/material/styles'
 
 type Products = {

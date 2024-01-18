@@ -4,8 +4,8 @@ import Container from '@mui/material/Container'
 import { useSettingsContext } from '../../../../shared/components/settings'
 import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import ProductNewEditForm from '../../../product/product-new-edit-form'
 import { usePathname } from 'next/navigation'
+import CouncilNewEditForm from '../components/council-new-edit-form'
 
 export default function ProductCreateView() {
   const settings = useSettingsContext()
@@ -31,7 +31,7 @@ export default function ProductCreateView() {
         }}
       />
 
-      <ProductNewEditForm />
+      <CouncilNewEditForm />
     </Container>
   )
 }

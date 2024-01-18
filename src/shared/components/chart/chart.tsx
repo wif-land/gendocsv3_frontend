@@ -1,15 +1,11 @@
 import { memo } from 'react'
 import dynamic from 'next/dynamic'
-// @mui
 import { alpha, styled } from '@mui/material/styles'
-// theme
-import { bgBlur } from '../../..theme/css'
-
+import { bgBlur } from '../../../core/theme/css'
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 const Chart = styled(ApexChart)(({ theme }) => ({
   '& .apexcharts-canvas': {
-    // Tooltip
     '& .apexcharts-tooltip': {
       ...bgBlur({
         color: theme.palette.background.default,

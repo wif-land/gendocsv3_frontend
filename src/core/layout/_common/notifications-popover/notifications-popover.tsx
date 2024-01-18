@@ -2,7 +2,6 @@
 
 import { m } from 'framer-motion'
 import { useState, useCallback } from 'react'
-// @mui
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import Tabs from '@mui/material/Tabs'
@@ -18,7 +17,6 @@ import Typography from '@mui/material/Typography'
 import NotificationItem from './notification-item'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
-import { _notifications } from '../../../../_mock'
 import Iconify from '../../../iconify'
 import Label from '../../../../shared/components/label'
 import Scrollbar from '../../../../shared/components/scrollbar'
@@ -42,8 +40,6 @@ const TABS = [
   },
 ]
 
-// ----------------------------------------------------------------------
-
 export default function NotificationsPopover() {
   const drawer = useBoolean()
 
@@ -58,7 +54,17 @@ export default function NotificationsPopover() {
     [],
   )
 
-  const [notifications, setNotifications] = useState(_notifications)
+  const [notifications, setNotifications] = useState([
+    {
+      id: '',
+      title: 'Leninsin',
+      category: 'jaja',
+      createdAt: new Date(),
+      isUnRead: false,
+      type: 'some',
+      avatarUrl: null,
+    },
+  ])
 
   const totalUnRead = notifications.filter(
     (item) => item.isUnRead === true,

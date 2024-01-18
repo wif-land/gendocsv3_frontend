@@ -1,4 +1,4 @@
-// @mui
+
 import { LinkProps } from '@mui/material/Link'
 import { TypographyProps } from '@mui/material/Typography'
 import { Variant } from '@mui/material/styles/createTypography'

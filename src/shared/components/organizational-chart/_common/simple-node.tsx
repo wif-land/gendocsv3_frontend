@@ -1,8 +1,6 @@
-// @mui
 import { alpha, Theme, SxProps } from '@mui/material/styles'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-//
 import { ItemProps } from '../types'
 
 type Props = {

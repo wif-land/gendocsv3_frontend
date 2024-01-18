@@ -49,7 +49,6 @@ import ThemeProvider from '../core/theme'
 import MotionLazy from '../shared/components/animate/motion-lazy'
 import { SnackbarProvider } from '../shared/components/snackbar'
 import ProgressBar from '../shared/components/progress-bar/progress-bar'
-import { AuthConsumer, AuthProvider } from '../auth/context/jwt'
 import { ModulesProvider } from './providers/modules-provider'
 
 export const metadata = {
@@ -91,31 +90,29 @@ export default function RootLayout({ children }: Props) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <SettingsProvider
-            defaultSettings={{
-              themeMode: 'light', // 'light' | 'dark'
-              themeDirection: 'ltr', //  'rtl' | 'ltr'
-              themeContrast: 'default', // 'default' | 'bold'
-              themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
-              themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
-              themeStretch: false,
-            }}
-          >
-            <ThemeProvider>
-              <MotionLazy>
-                <ModulesProvider>
-                  <SnackbarProvider>
-                    <SettingsDrawer />
-                    <ProgressBar />
+        <SettingsProvider
+          defaultSettings={{
+            themeMode: 'light', // 'light' | 'dark'
+            themeDirection: 'ltr', //  'rtl' | 'ltr'
+            themeContrast: 'default', // 'default' | 'bold'
+            themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
+            themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+            themeStretch: false,
+          }}
+        >
+          <ThemeProvider>
+            <MotionLazy>
+              <ModulesProvider>
+                <SnackbarProvider>
+                  <SettingsDrawer />
+                  <ProgressBar />
 
-                    <AuthConsumer>{children}</AuthConsumer>
-                  </SnackbarProvider>
-                </ModulesProvider>
-              </MotionLazy>
-            </ThemeProvider>
-          </SettingsProvider>
-        </AuthProvider>
+                  {children}
+                </SnackbarProvider>
+              </ModulesProvider>
+            </MotionLazy>
+          </ThemeProvider>
+        </SettingsProvider>
       </body>
     </html>
   )

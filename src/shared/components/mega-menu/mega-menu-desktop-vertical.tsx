@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-// @mui
+
 import Masonry from '@mui/lab/Masonry'
 import { alpha, Theme } from '@mui/material/styles'
 import List from '@mui/material/List'
@@ -9,14 +9,11 @@ import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import ListItem from '@mui/material/ListItem'
 import Typography from '@mui/material/Typography'
-// routes
-import { RouterLink } from '../../..routes/components'
-//
 import Iconify from '../iconify'
-//
 import MenuHotProducts from './_common/menu-hot-products'
 import MenuCarousel from './_common/menu-carousel'
 import { ParentItemProps, MegaMenuItemProps } from './types'
+import { RouterLink } from '../../../core/routes/components'
 
 const MENU_PAPER_WIDTH = 800
 const PARENT_ITEM_HEIGHT = 40

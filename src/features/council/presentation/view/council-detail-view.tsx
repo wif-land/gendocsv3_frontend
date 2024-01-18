@@ -14,13 +14,17 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useCouncilStore } from '../store/councilsStore'
 import { useSettingsContext } from '../../../../shared/components/settings'
 import EmptyContent from '../../../../shared/components/empty-content/empty-content'
-import { paths } from '../../../../core/routes/paths'
 import { CouncilDetailsSkeleton } from '../components/council-skeleton'
 import Iconify from '../../../../core/iconify'
-import ProductDetailsDescription from '../../../product/product-details-description'
+// import ProductDetailsDescription from '../../../product/product-details-description'
 import CouncilDetailsSummary from '../components/council-details-summary'
-import ProductDetailsToolbar from '../../../product/product-details-toolbar'
-import { PRODUCT_PUBLISH_OPTIONS } from '../../../../_mock'
+// import ProductDetailsToolbar from '../../../product/product-details-toolbar'
+
+const PRODUCT_PUBLISH_OPTIONS = {
+  draft: 'Draft',
+  pending: 'Pending',
+  published: 'Published',
+}
 
 const SUMMARY = [
   {
@@ -43,7 +47,6 @@ const SUMMARY = [
 export default function CouncilDetailsView() {
   const { id } = useParams()
   const router = useRouter()
-  const pathname = usePathname()
 
   const settings = useSettingsContext()
 
@@ -51,12 +54,6 @@ export default function CouncilDetailsView() {
   const product = councils.find((council) => council.id! === +id)
 
   const [currentTab, setCurrentTab] = useState('description')
-
-  const [publish, setPublish] = useState('')
-
-  const handleChangePublish = useCallback((newValue: string) => {
-    setPublish(newValue)
-  }, [])
 
   const handleChangeTab = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
@@ -86,14 +83,14 @@ export default function CouncilDetailsView() {
 
   const renderProduct = product && (
     <>
-      <ProductDetailsToolbar
+      {/* <ProductDetailsToolbar
         backLink={pathname.replace(/\/\d+$/, '')}
         editLink={`${pathname}/edit`}
         liveLink={paths.product.details(`${product?.id}`)}
         publish={publish || ''}
         onChangePublish={handleChangePublish}
         publishOptions={PRODUCT_PUBLISH_OPTIONS}
-      />
+      /> */}
 
       <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
         <Grid xs={12} md={6} lg={5}>
@@ -149,9 +146,9 @@ export default function CouncilDetailsView() {
           ))}
         </Tabs>
 
-        {currentTab === 'description' && (
+        {/* {currentTab === 'description' && (
           <ProductDetailsDescription description={'una buena descripcion'} />
-        )}
+        )} */}
       </Card>
     </>
   )

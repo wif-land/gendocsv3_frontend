@@ -1,4 +1,4 @@
-// @mui
+
 import { Theme, SxProps } from '@mui/material/styles'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'

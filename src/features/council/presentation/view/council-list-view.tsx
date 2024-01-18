@@ -40,7 +40,7 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/components/settings'
 import { RouterLink } from '../../../../core/routes/components'
-import ProductTableFiltersResult from '../../../product/product-table-filters-result'
+// import ProductTableFiltersResult from '../../../product/product-table-filters-result'
 import { CouncilTableRow } from '../components/product-table-row'
 
 const TABLE_HEAD = [
@@ -191,7 +191,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
             stockOptions={PRODUCT_STOCK_OPTIONS}
             publishOptions={PUBLISH_OPTIONS}
           />
-
+          {/* 
           {canReset && (
             <ProductTableFiltersResult
               filters={filters}
@@ -200,7 +200,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
               results={0}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction

@@ -1,9 +1,7 @@
 import { useState, useCallback } from 'react'
-// utils
-import { fDate } from '../../..utils/format-time'
-//
 import { isDateError, shortDateLabel } from './utils'
 import { DateRangePickerProps } from './types'
+import { fDate } from '../../../core/utils/format-time'
 
 type ReturnType = DateRangePickerProps
 

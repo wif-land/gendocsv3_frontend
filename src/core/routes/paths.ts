@@ -1,9 +1,4 @@
-import { _id, _postTitles } from '../../_mock'
 import { paramCase } from '../utils/change-case'
-
-const MOCK_ID = _id[1]
-
-const MOCK_TITLE = _postTitles[2]
 
 const ROOTS = {
   AUTH: '/auth',
@@ -23,21 +18,6 @@ export const paths = {
   freeUI: 'https://mui.com/store/items/minimal-dashboard-free/',
   figma:
     'https://www.figma.com/file/kAYnYYdib0aQPNKZpgJT6J/%5BPreview%5D-Minimal-Web.v5.0.0?type=design&node-id=0%3A1&t=Al4jScQq97Aly0Mn-1',
-  product: {
-    root: `/product`,
-    checkout: `/product/checkout`,
-    details: (id: string) => `/product/${id}`,
-    demo: {
-      details: `/product/${MOCK_ID}`,
-    },
-  },
-  post: {
-    root: `/post`,
-    details: (title: string) => `/post/${paramCase(title)}`,
-    demo: {
-      details: `/post/${paramCase(MOCK_TITLE)}`,
-    },
-  },
   // AUTH
   auth: {
     login: `${ROOTS.AUTH}/login`,
@@ -69,27 +49,27 @@ export const paths = {
       booking: `${ROOTS.DASHBOARD}/booking`,
       file: `${ROOTS.DASHBOARD}/file`,
     },
-    user: {
-      root: `${ROOTS.DASHBOARD}/user`,
-      new: `${ROOTS.DASHBOARD}/user/new`,
-      list: `${ROOTS.DASHBOARD}/user/list`,
-      cards: `${ROOTS.DASHBOARD}/user/cards`,
-      profile: `${ROOTS.DASHBOARD}/user/profile`,
-      account: `${ROOTS.DASHBOARD}/user/account`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
-      demo: {
-        edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
-      },
-    },
-    product: {
-      root: `${ROOTS.DASHBOARD}/product`,
-      new: `${ROOTS.DASHBOARD}/product/new`,
-      details: (id: string) => `${ROOTS.DASHBOARD}/product/${id}`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
-      demo: {
-        details: `${ROOTS.DASHBOARD}/product/${MOCK_ID}`,
-        edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
-      },
-    },
+    // user: {
+    //   root: `${ROOTS.DASHBOARD}/user`,
+    //   new: `${ROOTS.DASHBOARD}/user/new`,
+    //   list: `${ROOTS.DASHBOARD}/user/list`,
+    //   cards: `${ROOTS.DASHBOARD}/user/cards`,
+    //   profile: `${ROOTS.DASHBOARD}/user/profile`,
+    //   account: `${ROOTS.DASHBOARD}/user/account`,
+    //   edit: (id: string) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
+    //   demo: {
+    //     edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
+    //   },
+    // },
+    // product: {
+    //   root: `${ROOTS.DASHBOARD}/product`,
+    //   new: `${ROOTS.DASHBOARD}/product/new`,
+    //   details: (id: string) => `${ROOTS.DASHBOARD}/product/${id}`,
+    //   edit: (id: string) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
+    //   demo: {
+    //     details: `${ROOTS.DASHBOARD}/product/${MOCK_ID}`,
+    //     edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
+    //   },
+    // },
   },
 }
