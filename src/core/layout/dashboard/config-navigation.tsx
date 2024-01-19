@@ -41,8 +41,6 @@ export const useNavData = () => {
     }
   }, [user])
 
-  console.log({ accessModules, user })
-
   const actualModules = accessModules?.map<INavItem>((module) => ({
     subheader: module.name,
     items: module.submodules.map<IRoute>((submodule) => ({

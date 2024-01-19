@@ -1,6 +1,7 @@
 'use client'
 import { useParams } from 'next/navigation'
 import CouncilEditView from '../../../../../../features/council/presentation/view/council-edit-view'
+import { CareersEditView } from '../../../../../../features/careers/presentation/view'
 
 const Page = () => {
   const { subModuleName } = useParams()
@@ -9,6 +10,8 @@ const Page = () => {
     switch (subModuleName as string) {
       case 'consejos':
         return <CouncilEditView />
+      case 'carreras':
+        return <CareersEditView />
       default:
         return <div>DEFAULT</div>
     }

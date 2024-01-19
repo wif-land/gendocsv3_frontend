@@ -1,102 +1,34 @@
-import * as Yup from 'yup'
-import { useCallback, useMemo, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
-import Switch from '@mui/material/Switch'
 import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Unstable_Grid2'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import { ICareer } from '../../domain/entities/ICareer'
-import { useRouter } from 'next/navigation'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
-import { useSnackbar } from 'notistack'
 import {
   RHFAutocomplete,
+  RHFSwitch,
   RHFTextField,
 } from '../../../../shared/components/hook-form'
 import FormProvider from '../../../../shared/components/hook-form/form-provider'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
-
-interface FormValuesProps extends Omit<ICareer, 'images'> {}
+import { useCareerForm } from '../hooks/useCareerForm'
 
 type Props = {
   currentCareer?: ICareer
 }
 
-export default function CareerNewEditForm({ currentCareer }: Props) {
-  const router = useRouter()
-  const { functionaries } = useFunctionaryStore()
-
+export const CareerNewEditForm = ({ currentCareer }: Props) => {
   const mdUp = useResponsive('up', 'md')
-
-  const { enqueueSnackbar } = useSnackbar()
-
-  const NewCareerSchema = Yup.object().shape({
-    name: Yup.string().required('Campo requerido'),
-    credits: Yup.number().required('Campo requerido').max(140).min(130),
-    menDegree: Yup.string().required('Campo requerido'),
-    womenDegree: Yup.string().required('Campo requerido'),
-    coordinator: Yup.string().required('Campo requerido'),
-    internshipHours: Yup.number().required('Campo requerido').max(250).min(230),
-    vinculationHours: Yup.number().required('Campo requerido').max(95).min(80),
-  })
-
-  const defaultValues = useMemo(
-    () => ({
-      name: '',
-      credits: 0,
-      menDegree: '',
-      womenDegree: '',
-      coordinator: '',
-      internshipHours: 0,
-      vinculationHours: 0,
-    }),
-    [currentCareer],
-  )
-
-  const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewCareerSchema),
-    defaultValues,
-  })
+  const { functionaries, methods, onSubmit } = useCareerForm(currentCareer)
 
   const {
-    reset,
-    watch,
     handleSubmit,
     formState: { isSubmitting },
   } = methods
-
-  const values = watch()
-
-  console.info('VALUES', values)
-
-  useEffect(() => {
-    if (currentCareer) {
-      reset(defaultValues)
-    }
-  }, [currentCareer, defaultValues, reset])
-
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500))
-        reset()
-        // enqueueSnackbar(currentCareer ? 'Update success!' : 'Create success!')
-        // router.push('/careers')
-        console.info('DATA', data)
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    [currentCareer, enqueueSnackbar, reset, router],
-  )
 
   const renderDetails = (
     <>
@@ -236,11 +168,9 @@ export default function CareerNewEditForm({ currentCareer }: Props) {
     <>
       {mdUp && <Grid md={4} />}
       <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
-        <FormControlLabel
-          control={<Switch defaultChecked />}
-          label="Carrera activa"
-          sx={{ flexGrow: 1, pl: 3 }}
-        />
+        <Box sx={{ flexGrow: 1 }}>
+          <RHFSwitch name="isActive" label="Carrera activa"/>
+        </Box>
 
         <LoadingButton
           type="submit"
