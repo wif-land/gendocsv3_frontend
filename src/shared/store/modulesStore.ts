@@ -1,5 +1,5 @@
 import { StateCreator, create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 import { IModule } from '../../features/modules/types/IModule'
 
 interface StoreState {
@@ -48,7 +48,7 @@ const useModulesStore = create<StoreState>(
         set({ accessModules })
       },
     }),
-    { name: 'modules', storage: createJSONStorage(() => sessionStorage) },
+    { name: 'modules' },
   ) as StateCreator<StoreState>,
 )
 
