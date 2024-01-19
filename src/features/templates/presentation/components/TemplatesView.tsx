@@ -58,6 +58,7 @@ const COLUMNS = [
     label: 'Ver',
   },
 ]
+
 const ProcessesView = ({ processId }: { processId: string }) => {
   const [isFetching, setIsFetching] = useState(false)
   const { processes } = useProcessStore()

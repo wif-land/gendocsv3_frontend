@@ -58,6 +58,8 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
       params: { moduleId },
     })
 
+    console.log({ result })
+
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {

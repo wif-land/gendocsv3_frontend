@@ -65,11 +65,7 @@ module.exports = {
     curly: ['error', 'multi-line'],
     eqeqeq: ['error', 'smart'],
     'func-call-spacing': ['error', 'never'],
-    'func-style': [
-      'error',
-      'expression',
-      { allowArrowFunctions: true, allowNamedFunctions: true },
-    ],
+    // 'func-style': ['error', 'expression', { allowArrowFunctions: true }],
     'grouped-accessor-pairs': 'error',
     'max-classes-per-file': ['warn', 4],
     'no-console': 'warn',

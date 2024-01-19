@@ -7,6 +7,7 @@ import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
 import { LoadingScreen } from '../../../../shared/components/loading-screen'
 import { CouncilListView } from '../../../../features/council/presentation/view'
 import { CareerListView } from '../../../../features/careers/presentation/view'
+import { DocumentListView } from '../../../../features/documents/presentation/view'
 
 const UsersView = lazy(
   () => import('../../../../features/modules/components/users-view'),
@@ -25,26 +26,19 @@ const ProcessView = lazy(
     ),
 )
 
-const DocumentsView = lazy(
-  () =>
-    import(
-      '../../../../features/documents/presentation/components/DocumentsView'
-    ),
-)
-
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
 
   const route = `${codeModule}/${subModuleName}`
 
   const routeToComponent = {
-    ['admin/usuarios']: UsersView,
-    ['admin/estudiantes']: StudentsView,
-    ['admin/carreras']: CareerListView,
-    ['admin/funcionarios']: FunctionaryView,
+    usuarios: UsersView,
+    estudiantes: StudentsView,
+    carreras: CareerListView,
+    funcionarios: FunctionaryView,
     procesos: ProcessView,
     consejos: CouncilListView,
-    documentos: DocumentsView,
+    documentos: DocumentListView,
   }
 
   const defaultComponent = () => (

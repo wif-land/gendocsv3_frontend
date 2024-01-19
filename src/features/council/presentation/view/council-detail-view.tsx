@@ -10,21 +10,13 @@ import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useCouncilStore } from '../store/councilsStore'
 import { useSettingsContext } from '../../../../shared/components/settings'
 import EmptyContent from '../../../../shared/components/empty-content/empty-content'
 import { CouncilDetailsSkeleton } from '../components/council-skeleton'
 import Iconify from '../../../../core/iconify'
-// import ProductDetailsDescription from '../../../product/product-details-description'
 import CouncilDetailsSummary from '../components/council-details-summary'
-// import ProductDetailsToolbar from '../../../product/product-details-toolbar'
-
-const PRODUCT_PUBLISH_OPTIONS = {
-  draft: 'Draft',
-  pending: 'Pending',
-  published: 'Published',
-}
 
 const SUMMARY = [
   {

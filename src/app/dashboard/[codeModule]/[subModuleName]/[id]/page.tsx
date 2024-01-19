@@ -1,25 +1,39 @@
 'use client'
 import { useParams } from 'next/navigation'
 import TemplateView from '../../../../../features/templates/presentation/components/TemplatesView'
-import CouncilDetailsView from '../../../../../features/council/presentation/view/council-detail-view'
 import { CareerDetailView } from '../../../../../features/careers/presentation/view'
+import { DocumentDetailsView } from '../../../../../features/documents/presentation/view'
+import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
+import { CouncilDetailsView } from '../../../../../features/council/presentation/view'
 
 const Page = () => {
-  const { subModuleName, id } = useParams()
+  const { codeModule, subModuleName, id } = useParams()
 
-  const resolveViewBySubModule = () => {
-    switch (subModuleName as string) {
-      case 'procesos':
-        return <TemplateView processId={id as string} />
-      case 'consejos':
-        return <CouncilDetailsView />
-      case 'carreras':
-        return <CareerDetailView />
-      default:
-        return <div>DEFAULT</div>
-    }
+  const route = `${codeModule}/${subModuleName}`
+
+  const routeToComponent = {
+    procesos: () => <TemplateView processId={id as string} />,
+    consejos: CouncilDetailsView,
+    carreras: CareerDetailView,
+    documentos: DocumentDetailsView,
   }
-  return resolveViewBySubModule()
+
+  const defaultComponent = () => (
+    <div>
+      <StaticDatePicker orientation="landscape" />
+      <TimePicker label="Basic time picker" />
+    </div>
+  )
+
+  const matchedRoute = Object.keys(routeToComponent).find((key) =>
+    RegExp(key).test(route),
+  )
+
+  const Component =
+    routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
+    defaultComponent
+
+  return <Component />
 }
 
 export default Page

@@ -46,6 +46,7 @@ const COLUMNS = [
     label: 'Ver',
   },
 ]
+
 const DocumentsView = ({ moduleId }: { moduleId: string }) => {
   const router = useRouter()
   const [processUpdate, setProcessUpdate] = useState(false)
