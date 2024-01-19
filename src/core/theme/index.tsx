@@ -13,7 +13,7 @@ import { typography } from './typography'
 import { customShadows } from './custom-shadows'
 import { componentsOverrides } from './overrides'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const ThemeProvider = ({ children }: { children: any }) => {
   const memoizedValue = useMemo(
@@ -33,7 +33,7 @@ const ThemeProvider = ({ children }: { children: any }) => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
         {children}
       </LocalizationProvider>

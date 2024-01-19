@@ -36,7 +36,7 @@ export default function CouncilEditView() {
         }}
       />
 
-      <CouncilNewEditForm currentProduct={currentProduct} />
+      <CouncilNewEditForm currentCouncil={currentProduct} />
     </Container>
   )
 }

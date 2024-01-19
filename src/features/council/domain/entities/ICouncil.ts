@@ -8,6 +8,11 @@ export const CouncilTypeLabels = {
   [CouncilType.ORDINARY]: 'Ordinaria',
 }
 
+export const COUNCIL_TYPES = Object.keys(CouncilType).map((key) => ({
+  label: CouncilTypeLabels[key as keyof typeof CouncilType],
+  value: key,
+}))
+
 export interface ICouncil {
   id?: number
   createdAt?: Date
