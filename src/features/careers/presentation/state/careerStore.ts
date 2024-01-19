@@ -1,9 +1,9 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { ICareer } from '../../types/ICareer'
+import { ICareer } from '../../domain/entities/ICareer'
 
 interface StoreState {
-  careers: ICareer[] | undefined
+  careers: ICareer[]
   setCareers: (careers?: ICareer[] | undefined) => void
 }
 

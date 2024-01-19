@@ -59,6 +59,10 @@ export default function CouncilDetailsSummary({ product, ...other }: Props) {
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
         Size
       </Typography>
+
+      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+        Small
+      </Typography>
     </Stack>
   )
 
@@ -76,29 +80,22 @@ export default function CouncilDetailsSummary({ product, ...other }: Props) {
     </Typography>
   )
   return (
-    <FormProvider
-      methods={[]}
-      onSubmit={() => {
-        console.log('some')
-      }}
-    >
-      <Stack spacing={3} sx={{ pt: 3 }} {...other}>
-        <Stack spacing={2} alignItems="flex-start">
-          <Typography variant="h5">{name}</Typography>
+    <Stack spacing={3} sx={{ pt: 3 }} {...other}>
+      <Stack spacing={2} alignItems="flex-start">
+        <Typography variant="h5">{name}</Typography>
 
-          {renderSubDescription}
-        </Stack>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        {renderSizeOptions}
-
-        {renderQuantity}
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        {renderShare}
+        {renderSubDescription}
       </Stack>
-    </FormProvider>
+
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
+      {renderSizeOptions}
+
+      {renderQuantity}
+
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
+      {renderShare}
+    </Stack>
   )
 }
