@@ -14,7 +14,7 @@ import { ConfirmDialog } from '../../../../shared/components/custom-dialog'
 import { usePopover } from '../../../../shared/components/custom-popover'
 import CustomPopover from '../../../../shared/components/custom-popover/custom-popover'
 import { CareerModel } from '../../data/models/CareerModel'
-import { ICareerCoordinator } from '../../domain/entities/ICareer'
+import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 
 type Props = {
   row: CareerModel
@@ -71,8 +71,8 @@ export const CareerTableRow = ({
                 component="div"
                 sx={{ typography: 'body2', color: 'text.disabled' }}
               >
-                {`${(coordinator as ICareerCoordinator)?.firstName} ${(
-                  coordinator as ICareerCoordinator
+                {`${(coordinator as IFunctionary)?.firstName} ${(
+                  coordinator as IFunctionary
                 )?.firstLastName} - Coordinador`}
               </Box>
             }

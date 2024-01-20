@@ -1,3 +1,5 @@
+import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+
 export interface ICareer {
   id?: number
   createdAt?: Date
@@ -9,11 +11,5 @@ export interface ICareer {
   isActive: boolean
   internshipHours: number
   vinculationHours: number
-  coordinator: ICareerCoordinator | number | string
-}
-
-export interface ICareerCoordinator {
-  id: number
-  firstLastName: string
-  firstName: string
+  coordinator: IFunctionary | number | string
 }

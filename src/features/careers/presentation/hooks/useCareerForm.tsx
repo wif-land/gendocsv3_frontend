@@ -9,10 +9,21 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { useCareersStore } from '../state/careerStore'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 
 interface FormValuesProps extends ICareer {}
 
 export const useCareerForm = (currentCareer?: ICareer) => {
+  let coordinator = ''
+
+  if (currentCareer?.coordinator) {
+    coordinator = `${(currentCareer?.coordinator as IFunctionary).firstName} ${
+      (currentCareer?.coordinator as IFunctionary).secondName
+    } ${(currentCareer?.coordinator as IFunctionary).firstLastName} ${
+      (currentCareer?.coordinator as IFunctionary).secondLastName
+    } - ${(currentCareer?.coordinator as IFunctionary).dni}`
+  }
+
   const router = useRouter()
   const pathname = usePathname()
   const { functionaries, get } = useFunctionaryStore()
@@ -35,7 +46,7 @@ export const useCareerForm = (currentCareer?: ICareer) => {
       credits: currentCareer?.credits || 0,
       menDegree: currentCareer?.menDegree || '',
       womenDegree: currentCareer?.womenDegree || '',
-      coordinator: currentCareer?.coordinator || '',
+      coordinator: coordinator || '',
       internshipHours: currentCareer?.internshipHours || 0,
       vinculationHours: currentCareer?.vinculationHours || 0,
       isActive: currentCareer?.isActive || true,
@@ -75,7 +86,7 @@ export const useCareerForm = (currentCareer?: ICareer) => {
 
     if (status === HTTP_STATUS_CODES.OK) {
       updateCareer(editedFields)
-      enqueueSnackbar('Consejo actualizado exitosamente')
+      enqueueSnackbar('Carrera actualizada exitosamente')
     } else {
       throw new Error('Error al actualizar el consejo')
     }
@@ -94,10 +105,18 @@ export const useCareerForm = (currentCareer?: ICareer) => {
             coordinator: functionaryId as number,
           })
         } else {
-          await handleUpdate(currentCareer.id as number, {
-            ...data,
-            coordinator: functionaryId as number,
-          })
+          const editedFields = getEditedFields<FormValuesProps>(
+            defaultValues,
+            data,
+          )
+
+          if (editedFields?.coordinator) {
+            editedFields.coordinator = functionaryId as number
+          }
+
+          if (editedFields) {
+            await handleUpdate(currentCareer.id as number, editedFields)
+          }
         }
 
         router.push(
@@ -134,4 +153,25 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     onSubmit,
     handleSubmit,
   }
+}
+
+type GenericObject = { [key: string]: any }
+
+const getEditedFields = <T extends GenericObject>(
+  initialValues: T,
+  values: T,
+): T | null => {
+  const editedFields: T = {} as T
+
+  Object.keys(initialValues).forEach((key) => {
+    if (initialValues[key] !== values[key]) {
+      editedFields[key] = values[key]
+    }
+  })
+
+  if (Object.keys(editedFields).length === 0) {
+    return null
+  }
+
+  return editedFields
 }
