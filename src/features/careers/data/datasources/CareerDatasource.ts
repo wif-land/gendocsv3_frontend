@@ -17,6 +17,7 @@ export interface CareerDataSource {
   create(career: ICareer): Promise<{
     status: number
     career: CareerModel
+    message?: string
   }>
 }
 
@@ -34,6 +35,7 @@ export class CareersDataSourceImpl implements CareerDataSource {
   create = async (career: ICareer) => {
     const result = await AxiosClient.post(API_ROUTES.CAREERS.CREATE, career)
 
+    console.log({ result })
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {

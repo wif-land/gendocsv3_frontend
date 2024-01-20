@@ -1,4 +1,3 @@
-import { format } from 'date-fns'
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
@@ -34,11 +33,17 @@ export const CareerTableRow = ({
   onEditRow,
   onViewRow,
 }: Props) => {
-  const { name, isActive, coordinator, credits, createdAt } = row
-
   const confirm = useBoolean()
-
   const popover = usePopover()
+
+  const {
+    name,
+    isActive,
+    coordinator,
+    credits,
+    internshipHours,
+    vinculationHours,
+  } = row
 
   return (
     <>
@@ -83,7 +88,14 @@ export const CareerTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={format(createdAt || new Date(), 'p')}
+            primary={internshipHours}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={vinculationHours}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
@@ -91,9 +103,9 @@ export const CareerTableRow = ({
         <TableCell>
           <Label
             variant="soft"
-            color={(isActive === true && 'info') || 'default'}
+            color={(isActive === true && 'success') || 'primary'}
           >
-            {isActive === true ? 'Published' : 'Draft'}
+            {isActive === true ? 'Activo' : 'Inactivo'}
           </Label>
         </TableCell>
 

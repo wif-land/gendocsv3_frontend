@@ -31,39 +31,26 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/components/settings'
 import { RouterLink } from '../../../../core/routes/components'
-// import ProductTableFiltersResult from '../../../product/product-table-filters-result'
-import {
-  CouncilTableToolbar,
-  ICouncilTableFilterValue,
-  ICouncilTableFilters,
-} from '../../../council/presentation/components/council-table-toolbar'
 import { CareerTableRow } from '../components/CareerTableRow'
 import { useCareerView } from '../hooks/useCareerView'
 import { CareerModel } from '../../data/models/CareerModel'
+import {
+  CareerTableToolbar,
+  ICareerTableFilterValue,
+  ICareerTableFilters,
+} from '../components/CareerTableToolbar'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Carrera' },
-  { id: 'createdAt', label: 'Créditos', width: 160 },
-  { id: 'date', label: 'Creada en', width: 260 },
-  { id: 'isActive', label: 'Estado', width: 140 },
+  { id: 'credits', label: 'Créditos', width: 160 },
+  { id: 'internshipHours', label: 'Horas de prácticas', width: 160 },
+  { id: 'vinculationHours', label: 'Horas de Vinculación', width: 260 },
+  { id: 'isActive', label: 'Estado', width: 100 },
   { id: 'actions', label: 'Acciones', width: 110 },
 ]
 
-const PUBLISH_OPTIONS = [
-  { value: 'published', label: 'Published' },
-  { value: 'draft', label: 'Draft' },
-]
-
-const PRODUCT_STOCK_OPTIONS = [
-  { value: 'in stock', label: 'In stock' },
-  { value: 'low stock', label: 'Low stock' },
-  { value: 'out of stock', label: 'Out of stock' },
-]
-
-const defaultFilters: ICouncilTableFilters = {
+const defaultFilters: ICareerTableFilters = {
   name: '',
-  publish: [],
-  date: null,
 }
 
 const CareerListView = ({ moduleId }: { moduleId: string }) => {
@@ -73,10 +60,10 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
 
   const { loader, careers } = useCareerView()
 
-  const [filters, setFilters] = useState<ICouncilTableFilters>(defaultFilters)
+  const [filters, setFilters] = useState<ICareerTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
-    (name: string, value: ICouncilTableFilterValue) => {
+    (name: string, value: ICareerTableFilterValue) => {
       table.onResetPage()
       setFilters((prevState) => ({
         ...prevState,
@@ -102,10 +89,6 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
   const denseHeight = table.dense ? 60 : 80
 
   const canReset = !isEqual(defaultFilters, filters)
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters)
-  }, [])
 
   useEffect(() => {
     if (careers?.length) {
@@ -181,13 +164,8 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <CouncilTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            stockOptions={PRODUCT_STOCK_OPTIONS}
-            publishOptions={PUBLISH_OPTIONS}
-          />
-          {/* 
+          <CareerTableToolbar filters={filters} onFilters={handleFilters} />
+          {/*
           {canReset && (
             <ProductTableFiltersResult
               filters={filters}
@@ -331,10 +309,10 @@ const applyFilter = ({
 }: {
   inputData: CareerModel[]
   comparator: (a: any, b: any) => number
-  filters: ICouncilTableFilters
+  filters: ICareerTableFilters
 }) => {
   let currentInputData = [...inputData]
-  const { name, publish } = filters
+  const { name } = filters
 
   const stabilizedThis = currentInputData.map(
     (el, index) => [el, index] as const,
@@ -352,12 +330,6 @@ const applyFilter = ({
     currentInputData = currentInputData.filter(
       (product) =>
         product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
-    )
-  }
-
-  if (publish.length) {
-    currentInputData = currentInputData.filter((council) =>
-      publish.includes(council.createdAt!.toString()),
     )
   }
 

@@ -65,17 +65,22 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
                 placeholder="Escribe el nombre del coordinador"
                 freeSolo
                 options={functionaries!.map(
-                  (functionary: any) =>
-                    `${functionary.firstName} ${functionary.firstLastName}`,
+                  (functionary) =>
+                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
                 )}
                 getOptionLabel={(option) => option}
                 renderOption={(props, option) => {
-                  const { dni, firstName, firstLastName } =
-                    functionaries.filter(
-                      (functionary) =>
-                        option ===
-                        `${functionary.firstName} ${functionary.firstLastName}`,
-                    )[0]
+                  const {
+                    dni,
+                    firstName,
+                    firstLastName,
+                    secondName,
+                    secondLastName,
+                  } = functionaries.filter(
+                    (functionary) =>
+                      option ===
+                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                  )[0]
 
                   if (!dni) {
                     return null
@@ -84,8 +89,10 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
                   return (
                     <li {...props} key={dni}>
                       <Typography variant="body2">
-                        {firstName} {firstLastName}
+                        {firstName} {secondName} {firstLastName}{' '}
+                        {secondLastName}
                       </Typography>
+
                       <Typography variant="caption" color="text.secondary">
                         {dni}
                       </Typography>
@@ -169,7 +176,7 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
       {mdUp && <Grid md={4} />}
       <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Carrera activa"/>
+          <RHFSwitch name="isActive" label="Carrera activa" />
         </Box>
 
         <LoadingButton
