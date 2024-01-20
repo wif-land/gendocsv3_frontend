@@ -8,6 +8,7 @@ import { LoadingScreen } from '../../../../shared/components/loading-screen'
 import { CouncilListView } from '../../../../features/council/presentation/view'
 import { CareerListView } from '../../../../features/careers/presentation/view'
 import { DocumentListView } from '../../../../features/documents/presentation/view'
+import { FunctionaryListView } from '../../../../features/functionaries/presentation/view'
 
 const UsersView = lazy(
   () => import('../../../../features/modules/components/users-view'),
@@ -15,9 +16,6 @@ const UsersView = lazy(
 
 const StudentsView = lazy(
   () => import('../../../../features/modules/components/students-view'),
-)
-const FunctionaryView = lazy(
-  () => import('../../../../features/modules/components/functionary-view'),
 )
 const ProcessView = lazy(
   () =>
@@ -35,7 +33,7 @@ const Page = () => {
     usuarios: UsersView,
     estudiantes: StudentsView,
     carreras: CareerListView,
-    funcionarios: FunctionaryView,
+    funcionarios: FunctionaryListView,
     procesos: ProcessView,
     consejos: CouncilListView,
     documentos: DocumentListView,

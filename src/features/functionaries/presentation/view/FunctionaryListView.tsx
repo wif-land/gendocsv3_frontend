@@ -1,45 +1,82 @@
 import { usePathname, useRouter } from 'next/navigation'
-import { memo, useState } from 'react'
-import { useTable } from '../../../../shared/components/table'
+import { memo, useCallback, useEffect, useState } from 'react'
+import {
+  TableEmptyRows,
+  TableHeadCustom,
+  TableNoData,
+  TablePaginationCustom,
+  TableSelectedAction,
+  TableSkeleton,
+  emptyRows,
+  getComparator,
+  useTable,
+} from '../../../../shared/components/table'
+import { useFunctionaryView } from '../hooks/useFunctionaryView'
+import { isEqual } from 'lodash'
+import { FunctionaryModel } from '../../data/models/FunctionatyModel'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useSettingsContext } from '../../../../shared/components/settings'
+import {
+  Button,
+  Card,
+  Container,
+  IconButton,
+  Table,
+  TableBody,
+  TableContainer,
+  Tooltip,
+} from '@mui/material'
+import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
+import Iconify from '../../../../core/iconify'
+import Scrollbar from '../../../../shared/components/scrollbar'
+import { ConfirmDialog } from '../../../../shared/components/custom-dialog'
+import { RouterLink } from '../../../../core/routes/components'
+import { FunctionaryTableRow } from '../components/FunctionaryTableRow'
+import {
+  FunctionaryTableToolbar,
+  IFunctionaryTableFilterValue,
+  IFunctionaryTableFilters,
+} from '../components/FunctionaryTableToolbar'
 
-interface IFunctionaryTableFilters {}
-
-const COLUMNS = [
+const TABLE_HEAD = [
   {
-    key: 'number',
-    label: 'Número',
+    key: 'name',
+    label: 'Funcionario',
   },
   {
-    key: 'description',
-    label: 'Descripción',
+    key: 'personalEmail',
+    label: 'Email personal',
+  },
+  {
+    key: 'outlookEmail',
+    label: 'Email universitario',
+  },
+  {
+    key: 'isActive',
+    label: 'Estado',
   },
   {
     key: 'actions',
     label: 'Acciones',
   },
-  {
-    key: 'view',
-    label: 'Ver',
-  },
 ]
 
 const defaultFilters: IFunctionaryTableFilters = {
   name: '',
-  publish: [],
-  date: null,
 }
 
 const FunctionaryListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
-
   const { loader, functionaries } = useFunctionaryView()
 
-  const [filters, setFilters] = useState<IFunctionaryTableFilters>(defaultFilters)
+  const [tableData, setTableData] = useState<FunctionaryModel[]>([])
+  const [filters, setFilters] =
+    useState<IFunctionaryTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
-    (name: string, value: ICouncilTableFilterValue) => {
+    (name: string, value: IFunctionaryTableFilterValue) => {
       table.onResetPage()
       setFilters((prevState) => ({
         ...prevState,
@@ -48,8 +85,6 @@ const FunctionaryListView = () => {
     },
     [table],
   )
-
-  const [tableData, setTableData] = useState<Functionary[]>([])
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -61,9 +96,7 @@ const FunctionaryListView = () => {
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage,
   )
-
   const denseHeight = table.dense ? 60 : 80
-
   const canReset = !isEqual(defaultFilters, filters)
 
   const handleResetFilters = useCallback(() => {
@@ -71,10 +104,10 @@ const FunctionaryListView = () => {
   }, [])
 
   useEffect(() => {
-    if (careers?.length) {
-      setTableData(careers as CareerModel[])
+    if (functionaries?.length) {
+      setTableData(functionaries as FunctionaryModel[])
     }
-  }, [careers])
+  }, [functionaries])
 
   const confirm = useBoolean()
 
@@ -122,13 +155,13 @@ const FunctionaryListView = () => {
   const settings = useSettingsContext()
 
   return (
-    <div key={moduleId}>
+    <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Carreras"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Carreras' },
+            { name: 'Funcionarios' },
           ]}
           action={
             <Button
@@ -137,20 +170,18 @@ const FunctionaryListView = () => {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              Nueva carrera
+              Nuevo funcionario
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
-          <CouncilTableToolbar
+          <FunctionaryTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            stockOptions={PRODUCT_STOCK_OPTIONS}
-            publishOptions={PUBLISH_OPTIONS}
           />
-          {/* 
+          {/*
           {canReset && (
             <ProductTableFiltersResult
               filters={filters}
@@ -214,7 +245,7 @@ const FunctionaryListView = () => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <CareerTableRow
+                          <FunctionaryTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
@@ -292,12 +323,12 @@ const applyFilter = ({
   comparator,
   filters,
 }: {
-  inputData: CareerModel[]
+  inputData: FunctionaryModel[]
   comparator: (a: any, b: any) => number
   filters: IFunctionaryTableFilters
 }) => {
   let currentInputData = [...inputData]
-  const { name, publish } = filters
+  const { name } = filters
 
   const stabilizedThis = currentInputData.map(
     (el, index) => [el, index] as const,
@@ -313,14 +344,11 @@ const applyFilter = ({
 
   if (name) {
     currentInputData = currentInputData.filter(
-      (product) =>
-        product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
-    )
-  }
-
-  if (publish.length) {
-    currentInputData = currentInputData.filter((council) =>
-      publish.includes(council.createdAt!.toString()),
+      (functionary) =>
+        functionary.firstName.toLowerCase().includes(name.toLowerCase()) ||
+        functionary.secondName.toLowerCase().includes(name.toLowerCase()) ||
+        functionary.firstLastName.toLowerCase().includes(name.toLowerCase()) ||
+        functionary.secondLastName.toLowerCase().includes(name.toLowerCase()),
     )
   }
 

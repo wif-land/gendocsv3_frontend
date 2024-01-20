@@ -5,7 +5,7 @@ import { FunctionariesApi } from '../api/functionaries'
 import { toast } from 'react-toastify'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
-import { IFunctionary } from '../types/IFunctionary'
+import { IFunctionary } from '../domain/entities/IFunctionary'
 
 interface IFunctionaryForm {
   dni: string

@@ -6,6 +6,7 @@ import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
 import { CouncilCreateView } from '../../../../../features/council/presentation/view'
 import { CareerCreateView } from '../../../../../features/careers/presentation/view'
 import { DocumentCreateView } from '../../../../../features/documents/presentation/view'
+import { FunctionaryCreateView } from '../../../../../features/functionaries/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -13,9 +14,10 @@ const Page = () => {
   const route = `${codeModule}/${subModuleName}`
 
   const routeToComponent = {
-    ['consejos']: CouncilCreateView,
-    ['carreras']: CareerCreateView,
+    consejos: CouncilCreateView,
+    carreras: CareerCreateView,
     documentos: DocumentCreateView,
+    funcionarios: FunctionaryCreateView,
   }
 
   const defaultComponent = () => (

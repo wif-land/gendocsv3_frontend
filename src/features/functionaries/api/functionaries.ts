@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
-import { IFunctionary } from '../types/IFunctionary'
+import { IFunctionary } from '../domain/entities/IFunctionary'
 
 export class FunctionariesApi {
   static fetchFunctionaries = async (): Promise<{

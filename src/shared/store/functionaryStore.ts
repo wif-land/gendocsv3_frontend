@@ -1,5 +1,5 @@
 import { create, StateCreator } from 'zustand'
-import { IFunctionary } from '../../features/functionaries/types/IFunctionary'
+import { IFunctionary } from '../../features/functionaries/domain/entities/IFunctionary'
 import { FunctionariesApi } from '../../features/functionaries/api/functionaries'
 import { createJSONStorage, persist } from 'zustand/middleware'
 

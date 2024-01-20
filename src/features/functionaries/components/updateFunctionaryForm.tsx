@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Button, Input, Switch } from '@nextui-org/react'
-import { IFunctionary } from '../types/IFunctionary'
+import { IFunctionary } from '../domain/entities/IFunctionary'
 import { useUpdateFunctionary } from '../hooks/useUpdateFunctionary'
 
 const UpdateFunctionaryForm = ({

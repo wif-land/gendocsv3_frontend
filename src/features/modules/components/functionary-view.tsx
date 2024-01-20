@@ -23,7 +23,7 @@ import {
 } from '@nextui-org/react'
 import { MdMoreVert } from 'react-icons/md'
 import { toast } from 'react-toastify'
-import { IFunctionary } from '../../functionaries/types/IFunctionary'
+import { IFunctionary } from '../../functionaries/domain/entities/IFunctionary'
 import { FunctionaryServices } from '../../functionaries/services/functionaryServices'
 import AddFunctionaryForm from '../../functionaries/components/addFunctionaryForm'
 import UpdateFunctionaryForm from '../../functionaries/components/updateFunctionaryForm'
