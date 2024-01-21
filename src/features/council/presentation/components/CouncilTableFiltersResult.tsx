@@ -6,7 +6,7 @@ import Stack, { StackProps } from '@mui/material/Stack'
 import {
   ICouncilTableFilterValue,
   ICouncilTableFilters,
-} from './council-table-toolbar'
+} from './CouncilTableToolbar'
 import Iconify from '../../../../core/iconify'
 
 type Props = StackProps & {
@@ -16,7 +16,7 @@ type Props = StackProps & {
   results: number
 }
 
-export const ProductTableFiltersResult = ({
+export const CouncilTableFiltersResult = ({
   filters,
   onFilters,
   onResetFilters,

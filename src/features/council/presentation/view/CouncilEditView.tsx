@@ -2,19 +2,16 @@
 
 import Container from '@mui/material/Container'
 import { useSettingsContext } from '../../../../shared/components/settings'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import { useCouncilStore } from '../store/councilsStore'
 import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import CouncilNewEditForm from '../components/council-new-edit-form'
+import CouncilNewEditForm from '../components/CouncilNewEditForm'
 
 export default function CouncilEditView() {
   const settings = useSettingsContext()
-
-  const params = useParams()
-
-  const { id } = params
-
+  const { id } = useParams()
+  const pathname = usePathname()
   const { councils } = useCouncilStore()
 
   const currentProduct = councils.find((council) => council.id! === +id)
@@ -27,7 +24,7 @@ export default function CouncilEditView() {
           { name: 'Dashboard', href: paths.dashboard.root },
           {
             name: 'Consejos',
-            href: '/dashboard/councils',
+            href: pathname.replace('/new', ''),
           },
           { name: currentProduct?.name },
         ]}

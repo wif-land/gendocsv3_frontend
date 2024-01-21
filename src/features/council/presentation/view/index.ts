@@ -1,4 +1,4 @@
-export { default as CouncilEditView } from './council-edit-view'
-export { default as CouncilListView } from './council-list-view'
-export { default as CouncilCreateView } from './council-create-view'
-export { default as CouncilDetailsView } from './council-detail-view'
+export { default as CouncilEditView } from './CouncilEditView'
+export { default as CouncilListView } from './CouncilListView'
+export { default as CouncilCreateView } from './CouncilCreateView'
+export { default as CouncilDetailsView } from './CouncilDetailsView'

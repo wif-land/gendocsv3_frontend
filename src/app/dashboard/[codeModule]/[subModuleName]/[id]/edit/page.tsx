@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation'
-import CouncilEditView from '../../../../../../features/council/presentation/view/council-edit-view'
+import CouncilEditView from '../../../../../../features/council/presentation/view/CouncilEditView'
 import { CareersEditView } from '../../../../../../features/careers/presentation/view'
 import { FunctionaryEditView } from '../../../../../../features/functionaries/presentation/view'
 

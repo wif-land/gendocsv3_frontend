@@ -5,7 +5,7 @@ import { useSettingsContext } from '../../../../shared/components/settings'
 import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { usePathname } from 'next/navigation'
-import CouncilNewEditForm from '../components/council-new-edit-form'
+import CouncilNewEditForm from '../components/CouncilNewEditForm'
 
 export default function ProductCreateView() {
   const settings = useSettingsContext()

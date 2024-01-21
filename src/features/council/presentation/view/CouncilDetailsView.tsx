@@ -14,9 +14,9 @@ import { useParams, useRouter } from 'next/navigation'
 import { useCouncilStore } from '../store/councilsStore'
 import { useSettingsContext } from '../../../../shared/components/settings'
 import EmptyContent from '../../../../shared/components/empty-content/empty-content'
-import { CouncilDetailsSkeleton } from '../components/council-skeleton'
+import { CouncilDetailsSkeleton } from '../components/CouncilSkeleton'
 import Iconify from '../../../../core/iconify'
-import CouncilDetailsSummary from '../components/council-details-summary'
+import CouncilDetailsSummary from '../components/CouncilDetailSummary'
 
 const SUMMARY = [
   {
