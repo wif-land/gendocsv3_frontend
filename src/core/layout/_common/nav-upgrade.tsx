@@ -2,10 +2,10 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
-import { useMockedUser } from '../../../shared/hooks/use-mocked-user'
+import { useUserStore } from '../../../shared/store/userProfileStore'
 
 export default function NavUpgrade() {
-  const { user } = useMockedUser()
+  const { user } = useUserStore()
 
   return (
     <Stack
@@ -19,18 +19,18 @@ export default function NavUpgrade() {
         <Box sx={{ position: 'relative' }}>
           <Avatar
             src={''}
-            alt={user?.displayName}
+            alt={`${user?.firstName} ${user?.firstLastName}`}
             sx={{ width: 48, height: 48 }}
           />
         </Box>
 
         <Stack spacing={0.5} sx={{ mt: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.firstName} {user?.firstLastName}
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.disabled' }}>
-            {user?.email}
+            {user?.googleEmail}
           </Typography>
         </Stack>
       </Stack>

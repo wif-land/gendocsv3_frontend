@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/naming-convention */
 'use client'
 
 import { memo, useCallback, useEffect, useState } from 'react'
@@ -52,21 +51,8 @@ const TABLE_HEAD = [
   { id: 'actions', label: 'Acciones', width: 110 },
 ]
 
-const PUBLISH_OPTIONS = [
-  { value: 'published', label: 'Published' },
-  { value: 'draft', label: 'Draft' },
-]
-
-const PRODUCT_STOCK_OPTIONS = [
-  { value: 'in stock', label: 'In stock' },
-  { value: 'low stock', label: 'Low stock' },
-  { value: 'out of stock', label: 'Out of stock' },
-]
-
 const defaultFilters: ICouncilTableFilters = {
   name: '',
-  publish: [],
-  date: null,
 }
 
 const CouncilListView = ({ moduleId }: { moduleId: string }) => {
@@ -186,12 +172,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <CouncilTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            stockOptions={PRODUCT_STOCK_OPTIONS}
-            publishOptions={PUBLISH_OPTIONS}
-          />
+          <CouncilTableToolbar filters={filters} onFilters={handleFilters} />
 
           {canReset && (
             <CouncilTableFiltersResult
@@ -339,7 +320,7 @@ const applyFilter = ({
   filters: ICouncilTableFilters
 }) => {
   let currentInputData = [...inputData]
-  const { name, publish } = filters
+  const { name } = filters
 
   const stabilizedThis = currentInputData.map(
     (el, index) => [el, index] as const,
@@ -357,12 +338,6 @@ const applyFilter = ({
     currentInputData = currentInputData.filter(
       (product) =>
         product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
-    )
-  }
-
-  if (publish.length) {
-    currentInputData = currentInputData.filter((council) =>
-      publish.includes(council.createdAt!.toString()),
     )
   }
 

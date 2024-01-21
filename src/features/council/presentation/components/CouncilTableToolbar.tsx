@@ -1,14 +1,9 @@
 import { useCallback } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
-import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
-import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/components/custom-popover'
 import CustomPopover from '../../../../shared/components/custom-popover/custom-popover'
@@ -17,45 +12,19 @@ export type ICouncilTableFilterValue = string | string[]
 
 export type ICouncilTableFilters = {
   name: string
-  publish: string[]
-  date: Date | null
 }
 
 type Props = {
   filters: ICouncilTableFilters
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
-  stockOptions: {
-    value: string
-    label: string
-  }[]
-  publishOptions: {
-    value: string
-    label: string
-  }[]
 }
 
-export const CouncilTableToolbar = ({
-  filters,
-  onFilters,
-  publishOptions,
-}: Props) => {
+export const CouncilTableToolbar = ({ filters, onFilters }: Props) => {
   const popover = usePopover()
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value)
-    },
-    [onFilters],
-  )
-
-  const handleFilterPublish = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'publish',
-        typeof event.target.value === 'string'
-          ? event.target.value.split(',')
-          : event.target.value,
-      )
     },
     [onFilters],
   )
@@ -74,52 +43,6 @@ export const CouncilTableToolbar = ({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Date</InputLabel>
-
-          {/* <DateCalendar
-            value={filters.date}
-            onChange={handleFilterStock}
-            sx={{ textTransform: 'capitalize' }}
-          /> */}
-        </FormControl>
-
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Publish</InputLabel>
-
-          <Select
-            multiple
-            value={filters.publish}
-            onChange={handleFilterPublish}
-            input={<OutlinedInput label="Publish" />}
-            renderValue={(selected) =>
-              selected.map((value) => value).join(', ')
-            }
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {publishOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={filters.publish.includes(option.value)}
-                />
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
         <Stack
           direction="row"
           alignItems="center"
@@ -131,7 +54,7 @@ export const CouncilTableToolbar = ({
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder="Busca por nombre de consejo"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

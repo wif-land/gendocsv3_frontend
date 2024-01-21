@@ -1,7 +1,7 @@
 export type IRoleType = 'ADMIN' | 'WRITER' | 'READER'
 
 export interface IUser {
-  id: number
+  sub: number
   firstName: string
   secondName: string
   firstLastName: string

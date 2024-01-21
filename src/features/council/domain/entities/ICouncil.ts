@@ -1,5 +1,3 @@
-import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
-
 export enum CouncilType {
   EXTRAORDINARY = 'EXTRAORDINARY',
   ORDINARY = 'ORDINARY',
@@ -8,6 +6,12 @@ export enum CouncilType {
 export const CouncilTypeLabels = {
   [CouncilType.EXTRAORDINARY]: 'Extraordinaria',
   [CouncilType.ORDINARY]: 'Ordinaria',
+}
+
+export enum CouncilAttendanceRole {
+  PRESIDENT = 'PRESIDENT',
+  SUBROGATE = 'SUBROGATE',
+  MEMBER = 'MEMBER',
 }
 
 export const COUNCIL_TYPES = Object.keys(CouncilType).map((key) => ({
@@ -26,12 +30,10 @@ export interface ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
-  attendees: IAttendee[] | string[] | number[]
+  attendees?: IAttendee[] | string[] | number[]
 }
 
-export interface IAttendee extends IFunctionary {
-  isPresent: boolean
-  isAbsent: boolean
-  isExcused: boolean
-  role: string
+export interface IAttendee {
+  functionaryId: number
+  role: CouncilAttendanceRole
 }

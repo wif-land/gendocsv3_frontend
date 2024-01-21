@@ -93,7 +93,7 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
                       field.onChange(newValue)
                     }
                   }}
-                  label="Fecha de ejecución"
+                  label="Fecha y hora de ejecución"
                   format="dddd/MM/YYYY hh:mm a"
                   slotProps={{
                     textField: {

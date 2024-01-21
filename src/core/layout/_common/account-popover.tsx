@@ -7,17 +7,17 @@ import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/navigation'
-import { useMockedUser } from '../../../shared/hooks/use-mocked-user'
 import { usePopover } from '../../../shared/components/custom-popover'
 import { varHover } from '../../../shared/components/animate'
 import CustomPopover from '../../../shared/components/custom-popover/custom-popover'
 import { useSnackbar } from '../../../shared/components/snackbar'
 import { useAuth } from '../../../features/auth/hooks/useAuth'
+import { useUserStore } from '../../../shared/store/userProfileStore'
 
 export default function AccountPopover() {
   const router = useRouter()
 
-  const { user } = useMockedUser()
+  const { user } = useUserStore()
 
   const { logout } = useAuth()
 
@@ -55,7 +55,7 @@ export default function AccountPopover() {
       >
         <Avatar
           src={''}
-          alt={user?.displayName}
+          alt={`${user?.firstName} ${user?.firstLastName}`}
           sx={{
             width: 36,
             height: 36,
@@ -71,11 +71,11 @@ export default function AccountPopover() {
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.firstName} {user?.firstLastName}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user?.email}
+            {user?.googleEmail}
           </Typography>
         </Box>
 

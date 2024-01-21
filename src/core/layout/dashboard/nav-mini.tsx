@@ -3,13 +3,13 @@ import Stack from '@mui/material/Stack'
 import { NAV } from '../config-layout'
 import { useNavData } from './config-navigation'
 import { NavToggleButton } from '../_common'
-import { useMockedUser } from '../../../shared/hooks/use-mocked-user'
 import Logo from '../../../shared/components/logo'
 import NavSectionMini from '../../../shared/components/nav-section/mini/nav-section-mini'
 import { hideScroll } from '../../theme/css'
+import { useUserStore } from '../../../shared/store/userProfileStore'
 
 export default function NavMini() {
-  const { user } = useMockedUser()
+  const { user } = useUserStore()
   const navData = useNavData()
 
   return (
@@ -42,7 +42,7 @@ export default function NavMini() {
         <NavSectionMini
           data={navData}
           config={{
-            currentRole: user?.role || 'admin',
+            currentRole: (user?.roles as string[])[0] || 'admin',
           }}
         />
       </Stack>

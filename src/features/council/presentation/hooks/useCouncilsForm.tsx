@@ -3,14 +3,20 @@ import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useCouncilStore } from '../store/councilsStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
+import {
+  CouncilAttendanceRole,
+  CouncilType,
+  ICouncil,
+} from '../../domain/entities/ICouncil'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { enqueueSnackbar } from 'notistack'
 import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
-import { usePathname, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { useUserStore } from '../../../../shared/store/userProfileStore'
 
 interface FormValuesProps extends ICouncil {
   president: string
@@ -19,6 +25,13 @@ interface FormValuesProps extends ICouncil {
 
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const { councils, addCouncil, setCouncils } = useCouncilStore()
+  const { codeModule } = useParams()
+  const { user } = useUserStore()
+  const { modules } = useModulesStore()
+  const moduleIdentifier =
+    modules?.find(
+      (module) => module.code === (codeModule as string).toUpperCase(),
+    )?.id ?? 0
   const { functionaries, get } = useFunctionaryStore()
   const [unusedFunctionaries, setUnusedFunctionaries] = useState<
     IFunctionary[]
@@ -43,7 +56,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       name: currentCouncil?.name || '',
       date: currentCouncil?.date || new Date(Date.now() + 200),
       type: currentCouncil?.type || CouncilType.ORDINARY,
-      isActive: currentCouncil?.isActive || false,
+      isActive: currentCouncil?.isActive || true,
       isArchived: currentCouncil?.isArchived || false,
       president: '',
       subrogant: '',
@@ -76,8 +89,37 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     attendees.splice(index, 1)
   }
 
-  const handleCreateCouncil = async (values: ICouncil) => {
-    const result = await CouncilsUseCasesImpl.getInstance().create(values)
+  const handleCreateCouncil = async (values: FormValuesProps) => {
+    const {
+      president,
+      subrogant,
+      attendees: currentAttendees,
+      ...rest
+    } = values
+
+    const actualAttendees = [
+      {
+        functionaryId: functionaries?.find(
+          (functionary) => functionary.dni === president.split('-')[1].trim(),
+        )?.id as number,
+        role: CouncilAttendanceRole.PRESIDENT,
+      },
+      {
+        functionaryId: functionaries?.find(
+          (functionary) => functionary.dni === subrogant.split('-')[1].trim(),
+        )?.id as number,
+        role: CouncilAttendanceRole.SUBROGATE,
+      },
+    ]
+
+    const result = await CouncilsUseCasesImpl.getInstance().create({
+      ...rest,
+      moduleId: moduleIdentifier,
+      userId: user?.sub as number,
+      attendees: actualAttendees,
+    })
+
+    console.log('RESULT', result)
 
     if (!result.council) {
       throw new Error('Error al crear el consejo')
@@ -116,9 +158,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500))
-        console.info('DATA', data)
-
         if (!currentCouncil) {
           await handleCreateCouncil(data)
         } else {

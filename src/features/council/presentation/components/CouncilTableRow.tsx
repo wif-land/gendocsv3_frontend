@@ -75,7 +75,7 @@ export const CouncilTableRow = ({
           />
         </TableCell>
 
-        <TableCell align="right">
+        <TableCell>
           <ListItemText
             primary={format(new Date(date), 'p')}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
@@ -92,9 +92,9 @@ export const CouncilTableRow = ({
         <TableCell>
           <Label
             variant="soft"
-            color={(isActive === true && 'info') || 'default'}
+            color={(isActive === true && 'success') || 'primary'}
           >
-            {isActive === true ? 'Published' : 'Draft'}
+            {isActive === true ? 'Activo' : 'Inactivo'}
           </Label>
         </TableCell>
 
