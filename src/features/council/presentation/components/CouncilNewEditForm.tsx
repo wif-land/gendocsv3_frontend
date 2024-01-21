@@ -13,155 +13,37 @@ import {
   RHFTextField,
 } from '../../../../shared/components/hook-form'
 import FormProvider from '../../../../shared/components/hook-form/form-provider'
-import { useCouncilStore } from '../store/councilsStore'
-import { useSnackbar } from 'notistack'
-import * as Yup from 'yup'
-import { useCallback, useEffect, useMemo } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  COUNCIL_TYPES,
-  CouncilType,
-  ICouncil,
-} from '../../domain/entities/ICouncil'
-import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { CouncilModel } from '../../data/models/CouncilModel'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { Controller } from 'react-hook-form'
+import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
-import { Box, Chip } from '@mui/material'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
-
-interface FormValuesProps extends ICouncil {}
+import { Box, Chip, IconButton, Tooltip, alpha } from '@mui/material'
+import Iconify from '../../../../core/iconify'
+import { useCouncilsForm } from '../hooks/useCouncilsForm'
 
 type Props = {
   currentCouncil?: ICouncil
 }
 
 export default function CouncilNewEditForm({ currentCouncil }: Props) {
-  const { enqueueSnackbar } = useSnackbar()
-  const router = useRouter()
-  const { codeModule, subModuleName } = useParams()
-  const pathname = usePathname()
-  const { functionaries } = useFunctionaryStore()
+  // const { codeModule, subModuleName } = useParams()
   const mdUp = useResponsive('up', 'md')
-
-  const NewCouncilSchema = Yup.object().shape({
-    name: Yup.string().required('El nombre es requerido'),
-    date: Yup.date().required('La fecha es requerida'),
-    type: Yup.string().required('El tipo es requerido'),
-    moduleId: Yup.number().required('El módulo es requerido'),
-    userId: Yup.number().required('El usuario es requerido'),
-    isActive: Yup.boolean().required('El estado es requerido'),
-    isArchived: Yup.boolean().required('El estado es requerido'),
-    president: Yup.string().required('El presidente es requerido'),
-    subrogant: Yup.string().required('El subrogante es requerido')
-  })
-
-  const defaultValues = useMemo(
-    () => ({
-      name: currentCouncil?.name || '',
-      date: currentCouncil?.date || new Date(Date.now() + 200),
-      type: currentCouncil?.type || CouncilType.ORDINARY,
-      moduleId: currentCouncil?.moduleId || 0,
-      userId: currentCouncil?.userId || 0,
-      isActive: currentCouncil?.isActive || false,
-      isArchived: currentCouncil?.isArchived || false,
-    }),
-    [currentCouncil],
-  )
-
-  const methods = useForm<ICouncil>({
-    resolver: yupResolver(NewCouncilSchema),
-    defaultValues,
-  })
-
   const {
-    reset,
-    watch,
-    handleSubmit,
-    control,
-    formState: { isSubmitting },
-  } = methods
+    methods,
+    unusedFunctionaries,
+    onSubmit,
+    handleAddAttendees,
+    handleDeleteAttendeesQuantity,
+  } = useCouncilsForm(currentCouncil)
+  const { handleSubmit, control, watch } = methods
 
   const values = watch()
 
-  console.info('VALUES', values)
-  const { addCouncil, councils, setCouncils } = useCouncilStore()
-
-  useEffect(() => {
-    if (currentCouncil) {
-      reset(defaultValues)
-    }
-  }, [currentCouncil, reset])
-
-  const handleCreateCouncil = useCallback(async (values: ICouncil) => {
-    const result = await CouncilsUseCasesImpl.getInstance().create(values)
-
-    if (result.council) {
-      addCouncil(result.council)
-      enqueueSnackbar('Consejo creado exitosamente')
-    } else {
-      enqueueSnackbar('Error al crear el consejo')
-    }
-  }, [])
-
-  const handleUpdateCouncil = async (
-    id: number,
-    editedFields: Partial<ICouncil>,
-  ) => {
-    const { status } = await CouncilsUseCasesImpl.getInstance().update(
-      id,
-      editedFields,
-    )
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      setCouncils(
-        councils!.map((council) =>
-          council.id === id
-            ? new CouncilModel({
-                ...council,
-                ...editedFields,
-              })
-            : council,
-        ),
-      )
-      enqueueSnackbar('Consejo actualizado exitosamente')
-    } else {
-      enqueueSnackbar('Error al actualizar el consejo')
-    }
+  const handleRemoveAttendee = (index: number) => {
+    handleDeleteAttendeesQuantity(index)
+    const attendees = values.attendees as string[]
+    methods.setValue('attendees', attendees)
   }
-
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500))
-        console.info('DATA', data)
-
-        if (!currentCouncil) {
-          await handleCreateCouncil(data)
-        } else {
-          await handleUpdateCouncil(currentCouncil.id as number, data)
-        }
-
-        router.push(
-          currentCouncil
-            ? pathname.replace(new RegExp(`/${currentCouncil.id}/edit`), '')
-            : pathname.replace('/new', ''),
-        )
-        reset()
-      } catch (error) {
-        console.error(error)
-        enqueueSnackbar(
-          !currentCouncil
-            ? 'Error al crear el consejo'
-            : 'Error al actualizar el consejo',
-        )
-      }
-    },
-    [currentCouncil, enqueueSnackbar, reset, router],
-  )
 
   const renderDetails = (
     <>
@@ -182,7 +64,7 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
           {!mdUp && <CardHeader title="Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="name" label="Nombre" />
+            <RHFTextField name="name" label="Nombre" required />
 
             <RHFSelect
               native
@@ -222,8 +104,6 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
                 />
               )}
             />
-
-            <RHFSwitch name="isActive" label="Consejo Activo" />
           </Stack>
         </Card>
       </Grid>
@@ -248,24 +128,29 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            {functionaries && (
+            {unusedFunctionaries && (
               <RHFAutocomplete
                 name="president"
                 label="Presidente"
-                placeholder="Escribe el nombre del presidente"
+                placeholder="Escribe el nombre del presidente del consejo"
                 freeSolo
-                options={functionaries!.map(
-                  (functionary: any) =>
-                    `${functionary.firstName} ${functionary.firstLastName}`,
+                options={unusedFunctionaries!.map(
+                  (functionary) =>
+                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
                 )}
                 getOptionLabel={(option) => option}
                 renderOption={(props, option) => {
-                  const { dni, firstName, firstLastName } =
-                    functionaries.filter(
-                      (functionary) =>
-                        option ===
-                        `${functionary.firstName} ${functionary.firstLastName}`,
-                    )[0]
+                  const {
+                    dni,
+                    firstName,
+                    firstLastName,
+                    secondName,
+                    secondLastName,
+                  } = unusedFunctionaries.filter(
+                    (functionary) =>
+                      option ===
+                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                  )[0]
 
                   if (!dni) {
                     return null
@@ -274,8 +159,10 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
                   return (
                     <li {...props} key={dni}>
                       <Typography variant="body2">
-                        {firstName} {firstLastName}
+                        {firstName} {secondName} {firstLastName}{' '}
+                        {secondLastName}
                       </Typography>
+
                       <Typography variant="caption" color="text.secondary">
                         {dni}
                       </Typography>
@@ -297,24 +184,29 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
               />
             )}
 
-            {functionaries && (
+            {unusedFunctionaries && (
               <RHFAutocomplete
                 name="subrogant"
                 label="Subrogante"
                 placeholder="Escribe el nombre del subrogante"
                 freeSolo
-                options={functionaries!.map(
-                  (functionary: any) =>
-                    `${functionary.firstName} ${functionary.firstLastName}`,
+                options={unusedFunctionaries!.map(
+                  (functionary) =>
+                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
                 )}
                 getOptionLabel={(option) => option}
                 renderOption={(props, option) => {
-                  const { dni, firstName, firstLastName } =
-                    functionaries.filter(
-                      (functionary) =>
-                        option ===
-                        `${functionary.firstName} ${functionary.firstLastName}`,
-                    )[0]
+                  const {
+                    dni,
+                    firstName,
+                    firstLastName,
+                    secondName,
+                    secondLastName,
+                  } = unusedFunctionaries.filter(
+                    (functionary) =>
+                      option ===
+                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                  )[0]
 
                   if (!dni) {
                     return null
@@ -323,8 +215,10 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
                   return (
                     <li {...props} key={dni}>
                       <Typography variant="body2">
-                        {firstName} {firstLastName}
+                        {firstName} {secondName} {firstLastName}{' '}
+                        {secondLastName}
                       </Typography>
+
                       <Typography variant="caption" color="text.secondary">
                         {dni}
                       </Typography>
@@ -348,54 +242,77 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
 
             <Divider sx={{ borderStyle: 'dashed' }} />
 
-            {functionaries && (
-              <RHFAutocomplete
-                name="subrogant"
-                label="Miembro 1"
-                placeholder="Escribe el nombre del miembro 1"
-                freeSolo
-                options={functionaries!.map(
-                  (functionary: any) =>
-                    `${functionary.firstName} ${functionary.firstLastName}`,
-                )}
-                getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const { dni, firstName, firstLastName } =
-                    functionaries.filter(
+            {values.attendees &&
+              unusedFunctionaries &&
+              values.attendees.map((attendee, index) => (
+                <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <RHFAutocomplete
+                    sx={{ flexGrow: 1 }}
+                    name={`attendees[${index}]`}
+                    label={`Miembro ${index + 1}`}
+                    placeholder="Escribe el nombre del miembro"
+                    freeSolo
+                    options={unusedFunctionaries!.map(
                       (functionary) =>
-                        option ===
-                        `${functionary.firstName} ${functionary.firstLastName}`,
-                    )[0]
+                        `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                    )}
+                    getOptionLabel={(option) => option}
+                    renderOption={(props, option) => {
+                      const {
+                        dni,
+                        firstName,
+                        firstLastName,
+                        secondName,
+                        secondLastName,
+                      } = unusedFunctionaries!.filter(
+                        (functionary) =>
+                          option ===
+                          `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                      )[0]
 
-                  if (!dni) {
-                    return null
-                  }
+                      if (!dni) {
+                        return null
+                      }
 
-                  return (
-                    <li {...props} key={dni}>
-                      <Typography variant="body2">
-                        {firstName} {firstLastName}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {dni}
-                      </Typography>
-                    </li>
-                  )
-                }}
-                renderTags={(selected, getTagProps) =>
-                  selected.map((option, index) => (
-                    <Chip
-                      {...getTagProps({ index })}
-                      key={option}
-                      label={option}
-                      size="small"
-                      color="info"
-                      variant="soft"
-                    />
-                  ))
-                }
-              />
-            )}
+                      return (
+                        <li {...props} key={dni}>
+                          <Typography variant="body2">
+                            {firstName} {secondName} {firstLastName}{' '}
+                            {secondLastName}
+                          </Typography>
+
+                          <Typography variant="caption" color="text.secondary">
+                            {dni}
+                          </Typography>
+                        </li>
+                      )
+                    }}
+                  />
+
+                  <IconButton onClick={() => handleRemoveAttendee(index)}>
+                    <Iconify icon="fluent:delete-20-regular" />
+                  </IconButton>
+                </Box>
+              ))}
+
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              alignItems="center"
+              spacing={1}
+            >
+              <Tooltip title="Añadir miembro">
+                <IconButton
+                  onClick={handleAddAttendees}
+                  sx={{
+                    bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+                    border: (theme) => `dashed 1px ${theme.palette.divider}`,
+                  }}
+                >
+                  <Iconify icon="mingcute:add-line" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
           </Stack>
         </Card>
       </Grid>
@@ -405,7 +322,15 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', justifyContent: 'end' }}>
+      <Grid
+        xs={12}
+        md={8}
+        sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
+      >
+        <Box sx={{ flexGrow: 1 }}>
+          <RHFSwitch name="isActive" label="Consejo activo" />
+        </Box>
+
         <LoadingButton type="submit" variant="contained" size="large">
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>

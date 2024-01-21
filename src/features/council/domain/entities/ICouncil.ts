@@ -1,3 +1,5 @@
+import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+
 export enum CouncilType {
   EXTRAORDINARY = 'EXTRAORDINARY',
   ORDINARY = 'ORDINARY',
@@ -24,4 +26,12 @@ export interface ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
+  attendees: IAttendee[] | string[] | number[]
+}
+
+export interface IAttendee extends IFunctionary {
+  isPresent: boolean
+  isAbsent: boolean
+  isExcused: boolean
+  role: string
 }

@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
+import {
+  CouncilType,
+  IAttendee,
+  ICouncil,
+} from '../../domain/entities/ICouncil'
 
 export class CouncilModel implements ICouncil {
   id?: number
@@ -12,6 +16,7 @@ export class CouncilModel implements ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
+  attendees: IAttendee[] | number[] | string[]
 
   constructor(props: ICouncil) {
     this.id = props.id || undefined
@@ -24,6 +29,7 @@ export class CouncilModel implements ICouncil {
     this.type = props.type
     this.moduleId = props.moduleId
     this.userId = props.userId
+    this.attendees = props.attendees || []
   }
   static fromJson(json: Record<string, any> | string): CouncilModel {
     if (typeof json === 'string') {
@@ -40,6 +46,7 @@ export class CouncilModel implements ICouncil {
         type: json.type,
         moduleId: json.moduleId,
         userId: json.userId,
+        attendees: json.attendees,
       })
 
       return career
@@ -62,6 +69,7 @@ export class CouncilModel implements ICouncil {
       type: this.type,
       moduleId: this.moduleId,
       userId: this.userId,
+      attendees: this.attendees,
     }
   }
 }
