@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect } from 'react'
@@ -5,14 +6,12 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Drawer from '@mui/material/Drawer'
 import { NAV } from '../config-layout'
-import { useNavData } from './config-navigation'
 import { NavToggleButton, NavUpgrade } from '../_common'
 import { usePathname } from 'next/navigation'
 import { useResponsive } from '../../../shared/hooks/use-responsive'
 import Scrollbar from '../../../shared/components/scrollbar'
 import Logo from '../../../shared/components/logo'
 import NavSectionVertical from '../../../shared/components/nav-section/vertical/nav-section-vertical'
-import { useUserStore } from '../../../shared/store/userProfileStore'
 
 type Props = {
   openNav: boolean

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TreeProps } from 'react-organizational-chart'
-
 import { Theme, SxProps } from '@mui/material/styles'
 
 type VariantValue = 'simple' | 'standard' | 'group'

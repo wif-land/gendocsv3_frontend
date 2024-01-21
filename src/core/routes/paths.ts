@@ -1,5 +1,3 @@
-import { paramCase } from '../utils/change-case'
-
 const ROOTS = {
   AUTH: '/auth',
   AUTH_DEMO: '/auth-demo',

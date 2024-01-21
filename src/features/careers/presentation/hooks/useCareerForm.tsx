@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo } from 'react'
 import { ICareer } from '../../domain/entities/ICareer'
 import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
@@ -55,6 +56,7 @@ export const useCareerForm = (currentCareer?: ICareer) => {
   )
 
   const methods = useForm<FormValuesProps>({
+    // @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'DeepPartial<FormValuesProps> | undefined'.
     resolver: yupResolver(NewCareerSchema),
     defaultValues,
   })
@@ -165,7 +167,7 @@ const getEditedFields = <T extends GenericObject>(
 
   Object.keys(initialValues).forEach((key) => {
     if (initialValues[key] !== values[key]) {
-      editedFields[key] = values[key]
+      ;(editedFields as any)[key] = values[key]
     }
   })
 

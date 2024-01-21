@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Theme, SxProps } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import TableRow from '@mui/material/TableRow'

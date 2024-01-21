@@ -1,6 +1,4 @@
-import { Theme } from '@mui/material/styles'
-
-export default function AppBar(theme: Theme) {
+export default function AppBar() {
   return {
     MuiAppBar: {
       defaultProps: {

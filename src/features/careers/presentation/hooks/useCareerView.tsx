@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import useModulesStore from '../../../../shared/store/modulesStore'
 import { LOADER_DELAY } from '../../../../shared/constants/common'
 import { useCareersStore } from '../state/careerStore'
 import { CareerModel } from '../../data/models/CareerModel'

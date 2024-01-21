@@ -9,7 +9,6 @@ import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useUserStore } from '../../../shared/store/userProfileStore'
 import { appPublicRoutes } from '../../../shared/constants/appPublicRoutes'
 import { enqueueSnackbar } from 'notistack'
-import useModulesStore from '../../../shared/store/modulesStore'
 
 interface IAuth {
   email: string

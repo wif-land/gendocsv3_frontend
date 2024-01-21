@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import LoadingButton from '@mui/lab/LoadingButton'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
@@ -34,7 +35,11 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
     onSubmit,
     handleAddAttendees,
     handleDeleteAttendeesQuantity,
-  } = useCouncilsForm(currentCouncil)
+  } = useCouncilsForm({
+    ...currentCouncil,
+    president: '',
+    subrogant: '',
+  } as any)
   const { handleSubmit, control, watch } = methods
 
   const values = watch()

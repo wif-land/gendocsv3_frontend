@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client'
 

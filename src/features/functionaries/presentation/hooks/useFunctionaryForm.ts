@@ -62,6 +62,7 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
   )
 
   const methods = useForm<FormValuesProps>({
+    // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
     resolver: yupResolver(NewFunctionarySchema),
     defaultValues,
   })

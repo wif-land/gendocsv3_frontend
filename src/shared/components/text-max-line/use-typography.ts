@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useTheme } from '@mui/material/styles'
 import { Variant } from '@mui/material/styles/createTypography'
 import { useWidth } from '../../hooks/use-responsive'

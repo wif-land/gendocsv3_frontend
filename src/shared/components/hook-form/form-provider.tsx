@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormProvider as Form, UseFormReturn } from 'react-hook-form'
 
 type Props = {

@@ -53,6 +53,7 @@ export const useCouncilsForm = (currentCouncil?: FormValuesProps) => {
   )
 
   const methods = useForm<FormValuesProps>({
+    // @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
     resolver: yupResolver(NewCouncilSchema),
     defaultValues,
   })

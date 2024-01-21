@@ -39,11 +39,10 @@ export function RHFCheckbox({ name, helperText, ...other }: RHFCheckboxProps) {
   )
 }
 
-// ----------------------------------------------------------------------
-
 interface RHFMultiCheckboxProps
   extends Omit<FormControlLabelProps, 'control' | 'label'> {
   name: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: { label: string; value: any }[]
   row?: boolean
   label?: string

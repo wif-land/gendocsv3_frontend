@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-param-reassign */
 import {
   NavListProps,
   NavSectionProps,
@@ -72,8 +74,6 @@ export const splitPath = (array: NavListProps[], key: string) => {
   }
   return null
 }
-
-// ----------------------------------------------------------------------
 
 export const handleLoop = (array: any, subheader?: string) =>
   array?.map((list: any) => ({

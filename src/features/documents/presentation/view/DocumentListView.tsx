@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { memo, useCallback, useEffect, useState } from 'react'
 import {

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import cantones from '../../../features/students/data/canton'
-
 import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
 import { useStudent } from '../hooks/useAddStudent'
-import { ICareer } from '../../../features/careers/types/ICareer'
 import { CareersUseCasesImpl } from '../../careers/domain/usecases/CareerServices'
+import { ICareer } from '../../careers/domain/entities/ICareer'
 
 const AddStudentForm = ({ onClose }: { onClose: () => void }) => {
   const { formik } = useStudent()

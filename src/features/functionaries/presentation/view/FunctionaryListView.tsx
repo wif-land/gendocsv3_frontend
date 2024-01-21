@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePathname, useRouter } from 'next/navigation'
 import { memo, useCallback, useEffect, useState } from 'react'
 import {
@@ -98,10 +99,6 @@ const FunctionaryListView = () => {
   )
   const denseHeight = table.dense ? 60 : 80
   const canReset = !isEqual(defaultFilters, filters)
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters)
-  }, [])
 
   useEffect(() => {
     if (functionaries?.length) {

@@ -1,18 +1,15 @@
 import { useCallback } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
-import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
 import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/components/custom-popover'
 import CustomPopover from '../../../../shared/components/custom-popover/custom-popover'
-import { MobileDatePicker, MobileDateTimePicker } from '@mui/x-date-pickers'
+import { MobileDatePicker } from '@mui/x-date-pickers'
 
 export type IDocumentTableFilterValue = string | string[]
 
@@ -26,27 +23,12 @@ type Props = {
   onFilters: (name: string, value: IDocumentTableFilterValue) => void
 }
 
-export const DocumentTableToolbar = ({
-  filters,
-  onFilters,
-}: Props) => {
+export const DocumentTableToolbar = ({ filters, onFilters }: Props) => {
   const popover = usePopover()
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value)
-    },
-    [onFilters],
-  )
-
-  const handleFilterPublish = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'publish',
-        typeof event.target.value === 'string'
-          ? event.target.value.split(',')
-          : event.target.value,
-      )
     },
     [onFilters],
   )
@@ -75,7 +57,9 @@ export const DocumentTableToolbar = ({
 
           <MobileDatePicker
             value={filters.createdAt}
-            onChange={() => {}}
+            onChange={() => {
+              console.log('change')
+            }}
             sx={{ textTransform: 'capitalize' }}
           />
         </FormControl>

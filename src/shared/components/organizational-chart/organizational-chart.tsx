@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Tree, TreeNode } from 'react-organizational-chart'
 
 import { useTheme } from '@mui/material/styles'

@@ -1,4 +1,6 @@
-import { ICareer, ICareerCoordinator } from '../../domain/entities/ICareer'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+import { ICareer } from '../../domain/entities/ICareer'
 
 export class CareerModel implements ICareer {
   id?: number
@@ -7,7 +9,7 @@ export class CareerModel implements ICareer {
   womenDegree: string
   internshipHours: number
   vinculationHours: number
-  coordinator: ICareerCoordinator | number | string
+  coordinator: IFunctionary | number | string
   createdAt?: Date
   updatedAt?: Date
   name: string

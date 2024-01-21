@@ -1,4 +1,4 @@
-// ----------------------------------------------------------------------
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export function flattenArray<T>(list: T[], key = 'children'): T[] {
   let children: T[] = []

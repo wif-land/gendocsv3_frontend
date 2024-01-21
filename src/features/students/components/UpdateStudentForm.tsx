@@ -4,9 +4,9 @@ import { formatISO } from 'date-fns'
 
 import { Button, Input, Select, SelectItem, Switch } from '@nextui-org/react'
 import { useUpdateStudent } from '../hooks/useUpdateStudent'
-import { ICareer } from '../../careers/types/ICareer'
 import { IStudent } from '../types/IStudent'
 import { CareersUseCasesImpl } from '../../careers/domain/usecases/CareerServices'
+import { ICareer } from '../../careers/domain/entities/ICareer'
 
 const UpdateStudentForm = ({
   student,

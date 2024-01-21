@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 // import type { Metadata } from 'next'
 // import { Inter } from 'next/font/google'
 // import './globals.css'
@@ -34,10 +35,7 @@
 
 // export default RootLayout
 
-// scroll bar
 import 'simplebar-react/dist/simplebar.min.css'
-
-// lightbox
 import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
 import 'yet-another-react-lightbox/plugins/thumbnails.css'

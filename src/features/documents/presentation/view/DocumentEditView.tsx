@@ -1,7 +1,5 @@
 import { memo } from 'react'
 
-const DocumentEditView = () => {
-  return <div>DocumentEditView</div>
-}
+const DocumentEditView = () => <div>DocumentEditView</div>
 
 export default memo(DocumentEditView)

@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo } from 'react'
 import { useTheme } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import { HEADER } from '../config-layout'
-import { useNavData } from './config-navigation'
 import { HeaderShadow } from '../_common'
 import { bgBlur } from '../../theme/css'
 import NavSectionHorizontal from '../../../shared/components/nav-section/horizontal/nav-section-horizontal'

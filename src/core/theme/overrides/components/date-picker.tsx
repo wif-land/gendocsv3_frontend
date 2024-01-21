@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Theme } from '@mui/material/styles'
 import { buttonClasses } from '@mui/material/Button'
-// components
 import Iconify from '../../../iconify'
 
 const dateList = [
@@ -9,7 +9,6 @@ const dateList = [
   'StaticDatePicker',
   'DesktopDatePicker',
   'DesktopDateTimePicker',
-  //
   'MobileDatePicker',
   'MobileDateTimePicker',
 ]
