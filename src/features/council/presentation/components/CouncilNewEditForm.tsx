@@ -35,11 +35,7 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
     onSubmit,
     handleAddAttendees,
     handleDeleteAttendeesQuantity,
-  } = useCouncilsForm({
-    ...currentCouncil,
-    president: '',
-    subrogant: '',
-  } as any)
+  } = useCouncilsForm(currentCouncil)
   const { handleSubmit, control, watch } = methods
 
   const values = watch()

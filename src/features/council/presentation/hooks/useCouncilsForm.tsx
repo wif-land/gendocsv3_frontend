@@ -17,7 +17,7 @@ interface FormValuesProps extends ICouncil {
   subrogant: string
 }
 
-export const useCouncilsForm = (currentCouncil?: FormValuesProps) => {
+export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const { councils, addCouncil, setCouncils } = useCouncilStore()
   const { functionaries, get } = useFunctionaryStore()
   const [unusedFunctionaries, setUnusedFunctionaries] = useState<
@@ -143,8 +143,10 @@ export const useCouncilsForm = (currentCouncil?: FormValuesProps) => {
   )
 
   useEffect(() => {
-    if (currentCouncil) reset(defaultValues)
-  }, [currentCouncil, reset])
+    if (currentCouncil) {
+      reset(defaultValues)
+    }
+  }, [reset, currentCouncil])
 
   useEffect(() => {
     if (!functionaries) return
@@ -163,14 +165,14 @@ export const useCouncilsForm = (currentCouncil?: FormValuesProps) => {
       ),
     ]
 
-    const unusedFunctionaries = functionaries.filter(
+    const currentUnusedFunctionaries = functionaries.filter(
       (functionary) =>
         functionary.dni !== president?.dni &&
         functionary.dni !== subrogant?.dni &&
         !attendees.includes(functionary.dni),
     )
 
-    setUnusedFunctionaries(unusedFunctionaries)
+    setUnusedFunctionaries(currentUnusedFunctionaries)
   }, [values.attendees, values.president, values.subrogant])
 
   useEffect(() => {
@@ -180,7 +182,7 @@ export const useCouncilsForm = (currentCouncil?: FormValuesProps) => {
     }
 
     setUnusedFunctionaries(functionaries)
-  }, [functionaries])
+  }, [])
 
   return {
     councils,
