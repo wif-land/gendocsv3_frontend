@@ -70,8 +70,6 @@ export const useCareerForm = (currentCareer?: ICareer) => {
   const handleCreate = useCallback(async (values: ICareer) => {
     const result = await CareersUseCasesImpl.getInstance().create(values)
 
-    console.log({ result })
-
     if (result.career) {
       addCareer(result.career)
       enqueueSnackbar('Carrera creada exitosamente')
