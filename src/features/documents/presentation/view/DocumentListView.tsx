@@ -2,6 +2,8 @@
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { memo, useCallback, useEffect, useState } from 'react'
 import {
+  DENSE,
+  NO_DENSE,
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
@@ -11,7 +13,7 @@ import {
   emptyRows,
   getComparator,
   useTable,
-} from '../../../../shared/components/table'
+} from '../../../../shared/sdk/table'
 import {
   DocumentTableToolbar,
   IDocumentTableFilterValue,
@@ -29,13 +31,13 @@ import {
   Table,
 } from '@mui/material'
 import Iconify from '../../../../core/iconify'
-import Scrollbar from '../../../../shared/components/scrollbar'
-import { ConfirmDialog } from '../../../../shared/components/custom-dialog'
+import Scrollbar from '../../../../shared/sdk/scrollbar'
+import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { isEqual } from 'lodash'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { useSettingsContext } from '../../../../shared/components/settings'
-import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { DocumentTableRow } from '../components/DocumentTableRow'
 import { useDocumentView } from '../hooks/useDocumentsView'
 
@@ -92,7 +94,7 @@ const DocumentListView = () => {
     table.page * table.rowsPerPage + table.rowsPerPage,
   )
 
-  const denseHeight = table.dense ? 60 : 80
+  const denseHeight = table.dense ? NO_DENSE : DENSE
   const canReset = !isEqual(defaultFilters, filters)
 
   useEffect(() => {

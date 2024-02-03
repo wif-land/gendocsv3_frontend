@@ -1,14 +1,15 @@
 'use client'
 
 import Container from '@mui/material/Container'
-import { useSettingsContext } from '../../../../shared/components/settings'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { useParams, usePathname } from 'next/navigation'
 import { useCouncilStore } from '../store/councilsStore'
-import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import CouncilNewEditForm from '../components/CouncilNewEditForm'
+import { memo } from 'react'
 
-export default function CouncilEditView() {
+const CouncilEditView = () => {
   const settings = useSettingsContext()
   const { id } = useParams()
   const pathname = usePathname()
@@ -37,3 +38,5 @@ export default function CouncilEditView() {
     </Container>
   )
 }
+
+export default memo(CouncilEditView)

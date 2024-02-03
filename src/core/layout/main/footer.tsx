@@ -6,7 +6,7 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 import { usePathname } from 'next/navigation'
-import Logo from '../../../shared/components/logo'
+import Logo from '../../../shared/sdk/logo'
 
 const LINKS = [
   {

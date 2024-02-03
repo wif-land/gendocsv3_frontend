@@ -1,4 +1,4 @@
-import { ChipComponentProps } from '../../../../shared/components/ChipComponent'
+import { ChipComponentProps } from '../../../../shared/sdk/ChipComponent'
 
 export const COLUMNS = [
   {

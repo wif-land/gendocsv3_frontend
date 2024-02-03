@@ -10,7 +10,7 @@ type Props = {
   disabledActions?: boolean
 }
 
-export default function CouncilDetailsSummary({ product, ...other }: Props) {
+export const CouncilDetailsSummary = ({ product, ...other }: Props) => {
   const { name } = product
 
   const renderShare = (

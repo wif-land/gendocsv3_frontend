@@ -7,8 +7,8 @@ import IconButton from '@mui/material/IconButton'
 import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
-import { usePopover } from '../../../../shared/components/custom-popover'
-import CustomPopover from '../../../../shared/components/custom-popover/custom-popover'
+import { usePopover } from '../../../../shared/sdk/custom-popover'
+import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 
 export type IDocumentTableFilterValue = string | string[]

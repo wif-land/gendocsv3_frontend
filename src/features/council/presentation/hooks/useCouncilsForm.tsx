@@ -93,7 +93,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     const {
       president,
       subrogant,
-      attendees: currentAttendees,
+      // attendees: currentAttendees,
       ...rest
     } = values
 

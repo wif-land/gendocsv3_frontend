@@ -2,7 +2,7 @@ import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemButton from '@mui/material/ListItemButton'
-import Label from '../../../../shared/components/label'
+import Label from '../../../../shared/sdk/label'
 
 type Props = {
   title: {

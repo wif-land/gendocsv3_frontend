@@ -13,8 +13,8 @@ import {
   RHFAutocomplete,
   RHFSwitch,
   RHFTextField,
-} from '../../../../shared/components/hook-form'
-import FormProvider from '../../../../shared/components/hook-form/form-provider'
+} from '../../../../shared/sdk/hook-form'
+import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { useCareerForm } from '../hooks/useCareerForm'
 
 type Props = {

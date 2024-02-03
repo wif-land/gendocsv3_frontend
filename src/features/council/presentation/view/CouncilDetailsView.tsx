@@ -1,6 +1,7 @@
+/* eslint-disable no-magic-numbers */
 'use client'
 
-import { useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { alpha } from '@mui/material/styles'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
@@ -12,11 +13,11 @@ import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
 import { useParams, useRouter } from 'next/navigation'
 import { useCouncilStore } from '../store/councilsStore'
-import { useSettingsContext } from '../../../../shared/components/settings'
-import EmptyContent from '../../../../shared/components/empty-content/empty-content'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
+import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
 import { CouncilDetailsSkeleton } from '../components/CouncilSkeleton'
 import Iconify from '../../../../core/iconify'
-import CouncilDetailsSummary from '../components/CouncilDetailSummary'
+import { CouncilDetailsSummary } from '../components/CouncilDetailSummary'
 
 const SUMMARY = [
   {
@@ -36,7 +37,7 @@ const SUMMARY = [
   },
 ]
 
-export default function CouncilDetailsView() {
+const CouncilDetailsView = () => {
   const { id } = useParams()
   const router = useRouter()
 
@@ -151,3 +152,5 @@ export default function CouncilDetailsView() {
     </Container>
   )
 }
+
+export default memo(CouncilDetailsView)

@@ -1,9 +1,9 @@
 import { memo } from 'react'
-import { useSettingsContext } from '../../../../shared/components/settings'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { useParams, usePathname } from 'next/navigation'
 import { useFunctionaryView } from '../hooks/useFunctionaryView'
 import { Container } from '@mui/material'
-import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { FunctionaryNewEditForm } from '../components/FunctionaryNewEditForm'
 

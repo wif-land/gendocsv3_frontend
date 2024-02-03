@@ -11,9 +11,9 @@ import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import Iconify from '../../../../core/iconify'
-import { ConfirmDialog } from '../../../../shared/components/custom-dialog'
-import { usePopover } from '../../../../shared/components/custom-popover'
-import CustomPopover from '../../../../shared/components/custom-popover/custom-popover'
+import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
+import { usePopover } from '../../../../shared/sdk/custom-popover'
+import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 
 type Props = {

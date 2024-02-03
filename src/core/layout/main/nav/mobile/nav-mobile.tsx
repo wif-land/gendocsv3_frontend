@@ -8,9 +8,9 @@ import { usePathname } from 'next/navigation'
 import { NavProps } from '../types'
 import NavList from './nav-list'
 import { useBoolean } from '../../../../../shared/hooks/use-boolean'
-import SvgColor from '../../../../../shared/components/svg-color'
-import Scrollbar from '../../../../../shared/components/scrollbar'
-import Logo from '../../../../../shared/components/logo'
+import SvgColor from '../../../../../shared/sdk/svg-color'
+import Scrollbar from '../../../../../shared/sdk/scrollbar'
+import Logo from '../../../../../shared/sdk/logo'
 
 export default function NavMobile({ offsetTop, data }: NavProps) {
   const pathname = usePathname()

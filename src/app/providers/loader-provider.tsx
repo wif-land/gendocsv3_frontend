@@ -1,4 +1,4 @@
-import LoaderView from '../../shared/components/LoaderView'
+import LoaderView from '../../shared/sdk/LoaderView'
 
 const Index = () => <LoaderView />
 

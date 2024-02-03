@@ -2,10 +2,10 @@ import { memo } from 'react'
 
 import { useTheme } from '@mui/material/styles'
 import Box, { BoxProps } from '@mui/material/Box'
-//
+
 import BackgroundShape from './background-shape'
 
-function UploadIllustration({ ...other }: BoxProps) {
+const UploadIllustration = ({ ...other }: BoxProps) => {
   const theme = useTheme()
 
   const PRIMARY_MAIN = theme.palette.primary.main

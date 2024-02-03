@@ -7,8 +7,8 @@ import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemButton from '@mui/material/ListItemButton'
 import { fToNow } from '../../../utils/format-time'
-import FileThumbnail from '../../../../shared/components/file-thumbnail/file-thumbnail'
-import Label from '../../../../shared/components/label'
+import FileThumbnail from '../../../../shared/sdk/file-thumbnail/file-thumbnail'
+import Label from '../../../../shared/sdk/label'
 
 type NotificationItemProps = {
   notification: {

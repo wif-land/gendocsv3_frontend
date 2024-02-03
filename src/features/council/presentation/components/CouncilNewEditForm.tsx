@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import LoadingButton from '@mui/lab/LoadingButton'
 import Card from '@mui/material/Card'
@@ -12,8 +13,8 @@ import {
   RHFSelect,
   RHFSwitch,
   RHFTextField,
-} from '../../../../shared/components/hook-form'
-import FormProvider from '../../../../shared/components/hook-form/form-provider'
+} from '../../../../shared/sdk/hook-form'
+import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Controller } from 'react-hook-form'
 import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
@@ -26,8 +27,7 @@ type Props = {
   currentCouncil?: ICouncil
 }
 
-export default function CouncilNewEditForm({ currentCouncil }: Props) {
-  // const { codeModule, subModuleName } = useParams()
+export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const {
     methods,

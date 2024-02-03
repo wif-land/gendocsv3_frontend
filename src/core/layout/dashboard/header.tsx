@@ -9,12 +9,12 @@ import {
   SettingsButton,
   NotificationsPopover,
 } from '../_common'
-import { useSettingsContext } from '../../../shared/components/settings'
+import { useSettingsContext } from '../../../shared/sdk/settings'
 import { useResponsive } from '../../../shared/hooks/use-responsive'
 import { useOffSetTop } from '../../../shared/hooks/use-off-set-top'
 import { HEADER, NAV } from '../config-layout'
-import Logo from '../../../shared/components/logo'
-import SvgColor from '../../../shared/components/svg-color'
+import Logo from '../../../shared/sdk/logo'
+import SvgColor from '../../../shared/sdk/svg-color'
 import { bgBlur } from '../../theme/css'
 
 type Props = {

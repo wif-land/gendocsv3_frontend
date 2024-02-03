@@ -16,8 +16,8 @@ import { useResponsive } from '../../../shared/hooks/use-responsive'
 import { useOffSetTop } from '../../../shared/hooks/use-off-set-top'
 import { bgBlur } from '../../theme/css'
 import { paths } from '../../routes/paths'
-import Label from '../../../shared/components/label'
-import Logo from '../../../shared/components/logo'
+import Label from '../../../shared/sdk/label'
+import Logo from '../../../shared/sdk/logo'
 
 export default function Header() {
   const theme = useTheme()
