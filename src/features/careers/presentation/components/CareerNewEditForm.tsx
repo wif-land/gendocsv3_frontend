@@ -87,7 +87,7 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
                   }
 
                   return (
-                    <li {...props} key={dni}>
+                    <li key={dni} {...props}>
                       <Typography variant="body2">
                         {firstName} {secondName} {firstLastName}{' '}
                         {secondLastName}
@@ -103,7 +103,7 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
                   selected.map((option, index) => (
                     <Chip
                       {...getTagProps({ index })}
-                      key={option}
+                      key={index}
                       label={option}
                       size="small"
                       color="info"

@@ -214,7 +214,7 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
                   }
 
                   return (
-                    <li {...props} key={dni}>
+                    <li key={dni} {...props}>
                       <Typography variant="body2">
                         {firstName} {secondName} {firstLastName}{' '}
                         {secondLastName}
@@ -276,7 +276,7 @@ export default function CouncilNewEditForm({ currentCouncil }: Props) {
                       }
 
                       return (
-                        <li {...props} key={dni}>
+                        <li key={dni} {...props}>
                           <Typography variant="body2">
                             {firstName} {secondName} {firstLastName}{' '}
                             {secondLastName}
