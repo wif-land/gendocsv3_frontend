@@ -3,7 +3,7 @@ name: Continuous Integration for GenDocs
 on:
   pull_request:
     branches:
-      - develop
+      - develop-minimal
 
 jobs:
   lint:
