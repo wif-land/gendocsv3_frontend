@@ -22,6 +22,7 @@ export interface CouncilsDataSource {
 
   update(council: Partial<ICouncil>): Promise<{
     status: number
+    council: CouncilModel
   }>
 
   create(council: ICouncil): Promise<{
@@ -31,6 +32,9 @@ export interface CouncilsDataSource {
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
+  getById(id: number): Promise<{ status: number; council: CouncilModel }> {
+    throw new Error(`Method not implemented. ${id}`)
+  }
   static instance: CouncilsDataSourceImpl
 
   static getInstance = (): CouncilsDataSourceImpl => {
@@ -56,6 +60,8 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
   }
 
   create = async (council: CouncilModel) => {
+    console.log(council)
+
     const result = await AxiosClient.post(API_ROUTES.COUNCILS.CREATE, council)
 
     const { status, data } = result
@@ -79,9 +85,8 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return { status, councils: data.content as CouncilModel[] }
   }
 
-  update = async (career: ICouncil) => {
-    const { id, ...rest } = career
-
+  update = async (council: ICouncil) => {
+    const { id, ...rest } = council
     const result = await AxiosClient.patch(
       API_ROUTES.COUNCILS.UPDATE.replace(':id', id?.toString() || ''),
       rest,
@@ -90,13 +95,9 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
+      return { status, council: {} as CouncilModel }
     }
 
     return { status, council: data.content as CouncilModel }
-  }
-
-  getById = async (id: number) => {
-    throw new Error(`Method not implemented.${id}`)
   }
 }

@@ -42,6 +42,7 @@ import { RouterLink } from '../../../../core/routes/components'
 // import ProductTableFiltersResult from '../../../product/product-table-filters-result'
 import { CouncilTableRow } from '../components/CouncilTableRow'
 import { CouncilTableFiltersResult } from '../components/CouncilTableFiltersResult'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -60,7 +61,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const router = useRouter()
   const pathname = usePathname()
 
-  const { loader, councils } = useCouncilView({
+  const { loader, councils, setCouncils } = useCouncilView({
     moduleId,
   })
 
@@ -98,20 +99,29 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     setFilters(defaultFilters)
   }, [])
 
+  const confirm = useBoolean()
   useEffect(() => {
     if (councils.length) {
       setTableData(councils)
     }
   }, [councils])
 
-  const confirm = useBoolean()
-
   const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
+    async (id: string) => {
+      const currentCouncil = councils.find((row) => row.id === +id)
+      if (currentCouncil) {
+        const { council } = await CouncilsUseCasesImpl.getInstance().update(
+          +id,
+          {
+            isActive: !currentCouncil.isActive,
+          },
+        )
+        const updatedTableData = tableData.map((row) =>
+          row.id === council.id ? council : row,
+        )
+        setCouncils(updatedTableData)
+        setTableData(updatedTableData)
+      }
     },
     [dataInPage.length, table, tableData],
   )
@@ -179,7 +189,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
               filters={filters}
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
-              results={0}
+              results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
@@ -336,8 +346,8 @@ const applyFilter = ({
 
   if (name) {
     currentInputData = currentInputData.filter(
-      (product) =>
-        product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+      (council) =>
+        council.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
     )
   }
 

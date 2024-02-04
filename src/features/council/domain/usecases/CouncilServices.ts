@@ -24,6 +24,7 @@ interface CouncilUseCases {
     council: Partial<CouncilModel>,
   ): Promise<{
     status: number
+    council: CouncilModel
   }>
 
   getAllCouncilsByModuleId(moduleId: number): Promise<{
@@ -55,9 +56,9 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
     throw new Error(`Method not implemented.${id}`)
   }
 
-  update = async (id: number, career: Partial<CouncilModel>) =>
+  update = async (id: number, council: Partial<CouncilModel>) =>
     await this.councilRepository.update({
-      ...career,
+      ...council,
       id,
     })
 

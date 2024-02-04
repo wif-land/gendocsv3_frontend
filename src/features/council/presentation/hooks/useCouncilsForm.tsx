@@ -90,12 +90,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   }
 
   const handleCreateCouncil = async (values: FormValuesProps) => {
-    const {
-      president,
-      subrogant,
-      attendees: currentAttendees,
-      ...rest
-    } = values
+    const { president, subrogant, ...rest } = values
 
     const actualAttendees = [
       {
@@ -115,11 +110,9 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     const result = await CouncilsUseCasesImpl.getInstance().create({
       ...rest,
       moduleId: moduleIdentifier,
-      userId: user?.sub as number,
+      userId: user?.id as number,
       attendees: actualAttendees,
     })
-
-    console.log('RESULT', result)
 
     if (!result.council) {
       throw new Error('Error al crear el consejo')

@@ -52,7 +52,7 @@ export const CouncilTableToolbar = ({ filters, onFilters }: Props) => {
         >
           <TextField
             fullWidth
-            value={filters.name}
+            defaultValue={filters.name}
             onChange={handleFilterName}
             placeholder="Busca por nombre de consejo"
             InputProps={{

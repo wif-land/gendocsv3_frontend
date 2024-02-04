@@ -139,10 +139,19 @@ export const CouncilTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={{ color: 'error.main' }}
+          sx={row.isActive ? { color: 'error.main' } : { color: 'green' }}
         >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Borrar
+          {row.isActive ? (
+            <>
+              <Iconify icon="radix-icons:lock-closed" />
+              Desactivar
+            </>
+          ) : (
+            <>
+              <Iconify icon="radix-icons:lock-open-2" />
+              Activar
+            </>
+          )}
         </MenuItem>
       </CustomPopover>
 
@@ -150,10 +159,21 @@ export const CouncilTableRow = ({
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Borrar consejo"
-        content="¿Estás seguro de que quieres eliminar este consejo?"
+        content={
+          row.isActive
+            ? '¿Está seguro de desactivar este consejo?'
+            : '¿Está seguro de activar este consejo?'
+        }
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Borrar
+          <Button
+            variant="contained"
+            color={isActive ? 'error' : 'success'}
+            onClick={() => {
+              onDeleteRow()
+              confirm.onFalse()
+            }}
+          >
+            {isActive ? 'Desactivar' : 'Activar'}
           </Button>
         }
       />
