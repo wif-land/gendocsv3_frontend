@@ -7,10 +7,12 @@ type Props = {
   doubleClick: (e: React.SyntheticEvent) => void
 }
 
+const DEFAULT_TIMEOUT = 250
+
 export const useDoubleClick = ({
   click,
   doubleClick,
-  timeout = 250,
+  timeout = DEFAULT_TIMEOUT,
 }: Props) => {
   const clickTimeout = useRef<any>()
 

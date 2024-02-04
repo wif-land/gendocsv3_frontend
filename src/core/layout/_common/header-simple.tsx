@@ -7,7 +7,7 @@ import HeaderShadow from './header-shadow'
 import SettingsButton from './settings-button'
 import { useOffSetTop } from '../../../shared/hooks/use-off-set-top'
 import { bgBlur } from '../../theme/css'
-import Logo from '../../../shared/components/logo'
+import Logo from '../../../shared/sdk/logo'
 
 export default function HeaderSimple() {
   const theme = useTheme()

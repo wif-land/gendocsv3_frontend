@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable func-style */
 import { RefObject, useEffect, useRef, useLayoutEffect } from 'react'
 
@@ -21,7 +22,6 @@ export function useEventListener<
   options?: boolean | AddEventListenerOptions,
 ): void
 
-// Document Event based useEventListener interface
 export function useEventListener<K extends keyof DocumentEventMap>(
   eventName: K,
   handler: (event: DocumentEventMap[K]) => void,

@@ -18,9 +18,9 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { useEventListener } from '../../../../shared/hooks/use-event-listener'
 import Iconify from '../../../iconify'
-import Label from '../../../../shared/components/label'
-import Scrollbar from '../../../../shared/components/scrollbar'
-import SearchNotFound from '../../../../shared/components/search-not-found/search-not-found'
+import Label from '../../../../shared/sdk/label'
+import Scrollbar from '../../../../shared/sdk/scrollbar'
+import SearchNotFound from '../../../../shared/sdk/search-not-found/search-not-found'
 import { useRouter } from 'next/navigation'
 
 const Searchbar = () => {

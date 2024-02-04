@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar'
 import { HEADER } from '../config-layout'
 import { HeaderShadow } from '../_common'
 import { bgBlur } from '../../theme/css'
-import NavSectionHorizontal from '../../../shared/components/nav-section/horizontal/nav-section-horizontal'
+import NavSectionHorizontal from '../../../shared/sdk/nav-section/horizontal/nav-section-horizontal'
 
 const NavHorizontal = ({ navData }: { navData: any }) => {
   const theme = useTheme()

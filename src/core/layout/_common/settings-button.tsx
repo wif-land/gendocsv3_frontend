@@ -1,7 +1,7 @@
 import { Theme, SxProps } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Badge, { badgeClasses } from '@mui/material/Badge'
-import { useSettingsContext } from '../../../shared/components/settings'
+import { useSettingsContext } from '../../../shared/sdk/settings'
 import Iconify from '../../iconify'
 
 type Props = {

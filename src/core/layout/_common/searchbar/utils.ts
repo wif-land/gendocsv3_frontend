@@ -3,7 +3,7 @@
 import {
   NavListProps,
   NavSectionProps,
-} from '../../../../shared/components/nav-section'
+} from '../../../../shared/sdk/nav-section'
 import { flattenArray } from '../../../utils/flatten-array'
 
 type ItemProps = {

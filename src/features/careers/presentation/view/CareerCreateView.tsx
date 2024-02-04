@@ -1,8 +1,8 @@
 'use client'
 
 import Container from '@mui/material/Container'
-import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
-import { useSettingsContext } from '../../../../shared/components/settings'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { paths } from '../../../../core/routes/paths'
 import { usePathname } from 'next/navigation'
 import { memo } from 'react'

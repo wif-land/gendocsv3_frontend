@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material/styles'
 import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import { NAV } from '../config-layout'
-import { useSettingsContext } from '../../../shared/components/settings'
+import { useSettingsContext } from '../../../shared/sdk/settings'
 import { useResponsive } from '../../../shared/hooks/use-responsive'
 import Iconify from '../../iconify'
 import { bgBlur } from '../../theme/css'

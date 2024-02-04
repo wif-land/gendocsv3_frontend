@@ -1,6 +1,6 @@
 import Box, { BoxProps } from '@mui/material/Box'
 import { HEADER, NAV } from '../config-layout'
-import { useSettingsContext } from '../../../shared/components/settings'
+import { useSettingsContext } from '../../../shared/sdk/settings'
 import { useResponsive } from '../../../shared/hooks/use-responsive'
 
 const SPACING = 8

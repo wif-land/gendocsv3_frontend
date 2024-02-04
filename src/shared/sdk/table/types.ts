@@ -29,3 +29,6 @@ export type TableProps = {
   setSelected: React.Dispatch<React.SetStateAction<string[]>>
   setRowsPerPage: React.Dispatch<React.SetStateAction<number>>
 }
+
+export const NO_DENSE = 60
+export const DENSE = 80

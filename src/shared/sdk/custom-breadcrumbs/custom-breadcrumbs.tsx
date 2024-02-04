@@ -3,9 +3,10 @@ import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
-//
+
 import { CustomBreadcrumbsProps } from './types'
 import LinkItem from './link-item'
+
 export default function CustomBreadcrumbs({
   links,
   action,
