@@ -31,6 +31,7 @@ export interface ICouncil {
   moduleId: number
   userId: number
   attendees?: IAttendee[] | string[] | number[]
+  createdBy?: string
 }
 
 export interface IAttendee {

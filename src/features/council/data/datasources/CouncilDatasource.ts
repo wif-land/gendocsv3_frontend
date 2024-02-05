@@ -15,11 +15,6 @@ export interface CouncilsDataSource {
     councils: CouncilModel[]
   }>
 
-  getById(id: number): Promise<{
-    status: number
-    council: CouncilModel
-  }>
-
   update(council: Partial<ICouncil>): Promise<{
     status: number
     council: CouncilModel
@@ -32,9 +27,6 @@ export interface CouncilsDataSource {
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
-  getById(id: number): Promise<{ status: number; council: CouncilModel }> {
-    throw new Error(`Method not implemented. ${id}`)
-  }
   static instance: CouncilsDataSourceImpl
 
   static getInstance = (): CouncilsDataSourceImpl => {

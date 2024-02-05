@@ -1,10 +1,7 @@
 'use client'
 
-import { useCallback, useState } from 'react'
-import { alpha } from '@mui/material/styles'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
-import Tabs from '@mui/material/Tabs'
 import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
@@ -17,24 +14,46 @@ import EmptyContent from '../../../../shared/components/empty-content/empty-cont
 import { CouncilDetailsSkeleton } from '../components/CouncilSkeleton'
 import Iconify from '../../../../core/iconify'
 import CouncilDetailsSummary from '../components/CouncilDetailSummary'
-import { useUsersStore } from '../../../../shared/store/usersStore'
 import { format } from 'date-fns'
+import { useCallback, useState } from 'react'
+import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
+import { Tabs } from '@mui/material'
+import { CouncilDetailAttendance } from '../components/CouncilDetailAttendance'
 
 export default function CouncilDetailsView() {
   const { id } = useParams()
   const router = useRouter()
-
   const settings = useSettingsContext()
-
   const { councils } = useCouncilStore()
-  const { users } = useUsersStore()
+
+  const [currentTab, setCurrentTab] = useState('general')
+
+  const handleChangeTab = useCallback(
+    (event: React.SyntheticEvent, newValue: string) => {
+      setCurrentTab(newValue)
+    },
+    [],
+  )
+
   const council = councils.find((council) => council.id! === +id)
-  const user = users?.find((user) => user.id === council?.userId)
+
+  const TABS = [
+    {
+      value: 'general',
+      label: 'General',
+      icon: <Iconify icon="solar:user-id-bold" width={24} />,
+    },
+    {
+      value: 'attendees',
+      label: 'Miembros',
+      icon: <Iconify icon="solar:bell-bing-bold" width={24} />,
+    },
+  ]
 
   const SUMMARY = [
     {
       title: 'Creado por',
-      value: `${user?.firstName} ${user?.firstLastName}` || '',
+      value: council?.createdBy,
       icon: 'eva:person-outline',
     },
     {
@@ -51,26 +70,7 @@ export default function CouncilDetailsView() {
       }`,
       icon: 'eva:calendar-outline',
     },
-    {
-      title: 'Asistentes',
-      value: council?.attendance.length,
-      icon: 'eva:people-outline',
-    },
-    {
-      title: 'Estado',
-      value: council?.isActive ? 'Activo' : 'Inactivo',
-      icon: 'eva:checkmark-circle-2-outline',
-    },
   ]
-
-  const [currentTab, setCurrentTab] = useState('description')
-
-  const handleChangeTab = useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
-      setCurrentTab(newValue)
-    },
-    [],
-  )
 
   const renderSkeleton = <CouncilDetailsSkeleton />
 
@@ -91,7 +91,7 @@ export default function CouncilDetailsView() {
     />
   )
 
-  const renderProduct = council && (
+  const renderAttendees = council && (
     <>
       <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
         <Grid xs={12} md={6} lg={5}>
@@ -124,33 +124,47 @@ export default function CouncilDetailsView() {
       </Typography>
 
       <Card>
-        <Tabs
-          value={currentTab}
-          onChange={handleChangeTab}
-          sx={{
-            px: 3,
-            boxShadow: (theme) =>
-              `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-          }}
-        >
-          //TODO: council.attendance should be council.attendees and should be
-          //an array of objects with the info of the attendees
-          {council.attendance.map((attendee, index) => (
-            <Tab key={index} value={1} label={'Información del asistente'} />
-          ))}
-        </Tabs>
-
-        {/* {currentTab === 'description' && (
-          <ProductDetailsDescription description={'una buena descripcion'} />
-        )} */}
+        {council.attendees.map((attendee, index) => (
+          <Tab key={index} value={1} label={'Información del asistente'} />
+        ))}
       </Card>
     </>
   )
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      {false ? renderSkeleton : <>{false ? renderError : renderProduct}</>}
-      {!council && renderError}
+      <CustomBreadcrumbs
+        heading="Consejo"
+        links={[
+          { name: 'Dashboard', href: '/' },
+          { name: 'Consejo', href: '/' },
+          { name: council?.name || 'Cargando...' },
+        ]}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
+
+      <Tabs
+        value={currentTab}
+        onChange={handleChangeTab}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      >
+        {TABS.map((tab) => (
+          <Tab
+            key={tab.value}
+            label={tab.label}
+            icon={tab.icon}
+            value={tab.value}
+          />
+        ))}
+      </Tabs>
+
+      {currentTab === 'general' && <CouncilDetailsSummary council={council!} />}
+
+      {currentTab === 'asistencia' && <CouncilDetailAttendance />}
     </Container>
   )
 }

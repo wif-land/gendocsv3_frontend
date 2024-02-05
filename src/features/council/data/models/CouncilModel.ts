@@ -16,6 +16,7 @@ export class CouncilModel implements ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
+  createdBy?: string
   attendees: IAttendee[] | number[] | string[]
 
   constructor(props: ICouncil) {
@@ -29,7 +30,8 @@ export class CouncilModel implements ICouncil {
     this.type = props.type
     this.moduleId = props.moduleId
     this.userId = props.userId
-    this.attendees = props.attendees || []
+    ;(this.attendees = props.attendees || []),
+      (this.createdBy = props.createdBy || '')
   }
   static fromJson(json: Record<string, any> | string): CouncilModel {
     if (typeof json === 'string') {

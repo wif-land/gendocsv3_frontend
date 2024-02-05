@@ -14,7 +14,9 @@ export default function CouncilEditView() {
   const pathname = usePathname()
   const { councils } = useCouncilStore()
 
-  const currentProduct = councils.find((council) => council.id! === +id)
+  const currentCouncil = councils.find((council) => council.id! === +id)
+
+  console.log('currentCouncil', currentCouncil)
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -26,14 +28,14 @@ export default function CouncilEditView() {
             name: 'Consejos',
             href: pathname.replace('/new', ''),
           },
-          { name: currentProduct?.name },
+          { name: currentCouncil?.name },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <CouncilNewEditForm currentCouncil={currentProduct} />
+      <CouncilNewEditForm currentCouncil={currentCouncil} />
     </Container>
   )
 }

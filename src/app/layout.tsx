@@ -48,6 +48,7 @@ import MotionLazy from '../shared/components/animate/motion-lazy'
 import { SnackbarProvider } from '../shared/components/snackbar'
 import ProgressBar from '../shared/components/progress-bar/progress-bar'
 import { ModulesProvider } from './providers/modules-provider'
+import { primaryFont } from '../core/theme/typography'
 
 export const metadata = {
   title: 'Gendocs V3 - Gestión Documental',
@@ -86,7 +87,7 @@ type Props = {
 
 export default function RootLayout({ children }: Props) {
   return (
-    <html lang="en">
+    <html lang="en" className={primaryFont.className}>
       <body>
         <SettingsProvider
           defaultSettings={{
