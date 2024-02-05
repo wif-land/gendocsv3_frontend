@@ -158,7 +158,7 @@ export const CouncilTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar consejo"
+        title={row.isActive ? 'Desactivar consejo' : 'Activar consejo'}
         content={
           row.isActive
             ? '¿Está seguro de desactivar este consejo?'

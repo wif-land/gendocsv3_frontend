@@ -17,24 +17,8 @@ import EmptyContent from '../../../../shared/components/empty-content/empty-cont
 import { CouncilDetailsSkeleton } from '../components/CouncilSkeleton'
 import Iconify from '../../../../core/iconify'
 import CouncilDetailsSummary from '../components/CouncilDetailSummary'
-
-const SUMMARY = [
-  {
-    title: '100% Original',
-    description: 'Chocolate bar candy canes ice cream toffee cookie halvah.',
-    icon: 'solar:verified-check-bold',
-  },
-  {
-    title: '10 Day Replacement',
-    description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
-    icon: 'solar:clock-circle-bold',
-  },
-  {
-    title: 'Year Warranty',
-    description: 'Cotton candy gingerbread cake I love sugar sweet.',
-    icon: 'solar:shield-check-bold',
-  },
-]
+import { useUsersStore } from '../../../../shared/store/usersStore'
+import { format } from 'date-fns'
 
 export default function CouncilDetailsView() {
   const { id } = useParams()
@@ -43,7 +27,41 @@ export default function CouncilDetailsView() {
   const settings = useSettingsContext()
 
   const { councils } = useCouncilStore()
-  const product = councils.find((council) => council.id! === +id)
+  const { users } = useUsersStore()
+  const council = councils.find((council) => council.id! === +id)
+  const user = users?.find((user) => user.id === council?.userId)
+
+  const SUMMARY = [
+    {
+      title: 'Creado por',
+      value: `${user?.firstName} ${user?.firstLastName}` || '',
+      icon: 'eva:person-outline',
+    },
+    {
+      title: 'Tipo',
+      value: `${council?.type === 'ORDINARY' ? 'Ordinaria' : 'Extraordinaria'}`,
+      icon: 'eva:calendar-outline',
+    },
+    {
+      title: 'Fecha',
+      value: `${
+        council?.date !== undefined
+          ? format(new Date(council.date), ' dd/MM/yyyy HH:mm ')
+          : ''
+      }`,
+      icon: 'eva:calendar-outline',
+    },
+    {
+      title: 'Asistentes',
+      value: council?.attendance.length,
+      icon: 'eva:people-outline',
+    },
+    {
+      title: 'Estado',
+      value: council?.isActive ? 'Activo' : 'Inactivo',
+      icon: 'eva:checkmark-circle-2-outline',
+    },
+  ]
 
   const [currentTab, setCurrentTab] = useState('description')
 
@@ -59,34 +77,25 @@ export default function CouncilDetailsView() {
   const renderError = (
     <EmptyContent
       filled
-      title={`NO hay consejo con el id ${id}`}
+      title={`No hay consejo con el id ${id}`}
       action={
         <Button
           onClick={() => router.back()}
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
           sx={{ mt: 3 }}
         >
-          Back to List
+          Regresar
         </Button>
       }
       sx={{ py: 10 }}
     />
   )
 
-  const renderProduct = product && (
+  const renderProduct = council && (
     <>
-      {/* <ProductDetailsToolbar
-        backLink={pathname.replace(/\/\d+$/, '')}
-        editLink={`${pathname}/edit`}
-        liveLink={paths.product.details(`${product?.id}`)}
-        publish={publish || ''}
-        onChangePublish={handleChangePublish}
-        publishOptions={PRODUCT_PUBLISH_OPTIONS}
-      /> */}
-
       <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
         <Grid xs={12} md={6} lg={5}>
-          <CouncilDetailsSummary disabledActions product={product} />
+          <CouncilDetailsSummary disabledActions council={council} />
         </Grid>
       </Grid>
 
@@ -101,22 +110,18 @@ export default function CouncilDetailsView() {
       >
         {SUMMARY.map((item) => (
           <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-            <Iconify
-              icon={item.icon}
-              width={32}
-              sx={{ color: 'primary.main' }}
-            />
-
-            <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
+            <Iconify icon={item.icon} width={40} />
+            <Typography variant="h4" color="text.secondary">
               {item.title}
             </Typography>
-
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {item.description}
-            </Typography>
+            <Typography variant="h6">{item.value}</Typography>
           </Box>
         ))}
       </Box>
+
+      <Typography variant="h4" sx={{ mb: 3 }}>
+        Asistentes
+      </Typography>
 
       <Card>
         <Tabs
@@ -128,13 +133,10 @@ export default function CouncilDetailsView() {
               `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
           }}
         >
-          {[
-            {
-              value: 'description',
-              label: 'Description',
-            },
-          ].map((tab) => (
-            <Tab key={tab.value} value={tab.value} label={tab.label} />
+          //TODO: council.attendance should be council.attendees and should be
+          //an array of objects with the info of the attendees
+          {council.attendance.map((attendee, index) => (
+            <Tab key={index} value={1} label={'Información del asistente'} />
           ))}
         </Tabs>
 
@@ -148,6 +150,7 @@ export default function CouncilDetailsView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       {false ? renderSkeleton : <>{false ? renderError : renderProduct}</>}
+      {!council && renderError}
     </Container>
   )
 }

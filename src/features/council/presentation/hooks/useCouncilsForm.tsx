@@ -1,7 +1,6 @@
 import * as Yup from 'yup'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useCouncilStore } from '../store/councilsStore'
-import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import {
   CouncilAttendanceRole,
@@ -118,33 +117,64 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       throw new Error('Error al crear el consejo')
     }
 
+    console.log(`Back Response: ${JSON.stringify(result.council)} `)
+
     addCouncil(result.council)
     enqueueSnackbar('Consejo creado exitosamente')
   }
 
   const handleUpdateCouncil = async (
     id: number,
-    editedFields: Partial<ICouncil>,
+    editedFields: Partial<FormValuesProps>,
   ) => {
-    const { status } = await CouncilsUseCasesImpl.getInstance().update(
-      id,
-      editedFields,
-    )
+    const { president, subrogant, ...rest } = editedFields
+
+    const attendees = []
+    if (president) {
+      const presidentId = functionaries?.find(
+        (functionary) => functionary.dni === president.split('-')[1].trim(),
+      )?.id
+      if (presidentId) {
+        attendees.push({
+          functionaryId: presidentId,
+          role: CouncilAttendanceRole.PRESIDENT,
+        })
+      }
+    }
+    if (subrogant) {
+      const subrogantId = functionaries?.find(
+        (functionary) => functionary.dni === subrogant.split('-')[1].trim(),
+      )?.id
+      if (subrogantId) {
+        attendees.push({
+          functionaryId: subrogantId,
+          role: CouncilAttendanceRole.SUBROGATE,
+        })
+      }
+    }
+    // TODO: check the rest of attendees and add them to the list
+
+    const { status } = await CouncilsUseCasesImpl.getInstance().update(id, {
+      ...rest,
+      attendees,
+    })
 
     if (status !== HTTP_STATUS_CODES.OK) {
       throw new Error('Error al crear el consejo')
     }
 
-    setCouncils(
-      councils!.map((council) =>
-        council.id === id
-          ? new CouncilModel({
-              ...council,
-              ...editedFields,
-            })
-          : council,
-      ),
-    )
+    // TODO: Set council in store
+
+    // setCouncils(
+    //   councils!.map((council) =>
+    //     council.id === id
+    //       ? new CouncilModel({
+    //           ...council,
+    //           ...editedFields,
+    //         })
+    //       : council,
+    //   ),
+    // )
     enqueueSnackbar('Consejo actualizado exitosamente')
   }
 
