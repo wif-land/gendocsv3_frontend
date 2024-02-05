@@ -48,7 +48,7 @@ export const CareerDetailsSkeleton = ({ ...other }: Grid2Props) => (
 
     <Grid xs={12}>
       <Stack direction="row" alignItems="center">
-        {[...Array(3)].map((_, index) => (
+        {[1, 1, 1].map((_, index) => (
           <Stack
             key={index}
             spacing={2}

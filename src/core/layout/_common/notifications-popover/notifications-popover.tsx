@@ -18,9 +18,9 @@ import NotificationItem from './notification-item'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import Iconify from '../../../iconify'
-import Label from '../../../../shared/components/label'
-import Scrollbar from '../../../../shared/components/scrollbar'
-import { varHover } from '../../../../shared/components/animate'
+import Label from '../../../../shared/sdk/label'
+import Scrollbar from '../../../../shared/sdk/scrollbar'
+import { varHover } from '../../../../shared/sdk/animate'
 
 const TABS = [
   {

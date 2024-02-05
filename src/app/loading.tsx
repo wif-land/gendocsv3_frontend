@@ -1,7 +1,5 @@
 'use client'
 
-import { SplashScreen } from '../shared/components/loading-screen'
+import { SplashScreen } from '../shared/sdk/loading-screen'
 
-export default function Loading() {
-  return <SplashScreen />
-}
+export default () => <SplashScreen />

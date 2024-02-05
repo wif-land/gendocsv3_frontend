@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { NavItemProps } from '../types'
 import NavItem from './nav-item'
 import { useBoolean } from '../../../../../shared/hooks/use-boolean'
-import NavSectionVertical from '../../../../../shared/components/nav-section/vertical/nav-section-vertical'
+import NavSectionVertical from '../../../../../shared/sdk/nav-section/vertical/nav-section-vertical'
 
 type NavListProps = {
   item: NavItemProps

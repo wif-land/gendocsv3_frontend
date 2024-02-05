@@ -78,7 +78,6 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500))
         reset()
         // enqueueSnackbar(currentFunctionary ? 'Update success!' : 'Create success!')
         // router.push('/careers')

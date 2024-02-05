@@ -9,9 +9,9 @@ import { NAV } from '../config-layout'
 import { NavToggleButton, NavUpgrade } from '../_common'
 import { usePathname } from 'next/navigation'
 import { useResponsive } from '../../../shared/hooks/use-responsive'
-import Scrollbar from '../../../shared/components/scrollbar'
-import Logo from '../../../shared/components/logo'
-import NavSectionVertical from '../../../shared/components/nav-section/vertical/nav-section-vertical'
+import Scrollbar from '../../../shared/sdk/scrollbar'
+import Logo from '../../../shared/sdk/logo'
+import NavSectionVertical from '../../../shared/sdk/nav-section/vertical/nav-section-vertical'
 
 type Props = {
   openNav: boolean

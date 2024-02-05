@@ -1,11 +1,16 @@
 import { useSnackbar } from 'notistack'
 import React, { useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import FormProvider from '../../../../shared/components/hook-form/form-provider'
-import Card from '@mui/material/Card'
-import Stack from '@mui/material/Stack'
-import { FormControlLabel, Grid, ListItemText, Switch } from '@mui/material'
+import {
+  FormControlLabel,
+  ListItemText,
+  Switch,
+  Card,
+  Stack,
+} from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2'
 import LoadingButton from '@mui/lab/LoadingButton'
+import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 type FormValuesProps = {
   selected: string[]
@@ -13,27 +18,31 @@ type FormValuesProps = {
 
 const NOTIFICATIONS = [
   {
-    subheader: 'Activity',
-    caption: 'Donec mi odio, faucibus at, scelerisque quis',
+    subheader: 'Leonardo DiCaprio',
+    caption: 'Presidente',
     items: [
       {
         id: 'activity_comments',
-        label: 'Email me when someone comments onmy article',
+        label: 'Marcar como presente',
       },
       {
         id: 'activity_answers',
-        label: 'Email me when someone answers on my form',
+        label: 'Notificar por correo',
       },
-      { id: 'activityFollows', label: 'Email me hen someone follows me' },
     ],
   },
   {
-    subheader: 'Application',
-    caption: 'Donec mi odio, faucibus at, scelerisque quis',
+    subheader: 'Mathias Rios',
+    caption: 'Subrogante',
     items: [
-      { id: 'application_news', label: 'News and announcements' },
-      { id: 'application_product', label: 'Weekly product updates' },
-      { id: 'application_blog', label: 'Weekly blog digest' },
+      {
+        id: 'activity_comments',
+        label: 'Marcar como presente',
+      },
+      {
+        id: 'activity_answers',
+        label: 'Notificar por correo',
+      },
     ],
   },
 ]

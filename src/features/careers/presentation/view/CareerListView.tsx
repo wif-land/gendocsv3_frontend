@@ -12,7 +12,7 @@ import {
   TableContainer,
   Tooltip,
 } from '@mui/material'
-import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
 import {
   TableEmptyRows,
@@ -24,13 +24,13 @@ import {
   emptyRows,
   getComparator,
   useTable,
-} from '../../../../shared/components/table'
+} from '../../../../shared/sdk/table'
 import { isEqual } from 'lodash'
-import Scrollbar from '../../../../shared/components/scrollbar'
-import { ConfirmDialog } from '../../../../shared/components/custom-dialog'
+import Scrollbar from '../../../../shared/sdk/scrollbar'
+import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSettingsContext } from '../../../../shared/components/settings'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
 import { CareerTableRow } from '../components/CareerTableRow'
 import { useCareerView } from '../hooks/useCareerView'

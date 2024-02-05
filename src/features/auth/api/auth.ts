@@ -34,5 +34,5 @@ export const login = async (
 
   const { sub, ...userWithoutSub } = userData
 
-  return { status, decoded: { ...userWithoutSub, id: sub } }
+  return { status, decoded: { ...userWithoutSub, id: sub, sub } }
 }

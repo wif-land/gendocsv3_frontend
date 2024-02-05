@@ -2,6 +2,8 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { memo, useCallback, useEffect, useState } from 'react'
 import {
+  DENSE,
+  NO_DENSE,
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
@@ -11,12 +13,12 @@ import {
   emptyRows,
   getComparator,
   useTable,
-} from '../../../../shared/components/table'
+} from '../../../../shared/sdk/table'
 import { useFunctionaryView } from '../hooks/useFunctionaryView'
 import { isEqual } from 'lodash'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { useSettingsContext } from '../../../../shared/components/settings'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
   Button,
   Card,
@@ -27,10 +29,10 @@ import {
   TableContainer,
   Tooltip,
 } from '@mui/material'
-import CustomBreadcrumbs from '../../../../shared/components/custom-breadcrumbs/custom-breadcrumbs'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
-import Scrollbar from '../../../../shared/components/scrollbar'
-import { ConfirmDialog } from '../../../../shared/components/custom-dialog'
+import Scrollbar from '../../../../shared/sdk/scrollbar'
+import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { RouterLink } from '../../../../core/routes/components'
 import { FunctionaryTableRow } from '../components/FunctionaryTableRow'
 import {
@@ -97,7 +99,7 @@ const FunctionaryListView = () => {
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage,
   )
-  const denseHeight = table.dense ? 60 : 80
+  const denseHeight = table.dense ? NO_DENSE : DENSE
   const canReset = !isEqual(defaultFilters, filters)
 
   useEffect(() => {

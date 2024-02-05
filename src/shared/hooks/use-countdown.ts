@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'

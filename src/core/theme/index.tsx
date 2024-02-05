@@ -17,9 +17,9 @@ import { presets } from './options/presets'
 import { darkMode } from './options/dark-mode'
 import { contrast } from './options/contrast'
 import RTL, { direction } from './options/right-to-left'
-import { useSettingsContext } from '../../shared/components/settings'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { useSettingsContext } from '../../shared/sdk/settings'
 
 type Props = {
   children: React.ReactNode

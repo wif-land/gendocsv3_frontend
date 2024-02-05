@@ -1,40 +1,4 @@
 /* eslint-disable import/no-unresolved */
-// import type { Metadata } from 'next'
-// import { Inter } from 'next/font/google'
-// import './globals.css'
-// import { Providers } from './providers'
-// import 'react-toastify/dist/ReactToastify.css'
-// import { ToastContainer } from 'react-toastify'
-// import { ModulesProvider } from './providers/modules-provider'
-// import ThemeProvider from '../core/theme'
-// import LoaderView from '../shared/components/LoaderView'
-
-// const inter = Inter({ subsets: ['latin'] })
-
-// export const metadata: Metadata = {
-//   title: 'Gestión Documental V3',
-//   description: 'Generado por WifLand',
-// }
-
-// const RootLayout = ({ children }: { children: React.ReactNode }) => (
-//   <html lang="en">
-//     <body className={inter.className}>
-//       <ToastContainer />
-//       <LoaderView />
-
-//       <Providers>
-//         <ThemeProvider>
-//           <ModulesProvider>
-//             <main>{children}</main>
-//           </ModulesProvider>
-//         </ThemeProvider>
-//       </Providers>
-//     </body>
-//   </html>
-// )
-
-// export default RootLayout
-
 import 'simplebar-react/dist/simplebar.min.css'
 import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
@@ -42,11 +6,11 @@ import 'yet-another-react-lightbox/plugins/thumbnails.css'
 
 import 'react-quill/dist/quill.snow.css'
 import 'react-lazy-load-image-component/src/effects/blur.css'
-import { SettingsDrawer, SettingsProvider } from '../shared/components/settings'
+import { SettingsDrawer, SettingsProvider } from '../shared/sdk/settings'
 import ThemeProvider from '../core/theme'
-import MotionLazy from '../shared/components/animate/motion-lazy'
-import { SnackbarProvider } from '../shared/components/snackbar'
-import ProgressBar from '../shared/components/progress-bar/progress-bar'
+import MotionLazy from '../shared/sdk/animate/motion-lazy'
+import { SnackbarProvider } from '../shared/sdk/snackbar'
+import ProgressBar from '../shared/sdk/progress-bar/progress-bar'
 import { ModulesProvider } from './providers/modules-provider'
 import { primaryFont } from '../core/theme/typography'
 
@@ -85,34 +49,32 @@ type Props = {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: Props) {
-  return (
-    <html lang="en" className={primaryFont.className}>
-      <body>
-        <SettingsProvider
-          defaultSettings={{
-            themeMode: 'light', // 'light' | 'dark'
-            themeDirection: 'ltr', //  'rtl' | 'ltr'
-            themeContrast: 'default', // 'default' | 'bold'
-            themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
-            themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
-            themeStretch: false,
-          }}
-        >
-          <ThemeProvider>
-            <MotionLazy>
-              <ModulesProvider>
-                <SnackbarProvider>
-                  <SettingsDrawer />
-                  <ProgressBar />
+export default ({ children }: Props) => (
+  <html lang="en" className={primaryFont.className}>
+    <body>
+      <SettingsProvider
+        defaultSettings={{
+          themeMode: 'light', // 'light' | 'dark'
+          themeDirection: 'ltr', //  'rtl' | 'ltr'
+          themeContrast: 'default', // 'default' | 'bold'
+          themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
+          themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+          themeStretch: false,
+        }}
+      >
+        <ThemeProvider>
+          <MotionLazy>
+            <ModulesProvider>
+              <SnackbarProvider>
+                <SettingsDrawer />
+                <ProgressBar />
 
-                  {children}
-                </SnackbarProvider>
-              </ModulesProvider>
-            </MotionLazy>
-          </ThemeProvider>
-        </SettingsProvider>
-      </body>
-    </html>
-  )
-}
+                {children}
+              </SnackbarProvider>
+            </ModulesProvider>
+          </MotionLazy>
+        </ThemeProvider>
+      </SettingsProvider>
+    </body>
+  </html>
+)
