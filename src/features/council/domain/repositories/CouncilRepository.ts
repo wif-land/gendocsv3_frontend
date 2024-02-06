@@ -7,6 +7,8 @@ export interface CouncilRepository {
     councils: CouncilModel[]
   }>
 
+  getCount: (moduleId: number) => Promise<number>
+
   update: (data: Partial<ICouncil>) => Promise<{
     status: number
     council: CouncilModel
@@ -17,7 +19,11 @@ export interface CouncilRepository {
     council: CouncilModel
   }>
 
-  getAllCouncilsByModuleId: (moduleId: number) => Promise<{
+  getAllCouncilsByModuleId: (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => Promise<{
     status: number
     councils: CouncilModel[]
   }>

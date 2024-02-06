@@ -53,6 +53,7 @@ export const API_ROUTES = {
   COUNCILS: {
     GET_ALL: '/councils',
     GET_ONE: '/councils/:id',
+    GET_COUNT: '/councils/count',
     UPDATE: '/councils/:id',
     DELETE: '/councils/:id',
     CREATE: '/councils',

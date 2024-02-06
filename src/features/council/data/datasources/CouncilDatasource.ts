@@ -10,10 +10,16 @@ export interface CouncilsDataSource {
     councils: CouncilModel[]
   }>
 
-  getAllCouncilsByModuleId(moduleId: number): Promise<{
+  getAllCouncilsByModuleId(
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
     councils: CouncilModel[]
   }>
+
+  councilCountByModuleId(moduleId: number): Promise<number>
 
   update(council: Partial<ICouncil>): Promise<{
     status: number
@@ -42,9 +48,13 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return CouncilsDataSourceImpl.instance
   }
 
-  async getAllCouncilsByModuleId(moduleId: number) {
+  async getAllCouncilsByModuleId(
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) {
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL, {
-      params: { moduleId },
+      params: { moduleId, limit, offset },
     })
 
     const { status, data } = result
@@ -54,6 +64,20 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     }
 
     return { status, councils: data.content as CouncilModel[] }
+  }
+
+  councilCountByModuleId(moduleId: number) {
+    const result = AxiosClient.get(API_ROUTES.COUNCILS.GET_COUNT, {
+      params: { moduleId },
+    })
+
+    return result.then(({ status, data }) => {
+      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        return 0
+      }
+
+      return data.content as number
+    })
   }
 
   create = async (council: CouncilModel) => {

@@ -45,6 +45,7 @@ import { CouncilTableRow } from '../components/CouncilTableRow'
 import { CouncilTableFiltersResult } from '../components/CouncilTableFiltersResult'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import useModulesStore from '../../../../shared/store/modulesStore'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -66,6 +67,12 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const { loader, councils, setCouncils } = useCouncilView({
     moduleId,
   })
+
+  const { modules } = useModulesStore()
+
+  const currentModuleId = modules?.find(
+    (module) => module.code === moduleId.toUpperCase(),
+  )
 
   const [filters, setFilters] = useState<ICouncilTableFilters>(defaultFilters)
 
@@ -169,6 +176,92 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     (!loader.length && !dataFiltered.length)
 
   const settings = useSettingsContext()
+
+  const [currentPage, setCurrentPage] = useState(0)
+  // eslint-disable-next-line no-magic-numbers
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [count, setCount] = useState(0)
+  const [visitedPages, setVisitedPages] = useState<number[]>([0])
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    table.onChangePage(event, newPage)
+    setCurrentPage(newPage)
+    if (!visitedPages.includes(newPage)) {
+      setVisitedPages([...visitedPages, newPage])
+    }
+
+    const fetchNextPage = async () => {
+      await CouncilsUseCasesImpl.getInstance()
+        .getAllCouncilsByModuleId(
+          currentModuleId?.id as number,
+          rowsPerPage,
+          newPage * rowsPerPage,
+        )
+        .then((response) => {
+          setCouncils([...councils, ...response.councils] as CouncilModel[])
+          setTableData(councils)
+        })
+    }
+
+    if (visitedPages.includes(newPage)) return
+
+    if (count === councils.length) return
+
+    if (newPage > currentPage) {
+      fetchNextPage()
+    }
+  }
+
+  const handleChangeRegistrosPorPagina = (
+    evento: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    table.onChangeRowsPerPage(evento)
+    setRowsPerPage(Number(evento.target.value))
+    const fetchInitialData = async () => {
+      await CouncilsUseCasesImpl.getInstance()
+        .getAllCouncilsByModuleId(
+          currentModuleId?.id as number,
+          Number(evento.target.value),
+          currentPage * Number(evento.target.value),
+        )
+        .then((response) => {
+          setTableData(response.councils)
+          setCouncils(response.councils)
+          console.log(response.councils)
+        })
+    }
+
+    if (count === councils.length) return
+
+    fetchInitialData()
+  }
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      await CouncilsUseCasesImpl.getInstance()
+        .getCount(currentModuleId?.id as number)
+        .then((response) => {
+          setCount(response)
+        })
+    }
+
+    const fetchInitialData = async () => {
+      await CouncilsUseCasesImpl.getInstance()
+        .getAllCouncilsByModuleId(
+          currentModuleId?.id as number,
+          5,
+          currentPage * rowsPerPage,
+        )
+        .then((response) => {
+          setTableData(response.councils)
+          setCouncils(response.councils)
+          console.log(response.councils)
+        })
+    }
+
+    fetchInitialData()
+    fetchCount()
+  }, [])
 
   return (
     <div key={moduleId}>
@@ -293,11 +386,11 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={count}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRegistrosPorPagina}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />

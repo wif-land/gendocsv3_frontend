@@ -14,6 +14,8 @@ interface CouncilUseCases {
     councils: CouncilModel[]
   }>
 
+  getCount(moduleId: number): Promise<number>
+
   getById(id: number): Promise<{
     status: number
     council: CouncilModel
@@ -27,7 +29,11 @@ interface CouncilUseCases {
     council: CouncilModel
   }>
 
-  getAllCouncilsByModuleId(moduleId: number): Promise<{
+  getAllCouncilsByModuleId(
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
     councils: CouncilModel[]
   }>
@@ -57,6 +63,9 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAll = async () => await this.councilRepository.getAll()
 
+  getCount = async (moduleId: number) =>
+    await this.councilRepository.getCount(moduleId)
+
   getById = async (id: number) => {
     throw new Error(`Method not implemented.${id}`)
   }
@@ -67,8 +76,16 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
       id,
     })
 
-  getAllCouncilsByModuleId = async (moduleId: number) =>
-    await this.councilRepository.getAllCouncilsByModuleId(moduleId)
+  getAllCouncilsByModuleId = async (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) =>
+    await this.councilRepository.getAllCouncilsByModuleId(
+      moduleId,
+      limit,
+      offset,
+    )
 
   toggleCouncilStatus = async (councils: Partial<ICouncil>[]) =>
     await this.councilRepository.bulkUpdate(councils)
