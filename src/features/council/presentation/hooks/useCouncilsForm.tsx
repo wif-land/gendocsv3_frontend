@@ -222,9 +222,20 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         (functionary) =>
           functionary.dni === values.subrogant?.split('-')[1]?.trim(),
       ),
-      (values.attendees as string[]).map(
-        (attendee) => attendee.split('-')[1]?.trim(),
-      ),
+      (values.attendees as string[]).map((attendee) => {
+        if (typeof attendee === 'string') {
+          const parts = attendee.split('-')
+          if (parts.length > 1) {
+            return parts[1].trim()
+          } else {
+            console.error('Formato de asistente incorrecto', attendee)
+            return ''
+          }
+        } else {
+          console.error('Asistente no es una cadena', attendee)
+          return ''
+        }
+      }),
     ]
 
     const currentUnusedFunctionaries = functionaries.filter(

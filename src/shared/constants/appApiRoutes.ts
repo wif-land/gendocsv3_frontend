@@ -56,6 +56,7 @@ export const API_ROUTES = {
     UPDATE: '/councils/:id',
     DELETE: '/councils/:id',
     CREATE: '/councils',
+    BULK_UPDATE: '/councils/bulk',
   },
   TEMPLATES: {
     GET_ALL: '/templates',

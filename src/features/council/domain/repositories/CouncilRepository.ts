@@ -21,4 +21,9 @@ export interface CouncilRepository {
     status: number
     councils: CouncilModel[]
   }>
+
+  bulkUpdate: (councils: Partial<ICouncil>[]) => Promise<{
+    status: number
+    councils: CouncilModel[]
+  }>
 }

@@ -24,6 +24,11 @@ export interface CouncilsDataSource {
     status: number
     council: CouncilModel
   }>
+
+  bulkUpdate(councils: Partial<ICouncil>[]): Promise<{
+    status: number
+    councils: CouncilModel[]
+  }>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -52,8 +57,6 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
   }
 
   create = async (council: CouncilModel) => {
-    console.log(council)
-
     const result = await AxiosClient.post(API_ROUTES.COUNCILS.CREATE, council)
 
     const { status, data } = result
@@ -91,5 +94,17 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     }
 
     return { status, council: data.content as CouncilModel }
+  }
+
+  bulkUpdate(councils: ICouncil[]) {
+    const result = AxiosClient.patch(API_ROUTES.COUNCILS.BULK_UPDATE, councils)
+
+    return result.then(({ status, data }) => {
+      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        return { status, councils: [] as CouncilModel[] }
+      }
+
+      return { status, councils: data.content as CouncilModel[] }
+    })
   }
 }

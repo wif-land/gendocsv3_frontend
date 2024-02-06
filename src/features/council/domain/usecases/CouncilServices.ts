@@ -31,6 +31,11 @@ interface CouncilUseCases {
     status: number
     councils: CouncilModel[]
   }>
+
+  toggleCouncilStatus(councils: Partial<ICouncil>[]): Promise<{
+    status: number
+    councils: CouncilModel[]
+  }>
 }
 
 export class CouncilsUseCasesImpl implements CouncilUseCases {
@@ -64,4 +69,7 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAllCouncilsByModuleId = async (moduleId: number) =>
     await this.councilRepository.getAllCouncilsByModuleId(moduleId)
+
+  toggleCouncilStatus = async (councils: Partial<ICouncil>[]) =>
+    await this.councilRepository.bulkUpdate(councils)
 }

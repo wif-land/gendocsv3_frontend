@@ -44,4 +44,7 @@ export class CouncilRepositoryImpl implements CouncilRepository {
       return { status: 500, council: {} as CouncilModel }
     }
   }
+
+  bulkUpdate = async (councils: Partial<ICouncil>[]) =>
+    await this.datasource.bulkUpdate(councils)
 }

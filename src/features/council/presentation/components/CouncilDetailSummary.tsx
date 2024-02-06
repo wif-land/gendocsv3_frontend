@@ -5,7 +5,7 @@ import { CouncilModel } from '../../data/models/CouncilModel'
 import Label from '../../../../shared/sdk/label'
 import { format } from 'date-fns'
 import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
-import { Box, Button, Card, Grid, Tab } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import Iconify from '../../../../core/iconify'
 import { useRouter } from 'next/navigation'
 
@@ -50,6 +50,8 @@ export const CouncilDetailsSummary = ({ council, ...other }: Props) => {
     </Label>
   )
 
+  console.log(council)
+
   const renderError = (
     <EmptyContent
       filled
@@ -67,14 +69,8 @@ export const CouncilDetailsSummary = ({ council, ...other }: Props) => {
     />
   )
 
-  const renderAttendees = council && (
+  const renderAttendees = () => (
     <>
-      <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
-        <Grid xs={12} md={6} lg={5}>
-          <CouncilDetailsSummary disabledActions council={council} />
-        </Grid>
-      </Grid>
-
       <Box
         gap={5}
         display="grid"
@@ -94,16 +90,6 @@ export const CouncilDetailsSummary = ({ council, ...other }: Props) => {
           </Box>
         ))}
       </Box>
-
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Asistentes
-      </Typography>
-
-      <Card>
-        {council.attendees.map((attendee, index) => (
-          <Tab key={index} value={1} label={'Información del asistente'} />
-        ))}
-      </Card>
     </>
   )
 
@@ -117,7 +103,7 @@ export const CouncilDetailsSummary = ({ council, ...other }: Props) => {
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      {council ? renderAttendees : renderError}
+      {council ? renderAttendees() : renderError}
     </Stack>
   )
 }

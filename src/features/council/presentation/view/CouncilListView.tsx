@@ -44,6 +44,7 @@ import { RouterLink } from '../../../../core/routes/components'
 import { CouncilTableRow } from '../components/CouncilTableRow'
 import { CouncilTableFiltersResult } from '../components/CouncilTableFiltersResult'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -127,17 +128,26 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     [dataInPage.length, table, tableData],
   )
 
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
+  const handleDeleteRows = useCallback(async () => {
+    const deleteRows = tableData.filter((row) =>
+      table.selected.includes(row.id!.toString()),
     )
-    setTableData(deleteRows)
 
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
+    const { councils, status } =
+      await CouncilsUseCasesImpl.getInstance().toggleCouncilStatus(
+        deleteRows.map((row) => ({
+          isActive: !row.isActive,
+          id: row.id,
+        })),
+      )
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      const updatedTableData = tableData.map(
+        (row) => councils.find((council) => council.id === row.id) || row,
+      )
+      setCouncils(updatedTableData)
+      setTableData(updatedTableData)
+    }
   }, [dataFiltered.length, dataInPage.length, table, tableData])
 
   const handleEditRow = useCallback(
