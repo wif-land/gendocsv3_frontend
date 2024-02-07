@@ -16,9 +16,12 @@ interface CouncilUseCases {
 
   getCount(moduleId: number): Promise<number>
 
-  getById(id: number): Promise<{
+  getByTerm(
+    term: string,
+    moduleId: number,
+  ): Promise<{
     status: number
-    council: CouncilModel
+    council: CouncilModel[]
   }>
 
   update(
@@ -66,9 +69,8 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   getCount = async (moduleId: number) =>
     await this.councilRepository.getCount(moduleId)
 
-  getById = async (id: number) => {
-    throw new Error(`Method not implemented.${id}`)
-  }
+  getByTerm = async (term: string, moduleId: number) =>
+    await this.councilRepository.getByTerm(term, moduleId)
 
   update = async (id: number, council: Partial<CouncilModel>) =>
     await this.councilRepository.update({

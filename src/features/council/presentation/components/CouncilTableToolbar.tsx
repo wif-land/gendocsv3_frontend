@@ -7,6 +7,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { CouncilModel } from '../../data/models/CouncilModel'
 
 export type ICouncilTableFilterValue = string | string[]
 
@@ -17,13 +19,29 @@ export type ICouncilTableFilters = {
 type Props = {
   filters: ICouncilTableFilters
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
+  setFilteredCouncils: (councils: CouncilModel[]) => void
+  moduleId: number
 }
 
-export const CouncilTableToolbar = ({ filters, onFilters }: Props) => {
+export const CouncilTableToolbar = ({
+  filters,
+  onFilters,
+  setFilteredCouncils: setFilterdCouncils,
+  moduleId,
+}: Props) => {
   const popover = usePopover()
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      const getFilteredCouncils = async () => {
+        const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
+          event.target.value,
+          moduleId,
+        )
+        setFilterdCouncils(response.council)
+      }
+
+      getFilteredCouncils()
       onFilters('name', event.target.value)
     },
     [onFilters],

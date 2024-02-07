@@ -52,7 +52,7 @@ export const API_ROUTES = {
   },
   COUNCILS: {
     GET_ALL: '/councils',
-    GET_ONE: '/councils/:id',
+    GET_BY_TERM: '/councils/:term',
     GET_COUNT: '/councils/count',
     UPDATE: '/councils/:id',
     DELETE: '/councils/:id',
@@ -61,7 +61,7 @@ export const API_ROUTES = {
   },
   TEMPLATES: {
     GET_ALL: '/templates',
-    GET_ONE: '/templates/:id',
+    GET_ONE: '/templates/:term',
     UPDATE: '/templates/:id',
     DELETE: '/templates/:id',
     CREATE: '/templates',

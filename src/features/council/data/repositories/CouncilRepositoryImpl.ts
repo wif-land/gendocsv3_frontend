@@ -33,6 +33,9 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   getAll = async () => await this.datasource.getAll()
 
+  getByTerm = async (term: string, moduleId: number) =>
+    await this.datasource.getByTerm(term, moduleId)
+
   update = async (data: Partial<CouncilModel>) =>
     await this.datasource.update(data)
 

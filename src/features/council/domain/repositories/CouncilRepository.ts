@@ -7,6 +7,14 @@ export interface CouncilRepository {
     councils: CouncilModel[]
   }>
 
+  getByTerm: (
+    term: string,
+    moduleId: number,
+  ) => Promise<{
+    status: number
+    council: CouncilModel[]
+  }>
+
   getCount: (moduleId: number) => Promise<number>
 
   update: (data: Partial<ICouncil>) => Promise<{

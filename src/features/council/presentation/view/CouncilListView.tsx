@@ -115,9 +115,27 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     }
   }, [councils])
 
+  const findOne = async (id: string) => {
+    const council = await CouncilsUseCasesImpl.getInstance().getByTerm(
+      id,
+      currentModuleId?.id as number,
+    )
+    return council
+  }
+
   const handleDeleteRow = useCallback(
     async (id: string) => {
-      const currentCouncil = councils.find((row) => row.id === +id)
+      let currentCouncil = councils.find((row) => row.id === +id)
+
+      if (!currentCouncil) {
+        const result = await findOne(id)
+
+        if (result.status === HTTP_STATUS_CODES.OK) {
+          const { council } = result
+          currentCouncil = council[0]
+        }
+      }
+
       if (currentCouncil) {
         const { council } = await CouncilsUseCasesImpl.getInstance().update(
           +id,
@@ -182,6 +200,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const [count, setCount] = useState(0)
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
+  const [filteredCouncils, setFilteredCouncils] = useState<CouncilModel[]>([])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -198,6 +217,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
           newPage * rowsPerPage,
         )
         .then((response) => {
+          setCouncils([] as CouncilModel[])
           setCouncils([...councils, ...response.councils] as CouncilModel[])
           setTableData(councils)
         })
@@ -212,28 +232,27 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     }
   }
 
-  const handleChangeRegistrosPorPagina = (
+  const handleChangeRowsPerPage = (
     evento: React.ChangeEvent<HTMLInputElement>,
   ) => {
     table.onChangeRowsPerPage(evento)
     setRowsPerPage(Number(evento.target.value))
-    const fetchInitialData = async () => {
+    setCurrentPage(0)
+    setVisitedPages([])
+    setTableData([])
+    const fetchOnRowChange = async () => {
       await CouncilsUseCasesImpl.getInstance()
         .getAllCouncilsByModuleId(
           currentModuleId?.id as number,
           Number(evento.target.value),
-          currentPage * Number(evento.target.value),
+          0,
         )
         .then((response) => {
-          setTableData(response.councils)
           setCouncils(response.councils)
-          console.log(response.councils)
+          setTableData(response.councils)
         })
     }
-
-    if (count === councils.length) return
-
-    fetchInitialData()
+    fetchOnRowChange()
   }
 
   useEffect(() => {
@@ -249,13 +268,13 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
       await CouncilsUseCasesImpl.getInstance()
         .getAllCouncilsByModuleId(
           currentModuleId?.id as number,
+          // eslint-disable-next-line no-magic-numbers
           5,
           currentPage * rowsPerPage,
         )
         .then((response) => {
           setTableData(response.councils)
           setCouncils(response.councils)
-          console.log(response.councils)
         })
     }
 
@@ -286,14 +305,24 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <CouncilTableToolbar filters={filters} onFilters={handleFilters} />
+          <CouncilTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            setFilteredCouncils={setFilteredCouncils}
+            moduleId={currentModuleId?.id as number}
+          />
 
           {canReset && (
             <CouncilTableFiltersResult
+              councils={filteredCouncils}
+              handleDeleteRow={handleDeleteRow}
+              handleEditRow={handleEditRow}
+              handleViewRow={handleViewRow}
+              table={table}
               filters={filters}
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
-              results={dataFiltered.length}
+              results={filteredCouncils !== null ? filteredCouncils.length : 0}
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
@@ -345,7 +374,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
                     ))
                   ) : (
                     <>
-                      {dataFiltered
+                      {tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -390,7 +419,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRegistrosPorPagina}
+            onRowsPerPageChange={handleChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />

@@ -8,6 +8,10 @@ import {
   ICouncilTableFilters,
 } from './CouncilTableToolbar'
 import Iconify from '../../../../core/iconify'
+import { CouncilModel } from '../../data/models/CouncilModel'
+import { CouncilTableRow } from './CouncilTableRow'
+import { useEffect, useState } from 'react'
+// import { CouncilTableRow } from './CouncilTableRow'
 // import { useCouncilStore } from '../store/councilsStore'
 // import { CouncilModel } from '../../data/models/CouncilModel'
 
@@ -16,6 +20,12 @@ type Props = StackProps & {
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
   onResetFilters: VoidFunction
   results: number
+  councils: CouncilModel[]
+  handleDeleteRow: (id: string) => void
+  handleEditRow: (id: string) => void
+  handleViewRow: (id: string) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  table: any
 }
 
 export const CouncilTableFiltersResult = ({
@@ -23,16 +33,25 @@ export const CouncilTableFiltersResult = ({
   // onFilters,
   onResetFilters,
   results,
+  councils,
+  handleDeleteRow,
+  handleEditRow,
+  handleViewRow,
+  table,
   ...other
   // eslint-disable-next-line arrow-body-style
 }: Props) => {
-  // const { councils } = useCouncilStore()
-  // let filteredCouncils: CouncilModel[] = []
+  const [selectedRow, setSelectedRow] = useState<string | null>(null)
+  const [activeStates, setActiveStates] = useState<Record<string, boolean>>({})
 
-  // const handleRemovePublish = (inputValue: string) => {
-  //   filteredCouncils = councils.filter((item) => item.name !== inputValue)
-  //   onFilters('name', filteredCouncils[0].name)
-  // }
+  const toggleActiveState = (id: string) => {
+    // Cambia el estado activo actual para el ID dado
+    setActiveStates((prevStates) => ({
+      ...prevStates,
+      [id]: !prevStates[id],
+    }))
+    setSelectedRow(id)
+  }
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -48,58 +67,59 @@ export const CouncilTableFiltersResult = ({
         spacing={1}
         direction="row"
         flexWrap="wrap"
-        alignItems="center"
+        alignItems="stretch"
       >
-        {/* {!!filteredCouncils.length && (
-          <Block label="Publish:">
-            {filteredCouncils.map((item) => (
-              <Chip
+        {councils &&
+          councils.map((item) =>
+            item.id?.toString() === selectedRow ? (
+              <CouncilTableRow
                 key={item.id}
-                label={item.name}
-                size="small"
-                // onDelete={() => handleRemovePublish(item.name)}
+                row={item}
+                isOnTable={false}
+                activeState={activeStates[item.id!.toString()] || item.isActive}
+                selected={true}
+                onSelectRow={() => {
+                  setSelectedRow(item.id!.toString())
+                }}
+                onDeleteRow={() => {
+                  toggleActiveState(item.id!.toString())
+                  handleDeleteRow(item.id!.toString())
+                }}
+                onEditRow={() => {
+                  setSelectedRow(item.id!.toString())
+                  handleEditRow(item.id!.toString())
+                }}
+                onViewRow={() => handleViewRow(item.id!.toString())}
               />
-            ))}
-          </Block>
-        )} */}
-
-        <Button
-          color="error"
-          onClick={onResetFilters}
-          startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-        >
-          Clear
-        </Button>
+            ) : (
+              <CouncilTableRow
+                key={item.id}
+                row={item}
+                isOnTable={false}
+                selected={false}
+                onSelectRow={() => {
+                  setSelectedRow(item.id!.toString())
+                }}
+                onDeleteRow={() => {
+                  toggleActiveState(item.id!.toString())
+                  handleDeleteRow(item.id!.toString())
+                }}
+                onEditRow={() => {
+                  setSelectedRow(item.id!.toString())
+                  handleEditRow(item.id!.toString())
+                }}
+                onViewRow={() => handleViewRow(item.id!.toString())}
+              />
+            ),
+          )}
       </Stack>
+      <Button
+        color="error"
+        onClick={onResetFilters}
+        startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
+      >
+        Clear
+      </Button>
     </Stack>
   )
 }
-
-// type BlockProps = StackProps & {
-//   label: string
-// }
-
-// const Block = ({ label, children, sx, ...other }: BlockProps) => (
-//   <Stack
-//     component={Paper}
-//     variant="outlined"
-//     spacing={1}
-//     direction="row"
-//     sx={{
-//       p: 1,
-//       borderRadius: 1,
-//       overflow: 'hidden',
-//       borderStyle: 'dashed',
-//       ...sx,
-//     }}
-//     {...other}
-//   >
-//     <Box component="span" sx={{ typography: 'subtitle2' }}>
-//       {label}
-//     </Box>
-
-//     <Stack spacing={1} direction="row" flexWrap="wrap">
-//       {children}
-//     </Stack>
-//   </Stack>
-// )
