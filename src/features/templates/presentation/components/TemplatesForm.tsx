@@ -11,7 +11,7 @@ import {
 } from '@nextui-org/react'
 import { useEffect } from 'react'
 import { useTemplatesForm } from '../hooks/useTemplatesForm'
-import { useUserStore } from '../../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { ITemplate } from '../../domain/entities/ITemplate'
 
 interface ProcessesFormProps {
@@ -27,7 +27,7 @@ export const TemplatesForm = ({
   onOpenChange,
   values,
 }: ProcessesFormProps) => {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const isAddMode = !values?.id
   const { formik } = useTemplatesForm(values ?? ({} as ITemplate), () =>
     onOpenChange(false),

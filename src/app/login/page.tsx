@@ -1,7 +1,7 @@
 'use client'
 
-import { LoginForm } from '../../features/auth/components/LoginForm'
+import LoginView from '../../features/auth/presentation/views/LoginView'
 
-const LoginPage = () => <LoginForm />
+const LoginPage = () => <LoginView />
 
 export default LoginPage
