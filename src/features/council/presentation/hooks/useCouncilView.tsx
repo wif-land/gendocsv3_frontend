@@ -35,6 +35,9 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
       const result =
         await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
           moduleIdentifier,
+          // eslint-disable-next-line no-magic-numbers
+          5,
+          0,
         )
 
       if (result.councils) {

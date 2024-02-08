@@ -110,7 +110,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
 
   const confirm = useBoolean()
   useEffect(() => {
-    if (councils.length) {
+    if (councils !== null && councils.length) {
       setTableData(councils)
     }
   }, [councils])
@@ -201,6 +201,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const [count, setCount] = useState(0)
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [filteredCouncils, setFilteredCouncils] = useState<CouncilModel[]>([])
+  const [isDataFiltered, setIsDataFiltered] = useState(false)
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -222,6 +223,8 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
           setTableData(councils)
         })
     }
+
+    if (isDataFiltered) return
 
     if (visitedPages.includes(newPage)) return
 
@@ -255,32 +258,36 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     fetchOnRowChange()
   }
 
+  const fetchInitialData = async () => {
+    await CouncilsUseCasesImpl.getInstance()
+      .getAllCouncilsByModuleId(
+        currentModuleId?.id as number,
+        rowsPerPage,
+        currentPage * rowsPerPage,
+      )
+      .then((response) => {
+        setTableData(response.councils)
+        setCouncils(response.councils)
+      })
+  }
+
+  const fetchCount = async () => {
+    await CouncilsUseCasesImpl.getInstance()
+      .getCount(currentModuleId?.id as number)
+      .then((response) => {
+        setCount(response)
+      })
+  }
+
   useEffect(() => {
-    const fetchCount = async () => {
-      await CouncilsUseCasesImpl.getInstance()
-        .getCount(currentModuleId?.id as number)
-        .then((response) => {
-          setCount(response)
-        })
+    if (tableData.length === 0) {
+      fetchInitialData()
     }
 
-    const fetchInitialData = async () => {
-      await CouncilsUseCasesImpl.getInstance()
-        .getAllCouncilsByModuleId(
-          currentModuleId?.id as number,
-          // eslint-disable-next-line no-magic-numbers
-          5,
-          currentPage * rowsPerPage,
-        )
-        .then((response) => {
-          setTableData(response.councils)
-          setCouncils(response.councils)
-        })
+    if (count === 0) {
+      fetchCount()
     }
-
-    fetchInitialData()
-    fetchCount()
-  }, [])
+  }, [moduleId, tableData.length, count])
 
   return (
     <div key={moduleId}>
@@ -310,6 +317,9 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
             onFilters={handleFilters}
             setFilteredCouncils={setFilteredCouncils}
             moduleId={currentModuleId?.id as number}
+            setDataTable={setTableData}
+            setIsDataFiltered={setIsDataFiltered}
+            setVisitedPages={setVisitedPages}
           />
 
           {canReset && (
@@ -331,7 +341,9 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={tableData.length}
+              rowCount={
+                !isDataFiltered ? tableData.length : filteredCouncils.length
+              }
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
@@ -356,7 +368,9 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
+                  rowCount={
+                    !isDataFiltered ? tableData.length : filteredCouncils.length
+                  }
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
@@ -415,7 +429,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={count}
+            count={!isDataFiltered ? count : filteredCouncils.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}

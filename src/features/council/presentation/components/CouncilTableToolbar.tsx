@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
@@ -9,6 +9,8 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { CouncilModel } from '../../data/models/CouncilModel'
+import { useCouncilStore } from '../store/councilsStore'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
 
 export type ICouncilTableFilterValue = string | string[]
 
@@ -21,31 +23,95 @@ type Props = {
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
   setFilteredCouncils: (councils: CouncilModel[]) => void
   moduleId: number
+  setDataTable: (data: CouncilModel[]) => void
+  setIsDataFiltered: (isDataFiltered: boolean) => void
+  setVisitedPages: (visitedPages: number[]) => void
 }
 
 export const CouncilTableToolbar = ({
   filters,
   onFilters,
-  setFilteredCouncils: setFilterdCouncils,
+  setFilteredCouncils,
   moduleId,
+  setIsDataFiltered,
+  setDataTable,
+  setVisitedPages,
 }: Props) => {
   const popover = usePopover()
 
-  const handleFilterName = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const getFilteredCouncils = async () => {
-        const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
-          event.target.value,
-          moduleId,
-        )
-        setFilterdCouncils(response.council)
-      }
+  const { setCouncils } = useCouncilStore()
 
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const debouncedSetSearchTerm = useDebounce(setSearchTerm)
+
+  const handleFilterNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event.target.value === '') {
+      setIsDataFiltered(false)
+      setVisitedPages([])
+    } else {
+      setIsDataFiltered(true)
+    }
+
+    debouncedSetSearchTerm(event.target.value)
+  }
+
+  // const handleFilterName = useCallback(
+  //   async (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     const getFilteredCouncils = async () => {
+  //       const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
+  //         event.target.value,
+  //         moduleId,
+  //       )
+  //       setCouncils(response.council)
+  //       setFilteredCouncils(response.council)
+  //       setDataTable(response.council)
+  //     }
+
+  //     if (event.target.value === '') {
+  //       setDataTable([])
+  //       setIsDataFiltered(false)
+  //       return
+  //     }
+
+  //     getFilteredCouncils()
+  //     setIsDataFiltered(true)
+  //     onFilters('name', event.target.value)
+  //   },
+  //   [onFilters],
+  // )
+
+  useEffect(() => {
+    let activeRequest = true
+    const getFilteredCouncils = async () => {
+      const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
+        searchTerm,
+        moduleId,
+      )
+      if (activeRequest) {
+        setCouncils(response.council)
+        setFilteredCouncils(response.council)
+        setDataTable(response.council)
+        onFilters('name', searchTerm)
+      }
+      console.log('response', response)
+    }
+
+    if (searchTerm === '') {
+      setDataTable([])
+      setIsDataFiltered(false)
+      setVisitedPages([])
+    } else {
       getFilteredCouncils()
-      onFilters('name', event.target.value)
-    },
-    [onFilters],
-  )
+    }
+
+    return () => {
+      activeRequest = false
+      setVisitedPages([])
+    }
+  }, [searchTerm])
 
   return (
     <>
@@ -71,7 +137,7 @@ export const CouncilTableToolbar = ({
           <TextField
             fullWidth
             defaultValue={filters.name}
-            onChange={handleFilterName}
+            onChange={handleFilterNameChange}
             placeholder="Busca por nombre de consejo"
             InputProps={{
               startAdornment: (
