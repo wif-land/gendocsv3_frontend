@@ -1,6 +1,6 @@
 import { Button, Input, Switch } from '@nextui-org/react'
 import React, { useEffect } from 'react'
-import { useUserStore } from '../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../auth/presentation/state/useAccountStore'
 import useModulesStore from '../../../shared/store/modulesStore'
 import { IProcess } from '../types/IProcess'
 import { useEditProcess } from '../hooks/useEditProcess'
@@ -15,7 +15,7 @@ const EditProcessForm = ({
   process: IProcess
 }) => {
   const { formik, setProcessId } = useEditProcess()
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const { modules } = useModulesStore()
 
   useEffect(() => {

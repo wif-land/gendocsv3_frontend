@@ -16,7 +16,7 @@ import {
 } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
-import { useUserStore } from '../../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { IDocument } from '../../domain/entities/IDocument'
 import { useStudentStore } from '../../../../shared/store/studentStore'
 import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
@@ -40,7 +40,7 @@ export const DocumentsForm = ({
   onOpenChange,
   values,
 }: ProcessesFormProps) => {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const isAddMode = !values?.id
   const { formik } = useDocumentsForm(values ?? ({} as IDocument), () =>
     onOpenChange(false),

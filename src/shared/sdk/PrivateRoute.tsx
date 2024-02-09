@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useUserStore } from '../store/userProfileStore'
+import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
 import { getCookie } from '../utils/CookiesUtil'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 
@@ -8,7 +8,7 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   // const router = useRouter()
 
   useEffect(() => {

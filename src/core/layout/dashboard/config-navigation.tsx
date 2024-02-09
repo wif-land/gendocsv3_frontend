@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import useModulesStore from '../../../shared/store/modulesStore'
-import { useUserStore } from '../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 import Iconify from '../../iconify'
 
 interface IRoute {
@@ -32,7 +32,7 @@ const ICONS: {
 }
 
 export const useNavData = () => {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const { accessModules, setAccessModules } = useModulesStore()
 
   useEffect(() => {

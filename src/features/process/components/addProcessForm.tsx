@@ -1,7 +1,7 @@
 import { Button, Input, Switch } from '@nextui-org/react'
 import { useAddProcess } from '../hooks/useAddProcess'
 import React, { useEffect } from 'react'
-import { useUserStore } from '../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../auth/presentation/state/useAccountStore'
 import useModulesStore from '../../../shared/store/modulesStore'
 
 const AddProcessForm = ({
@@ -12,7 +12,7 @@ const AddProcessForm = ({
   moduleId: string
 }) => {
   const { formik } = useAddProcess()
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const { modules } = useModulesStore()
 
   useEffect(() => {

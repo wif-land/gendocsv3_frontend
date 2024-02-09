@@ -11,13 +11,13 @@ import { usePopover } from '../../../shared/sdk/custom-popover'
 import { varHover } from '../../../shared/sdk/animate'
 import CustomPopover from '../../../shared/sdk/custom-popover/custom-popover'
 import { useSnackbar } from '../../../shared/sdk/snackbar'
-import { useAuth } from '../../../features/auth/hooks/useAuth'
-import { useUserStore } from '../../../shared/store/userProfileStore'
+import { useAuth } from '../../../features/auth/presentation/hooks/useAuth'
+import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 
 export default function AccountPopover() {
   const router = useRouter()
 
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
 
   const { logout } = useAuth()
 

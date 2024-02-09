@@ -1,7 +1,7 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { setCookie } from '../utils/CookiesUtil'
-import { IUser } from '../../features/auth/types/IUser'
+import { IUser } from '../../features/auth/domain/entities/IUser'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 import { UsersApi } from '../../features/users/api/users'
 

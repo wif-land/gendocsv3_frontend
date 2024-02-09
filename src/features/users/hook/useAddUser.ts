@@ -4,7 +4,7 @@ import * as yup from 'yup'
 import { UsersApi } from '../api/users'
 import { toast } from 'react-toastify'
 import { useUsersStore } from '../../../shared/store/usersStore'
-import { IUser } from '../../../features/auth/types/IUser'
+import { IUser } from '../../auth/domain/entities/IUser'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 
 interface IUserForm {

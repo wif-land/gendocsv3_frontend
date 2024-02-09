@@ -15,7 +15,7 @@ import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import useModulesStore from '../../../../shared/store/modulesStore'
-import { useUserStore } from '../../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
 interface FormValuesProps extends ICouncil {
   president: string
@@ -25,7 +25,7 @@ interface FormValuesProps extends ICouncil {
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const { councils, addCouncil, setCouncils } = useCouncilStore()
   const { codeModule } = useParams()
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const { modules } = useModulesStore()
   const moduleIdentifier =
     modules?.find(
