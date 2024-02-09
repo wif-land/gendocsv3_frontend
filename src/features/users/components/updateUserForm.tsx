@@ -11,7 +11,7 @@ import {
 } from '@nextui-org/react'
 import { fetchModules } from '../../modules/api/modules'
 import { IModule } from '../../modules/types/IModule'
-import { IUser } from '../../../features/auth/types/IUser'
+import { IUser } from '../../auth/domain/entities/IUser'
 
 const UpdateUserForm = ({
   user,

@@ -6,10 +6,10 @@ import { NavToggleButton } from '../_common'
 import Logo from '../../../shared/sdk/logo'
 import NavSectionMini from '../../../shared/sdk/nav-section/mini/nav-section-mini'
 import { hideScroll } from '../../theme/css'
-import { useUserStore } from '../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 
 export default function NavMini() {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const navData = useNavData()
 
   return (

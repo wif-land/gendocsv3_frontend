@@ -2,10 +2,10 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
-import { useUserStore } from '../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 
 export default function NavUpgrade() {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
 
   return (
     <Stack

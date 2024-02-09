@@ -11,7 +11,7 @@ import {
 } from '@nextui-org/react'
 import { useEffect } from 'react'
 import { useProcessesForm } from '../hooks/useProcessesForm'
-import { useUserStore } from '../../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { IProcess } from '../../domain/entities/IProcess'
 
 interface ProcessesFormProps {
@@ -26,7 +26,7 @@ export const ProcessesForm = ({
   onOpenChange,
   values,
 }: ProcessesFormProps) => {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const isAddMode = !values?.id
   const { formik } = useProcessesForm(values ?? ({} as IProcess), () =>
     onOpenChange(false),

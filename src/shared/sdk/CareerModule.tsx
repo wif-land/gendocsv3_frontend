@@ -3,12 +3,12 @@ import { ListboxWrapper } from './ListboxWrapper'
 import { useEffect } from 'react'
 import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
-import { useUserStore } from '../store/userProfileStore'
+import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
 import { usePathname, useRouter } from 'next/navigation'
 import { submoduleIcons, defaultIcon } from '../constants/submodulesIcons'
 
 const CareerModule = () => {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const { accessModules, setAccessModules } = useModulesStore()
 
   const router = useRouter()
