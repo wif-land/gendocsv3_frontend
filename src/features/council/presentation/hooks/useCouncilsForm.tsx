@@ -5,6 +5,7 @@ import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import {
   CouncilAttendanceRole,
   CouncilType,
+  IAttendee,
   ICouncil,
 } from '../../domain/entities/ICouncil'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -16,6 +17,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
+import { CouncilModel } from '../../data/models/CouncilModel'
 
 interface FormValuesProps extends ICouncil {
   president: string
@@ -50,6 +52,34 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .required('Los asistentes son requeridos'),
   })
 
+  const findPresident = (attendees) =>
+    attendees.find(
+      (attendee) => attendee.role === CouncilAttendanceRole.PRESIDENT,
+    )?.functionary
+
+  const findSubrogate = (attendees) =>
+    attendees.find(
+      (attendee) => attendee.role === CouncilAttendanceRole.SUBROGATE,
+    )?.functionary
+
+  const filterMembers = (attendees) =>
+    attendees.filter(
+      (attendee) => attendee.role === CouncilAttendanceRole.MEMBER,
+    )
+
+  const president = useMemo(
+    () => findPresident(currentCouncil?.attendees || []),
+    [currentCouncil],
+  )
+  const subrogate = useMemo(
+    () => findSubrogate(currentCouncil?.attendees || []),
+    [currentCouncil],
+  )
+  const members = useMemo(
+    () => filterMembers(currentCouncil?.attendees || []),
+    [currentCouncil],
+  )
+
   const defaultValues = useMemo(
     () => ({
       name: currentCouncil?.name || '',
@@ -57,11 +87,18 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       type: currentCouncil?.type || CouncilType.ORDINARY,
       isActive: currentCouncil?.isActive || true,
       isArchived: currentCouncil?.isArchived || false,
-      president: '',
-      subrogant: '',
-      attendees: currentCouncil?.attendees || [''],
+      president: president
+        ? `${president.firstName} ${president.secondName} ${president.firstLastName} ${president.secondLastName} - ${president.dni}`
+        : '',
+      subrogant: subrogate
+        ? `${subrogate.firstName} ${subrogate.secondName} ${subrogate.firstLastName} ${subrogate.secondLastName} - ${subrogate.dni}`
+        : '',
+      attendees: members.map(
+        (member) =>
+          `${member.functionary.firstName} ${member.functionary.secondName} ${member.functionary.firstLastName} ${member.functionary.secondLastName} - ${member.functionary.dni}`,
+      ),
     }),
-    [currentCouncil],
+    [currentCouncil, president, subrogate, members],
   )
 
   const methods = useForm<FormValuesProps>({

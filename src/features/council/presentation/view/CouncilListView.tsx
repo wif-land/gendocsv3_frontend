@@ -45,7 +45,6 @@ import { CouncilTableRow } from '../components/CouncilTableRow'
 import { CouncilTableFiltersResult } from '../components/CouncilTableFiltersResult'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import useModulesStore from '../../../../shared/store/modulesStore'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -64,15 +63,17 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const router = useRouter()
   const pathname = usePathname()
 
-  const { loader, councils, setCouncils } = useCouncilView({
+  const {
+    loader,
+    councils,
+    setCouncils,
+    fetchInitialData,
+    moduleIdentifier,
+    fetchCount,
+    fetchNextPage,
+  } = useCouncilView({
     moduleId,
   })
-
-  const { modules } = useModulesStore()
-
-  const currentModuleId = modules?.find(
-    (module) => module.code === moduleId.toUpperCase(),
-  )
 
   const [filters, setFilters] = useState<ICouncilTableFilters>(defaultFilters)
 
@@ -118,7 +119,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const findOne = async (id: string) => {
     const council = await CouncilsUseCasesImpl.getInstance().getByTerm(
       id,
-      currentModuleId?.id as number,
+      moduleIdentifier,
     )
     return council
   }
@@ -210,20 +211,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
       setVisitedPages([...visitedPages, newPage])
     }
 
-    const fetchNextPage = async () => {
-      await CouncilsUseCasesImpl.getInstance()
-        .getAllCouncilsByModuleId(
-          currentModuleId?.id as number,
-          rowsPerPage,
-          newPage * rowsPerPage,
-        )
-        .then((response) => {
-          setCouncils([] as CouncilModel[])
-          setCouncils([...councils, ...response.councils] as CouncilModel[])
-          setTableData(councils)
-        })
-    }
-
     if (isDataFiltered) return
 
     if (visitedPages.includes(newPage)) return
@@ -231,7 +218,9 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     if (count === councils.length) return
 
     if (newPage > currentPage) {
-      fetchNextPage()
+      fetchNextPage(rowsPerPage, newPage).then(() => {
+        setTableData(councils)
+      })
     }
   }
 
@@ -246,7 +235,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     const fetchOnRowChange = async () => {
       await CouncilsUseCasesImpl.getInstance()
         .getAllCouncilsByModuleId(
-          currentModuleId?.id as number,
+          moduleIdentifier,
           Number(evento.target.value),
           0,
         )
@@ -258,34 +247,28 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     fetchOnRowChange()
   }
 
-  const fetchInitialData = async () => {
-    await CouncilsUseCasesImpl.getInstance()
-      .getAllCouncilsByModuleId(
-        currentModuleId?.id as number,
-        rowsPerPage,
-        currentPage * rowsPerPage,
-      )
-      .then((response) => {
-        setTableData(response.councils)
-        setCouncils(response.councils)
-      })
-  }
-
-  const fetchCount = async () => {
-    await CouncilsUseCasesImpl.getInstance()
-      .getCount(currentModuleId?.id as number)
-      .then((response) => {
-        setCount(response)
-      })
-  }
-
   useEffect(() => {
+    let isMounted = true
+
     if (tableData.length === 0) {
-      fetchInitialData()
+      if (isMounted) {
+        fetchInitialData(rowsPerPage, currentPage).then((response) => {
+          if (response.length > 0) {
+            setTableData(response)
+          }
+        })
+      }
     }
 
     if (count === 0) {
-      fetchCount()
+      if (isMounted) {
+        fetchCount().then((response) => {
+          setCount(response)
+        })
+      }
+    }
+    return () => {
+      isMounted = false
     }
   }, [moduleId, tableData.length, count])
 
@@ -316,7 +299,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
             filters={filters}
             onFilters={handleFilters}
             setFilteredCouncils={setFilteredCouncils}
-            moduleId={currentModuleId?.id as number}
+            moduleId={moduleIdentifier}
             setDataTable={setTableData}
             setIsDataFiltered={setIsDataFiltered}
             setVisitedPages={setVisitedPages}
