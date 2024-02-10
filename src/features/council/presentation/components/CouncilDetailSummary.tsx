@@ -30,9 +30,7 @@ export const CouncilDetailsSummary = ({
     (module) => module.code === pathname.split('/')[2].toUpperCase(),
   )?.id
 
-  const [currentCouncil, setCurrentCouncil] = useState<
-    CouncilModel | undefined
-  >(council)
+  const [currentCouncil, setCurrentCouncil] = useState<CouncilModel>(council)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {

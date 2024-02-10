@@ -109,6 +109,8 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
       return { status, councils: [] as CouncilModel[] }
     }
 
+    console.log('data', data.content)
+
     return { status, councils: data.content as CouncilModel[] }
   }
 
