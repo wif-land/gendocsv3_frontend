@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
+import { isEqual } from 'lodash'
+
 import { memo, useCallback, useEffect, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+
 import {
   Button,
   Card,
@@ -27,20 +31,19 @@ import {
   getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
-import { isEqual } from 'lodash'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
+import { ProcessModel } from '../../data/models/ProcessesModel'
+
 import {
   ProcessTableToolbar,
   IProcessTableFilterValue,
   IProcessTableFilters,
 } from '../components/ProcessTableTooldar'
 import { useProcessView } from '../hooks/useProcessView'
-import { ProcessModel } from '../../data/models/ProcessesModel'
 import { ProcessTableRow } from '../components/ProcessTableRow'
 
 const TABLE_HEAD = [

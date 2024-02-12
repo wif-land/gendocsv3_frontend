@@ -1,11 +1,13 @@
 'use client'
-
-import Container from '@mui/material/Container'
-import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
-import { useSettingsContext } from '../../../../shared/sdk/settings'
-import { paths } from '../../../../core/routes/paths'
 import { usePathname } from 'next/navigation'
 import { memo } from 'react'
+
+import Container from '@mui/material/Container'
+
+import { paths } from '../../../../core/routes/paths'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
+
 import { ProcessNewEditForm } from '../components/ProcessCreateEditForm'
 
 const ProcessCreateView = () => {

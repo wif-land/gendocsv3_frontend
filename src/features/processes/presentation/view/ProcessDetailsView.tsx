@@ -2,6 +2,8 @@
 'use client'
 
 import { memo, useCallback, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+
 import { alpha } from '@mui/material/styles'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
@@ -11,13 +13,14 @@ import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Typography from '@mui/material/Typography'
-import { useParams, useRouter } from 'next/navigation'
+
+import Iconify from '../../../../core/iconify'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
-import { ProcessDetailsSkeleton } from '../components/ProcessSkeleton'
-import Iconify from '../../../../core/iconify'
-import { ProcessDetailsSummary } from '../components/ProcessDetailSummary'
+
 import { useProcessStore } from '../state/useProcessStore'
+import { ProcessDetailsSummary } from '../components/ProcessDetailSummary'
+import { ProcessDetailsSkeleton } from '../components/ProcessSkeleton'
 
 const SUMMARY = [
   {

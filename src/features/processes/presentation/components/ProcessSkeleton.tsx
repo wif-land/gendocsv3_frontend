@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import Stack from '@mui/material/Stack'
 import Skeleton from '@mui/material/Skeleton'
 import Paper, { PaperProps } from '@mui/material/Paper'
@@ -49,7 +48,7 @@ export const ProcessDetailsSkeleton = ({ ...other }: Grid2Props) => (
 
     <Grid xs={12}>
       <Stack direction="row" alignItems="center">
-        {[...Array(3)].map((_, index) => (
+        {[1, 1, 1].map((_, index) => (
           <Stack
             key={index}
             spacing={2}

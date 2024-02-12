@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { useProcessStore } from '../state/useProcessStore'
+import useModulesStore from '../../../../shared/store/modulesStore'
+
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
-import useModulesStore from '../../../../shared/store/modulesStore'
+
+import { useProcessStore } from '../state/useProcessStore'
 
 export const useProcessView = ({ moduleId }: { moduleId: string }) => {
   const { processes, setProcesses } = useProcessStore()

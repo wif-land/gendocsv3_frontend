@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { toast } from 'react-toastify'
+import { useCallback, useEffect, useMemo } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useForm } from 'react-hook-form'
+import { enqueueSnackbar } from 'notistack'
+
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { useProcessStore } from '../state/useProcessStore'
+import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
+
+import { ProcessModel } from '../../data/models/ProcessesModel'
 import { IProcess } from '../../domain/entities/IProcess'
 import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
-import { ProcessModel } from '../../data/models/ProcessesModel'
-import { usePathname, useRouter } from 'next/navigation'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
-import * as Yup from 'yup'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { enqueueSnackbar } from 'notistack'
+
+import { useProcessStore } from '../state/useProcessStore'
 
 interface FormValuesProps extends IProcess {}
 
@@ -60,8 +63,8 @@ export const useProcessForm = (currentProcess?: IProcess) => {
         enqueueSnackbar('Proceso creado exitosamente')
         reset()
       } else {
-        toast.error('Error al crear el proceso', {
-          closeButton: false,
+        enqueueSnackbar('Error al crear el proceso', {
+          variant: 'error',
         })
       }
     } catch (error) {

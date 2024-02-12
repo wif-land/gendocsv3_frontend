@@ -10,7 +10,7 @@ import {
   Switch,
 } from '@nextui-org/react'
 import { useEffect } from 'react'
-import { useProcessForm } from '../hooks/useProcessesForm'
+import { useProcessForm } from '../hooks/useProcessForm'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { IProcess } from '../../domain/entities/IProcess'
 
