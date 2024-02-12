@@ -21,7 +21,7 @@ type Props = StackProps & {
   onResetFilters: VoidFunction
   results: number
   councils: CouncilModel[]
-  handleDeleteRow: (id: string) => void
+  handleDeleteRow: (row: CouncilModel) => void
   handleEditRow: (id: string) => void
   handleViewRow: (id: string) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

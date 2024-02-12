@@ -57,7 +57,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   //   }
   // }, [])
 
-  const fetchInitialData = async (rowsPerPage: number, currentPage: number) => {
+  const fetchData = async (rowsPerPage: number, currentPage: number) => {
     addLoaderItem('council')
 
     try {
@@ -68,14 +68,16 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
           currentPage * rowsPerPage,
         )
 
-      if (response.status === HTTP_STATUS_CODES.OK && response.councils) {
-        setCouncils(response.councils)
-        return response.councils
-      } else {
-        return []
+      if (response.status === HTTP_STATUS_CODES.OK && response.data) {
+        if ('councils' in response.data && 'count' in response.data) {
+          return response.data as { councils: CouncilModel[]; count: number }
+        }
       }
     } catch (error) {
-      return []
+      return {
+        councils: [] as CouncilModel[],
+        count: -1,
+      }
     } finally {
       setTimeout(() => {
         removeLoaderItem('council')
@@ -83,37 +85,26 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     }
   }
 
-  const fetchCount = async () => {
-    addLoaderItem('counter')
+  const updateRow = async (council: Partial<CouncilModel>) => {
+    addLoaderItem('council')
 
     try {
-      const response =
-        await CouncilsUseCasesImpl.getInstance().getCount(moduleIdentifier)
+      const response = await CouncilsUseCasesImpl.getInstance().update(
+        council.id as number,
+        {
+          isActive: !council.isActive,
+        },
+      )
 
-      return response
-    } catch (error) {
-      return 0
-    } finally {
-      setTimeout(() => {
-        removeLoaderItem('counter')
-      }, LOADER_DELAY)
-    }
-  }
-
-  const fetchNextPage = async (rowsPerPage: number, newPage: number) => {
-    try {
-      const response =
-        await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
-          moduleIdentifier,
-          rowsPerPage,
-          newPage * rowsPerPage,
-        )
-
-      if (response.status === HTTP_STATUS_CODES.OK && response.councils) {
-        setCouncils([...councils, ...response.councils])
+      if (response.status === HTTP_STATUS_CODES.OK && response.council) {
+        return response.council
       }
     } catch (error) {
-      console.error(error)
+      return {} as CouncilModel
+    } finally {
+      setTimeout(() => {
+        removeLoaderItem('council')
+      }, LOADER_DELAY)
     }
   }
 
@@ -124,8 +115,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     moduleIdentifier,
     handleSelectedCouncil,
     setCouncils,
-    fetchInitialData,
-    fetchCount,
-    fetchNextPage,
+    fetchData,
+    updateRow,
   }
 }

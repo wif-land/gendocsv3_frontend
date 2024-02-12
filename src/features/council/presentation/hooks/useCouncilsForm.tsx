@@ -246,7 +246,15 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     }
   }, [reset, currentCouncil])
 
-  const getDni = (attendee?: string) => attendee?.split('-')[1].trim() || ''
+  const getDni = (attendee?: string) => {
+    if (attendee && attendee.includes('-')) {
+      const parts = attendee.split('-')
+      if (parts.length > 1) {
+        return parts[1].trim()
+      }
+    }
+    return ''
+  }
 
   useEffect(() => {
     if (!functionaries) return

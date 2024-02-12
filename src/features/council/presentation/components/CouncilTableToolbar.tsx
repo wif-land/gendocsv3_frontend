@@ -11,6 +11,7 @@ import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { useCouncilStore } from '../store/councilsStore'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export type ICouncilTableFilterValue = string | string[]
 
@@ -25,7 +26,10 @@ type Props = {
   moduleId: number
   setDataTable: (data: CouncilModel[]) => void
   setIsDataFiltered: (isDataFiltered: boolean) => void
+  setCount: (count: number) => void
   setVisitedPages: (visitedPages: number[]) => void
+  currentPage: number
+  rowsPerPage: number
 }
 
 export const CouncilTableToolbar = ({
@@ -36,6 +40,9 @@ export const CouncilTableToolbar = ({
   setIsDataFiltered,
   setDataTable,
   setVisitedPages,
+  currentPage,
+  rowsPerPage,
+  setCount,
 }: Props) => {
   const popover = usePopover()
 
@@ -86,17 +93,30 @@ export const CouncilTableToolbar = ({
   useEffect(() => {
     let activeRequest = true
     const getFilteredCouncils = async () => {
-      const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
-        searchTerm,
-        moduleId,
-      )
+      const { data, status } =
+        await CouncilsUseCasesImpl.getInstance().getByTerm(
+          searchTerm,
+          moduleId,
+          rowsPerPage,
+          currentPage * rowsPerPage,
+        )
+
+      if (status === HTTP_STATUS_CODES.NOT_FOUND) {
+        setDataTable([])
+        setCouncils([])
+        setFilteredCouncils([])
+        setCount(0)
+        return
+      }
+
       if (activeRequest) {
-        setCouncils(response.council)
-        setFilteredCouncils(response.council)
-        setDataTable(response.council)
+        setCount(data.count)
+        setCouncils(data.councils)
+        setFilteredCouncils(data.councils)
+        setDataTable(data.councils)
         onFilters('name', searchTerm)
       }
-      console.log('response', response)
+      console.log('response', data, status)
     }
 
     if (searchTerm === '') {
