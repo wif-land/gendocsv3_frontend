@@ -40,38 +40,19 @@ import {
   IFunctionaryTableFilterValue,
   IFunctionaryTableFilters,
 } from '../components/FunctionaryTableToolbar'
-
-const TABLE_HEAD = [
-  {
-    key: 'name',
-    label: 'Funcionario',
-  },
-  {
-    key: 'personalEmail',
-    label: 'Email personal',
-  },
-  {
-    key: 'outlookEmail',
-    label: 'Email universitario',
-  },
-  {
-    key: 'isActive',
-    label: 'Estado',
-  },
-  {
-    key: 'actions',
-    label: 'Acciones',
-  },
-]
+import { TABLE_HEAD } from '../constants'
 
 const defaultFilters: IFunctionaryTableFilters = {
   name: '',
+  personalEmail: '',
+  outlookEmail: '',
 }
 
 const FunctionaryListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
+  const settings = useSettingsContext()
   const { loader, functionaries } = useFunctionaryView()
 
   const [tableData, setTableData] = useState<FunctionaryModel[]>([])
@@ -140,24 +121,15 @@ const FunctionaryListView = () => {
     [router],
   )
 
-  const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}`)
-    },
-    [router],
-  )
-
   const notFound =
     (!dataFiltered.length && canReset) ||
     (!loader.length && !dataFiltered.length)
-
-  const settings = useSettingsContext()
 
   return (
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Carreras"
+          heading="Funcionarios"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
             { name: 'Funcionarios' },
@@ -203,7 +175,7 @@ const FunctionaryListView = () => {
                 )
               }
               action={
-                <Tooltip title="Delete">
+                <Tooltip title="Borrar">
                   <IconButton color="primary" onClick={confirm.onTrue}>
                     <Iconify icon="solar:trash-bin-trash-bold" />
                   </IconButton>
@@ -257,7 +229,6 @@ const FunctionaryListView = () => {
                               handleDeleteRow(row.id!.toString())
                             }
                             onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}
                     </>
@@ -293,10 +264,10 @@ const FunctionaryListView = () => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Borrar"
         content={
           <>
-            Are you sure want to delete{' '}
+            Estás seguro que desear eliminar{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -309,7 +280,7 @@ const FunctionaryListView = () => {
               confirm.onFalse()
             }}
           >
-            Delete
+            Borrar
           </Button>
         }
       />
@@ -330,7 +301,14 @@ const applyFilter = ({
   const { name } = filters
 
   const stabilizedThis = currentInputData.map(
-    (el, index) => [el, index] as const,
+    (el, index) =>
+      [
+        {
+          ...el,
+          name: `${el.firstName} ${el.secondName} ${el.firstLastName} ${el.secondLastName}`,
+        },
+        index,
+      ] as const,
   )
 
   stabilizedThis.sort((a, b) => {
@@ -339,7 +317,9 @@ const applyFilter = ({
     return a[1] - b[1]
   })
 
-  currentInputData = stabilizedThis.map((el) => el[0])
+  currentInputData = stabilizedThis.map((el) =>
+    FunctionaryModel.fromJson(el[0]),
+  )
 
   if (name) {
     currentInputData = currentInputData.filter(

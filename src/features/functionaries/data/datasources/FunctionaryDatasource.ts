@@ -58,21 +58,18 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     return { status, functionaries: data.content as FunctionaryModel[] }
   }
 
-  update = async (career: Partial<IFunctionary>) => {
-    const { id, ...body } = career
+  update = async (functionary: Partial<IFunctionary>) => {
+    const { id, ...body } = functionary
 
-    const result = await AxiosClient.put(
-      API_ROUTES.FUNCTIONARIES.UPDATE,
+    const result = await AxiosClient.patch(
+      API_ROUTES.FUNCTIONARIES.UPDATE(id as number),
       body,
-      {
-        id,
-      },
     )
 
     const { status } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
+    if (status !== HTTP_STATUS_CODES.NO_CONTENT) {
+      throw new Error('Error al actualizar el funcionario')
     }
 
     return { status }

@@ -6,9 +6,11 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Unstable_Grid2'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
+
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
+
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
 

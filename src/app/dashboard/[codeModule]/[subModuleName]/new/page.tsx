@@ -1,7 +1,9 @@
 'use client'
 
 import { useParams } from 'next/navigation'
+
 import { Stack } from '@mui/material'
+
 import { CouncilCreateView } from '../../../../../features/council/presentation/view'
 import { CareerCreateView } from '../../../../../features/careers/presentation/view'
 import { DocumentCreateView } from '../../../../../features/documents/presentation/view'

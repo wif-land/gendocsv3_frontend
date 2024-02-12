@@ -38,7 +38,7 @@ export const API_ROUTES = {
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
     GET_ONE: '/functionaries/:id',
-    UPDATE: '/functionaries',
+    UPDATE: (id: number) => `/functionaries/${id}`,
     DELETE: '/functionaries/:id',
     CREATE: '/functionaries',
   },

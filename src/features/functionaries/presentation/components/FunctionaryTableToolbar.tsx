@@ -12,6 +12,8 @@ export type IFunctionaryTableFilterValue = string | string[]
 
 export type IFunctionaryTableFilters = {
   name: string
+  personalEmail: string
+  outlookEmail: string
 }
 
 type Props = {

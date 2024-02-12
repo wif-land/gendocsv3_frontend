@@ -4,22 +4,18 @@ import { IFunctionary } from '../entities/IFunctionary'
 import { FunctionaryRepository } from '../repositories/FunctionaryRepository'
 
 interface FunctionaryUseCases {
-  create(data: IFunctionary): Promise<{
-    status: number
-    functionary: FunctionaryModel
-  }>
+  create(
+    data: IFunctionary,
+  ): Promise<{ functionary: FunctionaryModel } | boolean>
 
-  getAll(): Promise<{
-    status: number
-    functionaries: FunctionaryModel[]
-  }>
+  getAll(): Promise<
+    | {
+        functionaries: FunctionaryModel[]
+      }
+    | boolean
+  >
 
-  update(
-    id: number,
-    data: Partial<FunctionaryModel>,
-  ): Promise<{
-    status: number
-  }>
+  update(id: number, data: Partial<FunctionaryModel>): Promise<boolean>
 }
 
 export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
@@ -36,14 +32,25 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
   private functionaryRepository: FunctionaryRepository =
     FunctionaryRepositoryImpl.getInstance()
 
-  create = async (data: IFunctionary) =>
-    await this.functionaryRepository.create(data)
+  create = async (data: IFunctionary) => {
+    try {
+      return await this.functionaryRepository.create(data)
+    } catch (error) {
+      return false
+    }
+  }
 
   getAll = async () => await this.functionaryRepository.getAll()
 
-  update = async (id: number, data: Partial<FunctionaryModel>) =>
-    await this.functionaryRepository.update({
-      ...data,
-      id,
-    })
+  update = async (id: number, data: Partial<FunctionaryModel>) => {
+    try {
+      await this.functionaryRepository.update({
+        ...data,
+        id,
+      })
+      return true
+    } catch (error) {
+      return false
+    }
+  }
 }

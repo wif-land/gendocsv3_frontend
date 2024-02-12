@@ -2,6 +2,7 @@
 
 import { lazy } from 'react'
 import { useParams } from 'next/navigation'
+
 import { CouncilListView } from '../../../../features/council/presentation/view'
 import { CareerListView } from '../../../../features/careers/presentation/view'
 import { DocumentListView } from '../../../../features/documents/presentation/view'

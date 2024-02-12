@@ -1,5 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation'
+
 import { ProcessEditView } from '../../../../../../features/processes/presentation/view'
 import { CouncilEditView } from '../../../../../../features/council/presentation/view'
 import { CareersEditView } from '../../../../../../features/careers/presentation/view'
@@ -21,10 +22,11 @@ const Page = () => {
     RegExp(key).test(subModuleName as string),
   )
 
-  return (
+  const Component =
     routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
     defaultComponent
-  )
+
+  return <Component />
 }
 
 export default Page
