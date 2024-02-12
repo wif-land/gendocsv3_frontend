@@ -48,10 +48,6 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
           data,
         )
 
-        if (!editedFields) {
-          return
-        }
-
         await handleUpdate(currentFunctionary.id!, editedFields)
       }
 

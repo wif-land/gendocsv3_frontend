@@ -84,8 +84,15 @@ export const handleCreate = async (values: FormValuesProps) => {
 
 export const handleUpdate = async (
   id: number,
-  values: Partial<IFunctionary>,
+  values: Partial<IFunctionary> | null,
 ) => {
+  if (!values) {
+    enqueueSnackbar('No se han encontrado valores para actualizar', {
+      variant: 'warning',
+    })
+    return
+  }
+
   const result = await FunctionaryUseCasesImpl.getInstance().update(id, values)
 
   if (!result) {
