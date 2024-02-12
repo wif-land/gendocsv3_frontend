@@ -30,7 +30,7 @@ export const ProcessNewEditForm = ({ currentProcess }: Props) => {
     formState: { isSubmitting },
   } = methods
 
-  const renderDetails = (
+  const renderGeneralInfo = (
     <>
       {mdUp && (
         <Grid md={4}>
@@ -38,8 +38,7 @@ export const ProcessNewEditForm = ({ currentProcess }: Props) => {
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Información general de la carrera, como nombre, créditos y
-            coordinador.
+            Información general del proceso, como nombre.
           </Typography>
         </Grid>
       )}
@@ -194,7 +193,7 @@ export const ProcessNewEditForm = ({ currentProcess }: Props) => {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        {renderDetails}
+        {renderGeneralInfo}
 
         {renderProperties}
 

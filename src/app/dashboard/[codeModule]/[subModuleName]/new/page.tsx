@@ -27,10 +27,11 @@ const Page = () => {
     RegExp(key).test(route),
   )
 
-  return (
+  const Component =
     routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
     defaultComponent
-  )
+
+  return <Component />
 }
 
 export default Page

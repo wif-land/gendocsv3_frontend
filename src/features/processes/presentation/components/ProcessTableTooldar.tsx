@@ -54,7 +54,7 @@ export const ProcessTableToolbar = ({ filters, onFilters }: Props) => {
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Busca por nombre de carrera"
+            placeholder="Busca por nombre de proceso"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
