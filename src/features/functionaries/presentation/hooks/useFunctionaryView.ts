@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
+import { useFunctionaryStore } from '../state/useFunctionaryStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 
 export const useFunctionaryView = () => {

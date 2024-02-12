@@ -1,22 +1,24 @@
 import { create, StateCreator } from 'zustand'
-import { IFunctionary } from '../../features/functionaries/domain/entities/IFunctionary'
-import { FunctionariesApi } from '../../features/functionaries/api/functionaries'
+import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 
 interface StoreState {
-  functionaries: IFunctionary[] | undefined
-  setFunctionaries: (functionaries?: IFunctionary[] | undefined) => void
+  functionaries: IFunctionary[]
+  setFunctionaries: (functionaries: IFunctionary[]) => void
   get: () => void
 }
 
 const STORE_NAME = 'functionaries-store'
+const DEFAULT_FUNCTIONARIES: IFunctionary[] = []
+
 export const useFunctionaryStore = create<StoreState>(
   persist(
     (set) => ({
-      functionaries: undefined,
+      functionaries: DEFAULT_FUNCTIONARIES,
       setFunctionaries: (functionaries) => set({ functionaries }),
       get: async () => {
-        const result = await FunctionariesApi.fetchFunctionaries()
+        const result = await FunctionaryUseCasesImpl.getInstance().getAll()
         set({ functionaries: result.functionaries })
       },
     }),

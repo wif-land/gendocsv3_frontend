@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo } from 'react'
 import { ICareer } from '../../domain/entities/ICareer'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
+import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { usePathname, useRouter } from 'next/navigation'
 import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'

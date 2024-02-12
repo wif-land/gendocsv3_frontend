@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 import { enqueueSnackbar } from 'notistack'
 
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
+import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { IProcess } from '../../domain/entities/IProcess'
