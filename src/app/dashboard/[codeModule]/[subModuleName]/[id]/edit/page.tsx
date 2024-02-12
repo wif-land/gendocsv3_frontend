@@ -1,6 +1,7 @@
 'use client'
 import { useParams } from 'next/navigation'
-import CouncilEditView from '../../../../../../features/council/presentation/view/CouncilEditView'
+import { ProcessEditView } from '../../../../../../features/processes/presentation/view'
+import { CouncilEditView } from '../../../../../../features/council/presentation/view'
 import { CareersEditView } from '../../../../../../features/careers/presentation/view'
 import { FunctionaryEditView } from '../../../../../../features/functionaries/presentation/view'
 
@@ -11,6 +12,7 @@ const Page = () => {
     consejos: CouncilEditView,
     carreras: CareersEditView,
     funcionarios: FunctionaryEditView,
+    procesos: ProcessEditView,
   }
 
   const defaultComponent = () => <div>DEFAULT</div>
@@ -19,11 +21,10 @@ const Page = () => {
     RegExp(key).test(subModuleName as string),
   )
 
-  const Component =
+  return (
     routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
     defaultComponent
-
-  return <Component />
+  )
 }
 
 export default Page

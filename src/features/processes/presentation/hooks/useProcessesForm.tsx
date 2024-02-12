@@ -1,79 +1,77 @@
-import * as yup from 'yup'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from 'react-toastify'
-import { useFormik } from 'formik'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { useProcessStore } from '../store/processesStore'
+import { useProcessStore } from '../state/useProcessStore'
 import { IProcess } from '../../domain/entities/IProcess'
 import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
 import { ProcessModel } from '../../data/models/ProcessesModel'
+import { usePathname, useRouter } from 'next/navigation'
+import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
+import * as Yup from 'yup'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { enqueueSnackbar } from 'notistack'
 
-export const useProcessesForm = (
-  initialValues: IProcess,
-  onClose: () => void,
-) => {
+interface FormValuesProps extends IProcess {}
+
+export const useProcessForm = (currentProcess?: IProcess) => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const { functionaries, get } = useFunctionaryStore()
   const { processes, setProcesses } = useProcessStore()
 
-  const validationSchema = yup.object({
-    name: yup.string().required('El nombre es requerido'),
+  const NewProcessSchema = Yup.object().shape({
+    name: Yup.string().required('Campo requerido'),
   })
 
-  const formik = useFormik<IProcess>({
-    enableReinitialize: true,
-    initialValues: {
-      name: initialValues.name || '',
-      isActive: initialValues.isActive || false,
-      moduleId: initialValues.moduleId || 0,
-      userId: initialValues.userId || 0,
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      if (!initialValues.id) {
-        await handleCreateProcess(values)
-        onClose()
-        return
-      }
+  const defaultValues = useMemo(
+    () =>
+      ({
+        name: currentProcess?.name || '',
+        isActive: currentProcess?.isActive || true,
+        moduleId: currentProcess?.moduleId || 0,
+        userId: currentProcess?.userId || 0,
+        createdAt: currentProcess?.createdAt || '',
+        updatedAt: currentProcess?.updatedAt || '',
+        templateProcesses: currentProcess?.templateProcesses || [],
+      }) as IProcess,
+    [currentProcess],
+  )
 
-      const editedFields: { [key: string]: unknown } = {}
-
-      Object.keys(initialValues).forEach((key) => {
-        if (
-          initialValues[key as keyof IProcess] !== values[key as keyof IProcess]
-        ) {
-          editedFields[key] = values[key as keyof IProcess]
-        }
-      })
-
-      if (Object.keys(editedFields).length === 0) {
-        onClose()
-        return
-      }
-      await handleUpdateProcess(initialValues.id, editedFields)
-      onClose()
-    },
+  const methods = useForm<FormValuesProps>({
+    // @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'DeepPartial<FormValuesProps> | undefined'.
+    resolver: yupResolver(NewProcessSchema),
+    defaultValues,
   })
 
-  const handleCreateProcess = async (values: IProcess) => {
+  const {
+    reset,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods
+
+  const handleCreate = useCallback(async (values: IProcess) => {
     try {
       const result = await ProcessesUseCasesImpl.getInstance().create(values)
 
       if (result.process) {
         setProcesses([...processes, result.process])
-        toast.success('Proceso creado exitosamente')
-        formik.resetForm()
+        enqueueSnackbar('Proceso creado exitosamente')
+        reset()
       } else {
         toast.error('Error al crear el proceso', {
           closeButton: false,
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al crear el proceso')
+      enqueueSnackbar('Ocurrió un error al crear el proceso', {
+        variant: 'error',
+      })
     }
-  }
+  }, [])
 
-  const handleUpdateProcess = async (
-    id: number,
-    editedFields: Partial<IProcess>,
-  ) => {
+  const handleUpdate = async (id: number, editedFields: Partial<IProcess>) => {
     try {
       const { status } = await ProcessesUseCasesImpl.getInstance().update(
         id,
@@ -91,17 +89,91 @@ export const useProcessesForm = (
               : process,
           ),
         )
-        toast.success('Proceso actualizado exitosamente')
-        formik.resetForm()
+        enqueueSnackbar('Proceso actualizado exitosamente')
+        reset()
       } else {
-        toast.error('Error al actualizar el proceso', {
-          closeButton: false,
+        enqueueSnackbar('Error al actualizar el proceso', {
+          variant: 'error',
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al actualizar el proceso')
+      enqueueSnackbar('Ocurrió un error al actualizar el proceso', {
+        variant: 'error',
+      })
     }
   }
 
-  return { formik, processes, setProcesses }
+  const onSubmit = useCallback(
+    async (data: FormValuesProps) => {
+      try {
+        if (!currentProcess) {
+          await handleCreate({
+            ...data,
+          })
+        } else {
+          const editedFields = getEditedFields<FormValuesProps>(
+            defaultValues,
+            data,
+          )
+
+          if (editedFields) {
+            await handleUpdate(currentProcess.id as number, editedFields)
+          }
+        }
+
+        router.push(
+          currentProcess
+            ? pathname.replace(new RegExp(`/${currentProcess.id}/edit`), '')
+            : pathname.replace('/new', ''),
+        )
+        reset()
+      } catch (error) {
+        enqueueSnackbar('Error al crear la carrera', {
+          variant: 'error',
+        })
+      }
+    },
+    [currentProcess, enqueueSnackbar, reset, router],
+  )
+
+  useEffect(() => {
+    if (currentProcess) {
+      reset(defaultValues)
+    }
+  }, [reset, currentProcess, defaultValues])
+
+  useEffect(() => {
+    if (!functionaries) {
+      get()
+    }
+  }, [])
+
+  return {
+    functionaries,
+    isSubmitting,
+    methods,
+    onSubmit,
+    handleSubmit,
+  }
+}
+
+type GenericObject = { [key: string]: any }
+
+const getEditedFields = <T extends GenericObject>(
+  initialValues: T,
+  values: T,
+): T | null => {
+  const editedFields: T = {} as T
+
+  Object.keys(initialValues).forEach((key) => {
+    if (initialValues[key] !== values[key]) {
+      ;(editedFields as any)[key] = values[key]
+    }
+  })
+
+  if (Object.keys(editedFields).length === 0) {
+    return null
+  }
+
+  return editedFields
 }
