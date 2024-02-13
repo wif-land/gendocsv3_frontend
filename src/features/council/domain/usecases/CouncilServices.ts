@@ -14,14 +14,17 @@ interface CouncilUseCases {
     councils: CouncilModel[]
   }>
 
-  getCount(moduleId: number): Promise<number>
-
   getByTerm(
     term: string,
     moduleId: number,
+    limit: number,
+    offset: number,
   ): Promise<{
     status: number
-    council: CouncilModel[]
+    data: {
+      count: number
+      councils: CouncilModel[]
+    }
   }>
 
   update(
@@ -38,7 +41,10 @@ interface CouncilUseCases {
     offset: number,
   ): Promise<{
     status: number
-    councils: CouncilModel[]
+    data: {
+      councils: CouncilModel[]
+      count: number
+    }
   }>
 
   toggleCouncilStatus(councils: Partial<ICouncil>[]): Promise<{
@@ -66,11 +72,12 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAll = async () => await this.councilRepository.getAll()
 
-  getCount = async (moduleId: number) =>
-    await this.councilRepository.getCount(moduleId)
-
-  getByTerm = async (term: string, moduleId: number) =>
-    await this.councilRepository.getByTerm(term, moduleId)
+  getByTerm = async (
+    term: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => await this.councilRepository.getByTerm(term, moduleId, limit, offset)
 
   update = async (id: number, council: Partial<CouncilModel>) =>
     await this.councilRepository.update({

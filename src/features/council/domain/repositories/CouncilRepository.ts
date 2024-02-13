@@ -10,12 +10,15 @@ export interface CouncilRepository {
   getByTerm: (
     term: string,
     moduleId: number,
+    limit: number,
+    offset: number,
   ) => Promise<{
     status: number
-    council: CouncilModel[]
+    data: {
+      count: number
+      councils: CouncilModel[]
+    }
   }>
-
-  getCount: (moduleId: number) => Promise<number>
 
   update: (data: Partial<ICouncil>) => Promise<{
     status: number
@@ -33,7 +36,10 @@ export interface CouncilRepository {
     offset: number,
   ) => Promise<{
     status: number
-    councils: CouncilModel[]
+    data: {
+      councils: CouncilModel[]
+      count: number
+    }
   }>
 
   bulkUpdate: (councils: Partial<ICouncil>[]) => Promise<{
