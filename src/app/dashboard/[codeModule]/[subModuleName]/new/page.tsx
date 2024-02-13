@@ -9,6 +9,7 @@ import { CareerCreateView } from '../../../../../features/careers/presentation/v
 import { DocumentCreateView } from '../../../../../features/documents/presentation/view'
 import { FunctionaryCreateView } from '../../../../../features/functionaries/presentation/view'
 import { ProcessCreateView } from '../../../../../features/processes/presentation/view'
+import { StudentCreateView } from '../../../../../features/students/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -16,6 +17,7 @@ const Page = () => {
   const route = `${codeModule}/${subModuleName}`
 
   const routeToComponent = {
+    estudiantes: StudentCreateView,
     consejos: CouncilCreateView,
     carreras: CareerCreateView,
     documentos: DocumentCreateView,

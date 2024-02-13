@@ -5,11 +5,13 @@ import { ProcessEditView } from '../../../../../../features/processes/presentati
 import { CouncilEditView } from '../../../../../../features/council/presentation/view'
 import { CareersEditView } from '../../../../../../features/careers/presentation/view'
 import { FunctionaryEditView } from '../../../../../../features/functionaries/presentation/view'
+import { StudentEditView } from '../../../../../../features/students/presentation/view'
 
 const Page = () => {
   const { subModuleName } = useParams()
 
   const routeToComponent = {
+    estudiantes: StudentEditView,
     consejos: CouncilEditView,
     carreras: CareersEditView,
     funcionarios: FunctionaryEditView,

@@ -30,7 +30,7 @@ export const API_ROUTES = {
   STUDENTS: {
     GET_ALL: '/students',
     GET_ONE: '/students/:id',
-    UPDATE: '/students/:id',
+    UPDATE: (id: number) => `/students/${id}`,
     DELETE: '/students/:id',
     CREATE: '/students',
     CREATE_MANY: '/students/bulk',

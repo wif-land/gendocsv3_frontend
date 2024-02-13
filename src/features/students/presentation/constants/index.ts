@@ -1,0 +1,128 @@
+import * as yup from 'yup'
+import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
+import { IStudent } from '../../types/IStudent'
+import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
+import { enqueueSnackbar } from 'notistack'
+import { CareerModel } from '../../../careers/data/models/CareerModel'
+
+export interface FormValuesProps extends IStudent {}
+
+export const TABLE_HEAD = [
+  {
+    id: 'name',
+    label: 'Estudiante',
+  },
+  {
+    id: 'personalEmail',
+    label: 'Email personal',
+  },
+  {
+    id: 'outlookEmail',
+    label: 'Email universitario',
+  },
+  {
+    id: 'isActive',
+    label: 'Estado',
+  },
+  {
+    id: 'actions',
+    label: 'Acciones',
+  },
+]
+
+export const NewStudentSchema = yup.object().shape({
+  dni: yup.string().required(VALIDATION_MESSAGES.required),
+  firstName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondName: yup.string().required(VALIDATION_MESSAGES.required),
+  firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
+  personalEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(
+      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
+      VALIDATION_MESSAGES.invalidFormat,
+    ),
+  outlookEmail: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(
+      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
+      VALIDATION_MESSAGES.invalidFormat,
+    ),
+  regularPhoneNumber: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
+  phoneNumber: yup
+    .string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
+  registration: yup.string().required(VALIDATION_MESSAGES.required),
+  approvedCredits: yup
+    .number()
+    .required(VALIDATION_MESSAGES.required)
+    // eslint-disable-next-line no-magic-numbers
+    .max(140)
+    .min(0),
+  folio: yup.string().required(VALIDATION_MESSAGES.required),
+  careerId: yup.number().required(VALIDATION_MESSAGES.required),
+})
+
+export const resolveDefaultValues = (currentStudent?: IStudent) => ({
+  dni: currentStudent?.dni || '',
+  firstName: currentStudent?.firstName || '',
+  secondName: currentStudent?.secondName || '',
+  firstLastName: currentStudent?.firstLastName || '',
+  secondLastName: currentStudent?.secondLastName || '',
+  outlookEmail: currentStudent?.outlookEmail || '',
+  personalEmail: currentStudent?.personalEmail || '',
+  phoneNumber: currentStudent?.phoneNumber || '',
+  regularPhoneNumber: currentStudent?.regularPhoneNumber || '',
+  isActive: currentStudent?.isActive || true,
+  registration: currentStudent?.registration || '',
+  approvedCredits: currentStudent?.approvedCredits || 0,
+  folio: currentStudent?.folio || '',
+  gender: currentStudent?.gender || '',
+  id: currentStudent?.id || 0,
+  birthdate: currentStudent?.birthdate || '',
+  canton: currentStudent?.canton || '',
+  career: currentStudent?.career || CareerModel.fromJson({}),
+  updatedAt: currentStudent?.updatedAt || '',
+  createdAt: currentStudent?.createdAt || '',
+  name: `${currentStudent?.firstName} ${currentStudent?.firstLastName}`,
+})
+
+export const handleCreate = async (values: FormValuesProps) => {
+  const result = await StudentUseCasesImpl.getInstance().create(values)
+
+  if (!result) {
+    enqueueSnackbar('Error al crear el funcionario', { variant: 'error' })
+    return
+  }
+
+  enqueueSnackbar('Funcionario creado con éxito', { variant: 'success' })
+}
+
+export const handleUpdate = async (
+  id: number,
+  values: Partial<IStudent> | null,
+) => {
+  if (!values) {
+    enqueueSnackbar('No se han encontrado valores para actualizar', {
+      variant: 'warning',
+    })
+    return
+  }
+
+  const result = await StudentUseCasesImpl.getInstance().update(id, values)
+
+  if (!result) {
+    enqueueSnackbar('Error al actualizar el funcionario', {
+      variant: 'error',
+    })
+    return
+  }
+
+  enqueueSnackbar('Funcionario actualizado con éxito', { variant: 'success' })
+}
