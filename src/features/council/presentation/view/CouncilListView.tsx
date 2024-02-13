@@ -60,6 +60,8 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
+  const settings = useSettingsContext()
+  const confirm = useBoolean()
 
   const {
     loader,
@@ -68,6 +70,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     fetchData,
     moduleIdentifier,
     updateRow,
+    fetchFilteredData,
   } = useCouncilView({
     moduleId,
   })
@@ -80,6 +83,21 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const [filteredCouncils, setFilteredCouncils] = useState<CouncilModel[]>([])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [filters, setFilters] = useState<ICouncilTableFilters>(defaultFilters)
+  const [tableData, setTableData] = useState<CouncilModel[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const handleResetFilters = () => {
+    setSearchTerm('')
+    setIsDataFiltered(false)
+  }
+
+  const denseHeight = table.dense ? NO_DENSE : DENSE
+
+  const notFound =
+    (!filteredCouncils.length && isDataFiltered) ||
+    (!loader.length && !filteredCouncils.length && isDataFiltered) ||
+    !councils.length
+
   const handleFilters = useCallback(
     (name: string, value: ICouncilTableFilterValue) => {
       table.onResetPage()
@@ -91,20 +109,9 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     [table],
   )
 
-  const [tableData, setTableData] = useState<CouncilModel[]>([])
-
-  const denseHeight = table.dense ? NO_DENSE : DENSE
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters)
-  }, [])
-
-  const confirm = useBoolean()
-  useEffect(() => {
-    if (councils !== null && councils.length) {
-      setTableData(councils)
-    }
-  }, [councils])
+  // const handleResetFilters = useCallback(() => {
+  //   setFilters(defaultFilters)
+  // }, [])
 
   const handleDeleteRow = useCallback(
     (row: CouncilModel) => {
@@ -157,13 +164,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const notFound =
-    (!filteredCouncils.length && isDataFiltered) ||
-    (!loader.length && !filteredCouncils.length && isDataFiltered) ||
-    !councils.length
-
-  const settings = useSettingsContext()
-
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
     setCurrentPage(newPage)
@@ -171,20 +171,26 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
       setVisitedPages([...visitedPages, newPage])
     }
 
-    if (isDataFiltered) return
-
     if (visitedPages.includes(newPage)) return
 
-    if (count === councils.length) return
-
     if (newPage > currentPage) {
-      fetchData(rowsPerPage, newPage).then((data) => {
-        console.log('nextPage')
-        if (data?.councils) {
-          setCouncils([...councils, ...data.councils])
-          setTableData([...tableData, ...data.councils])
-        }
-      })
+      if (isDataFiltered) {
+        if (count === filteredCouncils.length) return
+        fetchFilteredData(rowsPerPage, newPage, filters.name).then((data) => {
+          if (data?.councils) {
+            setCouncils([...councils, ...data.councils])
+            setTableData([...tableData, ...data.councils])
+          }
+        })
+      } else {
+        if (count === councils.length) return
+        fetchData(rowsPerPage, newPage).then((data) => {
+          if (data?.councils) {
+            setCouncils([...councils, ...data.councils])
+            setTableData([...tableData, ...data.councils])
+          }
+        })
+      }
     }
   }
 
@@ -196,23 +202,35 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     setCurrentPage(0)
     setVisitedPages([])
     setTableData([])
-
-    fetchData(Number(event.target.value), 0).then((data) => {
-      if (data?.councils) {
-        setTableData(data.councils)
-        setCouncils(data.councils)
-      }
-      if (data?.count) {
-        setCount(data.count)
-      }
-    })
+    if (isDataFiltered) {
+      fetchFilteredData(Number(event.target.value), 0, filters.name).then(
+        (data) => {
+          if (data?.councils) {
+            setTableData(data.councils)
+            setCouncils(data.councils)
+          }
+          if (data?.count) {
+            setCount(data.count)
+          }
+        },
+      )
+    } else {
+      fetchData(Number(event.target.value), 0).then((data) => {
+        if (data?.councils) {
+          setTableData(data.councils)
+          setCouncils(data.councils)
+        }
+        if (data?.count) {
+          setCount(data.count)
+        }
+      })
+    }
   }
 
   useEffect(() => {
     let isMounted = true
 
     if (tableData.length === 0 && !isDataFiltered) {
-      console.log('use effect')
       if (isMounted) {
         fetchData(rowsPerPage, currentPage).then((data) => {
           if (data?.councils && data?.councils.length > 0) {
@@ -230,6 +248,12 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
       isMounted = false
     }
   }, [moduleId, tableData, count, isDataFiltered])
+
+  useEffect(() => {
+    if (councils !== null && councils.length) {
+      setTableData(councils)
+    }
+  }, [councils])
 
   return (
     <div key={moduleId}>
@@ -265,19 +289,15 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
             rowsPerPage={rowsPerPage}
             currentPage={currentPage}
             setCount={setCount}
+            setCurrentPage={setCurrentPage}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
           />
 
           {isDataFiltered && (
             <CouncilTableFiltersResult
-              councils={filteredCouncils}
-              handleDeleteRow={handleDeleteRow}
-              handleEditRow={handleEditRow}
-              handleViewRow={handleViewRow}
-              table={table}
-              filters={filters}
-              onFilters={handleFilters}
               onResetFilters={handleResetFilters}
-              results={filteredCouncils !== null ? filteredCouncils.length : 0}
+              results={filteredCouncils !== null ? count : 0}
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
@@ -383,7 +403,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
         title="Delete"
         content={
           <>
-            Are you sure want to delete{' '}
+            Estás seguro de que quieres cambiar el estado de
             <strong> {table.selected.length} </strong> items?
           </>
         }

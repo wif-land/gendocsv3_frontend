@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
@@ -30,10 +30,13 @@ type Props = {
   setVisitedPages: (visitedPages: number[]) => void
   currentPage: number
   rowsPerPage: number
+  setCurrentPage: (currentPage: number) => void
+  searchTerm: string
+  setSearchTerm: (searchTerm: string) => void
 }
 
 export const CouncilTableToolbar = ({
-  filters,
+  // filters,
   onFilters,
   setFilteredCouncils,
   moduleId,
@@ -43,12 +46,13 @@ export const CouncilTableToolbar = ({
   currentPage,
   rowsPerPage,
   setCount,
+  setCurrentPage,
+  searchTerm,
+  setSearchTerm,
 }: Props) => {
   const popover = usePopover()
 
   const { setCouncils } = useCouncilStore()
-
-  const [searchTerm, setSearchTerm] = useState('')
 
   const debouncedSetSearchTerm = useDebounce(setSearchTerm)
 
@@ -65,32 +69,8 @@ export const CouncilTableToolbar = ({
     debouncedSetSearchTerm(event.target.value)
   }
 
-  // const handleFilterName = useCallback(
-  //   async (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     const getFilteredCouncils = async () => {
-  //       const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
-  //         event.target.value,
-  //         moduleId,
-  //       )
-  //       setCouncils(response.council)
-  //       setFilteredCouncils(response.council)
-  //       setDataTable(response.council)
-  //     }
-
-  //     if (event.target.value === '') {
-  //       setDataTable([])
-  //       setIsDataFiltered(false)
-  //       return
-  //     }
-
-  //     getFilteredCouncils()
-  //     setIsDataFiltered(true)
-  //     onFilters('name', event.target.value)
-  //   },
-  //   [onFilters],
-  // )
-
   useEffect(() => {
+    setCurrentPage(0)
     let activeRequest = true
     const getFilteredCouncils = async () => {
       const { data, status } =
@@ -116,7 +96,6 @@ export const CouncilTableToolbar = ({
         setDataTable(data.councils)
         onFilters('name', searchTerm)
       }
-      console.log('response', data, status)
     }
 
     if (searchTerm === '') {
@@ -156,7 +135,7 @@ export const CouncilTableToolbar = ({
         >
           <TextField
             fullWidth
-            defaultValue={filters.name}
+            defaultValue={searchTerm}
             onChange={handleFilterNameChange}
             placeholder="Busca por nombre de consejo"
             InputProps={{

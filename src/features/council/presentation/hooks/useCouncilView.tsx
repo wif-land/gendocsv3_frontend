@@ -108,6 +108,38 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     }
   }
 
+  const fetchFilteredData = async (
+    rowsPerPage: number,
+    currentPage: number,
+    filter: string,
+  ) => {
+    addLoaderItem('council')
+
+    try {
+      const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
+        filter,
+        moduleIdentifier,
+        rowsPerPage,
+        currentPage * rowsPerPage,
+      )
+
+      if (response.status === HTTP_STATUS_CODES.OK && response.data) {
+        if ('councils' in response.data && 'count' in response.data) {
+          return response.data as { councils: CouncilModel[]; count: number }
+        }
+      }
+    } catch (error) {
+      return {
+        councils: [] as CouncilModel[],
+        count: -1,
+      }
+    } finally {
+      setTimeout(() => {
+        removeLoaderItem('council')
+      }, LOADER_DELAY)
+    }
+  }
+
   return {
     loader,
     councils,
@@ -116,6 +148,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     handleSelectedCouncil,
     setCouncils,
     fetchData,
+    fetchFilteredData,
     updateRow,
   }
 }
