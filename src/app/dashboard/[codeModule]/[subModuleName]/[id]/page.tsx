@@ -2,7 +2,6 @@
 
 import { useParams } from 'next/navigation'
 
-import { CareerDetailView } from '../../../../../features/careers/presentation/view'
 import { DocumentDetailsView } from '../../../../../features/documents/presentation/view'
 import { CouncilDetailsView } from '../../../../../features/council/presentation/view'
 import { ProcessDetailsView } from '../../../../../features/processes/presentation/view'
@@ -15,7 +14,6 @@ const Page = () => {
 
   const routeToComponent = {
     consejos: CouncilDetailsView,
-    carreras: CareerDetailView,
     documentos: DocumentDetailsView,
     procesos: ProcessDetailsView,
     funcionarios: FunctionaryDetailsView,

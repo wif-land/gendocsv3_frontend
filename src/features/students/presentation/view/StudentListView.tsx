@@ -128,10 +128,10 @@ const StudentListView = () => {
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Funcionarios"
+          heading="Estudiantes"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Funcionarios' },
+            { name: 'Estudiantes' },
           ]}
           action={
             <Button
@@ -140,7 +140,7 @@ const StudentListView = () => {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              Nuevo funcionario
+              Nuevo estudiante
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}

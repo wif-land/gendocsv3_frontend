@@ -20,7 +20,6 @@ type Props = {
   row: CareerModel
   selected: boolean
   onEditRow: VoidFunction
-  onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
 }
@@ -31,7 +30,6 @@ export const CareerTableRow = ({
   onSelectRow,
   onDeleteRow,
   onEditRow,
-  onViewRow,
 }: Props) => {
   const confirm = useBoolean()
   const popover = usePopover()
@@ -60,7 +58,7 @@ export const CareerTableRow = ({
                 noWrap
                 color="inherit"
                 variant="subtitle2"
-                onClick={onViewRow}
+                onClick={onEditRow}
                 sx={{ cursor: 'pointer' }}
               >
                 {name}
@@ -127,16 +125,6 @@ export const CareerTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          Detalles
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
@@ -160,8 +148,8 @@ export const CareerTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar consejo"
-        content="¿Estás seguro de que quieres eliminar este consejo?"
+        title="Borrar carrera"
+        content="¿Estás seguro de que quieres eliminar esta carrera?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
             Borrar
