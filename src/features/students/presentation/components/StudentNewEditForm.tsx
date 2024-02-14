@@ -32,7 +32,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
     control,
   } = methods
 
-  const renderDetails = (
+  const renderGeneralInfo = (
     <>
       {mdUp && (
         <Grid md={4}>
@@ -290,7 +290,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        {renderDetails}
+        {renderGeneralInfo}
 
         {renderDegreeInfo}
 

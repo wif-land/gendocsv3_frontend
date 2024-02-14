@@ -66,7 +66,7 @@ export const NewStudentSchema = yup.object().shape({
     .max(140)
     .min(0),
   folio: yup.string().required(VALIDATION_MESSAGES.required),
-  careerId: yup.number().required(VALIDATION_MESSAGES.required),
+  career: yup.number().required(VALIDATION_MESSAGES.required),
 })
 
 export const resolveDefaultValues = (currentStudent?: IStudent) => ({

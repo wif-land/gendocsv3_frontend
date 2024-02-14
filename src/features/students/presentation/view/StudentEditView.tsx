@@ -18,8 +18,6 @@ const StudentEditView = () => {
 
   const currentStudent = students?.find((student) => student.id! === +id)
 
-  console.log({ currentStudent })
-
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
