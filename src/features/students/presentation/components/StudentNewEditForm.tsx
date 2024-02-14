@@ -78,10 +78,28 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
 
               <RHFTextField name="secondLastName" label="Segundo apellido" />
             </Box>
+          </Stack>
+        </Card>
+      </Grid>
+    </>
+  )
 
-            <Divider />
-            <Divider />
+  const renderDegreeInfo = (
+    <>
+      {mdUp && (
+        <Grid md={4}>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Información de grado
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Información de grado del estudiante como, carrera, créditos, etc.
+          </Typography>
+        </Grid>
+      )}
 
+      <Grid xs={12} md={8}>
+        <Card>
+          <Stack spacing={3} sx={{ p: 3 }}>
             <Box
               sx={{
                 columnGap: 2,
@@ -273,6 +291,8 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         {renderDetails}
+
+        {renderDegreeInfo}
 
         {renderContactInfo}
 

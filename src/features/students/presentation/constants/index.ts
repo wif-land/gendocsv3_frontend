@@ -87,7 +87,7 @@ export const resolveDefaultValues = (currentStudent?: IStudent) => ({
   id: currentStudent?.id || 0,
   birthdate: currentStudent?.birthdate || '',
   canton: currentStudent?.canton || '',
-  career: currentStudent?.career || CareerModel.fromJson({}),
+  career: currentStudent?.career.id || CareerModel.fromJson({}),
   updatedAt: currentStudent?.updatedAt || '',
   createdAt: currentStudent?.createdAt || '',
   name: `${currentStudent?.firstName} ${currentStudent?.firstLastName}`,
@@ -170,5 +170,9 @@ export const CANTONES = [
   {
     value: 'Tisaleo',
     label: 'Tisaleo',
+  },
+  {
+    value: 'Ibarra',
+    label: 'Ibarra',
   },
 ]
