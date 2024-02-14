@@ -22,10 +22,20 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   private constructor(private readonly datasource: CouncilsDataSource) {}
 
-  getAllCouncilsByModuleId = async (moduleId: number) =>
-    await this.datasource.getAllCouncilsByModuleId(moduleId)
+  getAllCouncilsByModuleId = async (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getAllCouncilsByModuleId(moduleId, limit, offset)
 
   getAll = async () => await this.datasource.getAll()
+
+  getByField = async (
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getByField(field, moduleId, limit, offset)
 
   update = async (data: Partial<CouncilModel>) =>
     await this.datasource.update(data)
@@ -44,4 +54,7 @@ export class CouncilRepositoryImpl implements CouncilRepository {
       return { status: 500, council: {} as CouncilModel }
     }
   }
+
+  bulkUpdate = async (councils: Partial<ICouncil>[]) =>
+    await this.datasource.bulkUpdate(councils)
 }

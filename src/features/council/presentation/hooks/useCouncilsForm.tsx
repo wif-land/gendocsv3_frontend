@@ -1,7 +1,6 @@
 import * as Yup from 'yup'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useCouncilStore } from '../store/councilsStore'
-import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import {
   CouncilAttendanceRole,
@@ -17,11 +16,17 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
+import {
+  ICouncilAttendee,
+  ICreateCouncilAttendee,
+} from '../../domain/entities/ICouncilAttendee'
 
 interface FormValuesProps extends ICouncil {
   president: string
   subrogant: string
 }
+
+const MAX_ATTENDEES = 10
 
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const { councils, addCouncil, setCouncils } = useCouncilStore()
@@ -51,18 +56,57 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .required('Los asistentes son requeridos'),
   })
 
+  const findPresident = (attendees: ICouncilAttendee[]) =>
+    attendees.find(
+      (attendee: ICouncilAttendee) =>
+        attendee.role === CouncilAttendanceRole.PRESIDENT,
+    )?.functionary
+
+  const findSubrogate = (attendees: ICouncilAttendee[]) =>
+    attendees.find(
+      (attendee) => attendee.role === CouncilAttendanceRole.SUBROGATE,
+    )?.functionary
+
+  const filterMembers = (attendees: ICouncilAttendee[]) =>
+    attendees.filter(
+      (attendee) => attendee.role === CouncilAttendanceRole.MEMBER,
+    )
+
+  const president = useMemo(
+    () =>
+      findPresident((currentCouncil?.attendees as ICouncilAttendee[]) || []),
+    [currentCouncil],
+  )
+  const subrogate = useMemo(
+    () =>
+      findSubrogate((currentCouncil?.attendees as ICouncilAttendee[]) || []),
+    [currentCouncil],
+  )
+  const members = useMemo(
+    () =>
+      filterMembers((currentCouncil?.attendees as ICouncilAttendee[]) || []),
+    [currentCouncil],
+  )
+
   const defaultValues = useMemo(
     () => ({
       name: currentCouncil?.name || '',
-      date: currentCouncil?.date || new Date(Date.now() + 200),
+      date: currentCouncil?.date || new Date(Date.now()),
       type: currentCouncil?.type || CouncilType.ORDINARY,
       isActive: currentCouncil?.isActive || true,
       isArchived: currentCouncil?.isArchived || false,
-      president: '',
-      subrogant: '',
-      attendees: currentCouncil?.attendees || [''],
+      president: president
+        ? `${president.firstName} ${president.secondName} ${president.firstLastName} ${president.secondLastName} - ${president.dni}`
+        : '',
+      subrogant: subrogate
+        ? `${subrogate.firstName} ${subrogate.secondName} ${subrogate.firstLastName} ${subrogate.secondLastName} - ${subrogate.dni}`
+        : '',
+      attendees: members.map(
+        (member) =>
+          `${member.functionary.firstName} ${member.functionary.secondName} ${member.functionary.firstLastName} ${member.functionary.secondLastName} - ${member.functionary.dni}`,
+      ),
     }),
-    [currentCouncil],
+    [currentCouncil, president, subrogate, members],
   )
 
   const methods = useForm<FormValuesProps>({
@@ -77,7 +121,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const handleAddAttendees = () => {
     const attendees = values.attendees as string[]
 
-    if (attendees.length >= 10) return
+    if (attendees.length >= MAX_ATTENDEES) return
     if (attendees.length > 0 && attendees[attendees.length - 1] === '') return
 
     attendees.push('')
@@ -90,14 +134,9 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   }
 
   const handleCreateCouncil = async (values: FormValuesProps) => {
-    const {
-      president,
-      subrogant,
-      // attendees: currentAttendees,
-      ...rest
-    } = values
+    const { president, subrogant, ...rest } = values
 
-    const actualAttendees = [
+    const actualAttendees: ICreateCouncilAttendee[] = [
       {
         functionaryId: functionaries?.find(
           (functionary) => functionary.dni === president.split('-')[1].trim(),
@@ -115,11 +154,11 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     const result = await CouncilsUseCasesImpl.getInstance().create({
       ...rest,
       moduleId: moduleIdentifier,
-      userId: user?.sub as number,
+      userId: user?.id as number,
       attendees: actualAttendees,
     })
 
-    console.log('RESULT', result)
+    console.log(`Back Response: ${JSON.stringify(result, null, 2)} `)
 
     if (!result.council) {
       throw new Error('Error al crear el consejo')
@@ -131,27 +170,45 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
   const handleUpdateCouncil = async (
     id: number,
-    editedFields: Partial<ICouncil>,
+    editedFields: Partial<FormValuesProps>,
   ) => {
-    const { status } = await CouncilsUseCasesImpl.getInstance().update(
-      id,
-      editedFields,
-    )
+    const { president, subrogant, ...rest } = editedFields
 
-    if (status !== HTTP_STATUS_CODES.OK) {
-      throw new Error('Error al crear el consejo')
+    const attendees = []
+    if (president) {
+      const presidentId = functionaries?.find(
+        (functionary) => functionary.dni === president.split('-')[1].trim(),
+      )?.id
+      if (presidentId) {
+        attendees.push({
+          functionaryId: presidentId,
+          role: CouncilAttendanceRole.PRESIDENT,
+        })
+      }
+    }
+    if (subrogant) {
+      const subrogantId = functionaries?.find(
+        (functionary) => functionary.dni === subrogant.split('-')[1].trim(),
+      )
+
+      if (subrogantId) {
+        attendees.push({
+          functionary: subrogantId,
+          role: CouncilAttendanceRole.SUBROGATE,
+        })
+      }
     }
 
-    setCouncils(
-      councils!.map((council) =>
-        council.id === id
-          ? new CouncilModel({
-              ...council,
-              ...editedFields,
-            })
-          : council,
-      ),
-    )
+    const { status } = await CouncilsUseCasesImpl.getInstance().update(id, {
+      ...rest,
+      attendees: attendees as ICouncilAttendee[],
+    })
+
+    if (status !== HTTP_STATUS_CODES.OK) {
+      enqueueSnackbar('Error al actualizar el consejo', { variant: 'error' })
+      return
+    }
+
     enqueueSnackbar('Consejo actualizado exitosamente')
   }
 
@@ -175,6 +232,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
           !currentCouncil
             ? 'Error al crear el consejo'
             : 'Error al actualizar el consejo',
+          { variant: 'error' },
         )
       }
     },
@@ -187,20 +245,23 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     }
   }, [reset, currentCouncil])
 
+  const getDni = (attendee?: string): string =>
+    attendee?.split('-')[1]?.trim() ?? ''
+
   useEffect(() => {
     if (!functionaries) return
 
     const [president, subrogant, attendees] = [
       functionaries.find(
-        (functionary) =>
-          functionary.dni === values.president?.split('-')[1]?.trim(),
+        (functionary) => functionary.dni === getDni(values.president),
       ),
       functionaries.find(
-        (functionary) =>
-          functionary.dni === values.subrogant?.split('-')[1]?.trim(),
+        (functionary) => functionary.dni === getDni(values.subrogant),
       ),
-      (values.attendees as string[]).map(
-        (attendee) => attendee.split('-')[1]?.trim(),
+      (values.attendees as string[]).map((attendee) =>
+        functionaries.find(
+          (functionary) => functionary.dni === getDni(attendee),
+        ),
       ),
     ]
 
@@ -208,7 +269,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       (functionary) =>
         functionary.dni !== president?.dni &&
         functionary.dni !== subrogant?.dni &&
-        !attendees.includes(functionary.dni),
+        !attendees.some((attendee) => attendee?.dni === functionary.dni),
     )
 
     setUnusedFunctionaries(currentUnusedFunctionaries)
