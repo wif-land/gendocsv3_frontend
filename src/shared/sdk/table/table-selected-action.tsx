@@ -63,7 +63,7 @@ export default function TableSelectedAction({
           }),
         }}
       >
-        {numSelected} selected
+        {numSelected > 1 ? `${numSelected} seleccionados` : `${numSelected} seleccionado`}
       </Typography>
 
       {action && action}

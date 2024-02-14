@@ -5,7 +5,7 @@ import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { usePathname } from 'next/navigation'
-import CouncilNewEditForm from '../components/CouncilNewEditForm'
+import { CouncilNewEditForm } from '../components/CouncilNewEditForm'
 import { memo } from 'react'
 
 const CouncilCreateView = () => {
