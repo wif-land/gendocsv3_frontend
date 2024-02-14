@@ -126,3 +126,49 @@ export const handleUpdate = async (
 
   enqueueSnackbar('Funcionario actualizado con éxito', { variant: 'success' })
 }
+
+export const GENDERS = [
+  {
+    value: 'M',
+    label: 'Masculino',
+  },
+  {
+    value: 'F',
+    label: 'Femenino',
+  },
+]
+
+export const CANTONES = [
+  {
+    value: 'Ambato',
+    label: 'Ambato',
+  },
+  {
+    value: 'Banos',
+    label: 'Baños',
+  },
+  {
+    value: 'Cevallos',
+    label: 'Cevallos',
+  },
+  {
+    value: 'Mocha',
+    label: 'Mocha',
+  },
+  {
+    value: 'Patate',
+    label: 'Patate',
+  },
+  {
+    value: 'Pillaro',
+    label: 'Pillaro',
+  },
+  {
+    value: 'Quero',
+    label: 'Quero',
+  },
+  {
+    value: 'Tisaleo',
+    label: 'Tisaleo',
+  },
+]

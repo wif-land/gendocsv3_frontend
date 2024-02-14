@@ -8,11 +8,16 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
-import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
+import { RHFSelect, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { IStudent } from '../../types/IStudent'
 import { useStudentForm } from '../hooks/useStudentForm'
+import { CANTONES, GENDERS } from '../constants'
+import { MenuItem } from '@mui/material'
+import { Controller } from 'react-hook-form'
+import { MobileDatePicker } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
 
 type Props = {
   currentStudent?: IStudent
@@ -20,11 +25,11 @@ type Props = {
 
 export const StudentNewEditForm = ({ currentStudent }: Props) => {
   const mdUp = useResponsive('up', 'md')
-  const { methods, onSubmit } = useStudentForm(currentStudent)
-
+  const { methods, onSubmit, careers } = useStudentForm(currentStudent)
   const {
     handleSubmit,
     formState: { isSubmitting },
+    control,
   } = methods
 
   const renderDetails = (
@@ -32,11 +37,11 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
       {mdUp && (
         <Grid md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Detalles
+            Información general
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             Información general del estudiante como, nombres, apellidos, cédula,
-            género, etc.
+            carrera, folio, matrícula, etc.
           </Typography>
         </Grid>
       )}
@@ -75,7 +80,56 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
             </Box>
 
             <Divider />
+            <Divider />
 
+            <Box
+              sx={{
+                columnGap: 2,
+                rowGap: 3,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'repeat(1, 1fr)',
+                  md: 'repeat(2, 1fr)',
+                },
+              }}
+            >
+              {!!careers.length && (
+                <RHFSelect name="career" label="Carrera">
+                  {careers.map((career) => (
+                    <MenuItem key={career.id} value={career.id}>
+                      {career.name}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+              )}
+
+              <RHFTextField name="approvedCredits" label="Créditos aprobados" />
+
+              <RHFTextField name="folio" label="Folio" required />
+
+              <RHFTextField name="registration" label="Matrícula" />
+            </Box>
+          </Stack>
+        </Card>
+      </Grid>
+    </>
+  )
+
+  const renderContactInfo = (
+    <>
+      {mdUp && (
+        <Grid md={4}>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Información de contacto
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Información de contacto del estudiante como, correo, teléfono, etc.
+          </Typography>
+        </Grid>
+      )}
+      <Grid xs={12} md={8}>
+        <Card>
+          <Stack spacing={3} sx={{ p: 3 }}>
             <Box
               sx={{
                 columnGap: 2,
@@ -119,16 +173,15 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
     </>
   )
 
-  const renderProperties = (
+  const renderDemographics = (
     <>
       {mdUp && (
         <Grid md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Títulos
+            Información demográfica
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Títulos de segundo, tercer y cuarto nivel conseguido por el
-            funcionario
+            Fecha de nacimiento, género, cantón, etc.
           </Typography>
         </Grid>
       )}
@@ -137,23 +190,59 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField
-              name="secondLevelDegree"
-              label="Título de segundo nivel"
-              required
-            />
+            <Box
+              sx={{
+                columnGap: 2,
+                rowGap: 3,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'repeat(1, 1fr)',
+                  md: 'repeat(2, 1fr)',
+                },
+              }}
+            >
+              <RHFSelect name="gender" label="Género">
+                {GENDERS.map((option) => (
+                  <MenuItem key={option.value} value={option.label}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
 
-            <RHFTextField
-              name="thirdLevelDegree"
-              label="Título de tercer nivel"
-              required
-            />
+              <RHFSelect name="canton" label="Cantón de residencia">
+                {CANTONES.map((option) => (
+                  <MenuItem key={option.value} value={option.label}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
 
-            <RHFTextField
-              name="fourthLevelDegree"
-              label="Título de cuarto nivel"
-              required
-            />
+              <Controller
+                name="birthdate"
+                rules={{ required: true }}
+                control={control}
+                render={({ field }) => (
+                  <MobileDatePicker
+                    {...field}
+                    value={dayjs(field.value)}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        field.onChange(newValue)
+                      }
+                    }}
+                    label="Fecha de nacimiento"
+                    format="dddd/MM/YYYY"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        required: true,
+                      },
+                    }}
+                    disableFuture
+                  />
+                )}
+              />
+            </Box>
           </Stack>
         </Card>
       </Grid>
@@ -163,11 +252,11 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Funcionario activo" />
-        </Box>
-
+      <Grid
+        xs={12}
+        md={8}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}
+      >
         <LoadingButton
           type="submit"
           variant="contained"
@@ -185,7 +274,9 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
       <Grid container spacing={3}>
         {renderDetails}
 
-        {renderProperties}
+        {renderContactInfo}
+
+        {renderDemographics}
 
         {renderActions}
       </Grid>

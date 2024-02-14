@@ -16,9 +16,9 @@ const StudentEditView = () => {
 
   const { students } = useStudentView()
 
-  const currentStudent = students?.find(
-    (functionary) => functionary.id! === +id,
-  )
+  const currentStudent = students?.find((student) => student.id! === +id)
+
+  console.log({ currentStudent })
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>

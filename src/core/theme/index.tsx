@@ -34,7 +34,7 @@ const ThemeProvider = ({ children }: { children: any }) => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
         <CssBaseline />
         {children}
       </LocalizationProvider>

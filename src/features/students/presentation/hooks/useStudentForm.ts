@@ -18,11 +18,13 @@ import { getEditedFields } from '../../../../shared/utils/FormUtil'
 
 import { IStudent } from '../../types/IStudent'
 import { useStudentStore } from '../../../../shared/store/studentStore'
+import { useCareersStore } from '../../../careers/presentation/state/careerStore'
 
 export const useStudentForm = (currentStudent?: IStudent) => {
   const router = useRouter()
   const pathname = usePathname()
   const { students } = useStudentStore()
+  const { careers, get } = useCareersStore()
   const { enqueueSnackbar } = useSnackbar()
   const { loader } = useLoaderStore()
 
@@ -68,11 +70,18 @@ export const useStudentForm = (currentStudent?: IStudent) => {
     }
   }, [currentStudent, defaultValues, reset])
 
+  useEffect(() => {
+    if (!careers.length) {
+      get()
+    }
+  }, [])
+
   return {
     loader,
     students,
     methods,
     onSubmit,
     handleSubmit,
+    careers,
   }
 }
