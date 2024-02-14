@@ -6,7 +6,7 @@ import { useParams, usePathname } from 'next/navigation'
 import { useCouncilStore } from '../store/councilsStore'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import CouncilNewEditForm from '../components/CouncilNewEditForm'
+import { CouncilNewEditForm } from '../components/CouncilNewEditForm'
 import { memo } from 'react'
 
 const CouncilEditView = () => {
@@ -15,7 +15,9 @@ const CouncilEditView = () => {
   const pathname = usePathname()
   const { councils } = useCouncilStore()
 
-  const currentProduct = councils.find((council) => council.id! === +id)
+  const currentCouncil = councils.find((council) => council.id! === +id)
+
+  console.log('currentCouncil', currentCouncil)
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -27,14 +29,14 @@ const CouncilEditView = () => {
             name: 'Consejos',
             href: pathname.replace('/new', ''),
           },
-          { name: currentProduct?.name },
+          { name: currentCouncil?.name },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <CouncilNewEditForm currentCouncil={currentProduct} />
+      <CouncilNewEditForm currentCouncil={currentCouncil} />
     </Container>
   )
 }

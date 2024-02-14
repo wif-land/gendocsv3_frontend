@@ -12,6 +12,7 @@ import MotionLazy from '../shared/sdk/animate/motion-lazy'
 import { SnackbarProvider } from '../shared/sdk/snackbar'
 import ProgressBar from '../shared/sdk/progress-bar/progress-bar'
 import { ModulesProvider } from './providers/modules-provider'
+import { primaryFont } from '../core/theme/typography'
 
 export const metadata = {
   title: 'Gendocs V3 - Gestión Documental',
@@ -48,8 +49,8 @@ type Props = {
   children: React.ReactNode
 }
 
-const RootLayout = ({ children }: Props) => (
-  <html lang="en">
+export default ({ children }: Props) => (
+  <html lang="en" className={primaryFont.className}>
     <body>
       <SettingsProvider
         defaultSettings={{
@@ -77,5 +78,3 @@ const RootLayout = ({ children }: Props) => (
     </body>
   </html>
 )
-
-export default RootLayout
