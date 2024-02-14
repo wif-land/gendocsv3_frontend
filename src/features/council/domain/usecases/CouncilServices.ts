@@ -14,8 +14,8 @@ interface CouncilUseCases {
     councils: CouncilModel[]
   }>
 
-  getByTerm(
-    term: string,
+  getByField(
+    field: string,
     moduleId: number,
     limit: number,
     offset: number,
@@ -72,12 +72,12 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAll = async () => await this.councilRepository.getAll()
 
-  getByTerm = async (
-    term: string,
+  getByField = async (
+    field: string,
     moduleId: number,
     limit: number,
     offset: number,
-  ) => await this.councilRepository.getByTerm(term, moduleId, limit, offset)
+  ) => await this.councilRepository.getByField(field, moduleId, limit, offset)
 
   update = async (id: number, council: Partial<CouncilModel>) =>
     await this.councilRepository.update({

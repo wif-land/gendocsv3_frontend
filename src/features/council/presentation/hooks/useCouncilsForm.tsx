@@ -198,7 +198,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         })
       }
     }
-    // TODO: check the rest of attendees and add them to the list
 
     const { status } = await CouncilsUseCasesImpl.getInstance().update(id, {
       ...rest,
@@ -246,15 +245,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     }
   }, [reset, currentCouncil])
 
-  const getDni = (attendee?: string) => {
-    if (attendee && attendee.includes('-')) {
-      const parts = attendee.split('-')
-      if (parts.length > 1) {
-        return parts[1].trim()
-      }
-    }
-    return ''
-  }
+  const getDni = (attendee?: string): string =>
+    attendee?.split('-')[1]?.trim() ?? ''
 
   useEffect(() => {
     if (!functionaries) return

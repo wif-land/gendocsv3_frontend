@@ -74,7 +74,7 @@ export const CouncilTableToolbar = ({
     let activeRequest = true
     const getFilteredCouncils = async () => {
       const { data, status } =
-        await CouncilsUseCasesImpl.getInstance().getByTerm(
+        await CouncilsUseCasesImpl.getInstance().getByField(
           searchTerm,
           moduleId,
           rowsPerPage,

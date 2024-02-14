@@ -8,11 +8,11 @@ import {
   Button,
   Card,
   Container,
-  IconButton,
   Table,
   TableBody,
   TableContainer,
   Tooltip,
+  Typography,
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
@@ -89,6 +89,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const handleResetFilters = () => {
     setSearchTerm('')
     setIsDataFiltered(false)
+    setTableData([])
   }
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
@@ -108,10 +109,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     },
     [table],
   )
-
-  // const handleResetFilters = useCallback(() => {
-  //   setFilters(defaultFilters)
-  // }, [])
 
   const handleDeleteRow = useCallback(
     (row: CouncilModel) => {
@@ -317,9 +314,18 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
               }
               action={
                 <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
+                  <Button color="primary" onClick={confirm.onTrue}>
+                    <Typography
+                      variant="button"
+                      sx={{
+                        ml: 2,
+                        flexGrow: 1,
+                        color: 'primary.main',
+                      }}
+                    >
+                      Cambiar estado
+                    </Typography>
+                  </Button>
                 </Tooltip>
               }
             />
@@ -400,7 +406,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Cambiar estado de consejos"
         content={
           <>
             Estás seguro de que quieres cambiar el estado de
@@ -416,7 +422,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
               confirm.onFalse()
             }}
           >
-            Delete
+            Cambiar
           </Button>
         }
       />

@@ -15,47 +15,16 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
-  const [selectedCareer, setSelectedCareer] = useState<CouncilModel | null>(
+  const [selectedCouncil, setSelectedCouncil] = useState<CouncilModel | null>(
     null,
   )
 
   const handleSelectedCouncil = useCallback(
     (item: CouncilModel | null) => {
-      setSelectedCareer(item)
+      setSelectedCouncil(item)
     },
     [councils],
   )
-
-  // useEffect(() => {
-  //   let isMounted = true
-
-  //   const fetchingCouncils = async () => {
-  //     if (!isMounted) return
-
-  //     addLoaderItem('council')
-  //     const result =
-  //       await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
-  //         moduleIdentifier,
-  //         // eslint-disable-next-line no-magic-numbers
-  //         5,
-  //         0,
-  //       )
-
-  //     if (result.councils) {
-  //       setCouncils(result.councils)
-  //     }
-
-  //     setTimeout(() => {
-  //       removeLoaderItem('council')
-  //     }, LOADER_DELAY)
-  //   }
-
-  //   fetchingCouncils()
-
-  //   return () => {
-  //     isMounted = false
-  //   }
-  // }, [])
 
   const fetchData = async (rowsPerPage: number, currentPage: number) => {
     addLoaderItem('council')
@@ -69,9 +38,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
         )
 
       if (response.status === HTTP_STATUS_CODES.OK && response.data) {
-        if ('councils' in response.data && 'count' in response.data) {
-          return response.data as { councils: CouncilModel[]; count: number }
-        }
+        return response.data as { councils: CouncilModel[]; count: number }
       }
     } catch (error) {
       return {
@@ -116,7 +83,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     addLoaderItem('council')
 
     try {
-      const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
+      const response = await CouncilsUseCasesImpl.getInstance().getByField(
         filter,
         moduleIdentifier,
         rowsPerPage,
@@ -143,7 +110,7 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   return {
     loader,
     councils,
-    selectedCareer,
+    selectedCareer: selectedCouncil,
     moduleIdentifier,
     handleSelectedCouncil,
     setCouncils,

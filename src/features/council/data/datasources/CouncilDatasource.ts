@@ -22,8 +22,8 @@ export interface CouncilsDataSource {
     }
   }>
 
-  getByTerm(
-    term: string,
+  getByField(
+    field: string,
     moduleId: number,
     limit: number,
     offset: number,
@@ -73,14 +73,13 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, data: { councils: [], count: 0 } }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as { councils: CouncilModel[]; count: number },
+      }
     }
-
-    return {
-      status,
-      data: data.content as { councils: CouncilModel[]; count: number },
-    }
+    return { status, data: { councils: [], count: 0 } }
   }
 
   create = async (council: CouncilModel) => {
@@ -88,11 +87,10 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, council: {} as CouncilModel }
+    if (status === HTTP_STATUS_CODES.CREATED) {
+      return { status, council: data.content as CouncilModel }
     }
-
-    return { status, council: data.content as CouncilModel }
+    return { status, council: {} as CouncilModel }
   }
 
   getAll = async () => {
@@ -100,21 +98,20 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, councils: [] as CouncilModel[] }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, councils: data.content as CouncilModel[] }
     }
-
-    return { status, councils: data.content as CouncilModel[] }
+    return { status, councils: [] as CouncilModel[] }
   }
 
-  getByTerm = async (
-    term: string,
+  getByField = async (
+    field: string,
     moduleId: number,
     limit: number,
     offset: number,
   ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.COUNCILS.GET_BY_TERM.replace(':term', term),
+      API_ROUTES.COUNCILS.GET_BY_FIELD(field),
       {
         params: { moduleId, limit, offset },
       },
@@ -122,41 +119,38 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, data: { councils: [], count: 0 } }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as { councils: CouncilModel[]; count: number },
+      }
     }
-
-    return {
-      status,
-      data: data.content as { councils: CouncilModel[]; count: number },
-    }
+    return { status, data: { councils: [], count: 0 } }
   }
 
   update = async (council: ICouncil) => {
     const { id, ...rest } = council
     const result = await AxiosClient.patch(
-      API_ROUTES.COUNCILS.UPDATE.replace(':id', id?.toString() || ''),
+      API_ROUTES.COUNCILS.UPDATE(id as number),
       rest,
     )
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, council: {} as CouncilModel }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, council: data.content as CouncilModel }
     }
-
-    return { status, council: data.content as CouncilModel }
+    return { status, council: {} as CouncilModel }
   }
 
-  bulkUpdate(councils: ICouncil[]) {
+  bulkUpdate = async (councils: ICouncil[]) => {
     const result = AxiosClient.patch(API_ROUTES.COUNCILS.BULK_UPDATE, councils)
 
     return result.then(({ status, data }) => {
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, councils: [] as CouncilModel[] }
+      if (status === HTTP_STATUS_CODES.OK) {
+        return { status, councils: data.content as CouncilModel[] }
       }
-
-      return { status, councils: data.content as CouncilModel[] }
+      return { status, councils: [] as CouncilModel[] }
     })
   }
 }

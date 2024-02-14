@@ -37,7 +37,7 @@ export const CouncilDetailsSummary = ({
     const fetchCouncil = async () => {
       setIsLoading(true)
       try {
-        const response = await CouncilsUseCasesImpl.getInstance().getByTerm(
+        const response = await CouncilsUseCasesImpl.getInstance().getByField(
           councilId.toString(),
           moduleId!,
         )

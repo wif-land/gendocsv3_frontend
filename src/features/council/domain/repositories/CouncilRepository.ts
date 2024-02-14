@@ -7,8 +7,8 @@ export interface CouncilRepository {
     councils: CouncilModel[]
   }>
 
-  getByTerm: (
-    term: string,
+  getByField: (
+    field: string,
     moduleId: number,
     limit: number,
     offset: number,
