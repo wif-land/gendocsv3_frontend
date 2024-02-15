@@ -8,14 +8,29 @@ interface FunctionaryUseCases {
     data: IFunctionary,
   ): Promise<{ functionary: FunctionaryModel } | boolean>
 
-  getAll(): Promise<
-    | {
-        functionaries: FunctionaryModel[]
-      }
-    | boolean
-  >
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
+  }>
 
-  update(id: number, data: Partial<FunctionaryModel>): Promise<boolean>
+  update(
+    id: number,
+    data: Partial<FunctionaryModel>,
+  ): Promise<{
+    status: number
+    functionary: FunctionaryModel
+  }>
+
+  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<{
+    status: number
+    functionaries: FunctionaryModel[]
+  }>
 }
 
 export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
@@ -40,17 +55,15 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
     }
   }
 
-  getAll = async () => await this.functionaryRepository.getAll()
+  getAll = async (limit: number, offset: number) =>
+    await this.functionaryRepository.getAll(limit, offset)
 
-  update = async (id: number, data: Partial<FunctionaryModel>) => {
-    try {
-      await this.functionaryRepository.update({
-        ...data,
-        id,
-      })
-      return true
-    } catch (error) {
-      return false
-    }
-  }
+  update = async (id: number, data: Partial<FunctionaryModel>) =>
+    await this.functionaryRepository.update({
+      ...data,
+      id,
+    })
+
+  bulkUpdate = async (functionaries: Partial<IFunctionary>[]) =>
+    await this.functionaryRepository.bulkUpdate(functionaries)
 }

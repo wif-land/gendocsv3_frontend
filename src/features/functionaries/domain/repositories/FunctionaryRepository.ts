@@ -2,13 +2,25 @@ import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { IFunctionary } from '../entities/IFunctionary'
 
 export interface FunctionaryRepository {
-  getAll: () => Promise<{
+  getAll: (
+    limit: number,
+    offset: number,
+  ) => Promise<{
     status: number
-    functionaries: FunctionaryModel[]
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
   }>
 
   update: (data: Partial<IFunctionary>) => Promise<{
     status: number
+    functionary: FunctionaryModel
+  }>
+
+  bulkUpdate: (data: Partial<IFunctionary>[]) => Promise<{
+    status: number
+    functionaries: FunctionaryModel[]
   }>
 
   create: (data: IFunctionary) => Promise<{

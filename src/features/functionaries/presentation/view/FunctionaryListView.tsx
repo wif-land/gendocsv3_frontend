@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePathname, useRouter } from 'next/navigation'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import {
   DENSE,
   NO_DENSE,
@@ -53,7 +53,10 @@ const FunctionaryListView = () => {
   const router = useRouter()
   const pathname = usePathname()
   const settings = useSettingsContext()
-  const { loader, functionaries } = useFunctionaryView()
+  // eslint-disable-next-line no-magic-numbers
+  const [count, setCount] = useState(0)
+  const [visitedPages, setVisitedPages] = useState<number[]>([0])
+  const [isDataFiltered, setIsDataFiltered] = useState(false)
 
   const [tableData, setTableData] = useState<FunctionaryModel[]>([])
   const [filters, setFilters] =
@@ -76,43 +79,25 @@ const FunctionaryListView = () => {
     filters,
   })
 
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage,
-  )
+  const {
+    loader,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+    handleUpdateRows,
+  } = useFunctionaryView({
+    tableData,
+    setTableData,
+    table,
+    setCount,
+    isDataFiltered,
+    visitedPages,
+  })
+
   const denseHeight = table.dense ? NO_DENSE : DENSE
   const canReset = !isEqual(defaultFilters, filters)
 
-  useEffect(() => {
-    if (functionaries?.length) {
-      setTableData(functionaries as FunctionaryModel[])
-    }
-  }, [functionaries])
-
   const confirm = useBoolean()
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
-    },
-    [dataInPage.length, table, tableData],
-  )
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
-    )
-    setTableData(deleteRows)
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
-  }, [dataFiltered.length, dataInPage.length, table, tableData])
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -210,7 +195,7 @@ const FunctionaryListView = () => {
                     ))
                   ) : (
                     <>
-                      {dataFiltered
+                      {tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -225,9 +210,7 @@ const FunctionaryListView = () => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() =>
-                              handleDeleteRow(row.id!.toString())
-                            }
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
                         ))}
@@ -236,11 +219,7 @@ const FunctionaryListView = () => {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(
-                      table.page,
-                      table.rowsPerPage,
-                      tableData.length,
-                    )}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, count)}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -250,11 +229,11 @@ const FunctionaryListView = () => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={count}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
@@ -276,7 +255,7 @@ const FunctionaryListView = () => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows()
+              handleUpdateRows()
               confirm.onFalse()
             }}
           >
