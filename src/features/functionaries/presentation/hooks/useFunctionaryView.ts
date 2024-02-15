@@ -1,10 +1,10 @@
 import { useFunctionaryStore } from '../state/useFunctionaryStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
+import { useFunctionaryMethods } from './useFunctionaryMethods'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 interface Props {
   tableData: FunctionaryModel[]
@@ -13,6 +13,7 @@ interface Props {
   setCount: (count: number) => void
   isDataFiltered: boolean
   visitedPages: number[]
+  field: string
 }
 
 export const useFunctionaryView = ({
@@ -22,14 +23,17 @@ export const useFunctionaryView = ({
   setCount,
   isDataFiltered,
   visitedPages,
+  field,
 }: Props) => {
   const { functionaries, setFunctionaries } = useFunctionaryStore()
-  const { loader, addLoaderItem, removeLoaderItem } = useLoaderStore()
+  const { loader } = useLoaderStore()
+  const { fetchData, updateRow, updateRows, fetchDataByField } =
+    useFunctionaryMethods()
 
   useEffect(() => {
     let isMounted = true
     if (tableData.length === 0) {
-      if (isMounted) {
+      if (isMounted && !isDataFiltered) {
         fetchData(table.rowsPerPage, table.page).then((data) => {
           if (data?.functionaries) {
             setFunctionaries(data.functionaries)
@@ -46,63 +50,6 @@ export const useFunctionaryView = ({
     }
   }, [tableData, isDataFiltered])
 
-  const fetchData = async (rowsPerPage: number, currentPage: number) => {
-    addLoaderItem('functionaries')
-    try {
-      const response = await FunctionaryUseCasesImpl.getInstance().getAll(
-        rowsPerPage,
-        currentPage * rowsPerPage,
-      )
-      if (response.status === HTTP_STATUS_CODES.OK) {
-        return response.data as {
-          functionaries: FunctionaryModel[]
-          count: number
-        }
-      }
-    } catch (error) {
-      return {
-        functionaries: [],
-        count: 0,
-      }
-    } finally {
-      removeLoaderItem('functionaries')
-    }
-  }
-
-  const updateRow = async (functionary: Partial<FunctionaryModel>) => {
-    addLoaderItem('functionaries')
-    try {
-      const response = await FunctionaryUseCasesImpl.getInstance().update(
-        functionary.id as number,
-        {
-          isActive: !functionary.isActive,
-        },
-      )
-      if (response.status === HTTP_STATUS_CODES.OK) {
-        return response.functionary as FunctionaryModel
-      }
-    } catch (error) {
-      return null
-    } finally {
-      removeLoaderItem('functionaries')
-    }
-  }
-
-  const updateRows = async (functionaries: Partial<FunctionaryModel>[]) => {
-    addLoaderItem('functionaries')
-    try {
-      const response =
-        await FunctionaryUseCasesImpl.getInstance().bulkUpdate(functionaries)
-      if (response.status === HTTP_STATUS_CODES.OK) {
-        return response.functionaries as FunctionaryModel[]
-      }
-    } catch (error) {
-      return []
-    } finally {
-      removeLoaderItem('functionaries')
-    }
-  }
-
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
     table.setPage(newPage)
@@ -115,7 +62,15 @@ export const useFunctionaryView = ({
 
     if (newPage > table.page) {
       if (isDataFiltered) {
-        console.log('fetchData filtered unimplemented')
+        fetchDataByField(field, table.rowsPerPage, newPage).then((response) => {
+          if (response?.status === HTTP_STATUS_CODES.OK) {
+            setFunctionaries([...functionaries, ...response.data.functionaries])
+            setTableData([
+              ...(functionaries as FunctionaryModel[]),
+              ...response.data.functionaries,
+            ])
+          }
+        })
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {
           if (data?.functionaries) {
@@ -138,7 +93,21 @@ export const useFunctionaryView = ({
     setTableData([])
 
     if (isDataFiltered) {
-      console.log('fetchData filtered unimplemented')
+      fetchDataByField(field, parseInt(event.target.value, 10), 0).then(
+        (response) => {
+          if (response?.status === HTTP_STATUS_CODES.OK) {
+            setFunctionaries(response.data.functionaries)
+            setTableData(response.data.functionaries)
+            setCount(response.data.count)
+          }
+
+          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+            setFunctionaries([])
+            setTableData([])
+            setCount(0)
+          }
+        },
+      )
     } else {
       fetchData(parseInt(event.target.value, 10), table.page).then((data) => {
         if (data?.functionaries) {
@@ -202,6 +171,28 @@ export const useFunctionaryView = ({
     })
   }
 
+  const handleSearch = (field: string, activeRequest: boolean) => {
+    if (activeRequest) {
+      fetchDataByField(field, table.rowsPerPage, table.page).then(
+        (response) => {
+          if (response?.status === HTTP_STATUS_CODES.OK) {
+            setFunctionaries(response.data.functionaries)
+            setTableData(response.data.functionaries)
+            setCount(response.data.count)
+            return
+          }
+
+          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+            setFunctionaries([])
+            setTableData([])
+            setCount(0)
+            return
+          }
+        },
+      )
+    }
+  }
+
   return {
     loader,
     functionaries,
@@ -210,5 +201,6 @@ export const useFunctionaryView = ({
     handleChangeRowsPerPage,
     handleUpdateRow,
     handleUpdateRows,
+    handleSearch,
   }
 }

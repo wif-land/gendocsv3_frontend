@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useEffect } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
@@ -7,6 +7,9 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { TableProps } from '../../../../shared/sdk/table'
+import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 
 export type IFunctionaryTableFilterValue = string | string[]
 
@@ -19,17 +22,64 @@ export type IFunctionaryTableFilters = {
 type Props = {
   filters: IFunctionaryTableFilters
   onFilters: (name: string, value: IFunctionaryTableFilterValue) => void
+  searchTerm: string
+  setSearchTerm: (value: string) => void
+  setVisitedPages: (value: number[]) => void
+  isDataFiltered: boolean
+  setIsDataFiltered: (value: boolean) => void
+  table: TableProps
+  setCount: (value: number) => void
+  setDataTable: (value: FunctionaryModel[]) => void
+  getFilteredFunctionaries: (field: string, activeRequest: boolean) => void
 }
 
-export const FunctionaryTableToolbar = ({ filters, onFilters }: Props) => {
+export const FunctionaryTableToolbar = ({
+  filters,
+  onFilters,
+  setSearchTerm,
+  searchTerm,
+  setVisitedPages,
+  setIsDataFiltered,
+  table,
+  setDataTable,
+  getFilteredFunctionaries,
+}: Props) => {
   const popover = usePopover()
 
-  const handleFilterName = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onFilters('name', event.target.value)
-    },
-    [onFilters],
-  )
+  const debounceSetSearchTerm = useDebounce(setSearchTerm)
+
+  const resetValues = () => {
+    setVisitedPages([])
+    setDataTable([])
+    setIsDataFiltered(false)
+  }
+
+  const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === '') {
+      resetValues()
+      return
+    } else {
+      setIsDataFiltered(true)
+      debounceSetSearchTerm(event.target.value)
+    }
+    onFilters('name', event.target.value)
+  }
+
+  useEffect(() => {
+    table.setPage(0)
+    setVisitedPages([])
+    let activeRequest = true
+
+    if (searchTerm !== '' && searchTerm.length > 1) {
+      getFilteredFunctionaries(searchTerm, activeRequest)
+    } else {
+      if (searchTerm.length !== 1) resetValues()
+    }
+
+    return () => {
+      activeRequest = false
+    }
+  }, [searchTerm])
 
   return (
     <>

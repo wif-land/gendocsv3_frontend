@@ -11,11 +11,9 @@ import {
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
-  getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
 import { useFunctionaryView } from '../hooks/useFunctionaryView'
-import { isEqual } from 'lodash'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
@@ -23,11 +21,9 @@ import {
   Button,
   Card,
   Container,
-  IconButton,
   Table,
   TableBody,
   TableContainer,
-  Tooltip,
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
@@ -41,6 +37,7 @@ import {
   IFunctionaryTableFilters,
 } from '../components/FunctionaryTableToolbar'
 import { TABLE_HEAD } from '../constants'
+import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
 
 const defaultFilters: IFunctionaryTableFilters = {
   name: '',
@@ -53,10 +50,10 @@ const FunctionaryListView = () => {
   const router = useRouter()
   const pathname = usePathname()
   const settings = useSettingsContext()
-  // eslint-disable-next-line no-magic-numbers
   const [count, setCount] = useState(0)
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const [tableData, setTableData] = useState<FunctionaryModel[]>([])
   const [filters, setFilters] =
@@ -73,18 +70,13 @@ const FunctionaryListView = () => {
     [table],
   )
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters,
-  })
-
   const {
     loader,
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
     handleUpdateRows,
+    handleSearch,
   } = useFunctionaryView({
     tableData,
     setTableData,
@@ -92,10 +84,10 @@ const FunctionaryListView = () => {
     setCount,
     isDataFiltered,
     visitedPages,
+    field: searchTerm,
   })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
-  const canReset = !isEqual(defaultFilters, filters)
 
   const confirm = useBoolean()
 
@@ -106,9 +98,17 @@ const FunctionaryListView = () => {
     [router],
   )
 
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setSearchTerm('')
+    setVisitedPages([])
+    setIsDataFiltered(false)
+  }
+
   const notFound =
-    (!dataFiltered.length && canReset) ||
-    (!loader.length && !dataFiltered.length)
+    (count === 0 && isDataFiltered) ||
+    (!loader.length && count === 0 && isDataFiltered) ||
+    !count
 
   return (
     <div>
@@ -136,17 +136,24 @@ const FunctionaryListView = () => {
           <FunctionaryTableToolbar
             filters={filters}
             onFilters={handleFilters}
+            setSearchTerm={setSearchTerm}
+            searchTerm={searchTerm}
+            setCount={setCount}
+            setVisitedPages={setVisitedPages}
+            isDataFiltered={isDataFiltered}
+            setIsDataFiltered={setIsDataFiltered}
+            table={table}
+            setDataTable={setTableData}
+            getFilteredFunctionaries={handleSearch}
           />
-          {/*
-          {canReset && (
-            <ProductTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
+
+          {isDataFiltered && (
+            <FunctionaryTableResult
               onResetFilters={handleResetFilters}
-              results={0}
+              results={count}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )} */}
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -160,11 +167,9 @@ const FunctionaryListView = () => {
                 )
               }
               action={
-                <Tooltip title="Borrar">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
+                <Button color="primary" onClick={confirm.onTrue}>
+                  Cambiar estado
+                </Button>
               }
             />
 
@@ -243,10 +248,10 @@ const FunctionaryListView = () => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar"
+        title="Actualizar estado"
         content={
           <>
-            Estás seguro que desear eliminar{' '}
+            Estás seguro que desear actualizar el estado de{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -259,58 +264,11 @@ const FunctionaryListView = () => {
               confirm.onFalse()
             }}
           >
-            Borrar
+            Cambiar
           </Button>
         }
       />
     </div>
   )
 }
-
-const applyFilter = ({
-  inputData,
-  comparator,
-  filters,
-}: {
-  inputData: FunctionaryModel[]
-  comparator: (a: any, b: any) => number
-  filters: IFunctionaryTableFilters
-}) => {
-  let currentInputData = [...inputData]
-  const { name } = filters
-
-  const stabilizedThis = currentInputData.map(
-    (el, index) =>
-      [
-        {
-          ...el,
-          name: `${el.firstName} ${el.secondName} ${el.firstLastName} ${el.secondLastName}`,
-        },
-        index,
-      ] as const,
-  )
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  currentInputData = stabilizedThis.map((el) =>
-    FunctionaryModel.fromJson(el[0]),
-  )
-
-  if (name) {
-    currentInputData = currentInputData.filter(
-      (functionary) =>
-        functionary.firstName.toLowerCase().includes(name.toLowerCase()) ||
-        functionary.secondName.toLowerCase().includes(name.toLowerCase()) ||
-        functionary.firstLastName.toLowerCase().includes(name.toLowerCase()) ||
-        functionary.secondLastName.toLowerCase().includes(name.toLowerCase()),
-    )
-  }
-
-  return currentInputData
-}
-
 export default memo(FunctionaryListView)

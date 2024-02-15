@@ -25,6 +25,9 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
   getAll = async (limit: number, offset: number) =>
     await this.datasource.getAll(limit, offset)
 
+  getByField = async (field: string, limit: number, offset: number) =>
+    await this.datasource.getByField(field, limit, offset)
+
   update = async (data: Partial<FunctionaryModel>) =>
     await this.datasource.update(data)
 

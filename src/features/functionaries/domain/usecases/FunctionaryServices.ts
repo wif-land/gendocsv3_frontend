@@ -19,6 +19,18 @@ interface FunctionaryUseCases {
     }
   }>
 
+  getByField(
+    field: string,
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
+  }>
+
   update(
     id: number,
     data: Partial<FunctionaryModel>,
@@ -57,6 +69,9 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
 
   getAll = async (limit: number, offset: number) =>
     await this.functionaryRepository.getAll(limit, offset)
+
+  getByField = async (field: string, limit: number, offset: number) =>
+    await this.functionaryRepository.getByField(field, limit, offset)
 
   update = async (id: number, data: Partial<FunctionaryModel>) =>
     await this.functionaryRepository.update({

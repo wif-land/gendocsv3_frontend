@@ -13,6 +13,18 @@ export interface FunctionaryRepository {
     }
   }>
 
+  getByField: (
+    field: string,
+    limit: number,
+    offset: number,
+  ) => Promise<{
+    status: number
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
+  }>
+
   update: (data: Partial<IFunctionary>) => Promise<{
     status: number
     functionary: FunctionaryModel
