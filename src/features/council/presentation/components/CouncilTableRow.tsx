@@ -25,6 +25,8 @@ type Props = {
   onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
+  activeState?: boolean | null
+  isOnTable?: boolean
 }
 
 export const CouncilTableRow = ({
@@ -34,6 +36,8 @@ export const CouncilTableRow = ({
   onDeleteRow,
   onEditRow,
   onViewRow,
+  isOnTable = true,
+  activeState,
 }: Props) => {
   const { name, date, isActive, type } = row
 
@@ -41,12 +45,16 @@ export const CouncilTableRow = ({
 
   const popover = usePopover()
 
+  const finalActiveState = activeState !== undefined ? activeState : isActive
+
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
+        {isOnTable && (
+          <TableCell padding="checkbox">
+            <Checkbox checked={selected} onClick={onSelectRow} />
+          </TableCell>
+        )}
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
@@ -90,12 +98,18 @@ export const CouncilTableRow = ({
         </TableCell>
 
         <TableCell>
-          <Label
-            variant="soft"
-            color={(isActive === true && 'success') || 'primary'}
-          >
-            {isActive === true ? 'Activo' : 'Inactivo'}
-          </Label>
+          {activeState === null ? (
+            <Label variant="soft" color="warning">
+              No disponible
+            </Label>
+          ) : (
+            <Label
+              variant="soft"
+              color={(finalActiveState === true && 'success') || 'primary'}
+            >
+              {finalActiveState === true ? 'Activo' : 'Inactivo'}
+            </Label>
+          )}
         </TableCell>
 
         <TableCell align="right">
@@ -139,21 +153,41 @@ export const CouncilTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={{ color: 'error.main' }}
+          sx={row.isActive ? { color: 'error.main' } : { color: 'green' }}
         >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Borrar
+          {row.isActive ? (
+            <>
+              <Iconify icon="radix-icons:lock-closed" />
+              Desactivar
+            </>
+          ) : (
+            <>
+              <Iconify icon="radix-icons:lock-open-2" />
+              Activar
+            </>
+          )}
         </MenuItem>
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar consejo"
-        content="¿Estás seguro de que quieres eliminar este consejo?"
+        title={row.isActive ? 'Desactivar consejo' : 'Activar consejo'}
+        content={
+          row.isActive
+            ? '¿Está seguro de desactivar este consejo?'
+            : '¿Está seguro de activar este consejo?'
+        }
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Borrar
+          <Button
+            variant="contained"
+            color={isActive ? 'error' : 'success'}
+            onClick={() => {
+              onDeleteRow()
+              confirm.onFalse()
+            }}
+          >
+            {isActive ? 'Desactivar' : 'Activar'}
           </Button>
         }
       />

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
 import {
-  CouncilType,
-  IAttendee,
-  ICouncil,
-} from '../../domain/entities/ICouncil'
+  ICouncilAttendee,
+  ICreateCouncilAttendee,
+} from '../../domain/entities/ICouncilAttendee'
 
 export class CouncilModel implements ICouncil {
   id?: number
@@ -16,7 +16,8 @@ export class CouncilModel implements ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
-  attendees: IAttendee[] | number[] | string[]
+  createdBy?: string
+  attendees: ICouncilAttendee[] | number[] | string[] | ICreateCouncilAttendee[]
 
   constructor(props: ICouncil) {
     this.id = props.id || undefined
@@ -30,6 +31,7 @@ export class CouncilModel implements ICouncil {
     this.moduleId = props.moduleId
     this.userId = props.userId
     this.attendees = props.attendees || []
+    this.createdBy = props.createdBy || ''
   }
   static fromJson(json: Record<string, any> | string): CouncilModel {
     if (typeof json === 'string') {

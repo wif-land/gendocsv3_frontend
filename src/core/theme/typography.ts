@@ -1,3 +1,5 @@
+import { Public_Sans, Barlow } from 'next/font/google'
+
 export function remToPx(value: string) {
   return Math.round(parseFloat(value) * 16)
 }
@@ -33,12 +35,22 @@ declare module '@mui/material/styles' {
     fontWeightSemiBold: React.CSSProperties['fontWeight']
   }
 }
+export const primaryFont = Public_Sans({
+  weight: ['400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['Helvetica', 'Arial', 'sans-serif'],
+})
 
-const primaryFont = 'Public Sans, sans-serif' // Google Font
-// const secondaryFont = 'CircularStd, sans-serif'; // Local Font
+export const secondaryFont = Barlow({
+  weight: ['900'],
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['Helvetica', 'Arial', 'sans-serif'],
+})
 
 export const typography = {
-  fontFamily: primaryFont,
+  fontFamily: primaryFont.style.fontFamily,
   fontWeightRegular: 400,
   fontWeightMedium: 500,
   fontWeightSemiBold: 600,

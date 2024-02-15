@@ -14,9 +14,17 @@ interface CouncilUseCases {
     councils: CouncilModel[]
   }>
 
-  getById(id: number): Promise<{
+  getByField(
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
-    council: CouncilModel
+    data: {
+      count: number
+      councils: CouncilModel[]
+    }
   }>
 
   update(
@@ -24,9 +32,22 @@ interface CouncilUseCases {
     council: Partial<CouncilModel>,
   ): Promise<{
     status: number
+    council: CouncilModel
   }>
 
-  getAllCouncilsByModuleId(moduleId: number): Promise<{
+  getAllCouncilsByModuleId(
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      councils: CouncilModel[]
+      count: number
+    }
+  }>
+
+  toggleCouncilStatus(councils: Partial<ICouncil>[]): Promise<{
     status: number
     councils: CouncilModel[]
   }>
@@ -51,16 +72,30 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAll = async () => await this.councilRepository.getAll()
 
-  getById = async (id: number) => {
-    throw new Error(`Method not implemented.${id}`)
-  }
+  getByField = async (
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => await this.councilRepository.getByField(field, moduleId, limit, offset)
 
-  update = async (id: number, career: Partial<CouncilModel>) =>
+  update = async (id: number, council: Partial<CouncilModel>) =>
     await this.councilRepository.update({
-      ...career,
+      ...council,
       id,
     })
 
-  getAllCouncilsByModuleId = async (moduleId: number) =>
-    await this.councilRepository.getAllCouncilsByModuleId(moduleId)
+  getAllCouncilsByModuleId = async (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) =>
+    await this.councilRepository.getAllCouncilsByModuleId(
+      moduleId,
+      limit,
+      offset,
+    )
+
+  toggleCouncilStatus = async (councils: Partial<ICouncil>[]) =>
+    await this.councilRepository.bulkUpdate(councils)
 }
