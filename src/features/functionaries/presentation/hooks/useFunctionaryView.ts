@@ -171,26 +171,22 @@ export const useFunctionaryView = ({
     })
   }
 
-  const handleSearch = (field: string, activeRequest: boolean) => {
-    if (activeRequest) {
-      fetchDataByField(field, table.rowsPerPage, table.page).then(
-        (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setFunctionaries(response.data.functionaries)
-            setTableData(response.data.functionaries)
-            setCount(response.data.count)
-            return
-          }
+  const handleSearch = (field: string) => {
+    fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
+      if (response?.status === HTTP_STATUS_CODES.OK) {
+        setFunctionaries(response.data.functionaries)
+        setTableData(response.data.functionaries)
+        setCount(response.data.count)
+        return
+      }
 
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-            setFunctionaries([])
-            setTableData([])
-            setCount(0)
-            return
-          }
-        },
-      )
-    }
+      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+        setFunctionaries([])
+        setTableData([])
+        setCount(0)
+        return
+      }
+    })
   }
 
   return {

@@ -103,6 +103,7 @@ const FunctionaryListView = () => {
     setSearchTerm('')
     setVisitedPages([])
     setIsDataFiltered(false)
+    setTableData([])
   }
 
   const notFound =
@@ -137,10 +138,7 @@ const FunctionaryListView = () => {
             filters={filters}
             onFilters={handleFilters}
             setSearchTerm={setSearchTerm}
-            searchTerm={searchTerm}
-            setCount={setCount}
             setVisitedPages={setVisitedPages}
-            isDataFiltered={isDataFiltered}
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}

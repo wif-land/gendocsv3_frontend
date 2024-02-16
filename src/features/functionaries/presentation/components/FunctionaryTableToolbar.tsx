@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
@@ -22,22 +22,18 @@ export type IFunctionaryTableFilters = {
 type Props = {
   filters: IFunctionaryTableFilters
   onFilters: (name: string, value: IFunctionaryTableFilterValue) => void
-  searchTerm: string
   setSearchTerm: (value: string) => void
   setVisitedPages: (value: number[]) => void
-  isDataFiltered: boolean
   setIsDataFiltered: (value: boolean) => void
   table: TableProps
-  setCount: (value: number) => void
   setDataTable: (value: FunctionaryModel[]) => void
-  getFilteredFunctionaries: (field: string, activeRequest: boolean) => void
+  getFilteredFunctionaries: (field: string) => void
 }
 
 export const FunctionaryTableToolbar = ({
   filters,
   onFilters,
   setSearchTerm,
-  searchTerm,
   setVisitedPages,
   setIsDataFiltered,
   table,
@@ -45,8 +41,8 @@ export const FunctionaryTableToolbar = ({
   getFilteredFunctionaries,
 }: Props) => {
   const popover = usePopover()
-
-  const debounceSetSearchTerm = useDebounce(setSearchTerm)
+  const [inputValue, setInputValue] = useState('' as string)
+  const debouncedValue = useDebounce(inputValue)
 
   const resetValues = () => {
     setVisitedPages([])
@@ -55,31 +51,22 @@ export const FunctionaryTableToolbar = ({
   }
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value === '') {
-      resetValues()
-      return
-    } else {
-      setIsDataFiltered(true)
-      debounceSetSearchTerm(event.target.value)
-    }
+    setInputValue(event.target.value)
     onFilters('name', event.target.value)
   }
 
   useEffect(() => {
     table.setPage(0)
     setVisitedPages([])
-    let activeRequest = true
 
-    if (searchTerm !== '' && searchTerm.length > 1) {
-      getFilteredFunctionaries(searchTerm, activeRequest)
+    if (inputValue) {
+      setIsDataFiltered(true)
+      setSearchTerm(inputValue)
+      getFilteredFunctionaries(debouncedValue)
     } else {
-      if (searchTerm.length !== 1) resetValues()
+      resetValues()
     }
-
-    return () => {
-      activeRequest = false
-    }
-  }, [searchTerm])
+  }, [debouncedValue])
 
   return (
     <>
