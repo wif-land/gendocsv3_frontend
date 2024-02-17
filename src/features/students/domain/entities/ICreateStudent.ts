@@ -1,3 +1,5 @@
+import { ICareer } from '../../../careers/domain/entities/ICareer'
+
 export interface ICreateStudent {
   dni: string
   firstName: string
@@ -5,12 +7,16 @@ export interface ICreateStudent {
   firstLastName: string
   secondLastName: string
   gender: string
-  birthDate: Date
+  birthdate: string
   canton: string
-  personalEmail: string
-  outlookEmail: string
-  regularPhoneNumber: string
-  cellphone: string
+  regularPhoneNumber?: string
+  cellphone?: string
   folio: string
   isActive: boolean
+  registration: string
+  approvedCredits: number
+  career: ICareer
+  personalEmail: string
+  outlookEmail: string
+  phoneNumber: string
 }

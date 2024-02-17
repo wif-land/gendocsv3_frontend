@@ -26,7 +26,7 @@ import { IStudent } from '../../../features/students/types/IStudent'
 import { MdMoreVert } from 'react-icons/md'
 import { StudentServices } from '../../students/services/studentServices'
 import { toast } from 'react-toastify'
-import { useStudentStore } from '../../../shared/store/studentStore'
+import { useStudentStore } from '../../students/presentation/state/studentStore'
 import AddStudentForm from '../../students/presentation/components/AddStudentForm'
 import UpdateStudentForm from '../../students/presentation/components/UpdateStudentForm'
 

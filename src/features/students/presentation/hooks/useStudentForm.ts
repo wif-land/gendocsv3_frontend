@@ -8,7 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import {
-  FormValuesProps,
   NewStudentSchema,
   resolveDefaultValues,
   handleCreate,
@@ -16,9 +15,9 @@ import {
 } from '../constants'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 
-import { IStudent } from '../../types/IStudent'
-import { useStudentStore } from '../../../../shared/store/studentStore'
+import { useStudentStore } from '../state/studentStore'
 import { useCareersStore } from '../../../careers/presentation/state/careerStore'
+import { IStudent } from '../../domain/entities/IStudent'
 
 export const useStudentForm = (currentStudent?: IStudent) => {
   const router = useRouter()
@@ -33,7 +32,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
     [currentStudent],
   )
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm<IStudent>({
     // @ts-expect-error - The defaultValues are not being recognized
     resolver: yupResolver(NewStudentSchema),
     defaultValues,
@@ -42,11 +41,11 @@ export const useStudentForm = (currentStudent?: IStudent) => {
   const { reset, handleSubmit } = methods
 
   const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
+    async (data: IStudent) => {
       if (!currentStudent) {
         await handleCreate(data)
       } else {
-        const editedFields = getEditedFields<FormValuesProps>(
+        const editedFields = getEditedFields<Partial<IStudent>>(
           defaultValues,
           data,
         )
@@ -71,7 +70,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
   }, [currentStudent, defaultValues, reset])
 
   useEffect(() => {
-    if (!careers.length) {
+    if (!careers?.length) {
       get()
     }
   }, [])

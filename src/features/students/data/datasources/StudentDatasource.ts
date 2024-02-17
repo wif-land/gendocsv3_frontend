@@ -3,6 +3,7 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { StudentModel } from '../models/StudentModel'
 import { IStudent } from '../../domain/entities/IStudent'
+import { ICreateStudent } from '../../domain/entities/ICreateStudent'
 
 export interface StudentDataSource {
   getAll(): Promise<{
@@ -14,7 +15,7 @@ export interface StudentDataSource {
     status: number
   }>
 
-  create(student: IStudent): Promise<{
+  create(student: ICreateStudent): Promise<{
     status: number
     student: StudentModel
   }>
@@ -31,12 +32,12 @@ export class StudentDataSourceImpl implements StudentDataSource {
     return StudentDataSourceImpl.instance
   }
 
-  create = async (student: StudentModel) => {
+  create = async (student: ICreateStudent) => {
     const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE, student)
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+    if (status !== HTTP_STATUS_CODES.CREATED) {
       return { status, student: {} as StudentModel }
     }
 
@@ -65,7 +66,7 @@ export class StudentDataSourceImpl implements StudentDataSource {
 
     const { status } = result
 
-    if (status !== HTTP_STATUS_CODES.NO_CONTENT) {
+    if (status !== HTTP_STATUS_CODES.OK) {
       throw new Error('Error al actualizar el estudiante!')
     }
 

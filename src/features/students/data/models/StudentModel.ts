@@ -23,7 +23,6 @@ export class StudentModel implements IStudent {
   personalEmail: string
   outlookEmail: string
   phoneNumber: string
-  name: string
   createdAt: string
 
   constructor(props: IStudent) {
@@ -47,7 +46,6 @@ export class StudentModel implements IStudent {
     this.personalEmail = props.personalEmail
     this.outlookEmail = props.outlookEmail
     this.phoneNumber = props.phoneNumber
-    this.name = `${props.firstName} ${props.secondName} ${props.firstLastName} ${props.secondLastName}`
     this.createdAt = props.createdAt
   }
 
@@ -65,7 +63,6 @@ export class StudentModel implements IStudent {
       folio: json.folio,
       gender: json.gender,
       isActive: json.isActive,
-      name: json.name,
       outlookEmail: json.outlookEmail,
       personalEmail: json.personalEmail,
       phoneNumber: json.phoneNumber,

@@ -1,5 +1,5 @@
 import { useFormik } from 'formik'
-import { useStudentStore } from '../../../../shared/store/studentStore'
+import { useStudentStore } from '../state/studentStore'
 import { IStudent } from '../../types/IStudent'
 import { StudentsApi } from '../../api/students'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'

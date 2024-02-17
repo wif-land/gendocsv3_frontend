@@ -1,5 +1,5 @@
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { IStudent } from '../../domain/entities/IStudent'
+import { ICreateStudent } from '../../domain/entities/ICreateStudent'
 import { StudentRepository } from '../../domain/repositories/StudentRepository'
 import {
   StudentDataSource,
@@ -27,7 +27,7 @@ export class StudentRepositoryImpl implements StudentRepository {
   update = async (data: Partial<StudentModel>) =>
     await this.datasource.update(data)
 
-  create = async (data: IStudent) => {
+  create = async (data: ICreateStudent) => {
     try {
       const result = await this.datasource.create(data)
       const { status } = result

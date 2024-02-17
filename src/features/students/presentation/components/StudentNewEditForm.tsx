@@ -11,13 +11,14 @@ import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { RHFSelect, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
-import { IStudent } from '../../types/IStudent'
 import { useStudentForm } from '../hooks/useStudentForm'
 import { CANTONES, GENDERS } from '../constants'
 import { MenuItem } from '@mui/material'
 import { Controller } from 'react-hook-form'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
+
+import { IStudent } from '../../domain/entities/IStudent'
 
 type Props = {
   currentStudent?: IStudent
@@ -111,7 +112,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 },
               }}
             >
-              {!!careers.length && (
+              {!!careers?.length && (
                 <RHFSelect name="career" label="Carrera">
                   {careers.map((career) => (
                     <MenuItem key={career.id} value={career.id}>
@@ -121,11 +122,15 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 </RHFSelect>
               )}
 
-              <RHFTextField name="approvedCredits" label="Créditos aprobados" />
+              <RHFTextField
+                name="approvedCredits"
+                label="Créditos aprobados"
+                required
+              />
 
               <RHFTextField name="folio" label="Folio" required />
 
-              <RHFTextField name="registration" label="Matrícula" />
+              <RHFTextField name="registration" label="Matrícula" required />
             </Box>
           </Stack>
         </Card>
@@ -179,11 +184,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 required
               />
 
-              <RHFTextField
-                name="regularPhoneNumber"
-                label="Teléfono fijo"
-                required
-              />
+              <RHFTextField name="regularPhoneNumber" label="Teléfono fijo" />
             </Box>
           </Stack>
         </Card>

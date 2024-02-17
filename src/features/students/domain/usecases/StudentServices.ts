@@ -1,5 +1,6 @@
 import { StudentModel } from '../../data/models/StudentModel'
 import { StudentRepositoryImpl } from '../../data/repositories/StudentRepositoryImpl'
+import { ICreateStudent } from '../entities/ICreateStudent'
 import { IStudent } from '../entities/IStudent'
 import { StudentRepository } from '../repositories/StudentRepository'
 
@@ -29,7 +30,7 @@ export class StudentUseCasesImpl implements StudentUseCases {
 
   private repository: StudentRepository = StudentRepositoryImpl.getInstance()
 
-  create = async (data: IStudent) => {
+  create = async (data: ICreateStudent) => {
     try {
       return await this.repository.create(data)
     } catch (error) {

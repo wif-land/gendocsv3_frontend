@@ -1,9 +1,8 @@
 import * as yup from 'yup'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
-import { IStudent } from '../../types/IStudent'
 import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 import { enqueueSnackbar } from 'notistack'
-import { CareerModel } from '../../../careers/data/models/CareerModel'
+import { IStudent } from '../../domain/entities/IStudent'
 
 export interface FormValuesProps extends IStudent {}
 
@@ -30,6 +29,8 @@ export const TABLE_HEAD = [
   },
 ]
 
+const MAX_CREDITS_TO_APPROVE = 140
+
 export const NewStudentSchema = yup.object().shape({
   dni: yup.string().required(VALIDATION_MESSAGES.required),
   firstName: yup.string().required(VALIDATION_MESSAGES.required),
@@ -50,10 +51,6 @@ export const NewStudentSchema = yup.object().shape({
       /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
       VALIDATION_MESSAGES.invalidFormat,
     ),
-  regularPhoneNumber: yup
-    .string()
-    .required(VALIDATION_MESSAGES.required)
-    .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidFormat),
   phoneNumber: yup
     .string()
     .required(VALIDATION_MESSAGES.required)
@@ -62,14 +59,15 @@ export const NewStudentSchema = yup.object().shape({
   approvedCredits: yup
     .number()
     .required(VALIDATION_MESSAGES.required)
-    // eslint-disable-next-line no-magic-numbers
-    .max(140)
+    .max(MAX_CREDITS_TO_APPROVE)
     .min(0),
   folio: yup.string().required(VALIDATION_MESSAGES.required),
   career: yup.number().required(VALIDATION_MESSAGES.required),
 })
 
-export const resolveDefaultValues = (currentStudent?: IStudent) => ({
+export const resolveDefaultValues = (
+  currentStudent?: IStudent,
+): Record<string, unknown> => ({
   dni: currentStudent?.dni || '',
   firstName: currentStudent?.firstName || '',
   secondName: currentStudent?.secondName || '',
@@ -84,24 +82,20 @@ export const resolveDefaultValues = (currentStudent?: IStudent) => ({
   approvedCredits: currentStudent?.approvedCredits || 0,
   folio: currentStudent?.folio || '',
   gender: currentStudent?.gender || '',
-  id: currentStudent?.id || 0,
   birthdate: currentStudent?.birthdate || '',
   canton: currentStudent?.canton || '',
-  career: currentStudent?.career.id || CareerModel.fromJson({}),
-  updatedAt: currentStudent?.updatedAt || '',
-  createdAt: currentStudent?.createdAt || '',
-  name: `${currentStudent?.firstName} ${currentStudent?.firstLastName}`,
+  career: currentStudent?.career.id || 0,
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
   const result = await StudentUseCasesImpl.getInstance().create(values)
 
   if (!result) {
-    enqueueSnackbar('Error al crear el funcionario', { variant: 'error' })
+    enqueueSnackbar('Error al crear el Estudiante', { variant: 'error' })
     return
   }
 
-  enqueueSnackbar('Funcionario creado con éxito', { variant: 'success' })
+  enqueueSnackbar('Estudiante creado con éxito')
 }
 
 export const handleUpdate = async (
@@ -118,13 +112,13 @@ export const handleUpdate = async (
   const result = await StudentUseCasesImpl.getInstance().update(id, values)
 
   if (!result) {
-    enqueueSnackbar('Error al actualizar el funcionario', {
+    enqueueSnackbar('Error al actualizar el Estudiante', {
       variant: 'error',
     })
     return
   }
 
-  enqueueSnackbar('Funcionario actualizado con éxito', { variant: 'success' })
+  enqueueSnackbar('Estudiante actualizado con éxito')
 }
 
 export const GENDERS = [

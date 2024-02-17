@@ -1,7 +1,7 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { IStudent } from '../../features/students/types/IStudent'
-import { StudentsApi } from '../../features/students/api/students'
+import { StudentsApi } from '../../api/students'
+import { IStudent } from '../../domain/entities/IStudent'
 
 interface StoreState {
   students: IStudent[] | undefined

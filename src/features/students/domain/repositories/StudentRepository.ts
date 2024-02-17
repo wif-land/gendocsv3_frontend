@@ -1,4 +1,5 @@
 import { StudentModel } from '../../data/models/StudentModel'
+import { ICreateStudent } from '../entities/ICreateStudent'
 import { IStudent } from '../entities/IStudent'
 
 export interface StudentRepository {
@@ -11,7 +12,7 @@ export interface StudentRepository {
     status: number
   }>
 
-  create: (data: IStudent) => Promise<{
+  create: (data: ICreateStudent) => Promise<{
     status: number
     student: StudentModel
   }>
