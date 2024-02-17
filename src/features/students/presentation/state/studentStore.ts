@@ -1,7 +1,7 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { StudentsApi } from '../../api/students'
 import { IStudent } from '../../domain/entities/IStudent'
+import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 
 interface StoreState {
   students: IStudent[] | undefined
@@ -16,7 +16,7 @@ export const useStudentStore = create<StoreState>(
       students: undefined,
       setStudents: (careers) => set({ students: careers }),
       get: async () => {
-        const result = await StudentsApi.fetchStudents()
+        const result = await StudentUseCasesImpl.getInstance().getAll()
         set({ students: result.students })
       },
     }),

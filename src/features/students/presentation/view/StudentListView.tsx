@@ -22,6 +22,7 @@ import {
   Card,
   Container,
   IconButton,
+  MenuItem,
   Table,
   TableBody,
   TableContainer,
@@ -31,7 +32,6 @@ import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-
 import Iconify from '../../../../core/iconify'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
-import { RouterLink } from '../../../../core/routes/components'
 import {
   IStudentTableFilterValue,
   IStudentTableFilters,
@@ -41,6 +41,10 @@ import { TABLE_HEAD } from '../constants'
 import { StudentModel } from '../../data/models/StudentModel'
 import { useStudentView } from '../hooks/useStudentView'
 import { StudentTableRow } from '../components/StudentTableRow'
+import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { usePopover } from '../../../../shared/sdk/custom-popover'
+import { StudentBulkUploadDialog } from '../components/StudentBulkUploadDialog'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 const defaultFilters: IStudentTableFilters = {
   name: '',
@@ -54,6 +58,21 @@ const StudentListView = () => {
   const pathname = usePathname()
   const settings = useSettingsContext()
   const { loader, students } = useStudentView()
+  const upload = useBoolean()
+  const popover = usePopover()
+
+  const createActions = [
+    {
+      value: 'single',
+      label: 'Individual',
+      action: () => router.push(`${pathname}/new`),
+    },
+    {
+      value: 'multiple',
+      label: 'Varios',
+      action: upload.onTrue,
+    },
+  ]
 
   const [tableData, setTableData] = useState<StudentModel[]>([])
   const [filters, setFilters] = useState<IStudentTableFilters>(defaultFilters)
@@ -134,14 +153,15 @@ const StudentListView = () => {
             { name: 'Estudiantes' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={`${pathname}/new`}
+            <LoadingButton
+              color="inherit"
               variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
+              endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+              onClick={popover.onOpen}
+              sx={{ textTransform: 'capitalize' }}
             >
-              Nuevo estudiante
-            </Button>
+              Agregar
+            </LoadingButton>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -256,6 +276,33 @@ const StudentListView = () => {
           />
         </Card>
       </Container>
+
+      <StudentBulkUploadDialog open={upload.value} onClose={upload.onFalse} />
+
+      <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="top-right"
+        sx={{ width: 140 }}
+      >
+        {createActions.map((option) => (
+          <MenuItem
+            key={option.value}
+            onClick={() => {
+              popover.onClose()
+              option.action()
+            }}
+          >
+            {option.value === 'multiple' && (
+              <Iconify icon="eva:cloud-upload-fill" />
+            )}
+            {option.value === 'single' && (
+              <Iconify icon="solar:file-text-bold" />
+            )}
+            {option.label}
+          </MenuItem>
+        ))}
+      </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
