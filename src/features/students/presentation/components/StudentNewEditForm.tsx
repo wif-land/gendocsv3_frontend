@@ -258,6 +258,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                       },
                     }}
                     disableFuture
+                    closeOnSelect
                   />
                 )}
               />
