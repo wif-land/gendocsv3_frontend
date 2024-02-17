@@ -49,8 +49,8 @@ export class StudentDataSourceImpl implements StudentDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, students: [] as StudentModel[] }
+    if (status !== HTTP_STATUS_CODES.OK) {
+      throw new Error('Error al obtener los estudiantes!')
     }
 
     return { status, students: data.content as StudentModel[] }

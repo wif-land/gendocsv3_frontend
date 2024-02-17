@@ -5,7 +5,7 @@ import { IStudent } from '../entities/IStudent'
 import { StudentRepository } from '../repositories/StudentRepository'
 
 interface StudentUseCases {
-  create(data: IStudent): Promise<{ student: StudentModel } | boolean>
+  create(data: IStudent): Promise<{ student: StudentModel }>
 
   getAll(): Promise<
     | {
@@ -30,25 +30,13 @@ export class StudentUseCasesImpl implements StudentUseCases {
 
   private repository: StudentRepository = StudentRepositoryImpl.getInstance()
 
-  create = async (data: ICreateStudent) => {
-    try {
-      return await this.repository.create(data)
-    } catch (error) {
-      return false
-    }
-  }
+  create = async (data: ICreateStudent) => await this.repository.create(data)
 
   getAll = async () => await this.repository.getAll()
 
-  update = async (id: number, data: Partial<StudentModel>) => {
-    try {
-      await this.repository.update({
-        ...data,
-        id,
-      })
-      return true
-    } catch (error) {
-      return false
-    }
-  }
+  update = async (id: number, data: Partial<StudentModel>) =>
+    await this.repository.update({
+      ...data,
+      id,
+    })
 }

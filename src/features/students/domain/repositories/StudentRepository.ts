@@ -4,16 +4,12 @@ import { IStudent } from '../entities/IStudent'
 
 export interface StudentRepository {
   getAll: () => Promise<{
-    status: number
     students: StudentModel[]
   }>
 
-  update: (data: Partial<IStudent>) => Promise<{
-    status: number
-  }>
+  update: (data: Partial<IStudent>) => Promise<boolean>
 
   create: (data: ICreateStudent) => Promise<{
-    status: number
     student: StudentModel
   }>
 }

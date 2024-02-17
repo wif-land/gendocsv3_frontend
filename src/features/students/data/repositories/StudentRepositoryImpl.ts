@@ -22,23 +22,35 @@ export class StudentRepositoryImpl implements StudentRepository {
 
   private constructor(private readonly datasource: StudentDataSource) {}
 
-  getAll = async () => await this.datasource.getAll()
+  getAll = async () => {
+    try {
+      return await this.datasource.getAll()
+    } catch (error) {
+      return { students: [] as StudentModel[] }
+    }
+  }
 
-  update = async (data: Partial<StudentModel>) =>
-    await this.datasource.update(data)
+  update = async (data: Partial<StudentModel>) => {
+    try {
+      await this.datasource.update(data)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
 
   create = async (data: ICreateStudent) => {
     try {
       const result = await this.datasource.create(data)
       const { status } = result
 
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, student: {} as StudentModel }
+      if (status !== HTTP_STATUS_CODES.CREATED) {
+        return { student: {} as StudentModel }
       }
 
-      return { status, student: result.student }
+      return { student: result.student }
     } catch (error) {
-      return { status: 500, student: {} as StudentModel }
+      return { student: {} as StudentModel }
     }
   }
 }
