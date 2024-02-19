@@ -118,21 +118,40 @@ export const StudentTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={{ color: 'error.main' }}
+          sx={
+            row.isActive ? { color: 'error.main' } : { color: 'success.main' }
+          }
         >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Borrar
+          {row.isActive ? (
+            <>
+              <Iconify icon="eva:slash-fill" />
+              Desactivar
+            </>
+          ) : (
+            <>
+              <Iconify icon="eva:checkmark-circle-fill" />
+              Activar
+            </>
+          )}
         </MenuItem>
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar funcionario"
-        content="¿Estás seguro de que quieres eliminar este funcionario?"
+        title={row.isActive ? 'Desactivar estudiante' : 'Activar estudiante'}
+        content={
+          row.isActive
+            ? 'Está seguro de desactivar el estudiante?'
+            : 'Está seguro de activar el estudiante?'
+        }
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Borrar
+          <Button
+            variant="contained"
+            color={row.isActive ? 'error' : 'success'}
+            onClick={onDeleteRow}
+          >
+            {row.isActive ? 'Desactivar' : 'Activar'}
           </Button>
         }
       />

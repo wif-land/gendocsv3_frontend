@@ -13,6 +13,7 @@ interface Props {
   setCount: (count: number) => void
   isDataFiltered: boolean
   visitedPages: number[]
+  setVisitedPages: (value: number[]) => void
   field: string
 }
 
@@ -23,6 +24,7 @@ export const useFunctionaryView = ({
   setCount,
   isDataFiltered,
   visitedPages,
+  setVisitedPages,
   field,
 }: Props) => {
   const { functionaries, setFunctionaries } = useFunctionaryStore()
@@ -91,6 +93,7 @@ export const useFunctionaryView = ({
     table.onChangeRowsPerPage(event)
     table.setPage(0)
     setTableData([])
+    setVisitedPages([])
 
     if (isDataFiltered) {
       fetchDataByField(field, parseInt(event.target.value, 10), 0).then(

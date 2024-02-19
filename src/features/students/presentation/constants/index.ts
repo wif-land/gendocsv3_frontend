@@ -3,6 +3,7 @@ import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
 import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 import { enqueueSnackbar } from 'notistack'
 import { IStudent } from '../../domain/entities/IStudent'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export interface FormValuesProps extends IStudent {}
 
@@ -90,12 +91,11 @@ export const resolveDefaultValues = (
 export const handleCreate = async (values: FormValuesProps) => {
   const result = await StudentUseCasesImpl.getInstance().create(values)
 
-  if (!result) {
-    enqueueSnackbar('Error al crear el Estudiante', { variant: 'error' })
+  if (result.status === HTTP_STATUS_CODES.CREATED) {
+    enqueueSnackbar('Estudiante creado con éxito')
     return
   }
-
-  enqueueSnackbar('Estudiante creado con éxito')
+  enqueueSnackbar('Error al crear el Estudiante', { variant: 'error' })
 }
 
 export const handleUpdate = async (

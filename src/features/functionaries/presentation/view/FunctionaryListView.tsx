@@ -84,6 +84,7 @@ const FunctionaryListView = () => {
     setCount,
     isDataFiltered,
     visitedPages,
+    setVisitedPages,
     field: searchTerm,
   })
 
@@ -108,8 +109,7 @@ const FunctionaryListView = () => {
 
   const notFound =
     (count === 0 && isDataFiltered) ||
-    (!loader.length && count === 0 && isDataFiltered) ||
-    !count
+    (!loader.length && count === 0 && isDataFiltered)
 
   return (
     <div>

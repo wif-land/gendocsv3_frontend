@@ -30,10 +30,12 @@ export const API_ROUTES = {
   STUDENTS: {
     GET_ALL: '/students',
     GET_ONE: '/students/:id',
+    GET_BY_FIELD: (field: string) => `/students/search/${field}`,
     UPDATE: (id: number) => `/students/${id}`,
-    DELETE: '/students/:id',
+    BULK_UPDATE: '/students/update/bulk',
+    DELETE: (id: number) => `/students/${id}`,
     CREATE: '/students',
-    CREATE_MANY: '/students/bulk',
+    CREATE_MANY: '/students/create/bulk',
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',

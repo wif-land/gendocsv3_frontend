@@ -32,6 +32,8 @@ export const useStudent = () => {
       form as unknown as IStudent,
     )
 
+    console.log('status', status, student)
+
     if (status === HTTP_STATUS_CODES.CREATED) {
       setStudents([...(students || []), student as IStudent])
       enqueueSnackbar('Estudiante creado con éxito!')

@@ -5,16 +5,48 @@ import { IStudent } from '../entities/IStudent'
 import { StudentRepository } from '../repositories/StudentRepository'
 
 interface StudentUseCases {
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      count: number
+      students: StudentModel[]
+    }
+  }>
+
+  getByField(
+    field: string,
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      count: number
+      students: StudentModel[]
+    }
+  }>
+
   create(data: IStudent): Promise<{ student: StudentModel }>
 
-  getAll(): Promise<
-    | {
-        students: StudentModel[]
-      }
-    | boolean
-  >
+  update(
+    id: number,
+    data: Partial<StudentModel>,
+  ): Promise<{
+    status: number
+    student: StudentModel
+  }>
 
-  update(id: number, data: Partial<StudentModel>): Promise<boolean>
+  bulkUpdate(students: Partial<IStudent>[]): Promise<{
+    status: number
+    students: StudentModel[]
+  }>
+
+  bulkCreate(students: ICreateStudent[]): Promise<{
+    status: number
+    students: StudentModel[]
+  }>
 }
 
 export class StudentUseCasesImpl implements StudentUseCases {
@@ -30,13 +62,20 @@ export class StudentUseCasesImpl implements StudentUseCases {
 
   private repository: StudentRepository = StudentRepositoryImpl.getInstance()
 
-  create = async (data: ICreateStudent) => await this.repository.create(data)
+  getAll = async (limit: number, offset: number) =>
+    await this.repository.getAll(limit, offset)
 
-  getAll = async () => await this.repository.getAll()
+  getByField = async (field: string, limit: number, offset: number) =>
+    await this.repository.getByField(field, limit, offset)
+
+  create = async (data: IStudent) => await this.repository.create(data)
 
   update = async (id: number, data: Partial<StudentModel>) =>
-    await this.repository.update({
-      ...data,
-      id,
-    })
+    await this.repository.update({ ...data, id })
+
+  bulkUpdate = async (students: Partial<IStudent>[]) =>
+    await this.repository.bulkUpdate(students)
+
+  bulkCreate = async (students: ICreateStudent[]) =>
+    await this.repository.bulkCreate(students)
 }

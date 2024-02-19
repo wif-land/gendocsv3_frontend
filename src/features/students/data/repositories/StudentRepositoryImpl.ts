@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICreateStudent } from '../../domain/entities/ICreateStudent'
 import { StudentRepository } from '../../domain/repositories/StudentRepository'
 import {
@@ -22,35 +21,20 @@ export class StudentRepositoryImpl implements StudentRepository {
 
   private constructor(private readonly datasource: StudentDataSource) {}
 
-  getAll = async () => {
-    try {
-      return await this.datasource.getAll()
-    } catch (error) {
-      return { students: [] as StudentModel[] }
-    }
-  }
+  getAll = async (limit: number, offset: number) =>
+    await this.datasource.getAll(limit, offset)
 
-  update = async (data: Partial<StudentModel>) => {
-    try {
-      await this.datasource.update(data)
-      return true
-    } catch (error) {
-      return false
-    }
-  }
+  getByField = async (field: string, limit: number, offset: number) =>
+    await this.datasource.getByField(field, limit, offset)
 
-  create = async (data: ICreateStudent) => {
-    try {
-      const result = await this.datasource.create(data)
-      const { status } = result
+  create = async (data: ICreateStudent) => await this.datasource.create(data)
 
-      if (status !== HTTP_STATUS_CODES.CREATED) {
-        return { student: {} as StudentModel }
-      }
+  update = async (data: Partial<StudentModel>) =>
+    await this.datasource.update(data)
 
-      return { student: result.student }
-    } catch (error) {
-      return { student: {} as StudentModel }
-    }
-  }
+  bulkUpdate = async (students: Partial<StudentModel>[]) =>
+    await this.datasource.bulkUpdate(students)
+
+  bulkCreate = async (students: ICreateStudent[]) =>
+    await this.datasource.bulkCreate(students)
 }

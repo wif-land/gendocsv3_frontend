@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePathname, useRouter } from 'next/navigation'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import {
   DENSE,
   NO_DENSE,
@@ -11,22 +11,18 @@ import {
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
-  getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
-import { isEqual } from 'lodash'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
   Button,
   Card,
   Container,
-  IconButton,
   MenuItem,
   Table,
   TableBody,
   TableContainer,
-  Tooltip,
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
@@ -45,6 +41,7 @@ import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import { StudentBulkUploadDialog } from '../components/StudentBulkUploadDialog'
 import LoadingButton from '@mui/lab/LoadingButton'
+import { StudentTableResult } from '../components/StudentTableFiltersResult'
 
 const defaultFilters: IStudentTableFilters = {
   name: '',
@@ -57,9 +54,43 @@ const StudentListView = () => {
   const router = useRouter()
   const pathname = usePathname()
   const settings = useSettingsContext()
-  const { loader, students } = useStudentView()
+  const [count, setCount] = useState(0)
+  const [visitedPages, setVisitedPages] = useState<number[]>([0])
+  const [isDataFiltered, setIsDataFiltered] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [tableData, setTableData] = useState<StudentModel[]>([])
+  const [filters, setFilters] = useState<IStudentTableFilters>(defaultFilters)
   const upload = useBoolean()
   const popover = usePopover()
+
+  const handleFilters = useCallback(
+    (name: string, value: IStudentTableFilterValue) => {
+      table.onResetPage()
+      setFilters((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }))
+    },
+    [table],
+  )
+
+  const {
+    loader,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+    handleUpdateRows,
+    handleSearch,
+  } = useStudentView({
+    tableData,
+    setTableData,
+    table,
+    setCount,
+    isDataFiltered,
+    visitedPages,
+    setVisitedPages,
+    field: searchTerm,
+  })
 
   const createActions = [
     {
@@ -74,63 +105,9 @@ const StudentListView = () => {
     },
   ]
 
-  const [tableData, setTableData] = useState<StudentModel[]>([])
-  const [filters, setFilters] = useState<IStudentTableFilters>(defaultFilters)
-
-  const handleFilters = useCallback(
-    (name: string, value: IStudentTableFilterValue) => {
-      table.onResetPage()
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }))
-    },
-    [table],
-  )
-
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters,
-  })
-
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage,
-  )
   const denseHeight = table.dense ? NO_DENSE : DENSE
-  const canReset = !isEqual(defaultFilters, filters)
-
-  useEffect(() => {
-    if (students?.length) {
-      setTableData(students as StudentModel[])
-    }
-  }, [students])
 
   const confirm = useBoolean()
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
-    },
-    [dataInPage.length, table, tableData],
-  )
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
-    )
-    setTableData(deleteRows)
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
-  }, [dataFiltered.length, dataInPage.length, table, tableData])
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -139,9 +116,17 @@ const StudentListView = () => {
     [router],
   )
 
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setSearchTerm('')
+    setVisitedPages([])
+    setIsDataFiltered(false)
+    setTableData([])
+  }
+
   const notFound =
-    (!dataFiltered.length && canReset) ||
-    (!loader.length && !dataFiltered.length)
+    (count === 0 && isDataFiltered) ||
+    (!loader.length && count === 0 && isDataFiltered)
 
   return (
     <div>
@@ -167,17 +152,24 @@ const StudentListView = () => {
         />
 
         <Card>
-          <StudentTableToolbar filters={filters} onFilters={handleFilters} />
-          {/*
-          {canReset && (
-            <ProductTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
+          <StudentTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            setSearchTerm={setSearchTerm}
+            setVisitedPages={setVisitedPages}
+            setIsDataFiltered={setIsDataFiltered}
+            table={table}
+            setDataTable={setTableData}
+            getFilteredFunctionaries={handleSearch}
+          />
+
+          {isDataFiltered && (
+            <StudentTableResult
               onResetFilters={handleResetFilters}
-              results={0}
+              results={count}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )} */}
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -191,11 +183,9 @@ const StudentListView = () => {
                 )
               }
               action={
-                <Tooltip title="Borrar">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
+                <Button color="primary" onClick={confirm.onTrue}>
+                  Cambiar estado
+                </Button>
               }
             />
 
@@ -226,7 +216,7 @@ const StudentListView = () => {
                     ))
                   ) : (
                     <>
-                      {dataFiltered
+                      {tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -241,9 +231,7 @@ const StudentListView = () => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() =>
-                              handleDeleteRow(row.id!.toString())
-                            }
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
                         ))}
@@ -252,11 +240,7 @@ const StudentListView = () => {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(
-                      table.page,
-                      table.rowsPerPage,
-                      tableData.length,
-                    )}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, count)}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -266,11 +250,11 @@ const StudentListView = () => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={count}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
@@ -307,10 +291,10 @@ const StudentListView = () => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar"
+        title="Cambiar estado"
         content={
           <>
-            Estás seguro que desear eliminar{' '}
+            Estás seguro que desear actualizar el estado de{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -319,60 +303,16 @@ const StudentListView = () => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows()
+              handleUpdateRows()
               confirm.onFalse()
             }}
           >
-            Borrar
+            Cambiar
           </Button>
         }
       />
     </div>
   )
-}
-
-const applyFilter = ({
-  inputData,
-  comparator,
-  filters,
-}: {
-  inputData: StudentModel[]
-  comparator: (a: any, b: any) => number
-  filters: IStudentTableFilters
-}) => {
-  let currentInputData = [...inputData]
-  const { name } = filters
-
-  const stabilizedThis = currentInputData.map(
-    (el, index) =>
-      [
-        {
-          ...el,
-          name: `${el.firstName} ${el.secondName} ${el.firstLastName} ${el.secondLastName}`,
-        },
-        index,
-      ] as const,
-  )
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  currentInputData = stabilizedThis.map((el) => StudentModel.fromJson(el[0]))
-
-  if (name) {
-    currentInputData = currentInputData.filter(
-      (student) =>
-        student.firstName.toLowerCase().includes(name.toLowerCase()) ||
-        student.secondName.toLowerCase().includes(name.toLowerCase()) ||
-        student.firstLastName.toLowerCase().includes(name.toLowerCase()) ||
-        student.secondLastName.toLowerCase().includes(name.toLowerCase()),
-    )
-  }
-
-  return currentInputData
 }
 
 export default memo(StudentListView)

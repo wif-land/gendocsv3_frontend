@@ -5,7 +5,7 @@ import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { StudentNewEditForm } from '../components/StudentNewEditForm'
-import { useStudentView } from '../hooks/useStudentView'
+import { useStudentStore } from '../state/studentStore'
 
 const StudentEditView = () => {
   const settings = useSettingsContext()
@@ -14,7 +14,7 @@ const StudentEditView = () => {
 
   const { id } = params
 
-  const { students } = useStudentView()
+  const { students } = useStudentStore()
 
   const currentStudent = students?.find((student) => student.id! === +id)
 

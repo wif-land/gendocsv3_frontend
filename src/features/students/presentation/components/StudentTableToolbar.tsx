@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
@@ -7,6 +7,9 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { TableProps } from '../../../../shared/sdk/table'
+import { StudentModel } from '../../data/models/StudentModel'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
 
 export type IStudentTableFilterValue = string | string[]
 
@@ -19,17 +22,54 @@ export type IStudentTableFilters = {
 type Props = {
   filters: IStudentTableFilters
   onFilters: (name: string, value: IStudentTableFilterValue) => void
+  setSearchTerm: (value: string) => void
+  setVisitedPages: (value: number[]) => void
+  setIsDataFiltered: (value: boolean) => void
+  table: TableProps
+  setDataTable: (value: StudentModel[]) => void
+  getFilteredFunctionaries: (field: string) => void
 }
 
-export const StudentTableToolbar = ({ filters, onFilters }: Props) => {
+export const StudentTableToolbar = ({
+  filters,
+  onFilters,
+  setSearchTerm,
+  setVisitedPages,
+  setIsDataFiltered,
+  table,
+  setDataTable,
+  getFilteredFunctionaries,
+}: Props) => {
   const popover = usePopover()
+  const [inputValue, setInputValue] = useState('' as string)
+  const debouncedValue = useDebounce(inputValue)
+
+  const resetValues = () => {
+    setVisitedPages([])
+    setDataTable([])
+    setIsDataFiltered(false)
+  }
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      setInputValue(event.target.value)
       onFilters('name', event.target.value)
     },
     [onFilters],
   )
+
+  useEffect(() => {
+    table.setPage(0)
+    setVisitedPages([])
+
+    if (inputValue) {
+      setIsDataFiltered(true)
+      setSearchTerm(inputValue)
+      getFilteredFunctionaries(debouncedValue)
+    } else {
+      resetValues()
+    }
+  }, [debouncedValue])
 
   return (
     <>
