@@ -50,6 +50,7 @@ export const StudentBulkUploadDialog = ({
 
   const handleUpload = () => {
     onClose()
+    console.log({ files })
     console.info('ON UPLOAD')
   }
 

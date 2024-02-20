@@ -34,7 +34,6 @@ import {
   StudentTableToolbar,
 } from '../components/StudentTableToolbar'
 import { TABLE_HEAD } from '../constants'
-import { StudentModel } from '../../data/models/StudentModel'
 import { useStudentView } from '../hooks/useStudentView'
 import { StudentTableRow } from '../components/StudentTableRow'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
@@ -58,7 +57,6 @@ const StudentListView = () => {
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [tableData, setTableData] = useState<StudentModel[]>([])
   const [filters, setFilters] = useState<IStudentTableFilters>(defaultFilters)
   const upload = useBoolean()
   const popover = usePopover()
@@ -76,14 +74,14 @@ const StudentListView = () => {
 
   const {
     loader,
+    tableData,
+    setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
     handleUpdateRows,
     handleSearch,
   } = useStudentView({
-    tableData,
-    setTableData,
     table,
     setCount,
     isDataFiltered,

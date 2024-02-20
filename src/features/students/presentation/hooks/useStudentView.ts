@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useStudentStore } from '../state/studentStore'
 import { StudentModel } from '../../data/models/StudentModel'
@@ -7,8 +7,6 @@ import { useStudentCommands } from './useStudentCommands'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 interface Props {
-  tableData: StudentModel[]
-  setTableData: (data: StudentModel[]) => void
   table: TableProps
   setCount: (count: number) => void
   isDataFiltered: boolean
@@ -18,8 +16,6 @@ interface Props {
 }
 
 export const useStudentView = ({
-  tableData,
-  setTableData,
   table,
   setCount,
   isDataFiltered,
@@ -27,30 +23,11 @@ export const useStudentView = ({
   setVisitedPages,
   field,
 }: Props) => {
+  const [tableData, setTableData] = useState<StudentModel[]>([])
   const { students, setStudents } = useStudentStore()
   const { loader } = useLoaderStore()
   const { fetchData, updateRow, updateRows, fetchDataByField } =
     useStudentCommands()
-
-  useEffect(() => {
-    let isMounted = true
-    if (tableData.length === 0) {
-      if (isMounted && !isDataFiltered) {
-        fetchData(table.rowsPerPage, table.page).then((data) => {
-          if (data?.students) {
-            setStudents(data.students)
-            setTableData(data.students)
-          }
-          if (data?.count) {
-            setCount(data.count)
-          }
-        })
-      }
-    }
-    return () => {
-      isMounted = false
-    }
-  }, [tableData, isDataFiltered])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -189,9 +166,31 @@ export const useStudentView = ({
     })
   }
 
+  useEffect(() => {
+    let isMounted = true
+    if (tableData.length === 0) {
+      if (isMounted && !isDataFiltered) {
+        fetchData(table.rowsPerPage, table.page).then((data) => {
+          if (data?.students) {
+            setStudents(data.students)
+            setTableData(data.students)
+          }
+          if (data?.count) {
+            setCount(data.count)
+          }
+        })
+      }
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [tableData, isDataFiltered])
+
   return {
     loader,
     students,
+    tableData,
+    setTableData,
     setStudents,
     handleChangePage,
     handleChangeRowsPerPage,
