@@ -13,13 +13,14 @@ import {
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
+import { useFunctionaryView } from '../hooks/useFunctionaryView'
+import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
   Button,
   Card,
   Container,
-  MenuItem,
   Table,
   TableBody,
   TableContainer,
@@ -28,28 +29,23 @@ import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-
 import Iconify from '../../../../core/iconify'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
+import { RouterLink } from '../../../../core/routes/components'
+import { FunctionaryTableRow } from '../components/FunctionaryTableRow'
 import {
-  IStudentTableFilterValue,
-  IStudentTableFilters,
-  StudentTableToolbar,
-} from '../components/StudentTableToolbar'
+  FunctionaryTableToolbar,
+  IFunctionaryTableFilterValue,
+  IFunctionaryTableFilters,
+} from '../components/FunctionaryTableToolbar'
 import { TABLE_HEAD } from '../constants'
-import { StudentModel } from '../../data/models/StudentModel'
-import { useStudentView } from '../hooks/useStudentView'
-import { StudentTableRow } from '../components/StudentTableRow'
-import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
-import { usePopover } from '../../../../shared/sdk/custom-popover'
-import { StudentBulkUploadDialog } from '../components/StudentBulkUploadDialog'
-import LoadingButton from '@mui/lab/LoadingButton'
-import { StudentTableResult } from '../components/StudentTableFiltersResult'
+import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
 
-const defaultFilters: IStudentTableFilters = {
+const defaultFilters: IFunctionaryTableFilters = {
   name: '',
   personalEmail: '',
   outlookEmail: '',
 }
 
-const StudentListView = () => {
+const FunctionaryListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
@@ -58,13 +54,13 @@ const StudentListView = () => {
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [tableData, setTableData] = useState<StudentModel[]>([])
-  const [filters, setFilters] = useState<IStudentTableFilters>(defaultFilters)
-  const upload = useBoolean()
-  const popover = usePopover()
+
+  const [tableData, setTableData] = useState<FunctionaryModel[]>([])
+  const [filters, setFilters] =
+    useState<IFunctionaryTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
-    (name: string, value: IStudentTableFilterValue) => {
+    (name: string, value: IFunctionaryTableFilterValue) => {
       table.onResetPage()
       setFilters((prevState) => ({
         ...prevState,
@@ -81,7 +77,7 @@ const StudentListView = () => {
     handleUpdateRow,
     handleUpdateRows,
     handleSearch,
-  } = useStudentView({
+  } = useFunctionaryView({
     tableData,
     setTableData,
     table,
@@ -91,19 +87,6 @@ const StudentListView = () => {
     setVisitedPages,
     field: searchTerm,
   })
-
-  const createActions = [
-    {
-      value: 'single',
-      label: 'Individual',
-      action: () => router.push(`${pathname}/new`),
-    },
-    {
-      value: 'multiple',
-      label: 'Varios',
-      action: upload.onTrue,
-    },
-  ]
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
@@ -128,33 +111,30 @@ const StudentListView = () => {
     (count === 0 && isDataFiltered) ||
     (!loader.length && count === 0 && isDataFiltered)
 
-  console.log('tableData', tableData)
-
   return (
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Estudiantes"
+          heading="Funcionarios"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Estudiantes' },
+            { name: 'Funcionarios' },
           ]}
           action={
-            <LoadingButton
-              color="inherit"
+            <Button
+              component={RouterLink}
+              href={`${pathname}/new`}
               variant="contained"
-              endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-              onClick={popover.onOpen}
-              sx={{ textTransform: 'capitalize' }}
+              startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              Agregar
-            </LoadingButton>
+              Nuevo funcionario
+            </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
-          <StudentTableToolbar
+          <FunctionaryTableToolbar
             filters={filters}
             onFilters={handleFilters}
             setSearchTerm={setSearchTerm}
@@ -166,7 +146,7 @@ const StudentListView = () => {
           />
 
           {isDataFiltered && (
-            <StudentTableResult
+            <FunctionaryTableResult
               onResetFilters={handleResetFilters}
               results={count}
               sx={{ p: 2.5, pt: 0 }}
@@ -224,7 +204,7 @@ const StudentListView = () => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <StudentTableRow
+                          <FunctionaryTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
@@ -263,37 +243,10 @@ const StudentListView = () => {
         </Card>
       </Container>
 
-      <StudentBulkUploadDialog open={upload.value} onClose={upload.onFalse} />
-
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="top-right"
-        sx={{ width: 140 }}
-      >
-        {createActions.map((option) => (
-          <MenuItem
-            key={option.value}
-            onClick={() => {
-              popover.onClose()
-              option.action()
-            }}
-          >
-            {option.value === 'multiple' && (
-              <Iconify icon="eva:cloud-upload-fill" />
-            )}
-            {option.value === 'single' && (
-              <Iconify icon="solar:file-text-bold" />
-            )}
-            {option.label}
-          </MenuItem>
-        ))}
-      </CustomPopover>
-
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Cambiar estado"
+        title="Actualizar estado"
         content={
           <>
             Estás seguro que desear actualizar el estado de{' '}
@@ -316,5 +269,4 @@ const StudentListView = () => {
     </div>
   )
 }
-
-export default memo(StudentListView)
+export default memo(FunctionaryListView)

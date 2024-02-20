@@ -1,13 +1,31 @@
-import { UserModel } from '../models/UserModel'
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { UserModel } from '../models/UserModel'
 import { IUser } from '../../domain/entities/IUser'
 
-export interface UsersDataSource {
-  getAll(): Promise<{
+export interface UserDataSource {
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
-    users: UserModel[]
+    data: {
+      count: number
+      users: UserModel[]
+    }
+  }>
+
+  getByField(
+    field: string,
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      count: number
+      users: UserModel[]
+    }
   }>
 
   update(user: Partial<IUser>): Promise<{
@@ -15,93 +33,112 @@ export interface UsersDataSource {
     user: UserModel
   }>
 
+  bulkUpdate(users: Partial<IUser>[]): Promise<{
+    status: number
+    users: UserModel[]
+  }>
+
   create(user: IUser): Promise<{
     status: number
     user: UserModel
   }>
-
-  delete(id: number): Promise<{
-    status: number
-    message?: string
-  }>
-
-  getUserById(id: number): Promise<{
-    status: number
-    user: UserModel
-  }>
-
-  //   bulkUpdate(users: Partial<IUser>[]): Promise<{
-  //     status: number
-  //     users: UserModel[]
-  //   }>
 }
 
-export class UsersDataSourceImpl implements UsersDataSource {
-  static instance: UsersDataSourceImpl
-  static getInstance = (): UsersDataSourceImpl => {
-    if (!UsersDataSourceImpl.instance) {
-      UsersDataSourceImpl.instance = new UsersDataSourceImpl()
+export class UserDataSourceImpl implements UserDataSource {
+  static instance: UserDataSourceImpl
+
+  static getInstance = (): UserDataSourceImpl => {
+    if (!UserDataSourceImpl.instance) {
+      UserDataSourceImpl.instance = new UserDataSourceImpl()
     }
-    return UsersDataSourceImpl.instance
-  }
-  getAll = async () => {
-    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
-    const { status, data } = result
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, users: [] as UserModel[] }
-    }
-    return { status, users: data.content as UserModel[] }
+
+    return UserDataSourceImpl.instance
   }
 
-  update = async (user: IUser) => {
-    const { id, ...rest } = user
+  getAll = async (limit: number, offset: number) => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL, {
+      params: { limit, offset },
+    })
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as {
+          count: number
+          users: UserModel[]
+        },
+      }
+    }
+
+    return {
+      status,
+      data: { count: 0, users: [] as UserModel[] },
+    }
+  }
+
+  getByField = async (field: string, limit: number, offset: number) => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_BY_FIELD(field), {
+      params: { limit, offset },
+    })
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as {
+          count: number
+          users: UserModel[]
+        },
+      }
+    }
+
+    return {
+      status,
+      data: { count: 0, users: [] as UserModel[] },
+    }
+  }
+
+  update = async (user: Partial<IUser>) => {
+    const { id, ...body } = user
+
     const result = await AxiosClient.patch(
-      API_ROUTES.USERS.UPDATE.replace(':id', id?.toString() || ''),
-      rest,
+      API_ROUTES.USERS.UPDATE(id as number),
+      body,
     )
+
     const { status, data } = result
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, user: {} as UserModel }
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, user: data.content as UserModel }
     }
-    return { status, user: data.content as UserModel }
+
+    return { status, user: {} as UserModel }
   }
 
-  create = async (user: IUser) => {
+  bulkUpdate = async (users: Partial<IUser>[]) => {
+    const result = await AxiosClient.patch(API_ROUTES.USERS.BULK_UPDATE, users)
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, users: data.content as UserModel[] }
+    }
+
+    return { status, users: [] as UserModel[] }
+  }
+
+  create = async (user: UserModel) => {
     const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, user)
+
     const { status, data } = result
+
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
       return { status, user: {} as UserModel }
     }
+
     return { status, user: data.content as UserModel }
   }
-
-  delete = async (id: number) => {
-    const result = await AxiosClient.delete(API_ROUTES.USERS.DELETE, { id })
-    const { status, data } = result
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, message: data.message }
-    }
-    return { status }
-  }
-
-  getUserById = async (id: number) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.USERS.GET_ONE.replace(':id', id.toString()),
-    )
-    const { status, data } = result
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, user: {} as UserModel }
-    }
-    return { status, user: data.content as UserModel }
-  }
-
-  //   bulkUpdate(users: IUser[]) {
-  //     const result = AxiosClient.patch(API_ROUTES.USERS.UPDATE, users)
-  //     return result.then(({ status, data }) => {
-  //       if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-  //         return { status, users: [] as UserModel[] }
-  //       }
-  //       return { status, users: data.content as UserModel[] }
-  //     })
-  //   }
 }

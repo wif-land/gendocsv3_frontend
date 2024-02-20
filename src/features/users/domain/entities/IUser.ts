@@ -26,7 +26,7 @@ export interface IUser {
   outlookEmail: string
   googleEmail: string
   password?: string
-  roles: string[]
+  role: UserType
   isActive: boolean
   accessModules: number[]
 }

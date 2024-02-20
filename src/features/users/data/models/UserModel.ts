@@ -1,4 +1,5 @@
-import { UserType, IUser } from '../../domain/entities/IUser'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IUser, UserType } from '../../domain/entities/IUser'
 
 export class UserModel implements IUser {
   id?: number
@@ -8,7 +9,7 @@ export class UserModel implements IUser {
   secondLastName: string
   outlookEmail: string
   googleEmail: string
-  roles: string[]
+  role: UserType
   password?: string
   isActive: boolean
   accessModules: number[]
@@ -22,7 +23,7 @@ export class UserModel implements IUser {
     this.outlookEmail = props.outlookEmail
     this.googleEmail = props.googleEmail
     this.password = props.password || undefined
-    this.roles = props.roles
+    this.role = props.role
     this.isActive = props.isActive
     this.accessModules = props.accessModules
   }
@@ -39,7 +40,7 @@ export class UserModel implements IUser {
         outlookEmail: json.outlookEmail,
         googleEmail: json.googleEmail,
         password: json.password,
-        roles: json.roles,
+        role: json.roles,
         isActive: json.isActive,
         accessModules: json.accessModules,
       })
@@ -61,7 +62,7 @@ export class UserModel implements IUser {
       outlookEmail: this.outlookEmail,
       googleEmail: this.googleEmail,
       password: this.password,
-      roles: this.roles,
+      role: this.role,
       isActive: this.isActive,
       accessModules: this.accessModules,
     }

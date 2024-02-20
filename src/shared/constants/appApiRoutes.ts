@@ -8,11 +8,12 @@ export const API_ROUTES = {
     LOGOUT: '/auth/logout',
   },
   USERS: {
-    GET_ALL: '/users',
-    GET_ONE: '/users/:id',
-    UPDATE: '/users',
-    DELETE: '/users',
-    CREATE: '/users',
+    GET_ALL: '/functionaries',
+    GET_BY_FIELD: (field: string) => `/functionaries/${field}`,
+    UPDATE: (id: number) => `/functionaries/${id}`,
+    BULK_UPDATE: '/functionaries/bulk',
+    DELETE: '/functionaries/:id',
+    CREATE: '/functionaries',
   },
   MODULES: {
     GET_ALL: '/modules',
