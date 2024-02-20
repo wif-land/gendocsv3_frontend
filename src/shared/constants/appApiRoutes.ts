@@ -80,4 +80,11 @@ export const API_ROUTES = {
   DOCUMENT_NUMERATION: {
     GET_BY_COUNCIL: '/numeration-document/by-council',
   },
+  POSITIONS: {
+    GET_ALL: '/positions',
+    GET_BY_FIELD: (field: string) => `/positions/${field}`,
+    UPDATE: (id: number) => `/positions/${id}`,
+    DELETE: (id: number) => `/positions/${id}`,
+    CREATE: '/positions',
+  },
 }
