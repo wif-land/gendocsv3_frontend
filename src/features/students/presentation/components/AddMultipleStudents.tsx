@@ -7,12 +7,14 @@ import { ICareer } from '../../../careers/domain/entities/ICareer'
 import { IStudent } from '../../domain/entities/IStudent'
 import { useCareersStore } from '../../../careers/presentation/state/careerStore'
 import { useStudentStore } from '../state/studentStore'
+import { useStudentCommands } from '../hooks/useStudentCommands'
 
 const AddMultipleStudents = ({ onClose }: { onClose: () => void }) => {
   const [students, setStudents] = useState<IStudent[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { careers } = useCareersStore()
   const { get: getStudents } = useStudentStore()
+  const { fetchData } = useStudentCommands()
   let isValid = true
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useCallback } from 'react'
 
 import * as XLSX from 'xlsx'
@@ -9,11 +11,10 @@ import Dialog, { DialogProps } from '@mui/material/Dialog'
 
 import { Upload } from '../../../../shared/sdk/upload'
 import Iconify from '../../../../core/iconify'
-import { enqueueSnackbar } from 'notistack'
-import { useStudentStore } from '../state/studentStore'
 import { useCareersStore } from '../../../careers/presentation/state/careerStore'
-import { ICareer } from '../../../careers/domain/entities/ICareer'
 import { IStudent } from '../../domain/entities/IStudent'
+import { transformData } from '../utils'
+import { useStudentCommands } from '../hooks/useStudentCommands'
 
 interface Props extends DialogProps {
   title?: string
@@ -33,73 +34,8 @@ export const StudentBulkUploadDialog = ({
 }: Props) => {
   const [files, setFiles] = useState<(File | string)[]>([])
   const [students, setStudents] = useState<IStudent[]>([])
-  const { get: getStudents } = useStudentStore()
-  const { careers } = useCareersStore()
-
-  let isValid = true
-
-  const transformData = (data: any) =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data.map((item: any) => {
-      if (
-        !item['Primer Nombre'] ||
-        !item['Fecha de nacimiento'] ||
-        !item['Carrera'] ||
-        !item['Cédula'] ||
-        !item['Género'] ||
-        !item['Número celular'] ||
-        !item['Cantón'] ||
-        !item['Créditos Aprovados'] ||
-        !item['Folio'] ||
-        !item['registration'] ||
-        !item['outlookEmail'] ||
-        !item['personalEmail'] ||
-        !item['Primer Apellido'] ||
-        !item['Segundo Apellido'] ||
-        !item['Segundo Nombre'] ||
-        !item['Teléfono convencional']
-      ) {
-        isValid = false
-        enqueueSnackbar(
-          'Por favor, asegúrate de que todos los campos estén completos',
-          { variant: 'error' },
-        )
-        return
-      }
-      const excelDate = new Date(
-        // eslint-disable-next-line no-magic-numbers
-        Math.round((item['Fecha de nacimiento'] - 25569) * 86400 * 1000),
-      )
-      const formattedDate = excelDate.toISOString().split('T')[0]
-
-      return {
-        firstName: item['Primer Nombre'],
-        secondName: item['Segundo Nombre'],
-        firstLastName: item['Primer Apellido'],
-        secondLastName: item['Segundo Apellido'],
-        outlookEmail: item['outlookEmail'],
-        personalEmail: item['personalEmail'],
-        phoneNumber: item['Número celular'],
-        regularPhoneNumber: item['Teléfono convencional'],
-        dni: item['Cédula'].toString(),
-        registration: item['registration'].toString(),
-        folio: item['Folio'].toString(),
-        gender: item['Género'],
-        birthdate: formattedDate,
-        canton: item['Cantón'],
-        approvedCredits: parseInt(item['Créditos Aprovados'], 10),
-        isActive: true,
-        career: careers?.find(
-          (career: ICareer) => career.name === item['Carrera'],
-        )?.id,
-      }
-    })
-
-  useEffect(() => {
-    if (!open) {
-      setFiles([])
-    }
-  }, [open])
+  const { careers, get: getCareers } = useCareersStore()
+  const { bulkCreate } = useStudentCommands()
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -116,55 +52,39 @@ export const StudentBulkUploadDialog = ({
     [files],
   )
 
-  const handleUpload = async () => {
-    onClose()
-    console.log({ files })
-    console.info('ON UPLOAD')
-    const reader = new FileReader()
-    reader.onload = (evt) => {
-      if (evt.target === null) {
-        return
+  const readAsBinaryStringSync = (file: File) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (evt) => {
+        if (evt.target === null) {
+          reject(new Error('Error loading file'))
+          return
+        }
+        const bstr = evt.target.result
+        resolve(bstr)
       }
-      const bstr = evt.target.result as string
+      reader.onerror = (_evt) => {
+        reject(new Error('Error reading file'))
+      }
+      reader.readAsBinaryString(file)
+    })
+
+  const processFileSynchronously = async (file: string | File) => {
+    try {
+      const bstr = await readAsBinaryStringSync(file as File)
       const workbook = XLSX.read(bstr, { type: 'binary' })
       const worksheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[worksheetName]
       const data = XLSX.utils.sheet_to_json(worksheet)
-      const transformedData = transformData(data)
-      console.log(JSON.stringify(transformedData, null, 2))
+      const transformedData = transformData(data, careers)
       setStudents(transformedData)
+    } catch (error) {
+      console.error(error)
     }
+  }
 
-    reader.readAsBinaryString(files[0] as File)
-
-    // let newStudents: boolean = false
-
-    // if (!isValid) {
-    //   setStudents([])
-    // } else {
-    //   try {
-    //     if (!students) {
-    //       return
-    //     }
-
-    //     const { status, studentsAdded } =
-    //       await StudentUseCasesImpl.getInstance().bulkCreate(students)
-    //     if (status !== HTTP_STATUS_CODES.CREATED) {
-    //       enqueueSnackbar('Error al crear los estudiantes!', {
-    //         variant: 'error',
-    //       })
-    //     } else {
-    //       getStudents()
-    //       newStudents = studentsAdded as boolean
-    //     }
-    //   } catch (error) {
-    //     enqueueSnackbar('Error al crear los estudiantes!', { variant: 'error' })
-    //   }
-    // }
-
-    // if (newStudents) {
-    //   enqueueSnackbar('Proceso completado')
-    // }
+  const handleUpload = async () => {
+    await processFileSynchronously(files[0])
 
     onClose()
   }
@@ -177,6 +97,26 @@ export const StudentBulkUploadDialog = ({
   const handleRemoveAllFiles = () => {
     setFiles([])
   }
+
+  useEffect(() => {
+    if (careers.length === 0) {
+      getCareers()
+    }
+  }, [careers])
+
+  useEffect(() => {
+    if (students.length === 0) {
+      return
+    }
+
+    bulkCreate(students)
+  }, [students])
+
+  useEffect(() => {
+    if (!open) {
+      setFiles([])
+    }
+  }, [open])
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other}>

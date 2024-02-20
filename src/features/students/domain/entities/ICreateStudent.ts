@@ -15,7 +15,7 @@ export interface ICreateStudent {
   isActive: boolean
   registration: string
   approvedCredits: number
-  career: ICareer
+  career: ICareer | number
   personalEmail: string
   outlookEmail: string
   phoneNumber: string
