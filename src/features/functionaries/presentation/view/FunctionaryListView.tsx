@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePathname, useRouter } from 'next/navigation'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import {
   DENSE,
   NO_DENSE,
@@ -11,11 +11,9 @@ import {
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
-  getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
 import { useFunctionaryView } from '../hooks/useFunctionaryView'
-import { isEqual } from 'lodash'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
@@ -23,11 +21,9 @@ import {
   Button,
   Card,
   Container,
-  IconButton,
   Table,
   TableBody,
   TableContainer,
-  Tooltip,
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
@@ -40,39 +36,24 @@ import {
   IFunctionaryTableFilterValue,
   IFunctionaryTableFilters,
 } from '../components/FunctionaryTableToolbar'
-
-const TABLE_HEAD = [
-  {
-    key: 'name',
-    label: 'Funcionario',
-  },
-  {
-    key: 'personalEmail',
-    label: 'Email personal',
-  },
-  {
-    key: 'outlookEmail',
-    label: 'Email universitario',
-  },
-  {
-    key: 'isActive',
-    label: 'Estado',
-  },
-  {
-    key: 'actions',
-    label: 'Acciones',
-  },
-]
+import { TABLE_HEAD } from '../constants'
+import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
 
 const defaultFilters: IFunctionaryTableFilters = {
   name: '',
+  personalEmail: '',
+  outlookEmail: '',
 }
 
 const FunctionaryListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
-  const { loader, functionaries } = useFunctionaryView()
+  const settings = useSettingsContext()
+  const [count, setCount] = useState(0)
+  const [visitedPages, setVisitedPages] = useState<number[]>([0])
+  const [isDataFiltered, setIsDataFiltered] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const [tableData, setTableData] = useState<FunctionaryModel[]>([])
   const [filters, setFilters] =
@@ -89,49 +70,27 @@ const FunctionaryListView = () => {
     [table],
   )
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters,
+  const {
+    loader,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+    handleUpdateRows,
+    handleSearch,
+  } = useFunctionaryView({
+    tableData,
+    setTableData,
+    table,
+    setCount,
+    isDataFiltered,
+    visitedPages,
+    setVisitedPages,
+    field: searchTerm,
   })
 
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage,
-  )
   const denseHeight = table.dense ? NO_DENSE : DENSE
-  const canReset = !isEqual(defaultFilters, filters)
-
-  useEffect(() => {
-    if (functionaries?.length) {
-      setTableData(functionaries as FunctionaryModel[])
-    }
-  }, [functionaries])
 
   const confirm = useBoolean()
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
-    },
-    [dataInPage.length, table, tableData],
-  )
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
-    )
-    setTableData(deleteRows)
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
-  }, [dataFiltered.length, dataInPage.length, table, tableData])
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -140,24 +99,23 @@ const FunctionaryListView = () => {
     [router],
   )
 
-  const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}`)
-    },
-    [router],
-  )
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setSearchTerm('')
+    setVisitedPages([])
+    setIsDataFiltered(false)
+    setTableData([])
+  }
 
   const notFound =
-    (!dataFiltered.length && canReset) ||
-    (!loader.length && !dataFiltered.length)
-
-  const settings = useSettingsContext()
+    (count === 0 && isDataFiltered) ||
+    (!loader.length && count === 0 && isDataFiltered)
 
   return (
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Carreras"
+          heading="Funcionarios"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
             { name: 'Funcionarios' },
@@ -179,17 +137,21 @@ const FunctionaryListView = () => {
           <FunctionaryTableToolbar
             filters={filters}
             onFilters={handleFilters}
+            setSearchTerm={setSearchTerm}
+            setVisitedPages={setVisitedPages}
+            setIsDataFiltered={setIsDataFiltered}
+            table={table}
+            setDataTable={setTableData}
+            getFilteredFunctionaries={handleSearch}
           />
-          {/*
-          {canReset && (
-            <ProductTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
+
+          {isDataFiltered && (
+            <FunctionaryTableResult
               onResetFilters={handleResetFilters}
-              results={0}
+              results={count}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )} */}
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -203,11 +165,9 @@ const FunctionaryListView = () => {
                 )
               }
               action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
+                <Button color="primary" onClick={confirm.onTrue}>
+                  Cambiar estado
+                </Button>
               }
             />
 
@@ -238,7 +198,7 @@ const FunctionaryListView = () => {
                     ))
                   ) : (
                     <>
-                      {dataFiltered
+                      {tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -253,11 +213,8 @@ const FunctionaryListView = () => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() =>
-                              handleDeleteRow(row.id!.toString())
-                            }
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}
                     </>
@@ -265,11 +222,7 @@ const FunctionaryListView = () => {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(
-                      table.page,
-                      table.rowsPerPage,
-                      tableData.length,
-                    )}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, count)}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -279,11 +232,11 @@ const FunctionaryListView = () => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={count}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
@@ -293,10 +246,10 @@ const FunctionaryListView = () => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Actualizar estado"
         content={
           <>
-            Are you sure want to delete{' '}
+            Estás seguro que desear actualizar el estado de{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -305,53 +258,15 @@ const FunctionaryListView = () => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows()
+              handleUpdateRows()
               confirm.onFalse()
             }}
           >
-            Delete
+            Cambiar
           </Button>
         }
       />
     </div>
   )
 }
-
-const applyFilter = ({
-  inputData,
-  comparator,
-  filters,
-}: {
-  inputData: FunctionaryModel[]
-  comparator: (a: any, b: any) => number
-  filters: IFunctionaryTableFilters
-}) => {
-  let currentInputData = [...inputData]
-  const { name } = filters
-
-  const stabilizedThis = currentInputData.map(
-    (el, index) => [el, index] as const,
-  )
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  currentInputData = stabilizedThis.map((el) => el[0])
-
-  if (name) {
-    currentInputData = currentInputData.filter(
-      (functionary) =>
-        functionary.firstName.toLowerCase().includes(name.toLowerCase()) ||
-        functionary.secondName.toLowerCase().includes(name.toLowerCase()) ||
-        functionary.firstLastName.toLowerCase().includes(name.toLowerCase()) ||
-        functionary.secondLastName.toLowerCase().includes(name.toLowerCase()),
-    )
-  }
-
-  return currentInputData
-}
-
 export default memo(FunctionaryListView)

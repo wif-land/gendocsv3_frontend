@@ -25,6 +25,8 @@ type Props = {
   onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
+  activeState?: boolean | null
+  isOnTable?: boolean
 }
 
 export const CouncilTableRow = ({
@@ -34,6 +36,8 @@ export const CouncilTableRow = ({
   onDeleteRow,
   onEditRow,
   onViewRow,
+  isOnTable = true,
+  activeState,
 }: Props) => {
   const { name, date, isActive, type } = row
 
@@ -41,12 +45,16 @@ export const CouncilTableRow = ({
 
   const popover = usePopover()
 
+  const finalActiveState = activeState !== undefined ? activeState : isActive
+
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
+        {isOnTable && (
+          <TableCell padding="checkbox">
+            <Checkbox checked={selected} onClick={onSelectRow} />
+          </TableCell>
+        )}
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
@@ -90,12 +98,18 @@ export const CouncilTableRow = ({
         </TableCell>
 
         <TableCell>
-          <Label
-            variant="soft"
-            color={(isActive === true && 'success') || 'primary'}
-          >
-            {isActive === true ? 'Activo' : 'Inactivo'}
-          </Label>
+          {activeState === null ? (
+            <Label variant="soft" color="warning">
+              No disponible
+            </Label>
+          ) : (
+            <Label
+              variant="soft"
+              color={(finalActiveState === true && 'success') || 'primary'}
+            >
+              {finalActiveState === true ? 'Activo' : 'Inactivo'}
+            </Label>
+          )}
         </TableCell>
 
         <TableCell align="right">

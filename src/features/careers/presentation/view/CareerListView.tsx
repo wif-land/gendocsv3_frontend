@@ -129,13 +129,6 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}`)
-    },
-    [router],
-  )
-
   const notFound =
     (!dataFiltered.length && canReset) ||
     (!loader.length && !dataFiltered.length)
@@ -243,7 +236,6 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
                               handleDeleteRow(row.id!.toString())
                             }
                             onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}
                     </>

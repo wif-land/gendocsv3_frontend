@@ -11,6 +11,7 @@ import { Tabs } from '@mui/material'
 import { CouncilDetailAttendance } from '../components/CouncilDetailAttendance'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { CouncilDetailsSummary } from '../components/CouncilDetailSummary'
+import { CouncilModel } from '../../data/models/CouncilModel'
 
 const CouncilDetailsView = () => {
   const { id } = useParams()
@@ -26,7 +27,9 @@ const CouncilDetailsView = () => {
     [],
   )
 
-  const council = councils.find((council) => council.id! === +id)
+  const council: CouncilModel | undefined = councils.find(
+    (council) => council.id! === +id,
+  )
 
   const TABS = [
     {
@@ -72,7 +75,12 @@ const CouncilDetailsView = () => {
         ))}
       </Tabs>
 
-      {currentTab === 'general' && <CouncilDetailsSummary council={council!} />}
+      {currentTab === 'general' && (
+        <CouncilDetailsSummary
+          council={council as CouncilModel}
+          councilId={Number(id)}
+        />
+      )}
 
       {currentTab === 'attendees' && <CouncilDetailAttendance />}
     </Container>

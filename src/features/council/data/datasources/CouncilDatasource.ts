@@ -16,10 +16,24 @@ export interface CouncilsDataSource {
     offset: number,
   ): Promise<{
     status: number
-    councils: CouncilModel[]
+    data: {
+      councils: CouncilModel[]
+      count: number
+    }
   }>
 
-  councilCountByModuleId(moduleId: number): Promise<number>
+  getByField(
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      councils: CouncilModel[]
+      count: number
+    }
+  }>
 
   update(council: Partial<ICouncil>): Promise<{
     status: number
@@ -48,36 +62,24 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return CouncilsDataSourceImpl.instance
   }
 
-  async getAllCouncilsByModuleId(
+  getAllCouncilsByModuleId = async (
     moduleId: number,
     limit: number,
     offset: number,
-  ) {
+  ) => {
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL, {
       params: { moduleId, limit, offset },
     })
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, councils: [] as CouncilModel[] }
-    }
-
-    return { status, councils: data.content as CouncilModel[] }
-  }
-
-  councilCountByModuleId(moduleId: number) {
-    const result = AxiosClient.get(API_ROUTES.COUNCILS.GET_COUNT, {
-      params: { moduleId },
-    })
-
-    return result.then(({ status, data }) => {
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return 0
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as { councils: CouncilModel[]; count: number },
       }
-
-      return data.content as number
-    })
+    }
+    return { status, data: { councils: [], count: 0 } }
   }
 
   create = async (council: CouncilModel) => {
@@ -85,11 +87,10 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, council: {} as CouncilModel }
+    if (status === HTTP_STATUS_CODES.CREATED) {
+      return { status, council: data.content as CouncilModel }
     }
-
-    return { status, council: data.content as CouncilModel }
+    return { status, council: {} as CouncilModel }
   }
 
   getAll = async () => {
@@ -97,38 +98,59 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, councils: [] as CouncilModel[] }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, councils: data.content as CouncilModel[] }
     }
+    return { status, councils: [] as CouncilModel[] }
+  }
 
-    return { status, councils: data.content as CouncilModel[] }
+  getByField = async (
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.COUNCILS.GET_BY_FIELD(field),
+      {
+        params: { moduleId, limit, offset },
+      },
+    )
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as { councils: CouncilModel[]; count: number },
+      }
+    }
+    return { status, data: { councils: [], count: 0 } }
   }
 
   update = async (council: ICouncil) => {
     const { id, ...rest } = council
     const result = await AxiosClient.patch(
-      API_ROUTES.COUNCILS.UPDATE.replace(':id', id?.toString() || ''),
+      API_ROUTES.COUNCILS.UPDATE(id as number),
       rest,
     )
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, council: {} as CouncilModel }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, council: data.content as CouncilModel }
     }
-
-    return { status, council: data.content as CouncilModel }
+    return { status, council: {} as CouncilModel }
   }
 
-  bulkUpdate(councils: ICouncil[]) {
+  bulkUpdate = async (councils: ICouncil[]) => {
     const result = AxiosClient.patch(API_ROUTES.COUNCILS.BULK_UPDATE, councils)
 
     return result.then(({ status, data }) => {
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, councils: [] as CouncilModel[] }
+      if (status === HTTP_STATUS_CODES.OK) {
+        return { status, councils: data.content as CouncilModel[] }
       }
-
-      return { status, councils: data.content as CouncilModel[] }
+      return { status, councils: [] as CouncilModel[] }
     })
   }
 }

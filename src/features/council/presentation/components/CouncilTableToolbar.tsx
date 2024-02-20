@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useEffect } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
@@ -7,6 +7,11 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { CouncilModel } from '../../data/models/CouncilModel'
+import { useCouncilStore } from '../store/councilsStore'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export type ICouncilTableFilterValue = string | string[]
 
@@ -17,17 +22,95 @@ export type ICouncilTableFilters = {
 type Props = {
   filters: ICouncilTableFilters
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
+  setFilteredCouncils: (councils: CouncilModel[]) => void
+  moduleId: number
+  setDataTable: (data: CouncilModel[]) => void
+  setIsDataFiltered: (isDataFiltered: boolean) => void
+  setCount: (count: number) => void
+  setVisitedPages: (visitedPages: number[]) => void
+  currentPage: number
+  rowsPerPage: number
+  setCurrentPage: (currentPage: number) => void
+  searchTerm: string
+  setSearchTerm: (searchTerm: string) => void
 }
 
-export const CouncilTableToolbar = ({ filters, onFilters }: Props) => {
+export const CouncilTableToolbar = ({
+  // filters,
+  onFilters,
+  setFilteredCouncils,
+  moduleId,
+  setIsDataFiltered,
+  setDataTable,
+  setVisitedPages,
+  currentPage,
+  rowsPerPage,
+  setCount,
+  setCurrentPage,
+  searchTerm,
+  setSearchTerm,
+}: Props) => {
   const popover = usePopover()
 
-  const handleFilterName = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onFilters('name', event.target.value)
-    },
-    [onFilters],
-  )
+  const { setCouncils } = useCouncilStore()
+
+  const debouncedSetSearchTerm = useDebounce(setSearchTerm)
+
+  const handleFilterNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event.target.value === '') {
+      setIsDataFiltered(false)
+      setVisitedPages([])
+    } else {
+      setIsDataFiltered(true)
+    }
+
+    debouncedSetSearchTerm(event.target.value)
+  }
+
+  useEffect(() => {
+    setCurrentPage(0)
+    let activeRequest = true
+    const getFilteredCouncils = async () => {
+      const { data, status } =
+        await CouncilsUseCasesImpl.getInstance().getByField(
+          searchTerm,
+          moduleId,
+          rowsPerPage,
+          currentPage * rowsPerPage,
+        )
+
+      if (status === HTTP_STATUS_CODES.NOT_FOUND) {
+        setDataTable([])
+        setCouncils([])
+        setFilteredCouncils([])
+        setCount(0)
+        return
+      }
+
+      if (activeRequest) {
+        setCount(data.count)
+        setCouncils(data.councils)
+        setFilteredCouncils(data.councils)
+        setDataTable(data.councils)
+        onFilters('name', searchTerm)
+      }
+    }
+
+    if (searchTerm === '') {
+      setDataTable([])
+      setIsDataFiltered(false)
+      setVisitedPages([])
+    } else {
+      getFilteredCouncils()
+    }
+
+    return () => {
+      activeRequest = false
+      setVisitedPages([])
+    }
+  }, [searchTerm])
 
   return (
     <>
@@ -52,8 +135,8 @@ export const CouncilTableToolbar = ({ filters, onFilters }: Props) => {
         >
           <TextField
             fullWidth
-            defaultValue={filters.name}
-            onChange={handleFilterName}
+            defaultValue={searchTerm}
+            onChange={handleFilterNameChange}
             placeholder="Busca por nombre de consejo"
             InputProps={{
               startAdornment: (

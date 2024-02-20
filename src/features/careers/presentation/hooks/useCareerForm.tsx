@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo } from 'react'
 import { ICareer } from '../../domain/entities/ICareer'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
+import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { usePathname, useRouter } from 'next/navigation'
 import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'
@@ -12,6 +12,7 @@ import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { useCareersStore } from '../state/careerStore'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+import { getEditedFields } from '../../../../shared/utils/FormUtil'
 
 interface FormValuesProps extends ICareer {}
 
@@ -154,25 +155,4 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     onSubmit,
     handleSubmit,
   }
-}
-
-type GenericObject = { [key: string]: any }
-
-const getEditedFields = <T extends GenericObject>(
-  initialValues: T,
-  values: T,
-): T | null => {
-  const editedFields: T = {} as T
-
-  Object.keys(initialValues).forEach((key) => {
-    if (initialValues[key] !== values[key]) {
-      ;(editedFields as any)[key] = values[key]
-    }
-  })
-
-  if (Object.keys(editedFields).length === 0) {
-    return null
-  }
-
-  return editedFields
 }

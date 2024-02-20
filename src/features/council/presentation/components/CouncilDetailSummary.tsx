@@ -7,17 +7,54 @@ import { format } from 'date-fns'
 import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
 import { Box, Button } from '@mui/material'
 import Iconify from '../../../../core/iconify'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { useEffect, useState } from 'react'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 
 type Props = {
   council: CouncilModel
+  councilId: number
   disabledActions?: boolean
 }
 
-export const CouncilDetailsSummary = ({ council, ...other }: Props) => {
+export const CouncilDetailsSummary = ({
+  council,
+  councilId,
+  ...other
+}: Props) => {
   const router = useRouter()
+  const pathname = usePathname()
+  const { modules } = useModulesStore()
+  const moduleId = modules?.find(
+    (module) => module.code === pathname.split('/')[2].toUpperCase(),
+  )?.id
 
-  const { name, id } = council
+  const [currentCouncil, setCurrentCouncil] = useState<CouncilModel>(council)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    const fetchCouncil = async () => {
+      setIsLoading(true)
+      try {
+        const response = await CouncilsUseCasesImpl.getInstance().getByField(
+          councilId.toString(),
+          moduleId!,
+        )
+        console.log('response', response)
+        setCurrentCouncil(response.council[0])
+      } catch (error) {
+        console.error('Error al obtener detalles del consejo', error)
+      }
+      setIsLoading(false)
+    }
+
+    if (!council) {
+      fetchCouncil()
+    }
+  }, [councilId, moduleId])
+
+  const { name, id } = currentCouncil as CouncilModel
 
   const SUMMARY = [
     {
@@ -50,8 +87,6 @@ export const CouncilDetailsSummary = ({ council, ...other }: Props) => {
     </Label>
   )
 
-  console.log(council)
-
   const renderError = (
     <EmptyContent
       filled
@@ -68,9 +103,9 @@ export const CouncilDetailsSummary = ({ council, ...other }: Props) => {
       sx={{ py: 10 }}
     />
   )
-
   const renderAttendees = () => (
     <>
+      {isLoading && <EmptyContent filled title="Cargando..." sx={{ py: 10 }} />}
       <Box
         gap={5}
         display="grid"

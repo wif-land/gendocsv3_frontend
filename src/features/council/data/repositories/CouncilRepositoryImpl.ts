@@ -28,10 +28,14 @@ export class CouncilRepositoryImpl implements CouncilRepository {
     offset: number,
   ) => await this.datasource.getAllCouncilsByModuleId(moduleId, limit, offset)
 
-  getCount = async (moduleId: number) =>
-    await this.datasource.councilCountByModuleId(moduleId)
-
   getAll = async () => await this.datasource.getAll()
+
+  getByField = async (
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getByField(field, moduleId, limit, offset)
 
   update = async (data: Partial<CouncilModel>) =>
     await this.datasource.update(data)

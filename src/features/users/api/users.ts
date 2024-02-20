@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { AxiosClient } from '../../../shared/utils/AxiosClient'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
-import { ICreateUser, IUser } from '../../auth/types/IUser'
+import { ICreateUser, IUser } from '../../auth/domain/entities/IUser'
 import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
 import { IUpdateUser } from '../types/IUserUpdate'
 

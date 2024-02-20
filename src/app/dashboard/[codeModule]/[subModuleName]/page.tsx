@@ -1,27 +1,17 @@
 'use client'
 
-import { Suspense, lazy } from 'react'
+import { lazy } from 'react'
 import { useParams } from 'next/navigation'
-import { Stack } from '@mui/material'
-import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
-import { LoadingScreen } from '../../../../shared/sdk/loading-screen'
+
 import { CouncilListView } from '../../../../features/council/presentation/view'
 import { CareerListView } from '../../../../features/careers/presentation/view'
 import { DocumentListView } from '../../../../features/documents/presentation/view'
 import { FunctionaryListView } from '../../../../features/functionaries/presentation/view'
+import { ProcessListView } from '../../../../features/processes/presentation/view'
+import { StudentListView } from '../../../../features/students/presentation/view'
 
 const UsersView = lazy(
   () => import('../../../../features/modules/components/users-view'),
-)
-
-const StudentsView = lazy(
-  () => import('../../../../features/modules/components/students-view'),
-)
-const ProcessView = lazy(
-  () =>
-    import(
-      '../../../../features/processes/presentation/components/ProcessesView'
-    ),
 )
 
 const Page = () => {
@@ -31,20 +21,15 @@ const Page = () => {
 
   const routeToComponent = {
     usuarios: UsersView,
-    estudiantes: StudentsView,
+    estudiantes: StudentListView,
     carreras: CareerListView,
     funcionarios: FunctionaryListView,
-    procesos: ProcessView,
+    procesos: ProcessListView,
     consejos: CouncilListView,
     documentos: DocumentListView,
   }
 
-  const defaultComponent = () => (
-    <Stack spacing={1} alignItems="center">
-      <StaticDatePicker orientation="landscape" />
-      <TimePicker label="Basic time picker" />
-    </Stack>
-  )
+  const defaultComponent = () => <div>Not found</div>
 
   const matchedRoute = Object.keys(routeToComponent).find((key) =>
     RegExp(key).test(route),
@@ -54,11 +39,7 @@ const Page = () => {
     routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
     defaultComponent
 
-  return (
-    <Suspense fallback={<LoadingScreen />}>
-      <Component moduleId={codeModule as string} />
-    </Suspense>
-  )
+  return <Component moduleId={codeModule as string} />
 }
 
 export default Page

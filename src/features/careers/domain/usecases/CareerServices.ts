@@ -8,10 +8,13 @@ interface CareerUseCases {
     career: CareerModel
   }>
 
-  getAll(): Promise<{
-    status: number
-    careers: CareerModel[]
-  }>
+  getAll(): Promise<
+    | {
+        status: number
+        careers: CareerModel[]
+      }
+    | boolean
+  >
 
   update(
     id: number,
@@ -37,7 +40,14 @@ export class CareersUseCasesImpl implements CareerUseCases {
 
   create = async (career: ICareer) => await this.careerRepository.create(career)
 
-  getAll = async () => await this.careerRepository.getAll()
+  getAll = async () => {
+    try {
+      return await this.careerRepository.getAll()
+    } catch (error) {
+      console.error('Error getting careers', error)
+      return false
+    }
+  }
 
   update = async (id: number, career: Partial<CareerModel>) =>
     await this.careerRepository.update({

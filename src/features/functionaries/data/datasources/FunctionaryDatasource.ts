@@ -5,13 +5,37 @@ import { FunctionaryModel } from '../models/FunctionatyModel'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 
 export interface FunctionaryDataSource {
-  getAll(): Promise<{
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
-    functionaries: FunctionaryModel[]
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
   }>
 
-  update(funtionary: Partial<IFunctionary>): Promise<{
+  getByField(
+    field: string,
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
+  }>
+
+  update(functionary: Partial<IFunctionary>): Promise<{
+    status: number
+    functionary: FunctionaryModel
+  }>
+
+  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<{
+    status: number
+    functionaries: FunctionaryModel[]
   }>
 
   create(functionary: IFunctionary): Promise<{
@@ -31,6 +55,87 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     return FunctionaryDataSourceImpl.instance
   }
 
+  getAll = async (limit: number, offset: number) => {
+    const result = await AxiosClient.get(API_ROUTES.FUNCTIONARIES.GET_ALL, {
+      params: { limit, offset },
+    })
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as {
+          count: number
+          functionaries: FunctionaryModel[]
+        },
+      }
+    }
+
+    return {
+      status,
+      data: { count: 0, functionaries: [] as FunctionaryModel[] },
+    }
+  }
+
+  getByField = async (field: string, limit: number, offset: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.FUNCTIONARIES.GET_BY_FIELD(field),
+      {
+        params: { limit, offset },
+      },
+    )
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as {
+          count: number
+          functionaries: FunctionaryModel[]
+        },
+      }
+    }
+
+    return {
+      status,
+      data: { count: 0, functionaries: [] as FunctionaryModel[] },
+    }
+  }
+
+  update = async (functionary: Partial<IFunctionary>) => {
+    const { id, ...body } = functionary
+
+    const result = await AxiosClient.patch(
+      API_ROUTES.FUNCTIONARIES.UPDATE(id as number),
+      body,
+    )
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, functionary: data.content as FunctionaryModel }
+    }
+
+    return { status, functionary: {} as FunctionaryModel }
+  }
+
+  bulkUpdate = async (functionaries: Partial<IFunctionary>[]) => {
+    const result = await AxiosClient.patch(
+      API_ROUTES.FUNCTIONARIES.BULK_UPDATE,
+      functionaries,
+    )
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, functionaries: data.content as FunctionaryModel[] }
+    }
+
+    return { status, functionaries: [] as FunctionaryModel[] }
+  }
+
   create = async (functionary: FunctionaryModel) => {
     const result = await AxiosClient.post(
       API_ROUTES.FUNCTIONARIES.CREATE,
@@ -44,37 +149,5 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     }
 
     return { status, functionary: data.content as FunctionaryModel }
-  }
-
-  getAll = async () => {
-    const result = await AxiosClient.get(API_ROUTES.FUNCTIONARIES.GET_ALL)
-
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, functionaries: [] as FunctionaryModel[] }
-    }
-
-    return { status, functionaries: data.content as FunctionaryModel[] }
-  }
-
-  update = async (career: Partial<IFunctionary>) => {
-    const { id, ...body } = career
-
-    const result = await AxiosClient.put(
-      API_ROUTES.FUNCTIONARIES.UPDATE,
-      body,
-      {
-        id,
-      },
-    )
-
-    const { status } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
-    }
-
-    return { status }
   }
 }

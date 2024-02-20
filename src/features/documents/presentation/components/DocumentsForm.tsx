@@ -16,12 +16,12 @@ import {
 } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
-import { useUserStore } from '../../../../shared/store/userProfileStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { IDocument } from '../../domain/entities/IDocument'
-import { useStudentStore } from '../../../../shared/store/studentStore'
-import { useFunctionaryStore } from '../../../../shared/store/functionaryStore'
+import { useStudentStore } from '../../../students/presentation/state/studentStore'
+import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { useCouncilStore } from '.././../../../features/council/presentation/store/councilsStore'
-import { useProcessStore } from '../../../../features/processes/presentation/store/processesStore'
+import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
 import { ProcessModel } from '../../../../features/processes/data/models/ProcessesModel'
 import { DocumentsUseCasesImpl } from '../../domain/usecases/DocumentServices'
 import { NumerationModel } from '../../data/models/NumerationModel'
@@ -40,7 +40,7 @@ export const DocumentsForm = ({
   onOpenChange,
   values,
 }: ProcessesFormProps) => {
-  const { user } = useUserStore()
+  const { user } = useAccountStore()
   const isAddMode = !values?.id
   const { formik } = useDocumentsForm(values ?? ({} as IDocument), () =>
     onOpenChange(false),
