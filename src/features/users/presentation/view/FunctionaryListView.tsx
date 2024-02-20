@@ -14,7 +14,6 @@ import {
   useTable,
 } from '../../../../shared/sdk/table'
 import { useFunctionaryView } from '../hooks/useFunctionaryView'
-import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
@@ -38,6 +37,7 @@ import {
 } from '../components/FunctionaryTableToolbar'
 import { TABLE_HEAD } from '../constants'
 import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
+import { IUser } from '../../domain/entities/IUser'
 
 const defaultFilters: IFunctionaryTableFilters = {
   name: '',
@@ -55,7 +55,7 @@ const FunctionaryListView = () => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const [tableData, setTableData] = useState<FunctionaryModel[]>([])
+  const [tableData, setTableData] = useState<IUser[]>([])
   const [filters, setFilters] =
     useState<IFunctionaryTableFilters>(defaultFilters)
 
@@ -127,7 +127,7 @@ const FunctionaryListView = () => {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              Nuevo funcionario
+              Nuevo usuario
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -158,12 +158,6 @@ const FunctionaryListView = () => {
               dense={table.dense}
               numSelected={table.selected.length}
               rowCount={tableData.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id!.toString()),
-                )
-              }
               action={
                 <Button color="primary" onClick={confirm.onTrue}>
                   Cambiar estado

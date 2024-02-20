@@ -7,7 +7,8 @@ interface Props extends StackProps {
   action?: React.ReactNode
   rowCount: number
   numSelected: number
-  onSelectAllRows: (checked: boolean) => void
+  onSelectAllRows?: (checked: boolean) => void
+  disableSelectAll?: boolean
 }
 
 export default function TableSelectedAction({
@@ -15,7 +16,8 @@ export default function TableSelectedAction({
   action,
   rowCount,
   numSelected,
-  onSelectAllRows,
+  onSelectAllRows = () => {},
+  disableSelectAll = false,
   sx,
   ...other
 }: Props) {
@@ -44,13 +46,17 @@ export default function TableSelectedAction({
       }}
       {...other}
     >
-      <Checkbox
-        indeterminate={!!numSelected && numSelected < rowCount}
-        checked={!!rowCount && numSelected === rowCount}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          onSelectAllRows(event.target.checked)
-        }
-      />
+      {
+        !disableSelectAll && (
+          <Checkbox
+            indeterminate={!!numSelected && numSelected < rowCount}
+            checked={!!rowCount && numSelected === rowCount}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              onSelectAllRows(event.target.checked)
+            }
+          />
+        )
+      }
 
       <Typography
         variant="subtitle2"

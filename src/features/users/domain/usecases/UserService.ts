@@ -36,11 +36,6 @@ interface UserUseCases {
     status: number
     user: UserModel
   }>
-
-  bulkUpdate(users: Partial<IUser>[]): Promise<{
-    status: number
-    users: UserModel[]
-  }>
 }
 
 export class UserUseCasesImpl implements UserUseCases {
@@ -69,7 +64,4 @@ export class UserUseCasesImpl implements UserUseCases {
       ...data,
       id,
     })
-
-  bulkUpdate = async (users: Partial<IUser>[]) =>
-    await this.userRepository.bulkUpdate(users)
 }

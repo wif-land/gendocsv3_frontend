@@ -33,11 +33,6 @@ export interface UserDataSource {
     user: UserModel
   }>
 
-  bulkUpdate(users: Partial<IUser>[]): Promise<{
-    status: number
-    users: UserModel[]
-  }>
-
   create(user: IUser): Promise<{
     status: number
     user: UserModel
@@ -116,18 +111,6 @@ export class UserDataSourceImpl implements UserDataSource {
     }
 
     return { status, user: {} as UserModel }
-  }
-
-  bulkUpdate = async (users: Partial<IUser>[]) => {
-    const result = await AxiosClient.patch(API_ROUTES.USERS.BULK_UPDATE, users)
-
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, users: data.content as UserModel[] }
-    }
-
-    return { status, users: [] as UserModel[] }
   }
 
   create = async (user: UserModel) => {
