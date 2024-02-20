@@ -1,12 +1,15 @@
 'use client'
 
 import { useParams } from 'next/navigation'
+
 import { Stack } from '@mui/material'
-import { StaticDatePicker, TimePicker } from '@mui/x-date-pickers'
+
 import { CouncilCreateView } from '../../../../../features/council/presentation/view'
 import { CareerCreateView } from '../../../../../features/careers/presentation/view'
 import { DocumentCreateView } from '../../../../../features/documents/presentation/view'
 import { FunctionaryCreateView } from '../../../../../features/functionaries/presentation/view'
+import { ProcessCreateView } from '../../../../../features/processes/presentation/view'
+import { StudentCreateView } from '../../../../../features/students/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -14,18 +17,15 @@ const Page = () => {
   const route = `${codeModule}/${subModuleName}`
 
   const routeToComponent = {
+    estudiantes: StudentCreateView,
     consejos: CouncilCreateView,
     carreras: CareerCreateView,
     documentos: DocumentCreateView,
     funcionarios: FunctionaryCreateView,
+    procesos: ProcessCreateView,
   }
 
-  const defaultComponent = () => (
-    <Stack spacing={1} alignItems="center">
-      <StaticDatePicker orientation="landscape" />
-      <TimePicker label="Basic time picker" />
-    </Stack>
-  )
+  const defaultComponent = () => <Stack>404</Stack>
 
   const matchedRoute = Object.keys(routeToComponent).find((key) =>
     RegExp(key).test(route),

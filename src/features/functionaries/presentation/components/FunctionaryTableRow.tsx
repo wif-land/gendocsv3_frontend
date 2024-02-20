@@ -7,19 +7,20 @@ import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
+
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import Label from '../../../../shared/sdk/label'
 import Iconify from '../../../../core/iconify'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 
 type Props = {
   row: FunctionaryModel
   selected: boolean
   onEditRow: VoidFunction
-  onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
 }
@@ -30,7 +31,6 @@ export const FunctionaryTableRow = ({
   onSelectRow,
   onDeleteRow,
   onEditRow,
-  onViewRow,
 }: Props) => {
   const confirm = useBoolean()
   const popover = usePopover()
@@ -50,7 +50,7 @@ export const FunctionaryTableRow = ({
                 noWrap
                 color="inherit"
                 variant="subtitle2"
-                onClick={onViewRow}
+                onClick={onEditRow}
                 sx={{ cursor: 'pointer' }}
               >
                 {`${row.firstName} ${row.secondName} ${row.firstLastName} ${row.secondLastName}`}
@@ -105,16 +105,6 @@ export const FunctionaryTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          Detalles
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
@@ -128,21 +118,40 @@ export const FunctionaryTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={{ color: 'error.main' }}
+          sx={
+            row.isActive ? { color: 'error.main' } : { color: 'success.main' }
+          }
         >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Borrar
+          {row.isActive ? (
+            <>
+              <Iconify icon="eva:slash-fill" />
+              Desactivar
+            </>
+          ) : (
+            <>
+              <Iconify icon="eva:checkmark-circle-fill" />
+              Activar
+            </>
+          )}
         </MenuItem>
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar consejo"
-        content="¿Estás seguro de que quieres eliminar este consejo?"
+        title={row.isActive ? 'Desactivar funcionario' : 'Activar funcionario'}
+        content={
+          row.isActive
+            ? 'Está seguro de desactivar el funcionario?'
+            : 'Está seguro de activar el funcionario?'
+        }
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Borrar
+          <Button
+            variant="contained"
+            color={row.isActive ? 'error' : 'success'}
+            onClick={onDeleteRow}
+          >
+            {row.isActive ? 'Desactivar' : 'Activar'}
           </Button>
         }
       />

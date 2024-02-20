@@ -18,7 +18,7 @@ export const defaultIcon = PiSquaresFour
 export type IconType = typeof PiArrowsClockwise
 
 interface ISubmoduleIcons {
-  [key: string]: IconType | undefined // Agrega una firma de índice aquí
+  [key: string]: IconType | undefined
 }
 
 export const submoduleIcons: ISubmoduleIcons = {

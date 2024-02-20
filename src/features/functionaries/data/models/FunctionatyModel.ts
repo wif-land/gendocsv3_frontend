@@ -16,6 +16,7 @@ export class FunctionaryModel implements IFunctionary {
   thirdLevelDegree: string
   fourthLevelDegree: string
   isActive: boolean
+  name?: string
 
   constructor(props: IFunctionary) {
     this.id = props.id
@@ -32,6 +33,7 @@ export class FunctionaryModel implements IFunctionary {
     this.thirdLevelDegree = props.thirdLevelDegree
     this.fourthLevelDegree = props.fourthLevelDegree
     this.isActive = props.isActive
+    this.name = `${this.firstName} ${this.secondName} ${this.firstLastName} ${this.secondLastName}`
   }
 
   static fromJson(json: Record<string, any>): FunctionaryModel {
@@ -50,6 +52,7 @@ export class FunctionaryModel implements IFunctionary {
       thirdLevelDegree: json.thirdLevelDegree,
       fourthLevelDegree: json.fourthLevelDegree,
       isActive: json.isActive,
+      name: `${json.firstName} ${json.secondName} ${json.firstLastName} ${json.secondLastName}`,
     })
   }
 

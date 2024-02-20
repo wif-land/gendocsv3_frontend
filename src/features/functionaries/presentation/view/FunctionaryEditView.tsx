@@ -6,6 +6,7 @@ import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { FunctionaryNewEditForm } from '../components/FunctionaryNewEditForm'
+import { useFunctionaryStore } from '../state/useFunctionaryStore'
 
 const FunctionaryEditView = () => {
   const settings = useSettingsContext()
@@ -14,7 +15,7 @@ const FunctionaryEditView = () => {
 
   const { id } = params
 
-  const { functionaries } = useFunctionaryView()
+  const { functionaries } = useFunctionaryStore()
 
   const currentFunctionary = functionaries?.find(
     (functionary) => functionary.id! === +id,

@@ -4,14 +4,31 @@ import { IFunctionary } from '../entities/IFunctionary'
 import { FunctionaryRepository } from '../repositories/FunctionaryRepository'
 
 interface FunctionaryUseCases {
-  create(data: IFunctionary): Promise<{
+  create(
+    data: IFunctionary,
+  ): Promise<{ functionary: FunctionaryModel } | boolean>
+
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
-    functionary: FunctionaryModel
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
   }>
 
-  getAll(): Promise<{
+  getByField(
+    field: string,
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
-    functionaries: FunctionaryModel[]
+    data: {
+      count: number
+      functionaries: FunctionaryModel[]
+    }
   }>
 
   update(
@@ -19,6 +36,12 @@ interface FunctionaryUseCases {
     data: Partial<FunctionaryModel>,
   ): Promise<{
     status: number
+    functionary: FunctionaryModel
+  }>
+
+  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<{
+    status: number
+    functionaries: FunctionaryModel[]
   }>
 }
 
@@ -36,14 +59,26 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
   private functionaryRepository: FunctionaryRepository =
     FunctionaryRepositoryImpl.getInstance()
 
-  create = async (data: IFunctionary) =>
-    await this.functionaryRepository.create(data)
+  create = async (data: IFunctionary) => {
+    try {
+      return await this.functionaryRepository.create(data)
+    } catch (error) {
+      return false
+    }
+  }
 
-  getAll = async () => await this.functionaryRepository.getAll()
+  getAll = async (limit: number, offset: number) =>
+    await this.functionaryRepository.getAll(limit, offset)
+
+  getByField = async (field: string, limit: number, offset: number) =>
+    await this.functionaryRepository.getByField(field, limit, offset)
 
   update = async (id: number, data: Partial<FunctionaryModel>) =>
     await this.functionaryRepository.update({
       ...data,
       id,
     })
+
+  bulkUpdate = async (functionaries: Partial<IFunctionary>[]) =>
+    await this.functionaryRepository.bulkUpdate(functionaries)
 }

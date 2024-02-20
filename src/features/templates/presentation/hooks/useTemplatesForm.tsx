@@ -2,7 +2,7 @@ import * as yup from 'yup'
 import { toast } from 'react-toastify'
 import { useFormik } from 'formik'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { useProcessStore } from '../../../processes/presentation/store/processesStore'
+import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
 import { ITemplate } from '../../domain/entities/ITemplate'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
 

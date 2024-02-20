@@ -22,10 +22,17 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
 
   private constructor(private readonly datasource: FunctionaryDataSource) {}
 
-  getAll = async () => await this.datasource.getAll()
+  getAll = async (limit: number, offset: number) =>
+    await this.datasource.getAll(limit, offset)
+
+  getByField = async (field: string, limit: number, offset: number) =>
+    await this.datasource.getByField(field, limit, offset)
 
   update = async (data: Partial<FunctionaryModel>) =>
     await this.datasource.update(data)
+
+  bulkUpdate = async (data: Partial<IFunctionary>[]) =>
+    await this.datasource.bulkUpdate(data)
 
   create = async (data: IFunctionary) => {
     try {

@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { useFormik } from 'formik'
 import { useEffect } from 'react'
-import { useFunctionaryStore } from '../../../shared/store/functionaryStore'
+import { useFunctionaryStore } from '../../functionaries/presentation/state/useFunctionaryStore'
 import { useCareersStore } from '../presentation/state/careerStore'
 
 export const CareersForm = ({

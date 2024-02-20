@@ -1,15 +1,19 @@
-export const useDebounce = <F extends (...args: never[]) => unknown>(
-  func: F,
-  timeout: number = DEFAULT_TIMEOUT,
-): F => {
-  let timer: ReturnType<typeof setTimeout>
+import { useEffect, useState } from 'react'
 
-  return ((...args: never[]) => {
-    clearTimeout(timer)
-    timer = setTimeout(() => {
-      func(...args)
-    }, timeout)
-  }) as F
+export const useDebounce = (value: string, delay?: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay || DEFAULT_DELAY)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
 }
 
-const DEFAULT_TIMEOUT = 300
+const DEFAULT_DELAY = 500

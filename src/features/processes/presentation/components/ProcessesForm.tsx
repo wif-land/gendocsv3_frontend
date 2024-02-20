@@ -10,7 +10,7 @@ import {
   Switch,
 } from '@nextui-org/react'
 import { useEffect } from 'react'
-import { useProcessesForm } from '../hooks/useProcessesForm'
+import { useProcessForm } from '../hooks/useProcessForm'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { IProcess } from '../../domain/entities/IProcess'
 
@@ -28,9 +28,7 @@ export const ProcessesForm = ({
 }: ProcessesFormProps) => {
   const { user } = useAccountStore()
   const isAddMode = !values?.id
-  const { formik } = useProcessesForm(values ?? ({} as IProcess), () =>
-    onOpenChange(false),
-  )
+  const { formik, methods } = useProcessForm(values ?? ({} as IProcess))
 
   useEffect(() => {
     formik.setFieldValue('userId', user?.id)

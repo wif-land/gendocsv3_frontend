@@ -19,7 +19,7 @@ import {
 } from '@nextui-org/react'
 import { Key, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
-import { useProcessStore } from '../store/processesStore'
+import { useProcessStore } from '../state/useProcessStore'
 import { ProcessesForm } from './ProcessesForm'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { ProcessModel } from '../../data/models/ProcessesModel'
