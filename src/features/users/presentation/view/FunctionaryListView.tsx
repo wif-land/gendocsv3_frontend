@@ -177,12 +177,6 @@ const FunctionaryListView = () => {
                   rowCount={tableData.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id!.toString()),
-                    )
-                  }
                 />
 
                 <TableBody>
