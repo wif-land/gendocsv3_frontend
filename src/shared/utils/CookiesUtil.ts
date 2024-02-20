@@ -8,10 +8,11 @@ export const setCookie = (key: string, value: unknown) => {
   const MINUTE = 60
   const SECOND = 1000
 
-  cookies().set(key, JSON.stringify(value), {
-    path: '/',
-    maxAge: DAY * HOUR * MINUTE * SECOND,
-  })
+  cookies().set(key, value as string),
+    {
+      path: '/',
+      maxAge: DAY * HOUR * MINUTE * SECOND,
+    }
 }
 
 export const getCookie = (key: string) => {

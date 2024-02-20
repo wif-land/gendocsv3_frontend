@@ -10,10 +10,12 @@ interface StoreState {
 }
 
 const STORE_NAME = 'students-store'
+const DEFAULT_STUDENTS: IStudent[] = []
+
 export const useStudentStore = create<StoreState>(
   persist(
     (set) => ({
-      students: undefined,
+      students: DEFAULT_STUDENTS,
       setStudents: (careers) => set({ students: careers }),
       get: async (limit: number, offset: number) => {
         const result = await StudentUseCasesImpl.getInstance().getAll(
