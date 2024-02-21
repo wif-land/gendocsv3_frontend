@@ -31,7 +31,6 @@ export const TABLE_HEAD = [
 ]
 
 export const NewFunctionarySchema = Yup.object().shape({
-  dni: Yup.string().required(VALIDATION_MESSAGES.required),
   firstName: Yup.string().required(VALIDATION_MESSAGES.required),
   secondName: Yup.string().required(VALIDATION_MESSAGES.required),
   firstLastName: Yup.string().required(VALIDATION_MESSAGES.required),
@@ -48,11 +47,6 @@ export const NewFunctionarySchema = Yup.object().shape({
       /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
       VALIDATION_MESSAGES.invalidFormat,
     ),
-  phoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
-  regularPhoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
-  thirdLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
-  fourthLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
 })
 
 export const resolveDefaultValues = (currentFunctionary?: IUser) => ({

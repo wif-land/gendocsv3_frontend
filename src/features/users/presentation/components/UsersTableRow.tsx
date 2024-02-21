@@ -131,11 +131,11 @@ export const UsersTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isActive ? 'Desactivar funcionario' : 'Activar funcionario'}
+        title={row.isActive ? 'Desactivar usuario' : 'Activar usuario'}
         content={
           row.isActive
-            ? 'Está seguro de desactivar el funcionario?'
-            : 'Está seguro de activar el funcionario?'
+            ? 'Está seguro de desactivar el usuario?'
+            : 'Está seguro de activar el usuario?'
         }
         action={
           <Button

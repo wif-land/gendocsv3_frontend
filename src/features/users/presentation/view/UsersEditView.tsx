@@ -6,6 +6,7 @@ import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-
 import { paths } from '../../../../core/routes/paths'
 import { UsersNewEditForm } from '../components/UsersNewEditForm'
 import { useUsersStore } from '../state/usersStore'
+import { IUser } from '../../domain/entities/IUser'
 
 const UsersEditView = () => {
   const settings = useSettingsContext()
@@ -28,17 +29,17 @@ const UsersEditView = () => {
             href: paths.dashboard.root,
           },
           {
-            name: 'Funcionarios',
+            name: 'Usuarios',
             href: pathname.replace(new RegExp(`/${id}/edit`), ''),
           },
-          { name: 'Editar funcionario' },
+          { name: 'Editar usuario' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <UsersNewEditForm currentUser={currentUser} />
+      <UsersNewEditForm currentUser={currentUser as IUser} />
     </Container>
   )
 }

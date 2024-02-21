@@ -35,7 +35,7 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Información general del funcionario, nombre, apellidos, cédula, etc.
+            Información general del usuario, nombre, apellidos, etc.
           </Typography>
         </Grid>
       )}
@@ -45,10 +45,6 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
           {!mdUp && <CardHeader title="Detalles" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="dni" label="Cédula de identidad" required />
-
-            <Divider />
-
             <Box
               sx={{
                 columnGap: 2,
@@ -94,65 +90,12 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
               />
 
               <RHFTextField
-                name="personalEmail"
+                name="googleEmail"
                 label="Correo personal"
                 type="email"
                 required
               />
-
-              <RHFTextField
-                name="phoneNumber"
-                label="Número de celular"
-                required
-              />
-
-              <RHFTextField
-                name="regularPhoneNumber"
-                label="Teléfono fijo"
-                required
-              />
             </Box>
-          </Stack>
-        </Card>
-      </Grid>
-    </>
-  )
-
-  const renderProperties = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Títulos
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Títulos de segundo, tercer y cuarto nivel conseguido por el
-            funcionario
-          </Typography>
-        </Grid>
-      )}
-
-      <Grid xs={12} md={8}>
-        <Card>
-          {!mdUp && <CardHeader title="Properties" />}
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField
-              name="secondLevelDegree"
-              label="Título de segundo nivel"
-              required
-            />
-
-            <RHFTextField
-              name="thirdLevelDegree"
-              label="Título de tercer nivel"
-              required
-            />
-
-            <RHFTextField
-              name="fourthLevelDegree"
-              label="Título de cuarto nivel"
-              required
-            />
           </Stack>
         </Card>
       </Grid>
@@ -164,7 +107,7 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
       {mdUp && <Grid md={4} />}
       <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Funcionario activo" />
+          <RHFSwitch name="isActive" label="Usuario activo" />
         </Box>
 
         <LoadingButton
@@ -183,8 +126,6 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         {renderDetails}
-
-        {renderProperties}
 
         {renderActions}
       </Grid>
