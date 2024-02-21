@@ -6,10 +6,7 @@ import { UserRepository } from '../repositories/UserRepository'
 interface UserUseCases {
   create(data: IUser): Promise<{ user: UserModel }>
 
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(): Promise<{
     status: number
     data: {
       count: number
@@ -34,7 +31,10 @@ interface UserUseCases {
     data: Partial<UserModel>,
   ): Promise<{
     status: number
-    user: UserModel
+    data: {
+      user: UserModel
+      accessToken: string
+    }
   }>
 }
 
@@ -53,8 +53,7 @@ export class UserUseCasesImpl implements UserUseCases {
 
   create = async (data: IUser) => await this.userRepository.create(data)
 
-  getAll = async (limit: number, offset: number) =>
-    await this.userRepository.getAll(limit, offset)
+  getAll = async () => await this.userRepository.getAll()
 
   getByField = async (field: string, limit: number, offset: number) =>
     await this.userRepository.getByField(field, limit, offset)

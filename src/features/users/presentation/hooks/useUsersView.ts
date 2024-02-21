@@ -35,10 +35,10 @@ export const useFunctionaryView = ({
     let isMounted = true
     if (tableData.length === 0) {
       if (isMounted && !isDataFiltered) {
-        fetchData(table.rowsPerPage, table.page).then((data) => {
+        fetchData().then((data) => {
           if (data?.users) {
-            setUsers(data.users)
             setTableData(data.users)
+            setUsers(data.users as IUser[])
           }
           if (data?.count) {
             setCount(data.count)
@@ -49,7 +49,7 @@ export const useFunctionaryView = ({
     return () => {
       isMounted = false
     }
-  }, [tableData, isDataFiltered])
+  }, [users, isDataFiltered])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -122,9 +122,7 @@ export const useFunctionaryView = ({
       if (data) {
         setUsers(users?.map((user) => (user.id === data.id ? data : user)))
         setTableData(
-          (users as IUser[]).map((functionary) =>
-            functionary.id === data.id ? data : functionary,
-          ),
+          (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
         )
       }
     })

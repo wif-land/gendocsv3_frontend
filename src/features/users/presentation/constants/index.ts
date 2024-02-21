@@ -32,44 +32,50 @@ export const TABLE_HEAD = [
 
 export const NewFunctionarySchema = Yup.object().shape({
   firstName: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondName: Yup.string().required(VALIDATION_MESSAGES.required),
+  secondName: Yup.string(),
   firstLastName: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondLastName: Yup.string().required(VALIDATION_MESSAGES.required),
+  secondLastName: Yup.string(),
   outlookEmail: Yup.string()
     .required(VALIDATION_MESSAGES.required)
     .matches(
       /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
       VALIDATION_MESSAGES.invalidFormat,
     ),
-  personalEmail: Yup.string()
+  googleEmail: Yup.string()
     .required(VALIDATION_MESSAGES.required)
     .matches(
-      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
+      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
       VALIDATION_MESSAGES.invalidFormat,
     ),
+  password: Yup.string(),
+  role: Yup.string().required(VALIDATION_MESSAGES.required),
+  accessModules: Yup.array()
+    .of(Yup.number())
+    .required(VALIDATION_MESSAGES.required),
 })
 
-export const resolveDefaultValues = (currentFunctionary?: IUser) => ({
-  firstName: currentFunctionary?.firstName || '',
-  secondName: currentFunctionary?.secondName || '',
-  firstLastName: currentFunctionary?.firstLastName || '',
-  secondLastName: currentFunctionary?.secondLastName || '',
-  outlookEmail: currentFunctionary?.outlookEmail || '',
-  googleEmail: currentFunctionary?.googleEmail || '',
-  isActive: currentFunctionary?.isActive || true,
-  role: currentFunctionary?.role || UserRole.ADMIN,
-  accessModules: currentFunctionary?.accessModules || [],
+export const resolveDefaultValues = (currentUser?: IUser) => ({
+  firstName: currentUser?.firstName || '',
+  secondName: currentUser?.secondName || '',
+  firstLastName: currentUser?.firstLastName || '',
+  secondLastName: currentUser?.secondLastName || '',
+  outlookEmail: currentUser?.outlookEmail || '',
+  googleEmail: currentUser?.googleEmail || '',
+  isActive: currentUser?.isActive || true,
+  password: currentUser?.password || '',
+  role: currentUser?.role || UserRole.ADMIN,
+  accessModules: currentUser?.accessModules || [],
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
   const result = await UserUseCasesImpl.getInstance().create(values)
 
   if (!result) {
-    enqueueSnackbar('Error al crear el funcionario', { variant: 'error' })
+    enqueueSnackbar('Error al crear el usuario', { variant: 'error' })
     return
   }
 
-  enqueueSnackbar('Funcionario creado con éxito', { variant: 'success' })
+  enqueueSnackbar('Usuario creado con éxito', { variant: 'success' })
 }
 
 export const handleUpdate = async (
@@ -86,11 +92,11 @@ export const handleUpdate = async (
   const result = await UserUseCasesImpl.getInstance().update(id, values)
 
   if (!result) {
-    enqueueSnackbar('Error al actualizar el funcionario', {
+    enqueueSnackbar('Error al actualizar el usuario', {
       variant: 'error',
     })
     return
   }
 
-  enqueueSnackbar('Funcionario actualizado con éxito', { variant: 'success' })
+  enqueueSnackbar('Usuario actualizado con éxito', { variant: 'success' })
 }

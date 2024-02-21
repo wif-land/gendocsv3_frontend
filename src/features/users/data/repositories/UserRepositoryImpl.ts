@@ -21,8 +21,7 @@ export class UserRepositoryImpl implements UserRepository {
 
   private constructor(private readonly datasource: UserDataSource) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.datasource.getAll(limit, offset)
+  getAll = async () => await this.datasource.getAll()
 
   getByField = async (field: string, limit: number, offset: number) =>
     await this.datasource.getByField(field, limit, offset)

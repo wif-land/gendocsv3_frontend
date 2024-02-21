@@ -2,10 +2,7 @@ import { UserModel } from '../../data/models/UserModel'
 import { IUser } from '../entities/IUser'
 
 export interface UserRepository {
-  getAll: (
-    limit: number,
-    offset: number,
-  ) => Promise<{
+  getAll: () => Promise<{
     status: number
     data: {
       count: number
@@ -27,7 +24,10 @@ export interface UserRepository {
 
   update: (data: Partial<IUser>) => Promise<{
     status: number
-    user: UserModel
+    data: {
+      user: UserModel
+      accessToken: string
+    }
   }>
 
   create: (data: IUser) => Promise<{

@@ -5,10 +5,7 @@ import { UserModel } from '../models/UserModel'
 import { IUser } from '../../domain/entities/IUser'
 
 export interface UserDataSource {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(): Promise<{
     status: number
     data: {
       count: number
@@ -30,7 +27,10 @@ export interface UserDataSource {
 
   update(user: Partial<IUser>): Promise<{
     status: number
-    user: UserModel
+    data: {
+      user: UserModel
+      accessToken: string
+    }
   }>
 
   create(user: IUser): Promise<{
@@ -50,10 +50,8 @@ export class UserDataSourceImpl implements UserDataSource {
     return UserDataSourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
-    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL, {
-      params: { limit, offset },
-    })
+  getAll = async () => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
 
     const { status, data } = result
 
@@ -107,10 +105,16 @@ export class UserDataSourceImpl implements UserDataSource {
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.OK) {
-      return { status, user: data.content as UserModel }
+      return {
+        status,
+        data: data.content as { user: UserModel; accessToken: string },
+      }
     }
 
-    return { status, user: {} as UserModel }
+    return {
+      status,
+      data: data.content as { user: UserModel; accessToken: string },
+    }
   }
 
   create = async (user: UserModel) => {
