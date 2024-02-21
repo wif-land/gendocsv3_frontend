@@ -1,4 +1,3 @@
-export { default as FunctionaryCreateView } from './FunctionaryCreateView'
-export { default as FunctionaryDetailsView } from './FunctionaryDetailsView'
-export { default as FunctionaryEditView } from './FunctionaryEditView'
-export { default as FunctionaryListView } from './FunctionaryListView'
+export { default as UsersCreateView } from './UsersCreateView'
+export { default as UsersEditView } from './UsersEditView'
+export { default as UsersListView } from './UsersListView'

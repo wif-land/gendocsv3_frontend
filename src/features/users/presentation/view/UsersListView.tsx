@@ -45,7 +45,7 @@ const defaultFilters: IFunctionaryTableFilters = {
   outlookEmail: '',
 }
 
-const FunctionaryListView = () => {
+const UsersListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
@@ -257,4 +257,4 @@ const FunctionaryListView = () => {
     </div>
   )
 }
-export default memo(FunctionaryListView)
+export default memo(UsersListView)

@@ -1,29 +1,19 @@
 import { memo } from 'react'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
-import { useParams, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { FunctionaryNewEditForm } from '../components/FunctionaryNewEditForm'
-import { useFunctionaryStore } from '../state/useFunctionaryStore'
 
-const FunctionaryEditView = () => {
+const UsersCreateView = () => {
   const settings = useSettingsContext()
   const pathname = usePathname()
-  const params = useParams()
-
-  const { id } = params
-
-  const { functionaries } = useFunctionaryStore()
-
-  const currentFunctionary = functionaries?.find(
-    (functionary) => functionary.id! === +id,
-  )
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Editar"
+        heading="Crea un nuevo funcionario"
         links={[
           {
             name: 'Dashboard',
@@ -31,18 +21,18 @@ const FunctionaryEditView = () => {
           },
           {
             name: 'Funcionarios',
-            href: pathname.replace(new RegExp(`/${id}/edit`), ''),
+            href: pathname.replace('/new', ''),
           },
-          { name: 'Editar funcionario' },
+          { name: 'Nuevo funcionario' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <FunctionaryNewEditForm currentFunctionary={currentFunctionary} />
+      <FunctionaryNewEditForm />
     </Container>
   )
 }
 
-export default memo(FunctionaryEditView)
+export default memo(UsersCreateView)
