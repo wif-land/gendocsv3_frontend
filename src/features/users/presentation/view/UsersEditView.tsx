@@ -5,7 +5,7 @@ import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { UsersNewEditForm } from '../components/UsersNewEditForm'
-import { useFunctionaryStore } from '../state/useUsersStore'
+import { useUsersStore } from '../state/usersStore'
 
 const UsersEditView = () => {
   const settings = useSettingsContext()
@@ -14,11 +14,9 @@ const UsersEditView = () => {
 
   const { id } = params
 
-  const { users: functionaries } = useFunctionaryStore()
+  const { users } = useUsersStore()
 
-  const currentFunctionary = functionaries?.find(
-    (functionary) => functionary.id! === +id,
-  )
+  const currentUser = users?.find((user) => user.id! === +id)
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -40,7 +38,7 @@ const UsersEditView = () => {
         }}
       />
 
-      <UsersNewEditForm currentUser={currentFunctionary} />
+      <UsersNewEditForm currentUser={currentUser} />
     </Container>
   )
 }

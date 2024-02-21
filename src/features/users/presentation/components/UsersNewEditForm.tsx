@@ -11,7 +11,7 @@ import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
-import { useUsersForm } from '../hooks/useFunctionaryForm'
+import { useUsersForm } from '../hooks/useUsersForm'
 import { IUser } from '../../domain/entities/IUser'
 
 type Props = {

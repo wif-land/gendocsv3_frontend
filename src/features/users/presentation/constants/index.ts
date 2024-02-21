@@ -10,7 +10,7 @@ export interface FormValuesProps extends IUser {}
 export const TABLE_HEAD = [
   {
     id: 'name',
-    label: 'Funcionario',
+    label: 'Usuario',
   },
   {
     id: 'googleEmail',

@@ -13,7 +13,7 @@ import {
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
-import { useFunctionaryView } from '../hooks/useFunctionaryView'
+import { useFunctionaryView } from '../hooks/useUsersView'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
@@ -27,9 +27,8 @@ import {
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
-import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { RouterLink } from '../../../../core/routes/components'
-import { FunctionaryTableRow } from '../components/UsersTableRow'
+import { UsersTableRow } from '../components/UsersTableRow'
 import {
   FunctionaryTableToolbar,
   IUsersTableFilterValue,
@@ -56,8 +55,7 @@ const UsersListView = () => {
   const [searchTerm, setSearchTerm] = useState('')
 
   const [tableData, setTableData] = useState<IUser[]>([])
-  const [filters, setFilters] =
-    useState<IUsersTableFilters>(defaultFilters)
+  const [filters, setFilters] = useState<IUsersTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
     (name: string, value: IUsersTableFilterValue) => {
@@ -75,7 +73,6 @@ const UsersListView = () => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
-    handleUpdateRows,
     handleSearch,
   } = useFunctionaryView({
     tableData,
@@ -192,15 +189,12 @@ const UsersListView = () => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <FunctionaryTableRow
+                          <UsersTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
                               row.id!.toString(),
                             )}
-                            onSelectRow={() =>
-                              table.onSelectRow(row.id!.toString())
-                            }
                             onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
@@ -230,30 +224,6 @@ const UsersListView = () => {
           />
         </Card>
       </Container>
-
-      <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Actualizar estado"
-        content={
-          <>
-            Estás seguro que desear actualizar el estado de{' '}
-            <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleUpdateRows()
-              confirm.onFalse()
-            }}
-          >
-            Cambiar
-          </Button>
-        }
-      />
     </div>
   )
 }

@@ -6,7 +6,6 @@ import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import { useFunctionaryStore } from '../state/useUsersStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import {
   FormValuesProps,
@@ -17,17 +16,18 @@ import {
 } from '../constants'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { IUser } from '../../domain/entities/IUser'
+import { useUsersStore } from '../state/usersStore'
 
-export const useUsersForm = (currentFunctionary?: IUser) => {
+export const useUsersForm = (currentUser?: IUser) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { users: functionaries } = useFunctionaryStore()
+  const { users } = useUsersStore()
   const { enqueueSnackbar } = useSnackbar()
   const { loader } = useLoaderStore()
 
   const defaultValues = useMemo(
-    () => resolveDefaultValues(currentFunctionary),
-    [currentFunctionary],
+    () => resolveDefaultValues(currentUser),
+    [currentUser],
   )
 
   const methods = useForm<FormValuesProps>({
@@ -40,7 +40,7 @@ export const useUsersForm = (currentFunctionary?: IUser) => {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
-      if (!currentFunctionary) {
+      if (!currentUser) {
         await handleCreate(data)
       } else {
         const editedFields = getEditedFields<FormValuesProps>(
@@ -48,28 +48,28 @@ export const useUsersForm = (currentFunctionary?: IUser) => {
           data,
         )
 
-        await handleUpdate(currentFunctionary.id!, editedFields)
+        await handleUpdate(currentUser.id!, editedFields)
       }
 
-      const newPath = currentFunctionary
-        ? pathname.replace(new RegExp(`/${currentFunctionary.id}/edit`), '')
+      const newPath = currentUser
+        ? pathname.replace(new RegExp(`/${currentUser.id}/edit`), '')
         : pathname.replace('/new', '')
 
       router.push(newPath)
       reset()
     },
-    [currentFunctionary, enqueueSnackbar, reset, router],
+    [currentUser, enqueueSnackbar, reset, router],
   )
 
   useEffect(() => {
-    if (currentFunctionary) {
+    if (currentUser) {
       reset(defaultValues)
     }
-  }, [currentFunctionary, defaultValues, reset])
+  }, [currentUser, defaultValues, reset])
 
   return {
     loader,
-    functionaries,
+    users,
     methods,
     onSubmit,
     handleSubmit,
