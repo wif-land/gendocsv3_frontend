@@ -1,23 +1,26 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { setCookie } from '../utils/CookiesUtil'
-import { IUser } from '../../features/auth/domain/entities/IUser'
-import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
-import { UsersApi } from '../../features/users/api/users'
+import { setCookie } from '../../../../shared/utils/CookiesUtil'
+import { IUser } from '../../../auth/domain/entities/IUser'
+import { ACCESS_TOKEN_COOKIE_NAME } from '../../../../shared/constants/appApiRoutes'
+import { UsersApi } from '../../api/users'
 
 interface StoreState {
-  users: IUser[] | undefined
+  users: IUser[]
   setUsers: (user: IUser[]) => void
   load: () => void
 }
 
+const STORE_NAME = 'users-storage'
+const DEFAULT_USERS: IUser[] = []
+
 export const useUsersStore = create<StoreState>(
   persist(
     (set) => ({
-      users: undefined,
+      users: DEFAULT_USERS,
       setUsers: (users: IUser[]) => set({ users }),
       logout: () => {
-        set({ users: undefined })
+        set({ users: DEFAULT_USERS })
         setCookie(ACCESS_TOKEN_COOKIE_NAME, null)
       },
       load: async () => {
@@ -26,7 +29,7 @@ export const useUsersStore = create<StoreState>(
       },
     }),
     {
-      name: 'users-storage',
+      name: STORE_NAME,
       storage: createJSONStorage(() => sessionStorage),
     },
   ) as StateCreator<StoreState>,

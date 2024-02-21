@@ -1,4 +1,4 @@
-export enum UserType {
+export enum UserRole {
   ADMIN = 'ADMIN',
   WRITER = 'WRITER',
   READER = 'READER',
@@ -6,14 +6,14 @@ export enum UserType {
 }
 
 export const UserTypeLabels = {
-  [UserType.ADMIN]: 'Administrador',
-  [UserType.WRITER]: 'Escritor',
-  [UserType.READER]: 'Lector',
-  [UserType.API]: 'API',
+  [UserRole.ADMIN]: 'Administrador',
+  [UserRole.WRITER]: 'Escritor',
+  [UserRole.READER]: 'Lector',
+  [UserRole.API]: 'API',
 }
 
-export const USER_TYPES = Object.keys(UserType).map((key) => ({
-  label: UserTypeLabels[key as keyof typeof UserType],
+export const USER_TYPES = Object.keys(UserRole).map((key) => ({
+  label: UserTypeLabels[key as keyof typeof UserRole],
   value: key,
 }))
 
@@ -26,7 +26,7 @@ export interface IUser {
   outlookEmail: string
   googleEmail: string
   password?: string
-  role: UserType
+  role: UserRole
   isActive: boolean
   accessModules: number[]
 }

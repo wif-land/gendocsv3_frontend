@@ -3,7 +3,7 @@ import { VALIDATION_MESSAGES } from '../../../shared/utils/Messages'
 import * as yup from 'yup'
 import { UsersApi } from '../api/users'
 import { toast } from 'react-toastify'
-import { useUsersStore } from '../../../shared/store/usersStore'
+import { useUsersStore } from '../presentation/state/usersStore'
 import { IUser } from '../../auth/domain/entities/IUser'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 

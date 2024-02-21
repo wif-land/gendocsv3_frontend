@@ -3,7 +3,7 @@ import * as yup from 'yup'
 import { UsersApi } from '../api/users'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { useUsersStore } from '../../../shared/store/usersStore'
+import { useUsersStore } from '../presentation/state/usersStore'
 import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 
 interface IUpdateUserForm {

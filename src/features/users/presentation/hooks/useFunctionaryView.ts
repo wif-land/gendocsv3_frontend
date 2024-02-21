@@ -1,14 +1,14 @@
-import { useFunctionaryStore } from '../state/useFunctionaryStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
-import { useFunctionaryMethods } from './useFunctionaryMethods'
+import { useUsersMethods } from './useUsersMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { IUser } from '../../domain/entities/IUser'
+import { useUsersStore } from '../state/usersStore'
 
 interface Props {
-  tableData: FunctionaryModel[]
-  setTableData: (data: FunctionaryModel[]) => void
+  tableData: IUser[]
+  setTableData: (data: IUser[]) => void
   table: TableProps
   setCount: (count: number) => void
   isDataFiltered: boolean
@@ -27,19 +27,18 @@ export const useFunctionaryView = ({
   setVisitedPages,
   field,
 }: Props) => {
-  const { functionaries, setFunctionaries } = useFunctionaryStore()
+  const { users, setUsers } = useUsersStore()
   const { loader } = useLoaderStore()
-  const { fetchData, updateRow, updateRows, fetchDataByField } =
-    useFunctionaryMethods()
+  const { fetchData, updateRow, fetchDataByField } = useUsersMethods()
 
   useEffect(() => {
     let isMounted = true
     if (tableData.length === 0) {
       if (isMounted && !isDataFiltered) {
         fetchData(table.rowsPerPage, table.page).then((data) => {
-          if (data?.functionaries) {
-            setFunctionaries(data.functionaries)
-            setTableData(data.functionaries)
+          if (data?.users) {
+            setUsers(data.users)
+            setTableData(data.users)
           }
           if (data?.count) {
             setCount(data.count)
@@ -66,21 +65,15 @@ export const useFunctionaryView = ({
       if (isDataFiltered) {
         fetchDataByField(field, table.rowsPerPage, newPage).then((response) => {
           if (response?.status === HTTP_STATUS_CODES.OK) {
-            setFunctionaries([...functionaries, ...response.data.functionaries])
-            setTableData([
-              ...(functionaries as FunctionaryModel[]),
-              ...response.data.functionaries,
-            ])
+            setUsers([...users, ...response.data.users])
+            setTableData([...(users as IUser[]), ...response.data.users])
           }
         })
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {
-          if (data?.functionaries) {
-            setFunctionaries([...functionaries, ...data.functionaries])
-            setTableData([
-              ...(functionaries as FunctionaryModel[]),
-              ...data.functionaries,
-            ])
+          if (data?.users) {
+            setUsers([...users, ...data.users])
+            setTableData([...(users as FunctionaryModel[]), ...data.users])
           }
         })
       }
@@ -99,13 +92,13 @@ export const useFunctionaryView = ({
       fetchDataByField(field, parseInt(event.target.value, 10), 0).then(
         (response) => {
           if (response?.status === HTTP_STATUS_CODES.OK) {
-            setFunctionaries(response.data.functionaries)
-            setTableData(response.data.functionaries)
+            setUsers(response.data.users)
+            setTableData(response.data.users)
             setCount(response.data.count)
           }
 
           if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-            setFunctionaries([])
+            setUsers([])
             setTableData([])
             setCount(0)
           }
@@ -113,9 +106,9 @@ export const useFunctionaryView = ({
       )
     } else {
       fetchData(parseInt(event.target.value, 10), table.page).then((data) => {
-        if (data?.functionaries) {
-          setFunctionaries(data.functionaries)
-          setTableData(data.functionaries)
+        if (data?.users) {
+          setUsers(data.users)
+          setTableData(data.users)
         }
         if (data?.count) {
           setCount(data.count)
@@ -124,67 +117,30 @@ export const useFunctionaryView = ({
     }
   }
 
-  const handleUpdateRow = (row: FunctionaryModel) => {
+  const handleUpdateRow = (row: IUser) => {
     updateRow(row).then((data) => {
       if (data) {
-        setFunctionaries(
-          functionaries.map((functionary) =>
-            functionary.id === data.id ? data : functionary,
-          ),
-        )
+        setUsers(users?.map((user) => (user.id === data.id ? data : user)))
         setTableData(
-          (functionaries as FunctionaryModel[]).map((functionary) =>
+          (users as IUser[]).map((functionary) =>
             functionary.id === data.id ? data : functionary,
           ),
         )
       }
-    })
-  }
-
-  const handleUpdateRows = () => {
-    const rows = tableData.filter((row) =>
-      table.selected.includes(row.id!.toString()),
-    )
-
-    const rowsData = rows.map((row: FunctionaryModel) => ({
-      isActive: !row.isActive,
-      id: row.id!,
-    }))
-
-    updateRows(rowsData).then((data) => {
-      if (data !== undefined) {
-        setFunctionaries(
-          functionaries.map((functionary) => {
-            const updatedFunctionary = data.find(
-              (updated) => updated.id === functionary.id,
-            )
-            return updatedFunctionary ? updatedFunctionary : functionary
-          }),
-        )
-      }
-      setTableData(
-        (functionaries as FunctionaryModel[]).map((functionary) => {
-          const updatedFunctionary = data?.find(
-            (updated) => updated.id === functionary.id,
-          )
-          return updatedFunctionary ? updatedFunctionary : functionary
-        }),
-      )
-      table.setSelected([])
     })
   }
 
   const handleSearch = (field: string) => {
     fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
       if (response?.status === HTTP_STATUS_CODES.OK) {
-        setFunctionaries(response.data.functionaries)
-        setTableData(response.data.functionaries)
+        setUsers(response.data.users)
+        setTableData(response.data.users)
         setCount(response.data.count)
         return
       }
 
       if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-        setFunctionaries([])
+        setUsers([])
         setTableData([])
         setCount(0)
         return
@@ -194,12 +150,10 @@ export const useFunctionaryView = ({
 
   return {
     loader,
-    functionaries,
-    setFunctionaries,
+    users,
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
-    handleUpdateRows,
     handleSearch,
   }
 }

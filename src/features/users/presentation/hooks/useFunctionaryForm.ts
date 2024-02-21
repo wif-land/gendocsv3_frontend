@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import { useFunctionaryStore } from '../state/useFunctionaryStore'
+import { useFunctionaryStore } from '../state/useUsersStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import {
   FormValuesProps,
@@ -21,7 +21,7 @@ import { IUser } from '../../domain/entities/IUser'
 export const useUsersForm = (currentFunctionary?: IUser) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { functionaries } = useFunctionaryStore()
+  const { users: functionaries } = useFunctionaryStore()
   const { enqueueSnackbar } = useSnackbar()
   const { loader } = useLoaderStore()
 

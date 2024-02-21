@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IUser, UserType } from '../../domain/entities/IUser'
+import { IUser, UserRole } from '../../domain/entities/IUser'
 
 export class UserModel implements IUser {
   id?: number
@@ -9,7 +9,7 @@ export class UserModel implements IUser {
   secondLastName: string
   outlookEmail: string
   googleEmail: string
-  role: UserType
+  role: UserRole
   password?: string
   isActive: boolean
   accessModules: number[]

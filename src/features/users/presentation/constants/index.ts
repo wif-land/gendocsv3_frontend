@@ -1,11 +1,11 @@
 import * as Yup from 'yup'
 
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
-import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { enqueueSnackbar } from 'notistack'
-import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
+import { IUser, UserRole } from '../../domain/entities/IUser'
+import { UserUseCasesImpl } from '../../domain/usecases/UserService'
 
-export interface FormValuesProps extends IFunctionary {}
+export interface FormValuesProps extends IUser {}
 
 export const TABLE_HEAD = [
   {
@@ -13,7 +13,7 @@ export const TABLE_HEAD = [
     label: 'Funcionario',
   },
   {
-    id: 'personalEmail',
+    id: 'googleEmail',
     label: 'Email personal',
   },
   {
@@ -55,24 +55,20 @@ export const NewFunctionarySchema = Yup.object().shape({
   fourthLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
 })
 
-export const resolveDefaultValues = (currentFunctionary?: IFunctionary) => ({
-  dni: currentFunctionary?.dni || '',
+export const resolveDefaultValues = (currentFunctionary?: IUser) => ({
   firstName: currentFunctionary?.firstName || '',
   secondName: currentFunctionary?.secondName || '',
   firstLastName: currentFunctionary?.firstLastName || '',
   secondLastName: currentFunctionary?.secondLastName || '',
   outlookEmail: currentFunctionary?.outlookEmail || '',
-  personalEmail: currentFunctionary?.personalEmail || '',
-  phoneNumber: currentFunctionary?.phoneNumber || '',
-  regularPhoneNumber: currentFunctionary?.regularPhoneNumber || '',
-  secondLevelDegree: currentFunctionary?.secondLevelDegree || '',
-  thirdLevelDegree: currentFunctionary?.thirdLevelDegree || '',
-  fourthLevelDegree: currentFunctionary?.fourthLevelDegree || '',
+  googleEmail: currentFunctionary?.googleEmail || '',
   isActive: currentFunctionary?.isActive || true,
+  role: currentFunctionary?.role || UserRole.ADMIN,
+  accessModules: currentFunctionary?.accessModules || [],
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
-  const result = await FunctionaryUseCasesImpl.getInstance().create(values)
+  const result = await UserUseCasesImpl.getInstance().create(values)
 
   if (!result) {
     enqueueSnackbar('Error al crear el funcionario', { variant: 'error' })
@@ -84,7 +80,7 @@ export const handleCreate = async (values: FormValuesProps) => {
 
 export const handleUpdate = async (
   id: number,
-  values: Partial<IFunctionary> | null,
+  values: Partial<IUser> | null,
 ) => {
   if (!values) {
     enqueueSnackbar('No se han encontrado valores para actualizar', {
@@ -93,7 +89,7 @@ export const handleUpdate = async (
     return
   }
 
-  const result = await FunctionaryUseCasesImpl.getInstance().update(id, values)
+  const result = await UserUseCasesImpl.getInstance().update(id, values)
 
   if (!result) {
     enqueueSnackbar('Error al actualizar el funcionario', {
