@@ -11,16 +11,16 @@ import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
-import { IFunctionary } from '../../domain/entities/IFunctionary'
-import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
+import { useUsersForm } from '../hooks/useFunctionaryForm'
+import { IUser } from '../../domain/entities/IUser'
 
 type Props = {
-  currentFunctionary?: IFunctionary
+  currentUser?: IUser
 }
 
-export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
+export const UsersNewEditForm = ({ currentUser }: Props) => {
   const mdUp = useResponsive('up', 'md')
-  const { methods, onSubmit } = useFunctionaryForm(currentFunctionary)
+  const { methods, onSubmit } = useUsersForm(currentUser)
 
   const {
     handleSubmit,
@@ -173,7 +173,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
           size="large"
           loading={isSubmitting}
         >
-          {!currentFunctionary ? 'Crear' : 'Guardar'}
+          {!currentUser ? 'Crear' : 'Guardar'}
         </LoadingButton>
       </Grid>
     </>

@@ -4,7 +4,7 @@ import { useParams, usePathname } from 'next/navigation'
 import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import { FunctionaryNewEditForm } from '../components/FunctionaryNewEditForm'
+import { UsersNewEditForm } from '../components/FunctionaryNewEditForm'
 import { useFunctionaryStore } from '../state/useFunctionaryStore'
 
 const UsersEditView = () => {
@@ -40,7 +40,7 @@ const UsersEditView = () => {
         }}
       />
 
-      <FunctionaryNewEditForm currentFunctionary={currentFunctionary} />
+      <UsersNewEditForm currentUser={currentFunctionary} />
     </Container>
   )
 }

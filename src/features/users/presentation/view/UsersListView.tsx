@@ -29,17 +29,17 @@ import Iconify from '../../../../core/iconify'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { RouterLink } from '../../../../core/routes/components'
-import { FunctionaryTableRow } from '../components/FunctionaryTableRow'
+import { FunctionaryTableRow } from '../components/UsersTableRow'
 import {
   FunctionaryTableToolbar,
-  IFunctionaryTableFilterValue,
-  IFunctionaryTableFilters,
-} from '../components/FunctionaryTableToolbar'
+  IUsersTableFilterValue,
+  IUsersTableFilters,
+} from '../components/UsersTableToolbar'
 import { TABLE_HEAD } from '../constants'
-import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
+import { FunctionaryTableResult } from '../components/UsersTableFiltersResult'
 import { IUser } from '../../domain/entities/IUser'
 
-const defaultFilters: IFunctionaryTableFilters = {
+const defaultFilters: IUsersTableFilters = {
   name: '',
   personalEmail: '',
   outlookEmail: '',
@@ -57,10 +57,10 @@ const UsersListView = () => {
 
   const [tableData, setTableData] = useState<IUser[]>([])
   const [filters, setFilters] =
-    useState<IFunctionaryTableFilters>(defaultFilters)
+    useState<IUsersTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
-    (name: string, value: IFunctionaryTableFilterValue) => {
+    (name: string, value: IUsersTableFilterValue) => {
       table.onResetPage()
       setFilters((prevState) => ({
         ...prevState,

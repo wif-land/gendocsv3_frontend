@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import { FunctionaryNewEditForm } from '../components/FunctionaryNewEditForm'
+import { UsersNewEditForm } from '../components/UsersNewEditForm'
 
 const UsersCreateView = () => {
   const settings = useSettingsContext()
@@ -13,24 +13,24 @@ const UsersCreateView = () => {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Crea un nuevo funcionario"
+        heading="Crea un nuevo usuario"
         links={[
           {
             name: 'Dashboard',
             href: paths.dashboard.root,
           },
           {
-            name: 'Funcionarios',
+            name: 'Usuarios',
             href: pathname.replace('/new', ''),
           },
-          { name: 'Nuevo funcionario' },
+          { name: 'Nuevo usuario' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <FunctionaryNewEditForm />
+      <UsersNewEditForm />
     </Container>
   )
 }

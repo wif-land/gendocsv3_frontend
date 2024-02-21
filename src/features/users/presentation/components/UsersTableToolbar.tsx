@@ -9,24 +9,24 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
-import { FunctionaryModel } from '../../data/models/FunctionatyModel'
+import { IUser } from '../../domain/entities/IUser'
 
-export type IFunctionaryTableFilterValue = string | string[]
+export type IUsersTableFilterValue = string | string[]
 
-export type IFunctionaryTableFilters = {
+export type IUsersTableFilters = {
   name: string
   personalEmail: string
   outlookEmail: string
 }
 
 type Props = {
-  filters: IFunctionaryTableFilters
-  onFilters: (name: string, value: IFunctionaryTableFilterValue) => void
+  filters: IUsersTableFilters
+  onFilters: (name: string, value: IUsersTableFilterValue) => void
   setSearchTerm: (value: string) => void
   setVisitedPages: (value: number[]) => void
   setIsDataFiltered: (value: boolean) => void
   table: TableProps
-  setDataTable: (value: FunctionaryModel[]) => void
+  setDataTable: (value: IUser[]) => void
   getFilteredFunctionaries: (field: string) => void
 }
 

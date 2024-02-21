@@ -8,7 +8,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import { useFunctionaryStore } from '../state/useFunctionaryStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { IFunctionary } from '../../domain/entities/IFunctionary'
 import {
   FormValuesProps,
   NewFunctionarySchema,
@@ -17,8 +16,9 @@ import {
   handleUpdate,
 } from '../constants'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { IUser } from '../../domain/entities/IUser'
 
-export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
+export const useUsersForm = (currentFunctionary?: IUser) => {
   const router = useRouter()
   const pathname = usePathname()
   const { functionaries } = useFunctionaryStore()
