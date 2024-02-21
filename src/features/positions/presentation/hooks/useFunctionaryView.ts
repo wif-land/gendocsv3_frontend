@@ -1,4 +1,4 @@
-import { usePositionStore } from '../state/useFunctionaryStore'
+import { usePositionStore } from '../state/usePositionStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { PositionModel } from '../../data/models/PositionModel'
 import { useEffect } from 'react'

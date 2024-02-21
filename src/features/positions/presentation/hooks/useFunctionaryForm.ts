@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import { usePositionStore } from '../state/useFunctionaryStore'
+import { usePositionStore } from '../state/usePositionStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { IPosition } from '../../domain/entities/IPosition'
 import {

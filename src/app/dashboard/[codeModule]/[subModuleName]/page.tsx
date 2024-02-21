@@ -9,6 +9,7 @@ import { DocumentListView } from '../../../../features/documents/presentation/vi
 import { FunctionaryListView } from '../../../../features/functionaries/presentation/view'
 import { ProcessListView } from '../../../../features/processes/presentation/view'
 import { StudentListView } from '../../../../features/students/presentation/view'
+import { PositionListView } from '../../../../features/positions/presentation/view'
 
 const UsersView = lazy(
   () => import('../../../../features/modules/components/users-view'),
@@ -27,6 +28,7 @@ const Page = () => {
     procesos: ProcessListView,
     consejos: CouncilListView,
     documentos: DocumentListView,
+    cargos: PositionListView,
   }
 
   const defaultComponent = () => <div>Not found</div>

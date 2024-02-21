@@ -5,8 +5,8 @@ import { useFunctionaryView } from '../hooks/useFunctionaryView'
 import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import { FunctionaryNewEditForm } from '../components/FunctionaryNewEditForm'
-import { usePositionStore } from '../state/useFunctionaryStore'
+import { PositionNewEditForm } from '../components/PositionNewEditForm'
+import { usePositionStore } from '../state/usePositionStore'
 
 const FunctionaryEditView = () => {
   const settings = useSettingsContext()
@@ -41,7 +41,7 @@ const FunctionaryEditView = () => {
         }}
       />
 
-      <FunctionaryNewEditForm currentFunctionary={currentFunctionary} />
+      <PositionNewEditForm currentFunctionary={currentFunctionary} />
     </Container>
   )
 }

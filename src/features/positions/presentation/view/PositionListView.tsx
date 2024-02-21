@@ -68,23 +68,17 @@ const PositionListView = () => {
     [table],
   )
 
-  const {
-    loader,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    handleUpdateRow,
-    handleUpdateRows,
-    handleSearch,
-  } = useFunctionaryView({
-    tableData,
-    setTableData,
-    table,
-    setCount,
-    isDataFiltered,
-    visitedPages,
-    setVisitedPages,
-    field: searchTerm,
-  })
+  const { loader, handleChangePage, handleChangeRowsPerPage, handleSearch } =
+    useFunctionaryView({
+      tableData,
+      setTableData,
+      table,
+      setCount,
+      isDataFiltered,
+      visitedPages,
+      setVisitedPages,
+      field: searchTerm,
+    })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
@@ -211,7 +205,8 @@ const PositionListView = () => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() => handleUpdateRow(row)}
+                            // eslint-disable-next-line @typescript-eslint/no-empty-function
+                            onDeleteRow={() => {}}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
                         ))}
@@ -256,7 +251,7 @@ const PositionListView = () => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleUpdateRows()
+              // handleDelete(table.selected)
               confirm.onFalse()
             }}
           >

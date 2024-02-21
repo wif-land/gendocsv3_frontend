@@ -1,4 +1,4 @@
-import { usePositionStore } from '../state/useFunctionaryStore'
+import { usePositionStore } from '../state/usePositionStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { PositionUseCasesImpl } from '../../domain/usecases/PositionServices'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'

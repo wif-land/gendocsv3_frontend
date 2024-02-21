@@ -14,6 +14,7 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 
 import { PositionModel } from '../../data/models/PositionModel'
+import { Box } from '@mui/material'
 
 type Props = {
   row: PositionModel
@@ -40,7 +41,7 @@ export const PositionTableRow = ({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        <TableCell>
           <ListItemText
             disableTypography
             primary={
@@ -64,10 +65,28 @@ export const PositionTableRow = ({
           />
         </TableCell>
 
-        <TableCell>
+        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
-            primary={row.functionary}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            disableTypography
+            primary={
+              <Link
+                noWrap
+                color="inherit"
+                variant="subtitle2"
+                onClick={onEditRow}
+                sx={{ cursor: 'pointer' }}
+              >
+                {`${row.functionary.firstName} ${row.functionary.secondName} ${row.functionary.firstLastName} ${row.functionary.secondLastName}`}
+              </Link>
+            }
+            secondary={
+              <Box
+                component="div"
+                sx={{ typography: 'body2', color: 'text.disabled' }}
+              >
+                {row.functionary.dni}
+              </Box>
+            }
           />
         </TableCell>
 

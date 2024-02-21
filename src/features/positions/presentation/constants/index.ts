@@ -20,6 +20,10 @@ export const TABLE_HEAD = [
     id: 'functionaryId',
     label: 'Funcionario',
   },
+  {
+    id: 'actions',
+    label: 'Acciones',
+  },
 ]
 
 export const NewFunctionarySchema = Yup.object().shape({
