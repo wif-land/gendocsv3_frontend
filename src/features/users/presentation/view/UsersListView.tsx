@@ -112,10 +112,10 @@ const UsersListView = () => {
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Funcionarios"
+          heading="Usuarios"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Funcionarios' },
+            { name: 'Usuarios' },
           ]}
           action={
             <Button

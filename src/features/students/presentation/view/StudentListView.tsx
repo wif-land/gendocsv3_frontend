@@ -126,8 +126,6 @@ const StudentListView = () => {
     (count === 0 && isDataFiltered) ||
     (!loader.length && count === 0 && isDataFiltered)
 
-  console.log('tableData', tableData)
-
   return (
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
