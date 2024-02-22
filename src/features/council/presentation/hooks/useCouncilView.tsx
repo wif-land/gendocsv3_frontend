@@ -1,121 +1,230 @@
-import { useCallback, useState } from 'react'
-import { CouncilModel } from '../../data/models/CouncilModel'
 import { useCouncilStore } from '../store/councilsStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import useModulesStore from '../../../../shared/store/modulesStore'
-import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { LOADER_DELAY } from '../../../../shared/constants/common'
+import { useEffect } from 'react'
+import { TableProps } from '../../../../shared/sdk/table'
+import { useCouncilsMethods } from './useCouncilsMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { ICouncil } from '../../domain/entities/ICouncil'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { CouncilModel } from '../../data/models/CouncilModel'
 
-export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
-  const { modules } = useModulesStore()
+interface Props {
+  tableData: CouncilModel[]
+  setTableData: (data: CouncilModel[]) => void
+  table: TableProps
+  setCount: (count: number) => void
+  isDataFiltered: boolean
+  visitedPages: number[]
+  setVisitedPages: (value: number[]) => void
+  field: string
+  moduleId: string
+}
+
+export const useCouncilView = ({
+  tableData,
+  setTableData,
+  table,
+  setCount,
+  isDataFiltered,
+  visitedPages,
+  setVisitedPages,
+  field,
+  moduleId,
+}: Props) => {
   const { councils, setCouncils } = useCouncilStore()
-  const { addLoaderItem, removeLoaderItem, loader } = useLoaderStore()
-
+  const { loader } = useLoaderStore()
+  const { fetchData, updateRow, fetchDataByField } = useCouncilsMethods()
+  const { modules } = useModulesStore()
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
-  const [selectedCouncil, setSelectedCouncil] = useState<CouncilModel | null>(
-    null,
-  )
-
-  const handleSelectedCouncil = useCallback(
-    (item: CouncilModel | null) => {
-      setSelectedCouncil(item)
-    },
-    [councils],
-  )
-
-  const fetchData = async (rowsPerPage: number, currentPage: number) => {
-    addLoaderItem('council')
-
-    try {
-      const response =
-        await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
-          moduleIdentifier,
-          rowsPerPage,
-          currentPage * rowsPerPage,
+  useEffect(() => {
+    let isMounted = true
+    if (tableData.length === 0) {
+      if (isMounted && !isDataFiltered) {
+        fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
+          (data) => {
+            if (data?.councils) {
+              setCouncils(data.councils)
+              setTableData(data.councils)
+            }
+            if (data?.count) {
+              setCount(data.count)
+            }
+          },
         )
+      }
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [tableData, isDataFiltered])
 
-      if (response.status === HTTP_STATUS_CODES.OK && response.data) {
-        return response.data as { councils: CouncilModel[]; count: number }
+  const handleChangePage = (event: unknown, newPage: number) => {
+    table.onChangePage(event, newPage)
+    table.setPage(newPage)
+
+    if (visitedPages.includes(newPage)) {
+      return
+    } else {
+      visitedPages.push(newPage)
+    }
+
+    if (newPage > table.page) {
+      if (isDataFiltered) {
+        fetchDataByField(
+          field,
+          moduleIdentifier,
+          table.rowsPerPage,
+          newPage,
+        ).then((response) => {
+          if (response?.status === HTTP_STATUS_CODES.OK) {
+            setCouncils([
+              ...councils,
+              ...(response.data.councils as CouncilModel[]),
+            ])
+            setTableData([
+              ...councils,
+              ...(response.data.councils as CouncilModel[]),
+            ])
+          }
+        })
+      } else {
+        fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
+          if (data?.councils) {
+            setCouncils([...councils, ...data.councils])
+            setTableData([...councils, ...data.councils])
+          }
+        })
       }
-    } catch (error) {
-      return {
-        councils: [] as CouncilModel[],
-        count: -1,
-      }
-    } finally {
-      setTimeout(() => {
-        removeLoaderItem('council')
-      }, LOADER_DELAY)
     }
   }
 
-  const updateRow = async (council: Partial<CouncilModel>) => {
-    addLoaderItem('council')
-
-    try {
-      const response = await CouncilsUseCasesImpl.getInstance().update(
-        council.id as number,
-        {
-          isActive: !council.isActive,
-        },
-      )
-
-      if (response.status === HTTP_STATUS_CODES.OK && response.council) {
-        return response.council
-      }
-    } catch (error) {
-      return {} as CouncilModel
-    } finally {
-      setTimeout(() => {
-        removeLoaderItem('council')
-      }, LOADER_DELAY)
-    }
-  }
-
-  const fetchFilteredData = async (
-    rowsPerPage: number,
-    currentPage: number,
-    filter: string,
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    addLoaderItem('council')
+    table.onChangeRowsPerPage(event)
+    table.setPage(0)
+    setTableData([])
+    setVisitedPages([])
 
-    try {
-      const response = await CouncilsUseCasesImpl.getInstance().getByField(
-        filter,
+    if (isDataFiltered) {
+      fetchDataByField(
+        field,
         moduleIdentifier,
-        rowsPerPage,
-        currentPage * rowsPerPage,
-      )
-
-      if (response.status === HTTP_STATUS_CODES.OK && response.data) {
-        if ('councils' in response.data && 'count' in response.data) {
-          return response.data as { councils: CouncilModel[]; count: number }
+        parseInt(event.target.value, 10),
+        0,
+      ).then((response) => {
+        if (response?.status === HTTP_STATUS_CODES.OK) {
+          setCouncils(response.data.councils as CouncilModel[])
+          setTableData(response.data.councils as CouncilModel[])
+          setCount(response.data.count)
         }
-      }
-    } catch (error) {
-      return {
-        councils: [] as CouncilModel[],
-        count: -1,
-      }
-    } finally {
-      setTimeout(() => {
-        removeLoaderItem('council')
-      }, LOADER_DELAY)
+
+        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+          setCouncils([])
+          setTableData([])
+          setCount(0)
+        }
+      })
+    } else {
+      fetchData(
+        moduleIdentifier,
+        parseInt(event.target.value, 10),
+        table.page,
+      ).then((data) => {
+        if (data?.councils) {
+          setCouncils(data.councils)
+          setTableData(data.councils)
+        }
+        if (data?.count) {
+          setCount(data.count)
+        }
+      })
     }
+  }
+
+  const handleUpdateRow = (row: ICouncil) => {
+    updateRow(row).then((data) => {
+      if (data) {
+        setCouncils(
+          councils.map((council) =>
+            council.id === data.id ? (data as CouncilModel) : council,
+          ),
+        )
+        setTableData(
+          councils.map((functionary) =>
+            functionary.id === data.id ? (data as CouncilModel) : functionary,
+          ),
+        )
+      }
+    })
+  }
+
+  // const handleUpdateRows = () => {
+  //   const rows = tableData.filter((row) =>
+  //     table.selected.includes(row.id!.toString()),
+  //   )
+
+  //   const rowsData = rows.map((row: ICouncil) => ({
+  //     isActive: !row.isActive,
+  //     id: row.id!,
+  //   }))
+
+  //   updateRows(rowsData).then((data) => {
+  //     if (data !== undefined) {
+  //       setCouncils(
+  //         councils.map((functionary) => {
+  //           const updatedFunctionary = data.find(
+  //             (updated) => updated.id === functionary.id,
+  //           )
+  //           return updatedFunctionary ? updatedFunctionary : functionary
+  //         }),
+  //       )
+  //     }
+  //     setTableData(
+  //       (councils as ICouncil[]).map((functionary) => {
+  //         const updatedFunctionary = data?.find(
+  //           (updated) => updated.id === functionary.id,
+  //         )
+  //         return updatedFunctionary ? updatedFunctionary : functionary
+  //       }),
+  //     )
+  //     table.setSelected([])
+  //   })
+  // }
+
+  const handleSearch = (field: string) => {
+    fetchDataByField(
+      field,
+      moduleIdentifier,
+      table.rowsPerPage,
+      table.page,
+    ).then((response) => {
+      if (response?.status === HTTP_STATUS_CODES.OK) {
+        setCouncils(response.data.councils as CouncilModel[])
+        setTableData(response.data.councils as CouncilModel[])
+        setCount(response.data.count)
+        return
+      }
+
+      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+        setCouncils([])
+        setTableData([])
+        setCount(0)
+        return
+      }
+    })
   }
 
   return {
     loader,
     councils,
-    selectedCareer: selectedCouncil,
-    moduleIdentifier,
-    handleSelectedCouncil,
-    setCouncils,
-    fetchData,
-    fetchFilteredData,
-    updateRow,
+    setFunctionaries: setCouncils,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+    // handleUpdateRows,
+    handleSearch,
   }
 }
