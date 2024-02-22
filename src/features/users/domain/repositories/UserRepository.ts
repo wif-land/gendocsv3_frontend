@@ -2,7 +2,10 @@ import { UserModel } from '../../data/models/UserModel'
 import { IUser } from '../entities/IUser'
 
 export interface UserRepository {
-  getAll: () => Promise<{
+  getAll: (
+    limit: number,
+    offset: number,
+  ) => Promise<{
     status: number
     data: {
       count: number

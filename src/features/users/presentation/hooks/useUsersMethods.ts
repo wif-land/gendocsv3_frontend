@@ -8,10 +8,13 @@ export const useUsersMethods = () => {
   const { users, setUsers } = useUsersStore()
   const { loader, addLoaderItem, removeLoaderItem } = useLoaderStore()
 
-  const fetchData = async () => {
+  const fetchData = async (rowsPerPage: number, currentPage: number) => {
     addLoaderItem('users')
     try {
-      const response = await UserUseCasesImpl.getInstance().getAll()
+      const response = await UserUseCasesImpl.getInstance().getAll(
+        rowsPerPage,
+        currentPage * rowsPerPage,
+      )
       if (response.status === HTTP_STATUS_CODES.OK) {
         return response.data
       }

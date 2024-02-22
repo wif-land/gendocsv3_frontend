@@ -5,6 +5,7 @@ import { useUsersMethods } from './useUsersMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IUser } from '../../domain/entities/IUser'
 import { useUsersStore } from '../state/usersStore'
+import { UserModel } from '../../data/models/UserModel'
 
 interface Props {
   tableData: IUser[]
@@ -35,7 +36,7 @@ export const useFunctionaryView = ({
     let isMounted = true
     if (tableData.length === 0) {
       if (isMounted && !isDataFiltered) {
-        fetchData().then((data) => {
+        fetchData(table.rowsPerPage, table.page).then((data) => {
           if (data?.users) {
             setTableData(data.users)
             setUsers(data.users as IUser[])
@@ -49,7 +50,7 @@ export const useFunctionaryView = ({
     return () => {
       isMounted = false
     }
-  }, [users, isDataFiltered])
+  }, [tableData, isDataFiltered])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -73,7 +74,7 @@ export const useFunctionaryView = ({
         fetchData(table.rowsPerPage, newPage).then((data) => {
           if (data?.users) {
             setUsers([...users, ...data.users])
-            setTableData([...(users as FunctionaryModel[]), ...data.users])
+            setTableData([...(users as UserModel[]), ...data.users])
           }
         })
       }

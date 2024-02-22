@@ -27,7 +27,7 @@ type Props = {
   setIsDataFiltered: (value: boolean) => void
   table: TableProps
   setDataTable: (value: IUser[]) => void
-  getFilteredFunctionaries: (field: string) => void
+  getFilteredUsers: (field: string) => void
 }
 
 export const FunctionaryTableToolbar = ({
@@ -38,7 +38,7 @@ export const FunctionaryTableToolbar = ({
   setIsDataFiltered,
   table,
   setDataTable,
-  getFilteredFunctionaries,
+  getFilteredUsers,
 }: Props) => {
   const popover = usePopover()
   const [inputValue, setInputValue] = useState('' as string)
@@ -62,7 +62,7 @@ export const FunctionaryTableToolbar = ({
     if (inputValue) {
       setIsDataFiltered(true)
       setSearchTerm(inputValue)
-      getFilteredFunctionaries(debouncedValue)
+      getFilteredUsers(debouncedValue)
     } else {
       resetValues()
     }

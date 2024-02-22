@@ -139,7 +139,7 @@ const UsersListView = () => {
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            getFilteredFunctionaries={handleSearch}
+            getFilteredUsers={handleSearch}
           />
 
           {isDataFiltered && (

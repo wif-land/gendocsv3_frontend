@@ -5,7 +5,10 @@ import { UserModel } from '../models/UserModel'
 import { IUser } from '../../domain/entities/IUser'
 
 export interface UserDataSource {
-  getAll(): Promise<{
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
     data: {
       count: number
@@ -50,8 +53,10 @@ export class UserDataSourceImpl implements UserDataSource {
     return UserDataSourceImpl.instance
   }
 
-  getAll = async () => {
-    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
+  getAll = async (limit: number, offset: number) => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL, {
+      params: { limit, offset },
+    })
 
     const { status, data } = result
 
