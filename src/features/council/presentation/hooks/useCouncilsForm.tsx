@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useCouncilStore } from '../store/councilsStore'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { CouncilAttendanceRole, ICouncil } from '../../domain/entities/ICouncil'
@@ -6,7 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { enqueueSnackbar } from 'notistack'
-import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import useModulesStore from '../../../../shared/store/modulesStore'
@@ -16,6 +14,12 @@ import {
   ICreateCouncilAttendee,
 } from '../../domain/entities/ICouncilAttendee'
 import { NewCouncilSchema, resolveDefaultValues } from '../constants'
+import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { IModule } from '../../../modules/types/IModule'
+import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 interface FormValuesProps extends ICouncil {
   president: string
@@ -23,44 +27,67 @@ interface FormValuesProps extends ICouncil {
 }
 
 const MAX_ATTENDEES = 10
+const resolveModuleId = (modules: IModule[], codeModule: string) => {
+  const module = modules.find(
+    (module) => module.code === (codeModule as string).toUpperCase(),
+  )
+
+  return module?.id
+}
+const getDni = (attendee?: string): string =>
+  attendee?.split('-')[1]?.trim() ?? ''
 
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
-  const { councils, addCouncil, setCouncils } = useCouncilStore()
+  const router = useRouter()
+  const pathname = usePathname()
   const { codeModule } = useParams()
+
+  const { councils, addCouncil, setCouncils } = useCouncilStore()
   const { user } = useAccountStore()
-  const { modules } = useModulesStore()
-  const moduleIdentifier =
-    modules?.find(
-      (module) => module.code === (codeModule as string).toUpperCase(),
-    )?.id ?? 0
-  const { functionaries, get } = useFunctionaryStore()
+  const [searchField, setSearchField] = useState('')
+
+  const moduleIdentifier = resolveModuleId(
+    useModulesStore().modules,
+    codeModule as string,
+  )
   const [unusedFunctionaries, setUnusedFunctionaries] = useState<
     IFunctionary[]
   >([])
-  const router = useRouter()
-  const pathname = usePathname()
+  const isOpenPresident = useBoolean()
+  const isOpenSubrogant = useBoolean()
+  const isOpenMembers = useBoolean()
 
-  const defaultValues = useMemo(
+  const calculateLoadingState = (isOpen: boolean) =>
+    isOpen && unusedFunctionaries.length === 0
+
+  const loadingPresident = calculateLoadingState(isOpenPresident.value)
+  const loadingSubrogant = calculateLoadingState(isOpenSubrogant.value)
+  const loadingMembers = calculateLoadingState(isOpenMembers.value)
+
+  const defaultValues: Partial<ICouncil> = useMemo(
     () => resolveDefaultValues(currentCouncil),
     [currentCouncil],
   )
-
   const methods = useForm<FormValuesProps>({
     // @ts-expect-error - The resolver is not being recognized
     resolver: yupResolver(NewCouncilSchema),
     defaultValues,
   })
+  const values = methods.watch()
 
-  const { reset, watch } = methods
-  const values = watch()
-
-  const handleAddAttendees = () => {
+  const handleAddAttendee = () => {
     const attendees = values.attendees as string[]
 
     if (attendees.length >= MAX_ATTENDEES) return
     if (attendees.length > 0 && attendees[attendees.length - 1] === '') return
 
     attendees.push('')
+    methods.setValue('attendees', attendees)
+  }
+
+  const handleRemoveAttendee = (index: number) => {
+    handleDeleteAttendeesQuantity(index)
+    const attendees = values.attendees as string[]
     methods.setValue('attendees', attendees)
   }
 
@@ -74,14 +101,14 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
     const actualAttendees: ICreateCouncilAttendee[] = [
       {
-        functionaryId: functionaries?.find(
-          (functionary) => functionary.dni === president.split('-')[1].trim(),
+        functionaryId: unusedFunctionaries?.find(
+          (functionary) => functionary.dni === getDni(president),
         )?.id as number,
         role: CouncilAttendanceRole.PRESIDENT,
       },
       {
-        functionaryId: functionaries?.find(
-          (functionary) => functionary.dni === subrogant.split('-')[1].trim(),
+        functionaryId: unusedFunctionaries?.find(
+          (functionary) => functionary.dni === getDni(subrogant),
         )?.id as number,
         role: CouncilAttendanceRole.SUBROGATE,
       },
@@ -89,7 +116,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
     const result = await CouncilsUseCasesImpl.getInstance().create({
       ...rest,
-      moduleId: moduleIdentifier,
+      moduleId: moduleIdentifier ?? 0,
       userId: user?.id as number,
       attendees: actualAttendees,
     })
@@ -99,7 +126,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     }
 
     addCouncil(result.council)
-    enqueueSnackbar('Consejo creado exitosamente')
   }
 
   const handleUpdateCouncil = async (
@@ -110,9 +136,10 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
     const attendees = []
     if (president) {
-      const presidentId = functionaries?.find(
-        (functionary) => functionary.dni === president.split('-')[1].trim(),
-      )?.id
+      const presidentId = unusedFunctionaries?.find(
+        (functionary) => functionary.dni === getDni(president),
+      )
+
       if (presidentId) {
         attendees.push({
           functionaryId: presidentId,
@@ -120,9 +147,10 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         })
       }
     }
+
     if (subrogant) {
-      const subrogantId = functionaries?.find(
-        (functionary) => functionary.dni === subrogant.split('-')[1].trim(),
+      const subrogantId = unusedFunctionaries?.find(
+        (functionary) => functionary.dni === getDni(subrogant),
       )
 
       if (subrogantId) {
@@ -133,17 +161,10 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       }
     }
 
-    const { status } = await CouncilsUseCasesImpl.getInstance().update(id, {
+    await CouncilsUseCasesImpl.getInstance().update(id, {
       ...rest,
       attendees: attendees as ICouncilAttendee[],
     })
-
-    if (status !== HTTP_STATUS_CODES.OK) {
-      enqueueSnackbar('Error al actualizar el consejo', { variant: 'error' })
-      return
-    }
-
-    enqueueSnackbar('Consejo actualizado exitosamente')
   }
 
   const onSubmit = useCallback(
@@ -152,7 +173,14 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         if (!currentCouncil) {
           await handleCreateCouncil(data)
         } else {
-          await handleUpdateCouncil(currentCouncil.id as number, data)
+          const editedFields = getEditedFields<Partial<FormValuesProps>>(
+            defaultValues,
+            data,
+          )
+
+          if (editedFields) {
+            await handleUpdateCouncil(currentCouncil.id as number, editedFields)
+          }
         }
 
         router.push(
@@ -160,7 +188,12 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
             ? pathname.replace(new RegExp(`/${currentCouncil.id}/edit`), '')
             : pathname.replace('/new', ''),
         )
-        reset()
+        enqueueSnackbar(
+          !currentCouncil
+            ? 'Consejo creado correctamente'
+            : 'Consejo actualizado correctamente',
+          { variant: 'success' },
+        )
       } catch (error) {
         enqueueSnackbar(
           !currentCouncil
@@ -168,38 +201,37 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
             : 'Error al actualizar el consejo',
           { variant: 'error' },
         )
+      } finally {
+        methods.reset()
       }
     },
-    [currentCouncil, enqueueSnackbar, reset, router],
+    [currentCouncil, enqueueSnackbar, methods.reset, router],
   )
 
   useEffect(() => {
     if (currentCouncil) {
-      reset(defaultValues)
+      methods.reset(defaultValues)
     }
-  }, [reset, currentCouncil])
-
-  const getDni = (attendee?: string): string =>
-    attendee?.split('-')[1]?.trim() ?? ''
+  }, [methods.reset, currentCouncil])
 
   useEffect(() => {
-    if (!functionaries) return
+    if (!unusedFunctionaries) return
 
     const [president, subrogant, attendees] = [
-      functionaries.find(
+      unusedFunctionaries.find(
         (functionary) => functionary.dni === getDni(values.president),
       ),
-      functionaries.find(
+      unusedFunctionaries.find(
         (functionary) => functionary.dni === getDni(values.subrogant),
       ),
       (values.attendees as string[]).map((attendee) =>
-        functionaries.find(
+        unusedFunctionaries.find(
           (functionary) => functionary.dni === getDni(attendee),
         ),
       ),
     ]
 
-    const currentUnusedFunctionaries = functionaries.filter(
+    const currentUnusedFunctionaries = unusedFunctionaries.filter(
       (functionary) =>
         functionary.dni !== president?.dni &&
         functionary.dni !== subrogant?.dni &&
@@ -209,24 +241,63 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     setUnusedFunctionaries(currentUnusedFunctionaries)
   }, [values.attendees, values.president, values.subrogant])
 
-  useEffect(() => {
-    if (!functionaries) {
-      get()
-      return
-    }
+  const searchDebounced = useDebounce(searchField)
 
-    setUnusedFunctionaries(functionaries)
-  }, [])
+  useEffect(() => {
+    let isMounted = true
+
+    if (!(loadingPresident || loadingSubrogant || loadingMembers)) return
+
+    FunctionaryUseCasesImpl.getInstance()
+      .getByField(searchDebounced)
+      .then((result) => {
+        if (!isMounted) return
+
+        if (result.status === HTTP_STATUS_CODES.OK) {
+          setUnusedFunctionaries(result.data.functionaries)
+        } else {
+          enqueueSnackbar('Error al obtener los funcionarios', {
+            variant: 'error',
+          })
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [loadingPresident, loadingSubrogant, loadingMembers, searchDebounced])
 
   return {
     councils,
     methods,
     unusedFunctionaries,
     defaultValues,
-    handleAddAttendees,
+    handleAddAttendees: handleAddAttendee,
+    handleRemoveAttendee,
     handleDeleteAttendeesQuantity,
     setCouncils,
     handleUpdateCouncil,
     onSubmit,
+    setSearchField,
+    attendees: {
+      president: {
+        loadingPresident,
+        isOpenPresident,
+        handleOpenPresident: isOpenPresident.onTrue,
+        handleClosePresident: isOpenPresident.onFalse,
+      },
+      subrogant: {
+        loadingSubrogant,
+        isOpenSubrogant,
+        handleOpenSubrogant: isOpenSubrogant.onTrue,
+        handleCloseSubrogant: isOpenSubrogant.onFalse,
+      },
+      members: {
+        loadingMembers,
+        isOpenMembers,
+        handleOpenMembers: isOpenMembers.onTrue,
+        handleCloseMembers: isOpenMembers.onFalse,
+      },
+    },
   }
 }

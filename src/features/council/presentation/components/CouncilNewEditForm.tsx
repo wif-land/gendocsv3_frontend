@@ -34,17 +34,25 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
     unusedFunctionaries,
     onSubmit,
     handleAddAttendees,
-    handleDeleteAttendeesQuantity,
+    handleRemoveAttendee,
+    attendees: {
+      president: {
+        isOpenPresident,
+        loadingPresident,
+        handleOpenPresident,
+        handleClosePresident,
+      },
+      subrogant: {
+        isOpenSubrogant,
+        loadingSubrogant,
+        handleOpenSubrogant,
+        handleCloseSubrogant,
+      },
+    },
   } = useCouncilsForm(currentCouncil)
   const { handleSubmit, control, watch } = methods
 
   const values = watch()
-
-  const handleRemoveAttendee = (index: number) => {
-    handleDeleteAttendeesQuantity(index)
-    const attendees = values.attendees as string[]
-    methods.setValue('attendees', attendees)
-  }
 
   const renderDetails = (
     <>
@@ -129,117 +137,119 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            {unusedFunctionaries && (
-              <RHFAutocomplete
-                name="president"
-                label="Presidente"
-                placeholder="Escribe el nombre del presidente del consejo"
-                freeSolo
-                options={unusedFunctionaries!.map(
+            <RHFAutocomplete
+              name="president"
+              label="Presidente"
+              placeholder="Escribe el nombre del presidente del consejo"
+              freeSolo
+              open={isOpenPresident.value}
+              loading={loadingPresident}
+              onOpen={handleOpenPresident}
+              onClose={handleClosePresident}
+              options={unusedFunctionaries!.map(
+                (functionary) =>
+                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+              )}
+              getOptionLabel={(option) => option}
+              renderOption={(props, option) => {
+                const {
+                  dni,
+                  firstName,
+                  firstLastName,
+                  secondName,
+                  secondLastName,
+                } = unusedFunctionaries.filter(
                   (functionary) =>
+                    option ===
                     `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )}
-                getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const {
-                    dni,
-                    firstName,
-                    firstLastName,
-                    secondName,
-                    secondLastName,
-                  } = unusedFunctionaries.filter(
-                    (functionary) =>
-                      option ===
-                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                  )[0]
+                )[0]
 
-                  if (!dni) {
-                    return null
-                  }
-
-                  return (
-                    <li {...props} key={dni}>
-                      <Typography variant="body2">
-                        {firstName} {secondName} {firstLastName}{' '}
-                        {secondLastName}
-                      </Typography>
-
-                      <Typography variant="caption" color="text.secondary">
-                        {dni}
-                      </Typography>
-                    </li>
-                  )
-                }}
-                renderTags={(selected, getTagProps) =>
-                  selected.map((option, index) => (
-                    <Chip
-                      {...getTagProps({ index })}
-                      key={option}
-                      label={option}
-                      size="small"
-                      color="info"
-                      variant="soft"
-                    />
-                  ))
+                if (!dni) {
+                  return null
                 }
-              />
-            )}
 
-            {unusedFunctionaries && (
-              <RHFAutocomplete
-                name="subrogant"
-                label="Subrogante"
-                placeholder="Escribe el nombre del subrogante"
-                freeSolo
-                options={unusedFunctionaries!.map(
+                return (
+                  <li {...props} key={dni}>
+                    <Typography variant="body2">
+                      {firstName} {secondName} {firstLastName} {secondLastName}
+                    </Typography>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {dni}
+                    </Typography>
+                  </li>
+                )
+              }}
+              renderTags={(selected, getTagProps) =>
+                selected.map((option, index) => (
+                  <Chip
+                    {...getTagProps({ index })}
+                    key={option}
+                    label={option}
+                    size="small"
+                    color="info"
+                    variant="soft"
+                  />
+                ))
+              }
+            />
+
+            <RHFAutocomplete
+              name="subrogant"
+              label="Subrogante"
+              placeholder="Escribe el nombre del subrogante"
+              freeSolo
+              open={isOpenSubrogant.value}
+              loading={loadingSubrogant}
+              onOpen={handleOpenSubrogant}
+              onClose={handleCloseSubrogant}
+              options={unusedFunctionaries!.map(
+                (functionary) =>
+                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+              )}
+              getOptionLabel={(option) => option}
+              renderOption={(props, option) => {
+                const {
+                  dni,
+                  firstName,
+                  firstLastName,
+                  secondName,
+                  secondLastName,
+                } = unusedFunctionaries.filter(
                   (functionary) =>
+                    option ===
                     `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )}
-                getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const {
-                    dni,
-                    firstName,
-                    firstLastName,
-                    secondName,
-                    secondLastName,
-                  } = unusedFunctionaries.filter(
-                    (functionary) =>
-                      option ===
-                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                  )[0]
+                )[0]
 
-                  if (!dni) {
-                    return null
-                  }
-
-                  return (
-                    <li key={dni} {...props}>
-                      <Typography variant="body2">
-                        {firstName} {secondName} {firstLastName}{' '}
-                        {secondLastName}
-                      </Typography>
-
-                      <Typography variant="caption" color="text.secondary">
-                        {dni}
-                      </Typography>
-                    </li>
-                  )
-                }}
-                renderTags={(selected, getTagProps) =>
-                  selected.map((option, index) => (
-                    <Chip
-                      {...getTagProps({ index })}
-                      key={option}
-                      label={option}
-                      size="small"
-                      color="info"
-                      variant="soft"
-                    />
-                  ))
+                if (!dni) {
+                  return null
                 }
-              />
-            )}
+
+                return (
+                  <li key={dni} {...props}>
+                    <Typography variant="body2">
+                      {firstName} {secondName} {firstLastName} {secondLastName}
+                    </Typography>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {dni}
+                    </Typography>
+                  </li>
+                )
+              }}
+              renderTags={(selected, getTagProps) =>
+                selected.map((option, index) => (
+                  <Chip
+                    {...getTagProps({ index })}
+                    key={option}
+                    label={option}
+                    size="small"
+                    color="info"
+                    variant="soft"
+                  />
+                ))
+              }
+            />
 
             <Divider sx={{ borderStyle: 'dashed' }} />
 

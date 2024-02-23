@@ -3,6 +3,7 @@ import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import { useCouncilStore } from '../store/councilsStore'
+import { enqueueSnackbar } from 'notistack'
 
 export const useCouncilsMethods = () => {
   const { councils, setCouncils } = useCouncilStore()
@@ -21,10 +22,19 @@ export const useCouncilsMethods = () => {
           rowsPerPage,
           currentPage * rowsPerPage,
         )
-      if (response.status === HTTP_STATUS_CODES.OK) {
-        return response.data
+
+      if (response.status !== HTTP_STATUS_CODES.OK) {
+        return {
+          councils: [],
+          count: 0,
+        }
       }
+
+      return response.data
     } catch (error) {
+      enqueueSnackbar('No encontramos consejos', {
+        variant: 'info',
+      })
       return {
         councils: [],
         count: 0,

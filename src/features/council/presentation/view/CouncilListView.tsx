@@ -2,7 +2,6 @@
 'use client'
 
 import { memo, useCallback, useState } from 'react'
-import { CouncilModel } from '../../data/models/CouncilModel'
 import { useCouncilView } from '../hooks/useCouncilView'
 import {
   Button,
@@ -39,18 +38,7 @@ import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
 import { CouncilTableRow } from '../components/CouncilTableRow'
 import { CouncilTableFiltersResult } from '../components/CouncilTableFiltersResult'
-
-const TABLE_HEAD = [
-  { id: 'name', label: 'Consejo' },
-  { id: 'createdAt', label: 'Hora de ejecución', width: 160 },
-  { id: 'date', label: 'Fecha de ejecución', width: 260 },
-  { id: 'isActive', label: 'Estado', width: 140 },
-  { id: 'actions', label: 'Acciones', width: 110 },
-]
-
-const defaultFilters: ICouncilTableFilters = {
-  name: '',
-}
+import { TABLE_HEAD, defaultFilters } from '../constants'
 
 const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
@@ -58,12 +46,10 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const pathname = usePathname()
   const settings = useSettingsContext()
   const confirm = useBoolean()
-  const [count, setCount] = useState(0)
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const [tableData, setTableData] = useState<CouncilModel[]>([])
   const [filters, setFilters] = useState<ICouncilTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
@@ -101,15 +87,15 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
 
   const {
     loader,
+    tableData,
+    count,
+    setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
     handleSearch,
     handleUpdateRow,
   } = useCouncilView({
-    tableData,
-    setTableData,
     table,
-    setCount,
     isDataFiltered,
     visitedPages,
     setVisitedPages,
@@ -122,6 +108,8 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const notFound =
     (count === 0 && isDataFiltered) ||
     (!loader.length && count === 0 && isDataFiltered)
+
+  console.log('tableData', tableData)
 
   return (
     <div key={moduleId}>

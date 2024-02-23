@@ -1,6 +1,6 @@
 import { useCouncilStore } from '../store/councilsStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useCouncilsMethods } from './useCouncilsMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
@@ -9,10 +9,7 @@ import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
 
 interface Props {
-  tableData: CouncilModel[]
-  setTableData: (data: CouncilModel[]) => void
   table: TableProps
-  setCount: (count: number) => void
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
@@ -21,16 +18,15 @@ interface Props {
 }
 
 export const useCouncilView = ({
-  tableData,
-  setTableData,
   table,
-  setCount,
   isDataFiltered,
   visitedPages,
   setVisitedPages,
   field,
   moduleId,
 }: Props) => {
+  const [tableData, setTableData] = useState<CouncilModel[]>([])
+  const [count, setCount] = useState(0)
   const { councils, setCouncils } = useCouncilStore()
   const { loader } = useLoaderStore()
   const { fetchData, updateRow, fetchDataByField } = useCouncilsMethods()
@@ -40,21 +36,19 @@ export const useCouncilView = ({
 
   useEffect(() => {
     let isMounted = true
-    if (tableData.length === 0) {
-      if (isMounted && !isDataFiltered) {
-        fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
-          (data) => {
-            if (data?.councils) {
-              setCouncils(data.councils)
-              setTableData(data.councils)
-            }
-            if (data?.count) {
-              setCount(data.count)
-            }
-          },
-        )
-      }
+    if (tableData.length !== 0) return
+
+    if (isMounted && !isDataFiltered) {
+      fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
+        (data) => {
+          if (data.count === 0) return
+          setCouncils(data.councils)
+          setTableData(data.councils)
+          setCount(data.count)
+        },
+      )
     }
+
     return () => {
       isMounted = false
     }
@@ -218,9 +212,11 @@ export const useCouncilView = ({
   }
 
   return {
+    count,
+    tableData,
     loader,
     councils,
-    setFunctionaries: setCouncils,
+    setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,

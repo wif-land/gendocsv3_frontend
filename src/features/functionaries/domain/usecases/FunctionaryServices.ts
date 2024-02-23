@@ -70,8 +70,19 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
   getAll = async (limit: number, offset: number) =>
     await this.functionaryRepository.getAll(limit, offset)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    await this.functionaryRepository.getByField(field, limit, offset)
+  getByField = async (field: string, limit = 5, offset = 0) => {
+    try {
+      return await this.functionaryRepository.getByField(field, limit, offset)
+    } catch (error) {
+      return {
+        status: 500,
+        data: {
+          count: 0,
+          functionaries: [],
+        },
+      }
+    }
+  }
 
   update = async (id: number, data: Partial<FunctionaryModel>) =>
     await this.functionaryRepository.update({

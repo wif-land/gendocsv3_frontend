@@ -6,6 +6,19 @@ import {
   ICouncil,
 } from '../../domain/entities/ICouncil'
 import { FunctionaryModel } from '../../../functionaries/data/models/FunctionatyModel'
+import { ICouncilTableFilters } from '../components/CouncilTableToolbar'
+
+export const TABLE_HEAD = [
+  { id: 'name', label: 'Consejo' },
+  { id: 'createdAt', label: 'Hora de ejecución', width: 160 },
+  { id: 'date', label: 'Fecha de ejecución', width: 260 },
+  { id: 'isActive', label: 'Estado', width: 140 },
+  { id: 'actions', label: 'Acciones', width: 110 },
+]
+
+export const defaultFilters: ICouncilTableFilters = {
+  name: '',
+}
 
 export const NewCouncilSchema = Yup.object().shape({
   name: Yup.string().required('El nombre es requerido'),
