@@ -11,6 +11,7 @@ interface StoreState {
 
 const STORE_NAME = 'functionaries-store'
 const DEFAULT_FUNCTIONARIES: IFunctionary[] = []
+const LIMIT = 5
 
 export const useFunctionaryStore = create<StoreState>(
   persist(
@@ -18,8 +19,11 @@ export const useFunctionaryStore = create<StoreState>(
       functionaries: DEFAULT_FUNCTIONARIES,
       setFunctionaries: (functionaries) => set({ functionaries }),
       get: async () => {
-        const result = await FunctionaryUseCasesImpl.getInstance().getAll()
-        set({ functionaries: result.functionaries })
+        const result = await FunctionaryUseCasesImpl.getInstance().getAll(
+          LIMIT,
+          0,
+        )
+        set({ functionaries: result.data.functionaries })
       },
     }),
     {
