@@ -27,7 +27,6 @@ export const NewCouncilSchema = Yup.object().shape({
   isActive: Yup.boolean().required('El estado es requerido'),
   isArchived: Yup.boolean().required('El estado es requerido'),
   president: Yup.string().required('El presidente es requerido'),
-  subrogant: Yup.string().required('El subrogante es requerido'),
   attendees: Yup.array()
     .of(Yup.string())
     .required('Los asistentes son requeridos'),
@@ -69,14 +68,16 @@ const filterMembers = (attendees: ICouncilAttendee[]) =>
 
 export const resolveDefaultValues = (currentCouncil?: ICouncil) => {
   const president = findPresident(
-    currentCouncil?.attendees as ICouncilAttendee[],
+    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
   )
 
   const subrogate = findSubrogate(
-    currentCouncil?.attendees as ICouncilAttendee[],
+    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
   )
 
-  const members = filterMembers(currentCouncil?.attendees as ICouncilAttendee[])
+  const members = filterMembers(
+    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
+  )
 
   return {
     name: currentCouncil?.name || '',

@@ -35,19 +35,11 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
     onSubmit,
     handleAddAttendees,
     handleRemoveAttendee,
+    setSearchField,
+    loading,
     attendees: {
-      president: {
-        isOpenPresident,
-        loadingPresident,
-        handleOpenPresident,
-        handleClosePresident,
-      },
-      subrogant: {
-        isOpenSubrogant,
-        loadingSubrogant,
-        handleOpenSubrogant,
-        handleCloseSubrogant,
-      },
+      president: { isOpenPresident, handleOpenPresident, handleClosePresident },
+      subrogant: { isOpenSubrogant, handleOpenSubrogant, handleCloseSubrogant },
     },
   } = useCouncilsForm(currentCouncil)
   const { handleSubmit, control, watch } = methods
@@ -143,10 +135,17 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
               placeholder="Escribe el nombre del presidente del consejo"
               freeSolo
               open={isOpenPresident.value}
-              loading={loadingPresident}
+              loading={loading.value}
               onOpen={handleOpenPresident}
-              onClose={handleClosePresident}
-              options={unusedFunctionaries!.map(
+              onClose={() => {
+                handleClosePresident()
+                setSearchField('')
+              }}
+              noOptionsText="No hay resultados"
+              onInputChange={(_event, newInputValue) => {
+                setSearchField(newInputValue)
+              }}
+              options={unusedFunctionaries?.map(
                 (functionary) =>
                   `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
               )}
@@ -180,18 +179,6 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                   </li>
                 )
               }}
-              renderTags={(selected, getTagProps) =>
-                selected.map((option, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    key={option}
-                    label={option}
-                    size="small"
-                    color="info"
-                    variant="soft"
-                  />
-                ))
-              }
             />
 
             <RHFAutocomplete
@@ -199,14 +186,21 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
               label="Subrogante"
               placeholder="Escribe el nombre del subrogante"
               freeSolo
+              noOptionsText="No hay resultados"
               open={isOpenSubrogant.value}
-              loading={loadingSubrogant}
+              loading={loading.value}
               onOpen={handleOpenSubrogant}
-              onClose={handleCloseSubrogant}
+              onClose={() => {
+                handleCloseSubrogant()
+                setSearchField('')
+              }}
               options={unusedFunctionaries!.map(
                 (functionary) =>
                   `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
               )}
+              onInputChange={(event, newInputValue) => {
+                setSearchField(newInputValue)
+              }}
               getOptionLabel={(option) => option}
               renderOption={(props, option) => {
                 const {

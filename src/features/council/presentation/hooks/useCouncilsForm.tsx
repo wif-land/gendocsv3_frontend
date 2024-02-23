@@ -56,13 +56,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const isOpenPresident = useBoolean()
   const isOpenSubrogant = useBoolean()
   const isOpenMembers = useBoolean()
-
-  const calculateLoadingState = (isOpen: boolean) =>
-    isOpen && unusedFunctionaries.length === 0
-
-  const loadingPresident = calculateLoadingState(isOpenPresident.value)
-  const loadingSubrogant = calculateLoadingState(isOpenSubrogant.value)
-  const loadingMembers = calculateLoadingState(isOpenMembers.value)
+  const loading = useBoolean()
 
   const defaultValues: Partial<ICouncil> = useMemo(
     () => resolveDefaultValues(currentCouncil),
@@ -101,15 +95,11 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
     const actualAttendees: ICreateCouncilAttendee[] = [
       {
-        functionaryId: unusedFunctionaries?.find(
-          (functionary) => functionary.dni === getDni(president),
-        )?.id as number,
+        functionaryId: getDni(president),
         role: CouncilAttendanceRole.PRESIDENT,
       },
       {
-        functionaryId: unusedFunctionaries?.find(
-          (functionary) => functionary.dni === getDni(subrogant),
-        )?.id as number,
+        functionaryId: getDni(subrogant),
         role: CouncilAttendanceRole.SUBROGATE,
       },
     ]
@@ -245,27 +235,42 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
   useEffect(() => {
     let isMounted = true
-
-    if (!(loadingPresident || loadingSubrogant || loadingMembers)) return
-
+    loading.onTrue()
     FunctionaryUseCasesImpl.getInstance()
       .getByField(searchDebounced)
       .then((result) => {
         if (!isMounted) return
 
         if (result.status === HTTP_STATUS_CODES.OK) {
-          setUnusedFunctionaries(result.data.functionaries)
+          const usedFunctionaries = [
+            ...(methods.getValues().attendees as string[]),
+            methods.getValues().president,
+            methods.getValues().subrogant,
+          ]
+          const attendees = usedFunctionaries.map((attendee) =>
+            getDni(attendee),
+          )
+
+          const filteredFunctionaries = result.data.functionaries.filter(
+            (functionary) => !attendees.includes(functionary.dni),
+          )
+
+          setUnusedFunctionaries(filteredFunctionaries)
         } else {
-          enqueueSnackbar('Error al obtener los funcionarios', {
-            variant: 'error',
-          })
+          setUnusedFunctionaries([])
         }
+        loading.onFalse()
       })
 
     return () => {
       isMounted = false
     }
-  }, [loadingPresident, loadingSubrogant, loadingMembers, searchDebounced])
+  }, [
+    searchDebounced,
+    isOpenMembers.value,
+    isOpenPresident.value,
+    isOpenSubrogant.value,
+  ])
 
   return {
     councils,
@@ -279,21 +284,19 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     handleUpdateCouncil,
     onSubmit,
     setSearchField,
+    loading,
     attendees: {
       president: {
-        loadingPresident,
         isOpenPresident,
         handleOpenPresident: isOpenPresident.onTrue,
         handleClosePresident: isOpenPresident.onFalse,
       },
       subrogant: {
-        loadingSubrogant,
         isOpenSubrogant,
         handleOpenSubrogant: isOpenSubrogant.onTrue,
         handleCloseSubrogant: isOpenSubrogant.onFalse,
       },
       members: {
-        loadingMembers,
         isOpenMembers,
         handleOpenMembers: isOpenMembers.onTrue,
         handleCloseMembers: isOpenMembers.onFalse,

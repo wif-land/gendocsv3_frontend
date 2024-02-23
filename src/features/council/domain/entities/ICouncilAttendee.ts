@@ -12,7 +12,7 @@ export interface ICouncilAttendee {
 }
 
 export interface ICreateCouncilAttendee {
-  functionaryId: number
+  functionaryId: string
 
   role: CouncilAttendanceRole
 }

@@ -106,10 +106,8 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
   const notFound =
-    (count === 0 && isDataFiltered) ||
+    (!loader.length && count === 0) ||
     (!loader.length && count === 0 && isDataFiltered)
-
-  console.log('tableData', tableData)
 
   return (
     <div key={moduleId}>
