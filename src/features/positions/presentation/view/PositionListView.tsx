@@ -13,7 +13,7 @@ import {
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
-import { useFunctionaryView } from '../hooks/useFunctionaryView'
+import { useFunctionaryView } from '../hooks/usePositionView'
 import { PositionModel } from '../../data/models/PositionModel'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
@@ -35,9 +35,9 @@ import {
   FunctionaryTableToolbar,
   IPositionTableFilterValue,
   IPositionTableFilters,
-} from '../components/FunctionaryTableToolbar'
+} from '../components/PositionTableToolbar'
 import { TABLE_HEAD } from '../constants'
-import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
+import { FunctionaryTableResult } from '../components/PositionTableFiltersResult'
 
 const defaultFilters: IPositionTableFilters = {
   variable: '',
@@ -68,17 +68,23 @@ const PositionListView = () => {
     [table],
   )
 
-  const { loader, handleChangePage, handleChangeRowsPerPage, handleSearch } =
-    useFunctionaryView({
-      tableData,
-      setTableData,
-      table,
-      setCount,
-      isDataFiltered,
-      visitedPages,
-      setVisitedPages,
-      field: searchTerm,
-    })
+  const {
+    loader,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleSearch,
+    handleDeleteRow,
+    handleDeleteManyRows,
+  } = useFunctionaryView({
+    tableData,
+    setTableData,
+    table,
+    setCount,
+    isDataFiltered,
+    visitedPages,
+    setVisitedPages,
+    field: searchTerm,
+  })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
@@ -205,8 +211,7 @@ const PositionListView = () => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            // eslint-disable-next-line @typescript-eslint/no-empty-function
-                            onDeleteRow={() => {}}
+                            onDeleteRow={() => handleDeleteRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
                         ))}
@@ -251,7 +256,7 @@ const PositionListView = () => {
             variant="contained"
             color="error"
             onClick={() => {
-              // handleDelete(table.selected)
+              handleDeleteManyRows()
               confirm.onFalse()
             }}
           >

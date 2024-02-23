@@ -4,6 +4,7 @@ import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
 import { IPosition } from '../../domain/entities/IPosition'
 import { enqueueSnackbar } from 'notistack'
 import { PositionUseCasesImpl } from '../../domain/usecases/PositionServices'
+import { IFunctionary } from '../../../../features/functionaries/domain/entities/IFunctionary'
 
 export interface FormValuesProps extends IPosition {}
 
@@ -27,61 +28,39 @@ export const TABLE_HEAD = [
 ]
 
 export const NewFunctionarySchema = Yup.object().shape({
-  dni: Yup.string().required(VALIDATION_MESSAGES.required),
-  firstName: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondName: Yup.string().required(VALIDATION_MESSAGES.required),
-  firstLastName: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondLastName: Yup.string().required(VALIDATION_MESSAGES.required),
-  outlookEmail: Yup.string()
-    .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
-  personalEmail: Yup.string()
-    .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
-  phoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
-  regularPhoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
-  thirdLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
-  fourthLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
+  name: Yup.string().required(VALIDATION_MESSAGES.required),
+  variable: Yup.string().required(VALIDATION_MESSAGES.required),
+  functionary: Yup.string().required(VALIDATION_MESSAGES.required),
 })
 
-export const resolveDefaultValues = (currentFunctionary?: IPosition) => ({
-  dni: currentFunctionary?.dni || '',
-  firstName: currentFunctionary?.firstName || '',
-  secondName: currentFunctionary?.secondName || '',
-  firstLastName: currentFunctionary?.firstLastName || '',
-  secondLastName: currentFunctionary?.secondLastName || '',
-  outlookEmail: currentFunctionary?.outlookEmail || '',
-  personalEmail: currentFunctionary?.personalEmail || '',
-  phoneNumber: currentFunctionary?.phoneNumber || '',
-  regularPhoneNumber: currentFunctionary?.regularPhoneNumber || '',
-  secondLevelDegree: currentFunctionary?.secondLevelDegree || '',
-  thirdLevelDegree: currentFunctionary?.thirdLevelDegree || '',
-  fourthLevelDegree: currentFunctionary?.fourthLevelDegree || '',
-  isActive: currentFunctionary?.isActive || true,
+export const resolveDefaultValues = (currentPosition?: IPosition) => ({
+  name: currentPosition?.name || '',
+  variable: currentPosition?.variable.replace(/{{|}}/g, '') || '',
+  functionary: currentPosition?.functionary
+    ? getSelectedFunctionary(currentPosition?.functionary as IFunctionary)
+    : '',
 })
+
+export const getSelectedFunctionary = (currentFunctionary?: IFunctionary) =>
+  ` ${currentFunctionary?.firstName} ${currentFunctionary?.secondName} ${currentFunctionary?.firstLastName} ${currentFunctionary?.secondLastName} - ${currentFunctionary?.dni}`
 
 export const handleCreate = async (values: FormValuesProps) => {
-  const result = await PositionUseCasesImpl.getInstance().create(values)
+  const functionaryDni = (values.functionary as string).split('-')[1].trim()
+  const result = await PositionUseCasesImpl.getInstance().create({
+    ...values,
+    variable: `{{${values.variable.toUpperCase()}}}`,
+    functionary: functionaryDni,
+  })
 
   if (!result) {
-    enqueueSnackbar('Error al crear el funcionario', { variant: 'error' })
+    enqueueSnackbar('Error al crear el cargo', { variant: 'error' })
     return
   }
 
-  enqueueSnackbar('Funcionario creado con éxito', { variant: 'success' })
+  enqueueSnackbar('Cargo creado con éxito', { variant: 'success' })
 }
 
-export const handleUpdate = async (
-  id: number,
-  values: Partial<IPosition> | null,
-) => {
+export const handleUpdate = async (values: Partial<IPosition> | null) => {
   if (!values) {
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
@@ -89,7 +68,22 @@ export const handleUpdate = async (
     return
   }
 
-  const result = await PositionUseCasesImpl.getInstance().update(id, values)
+  let functionaryDni
+  let newVariable
+
+  if (values.functionary) {
+    functionaryDni = (values.functionary as string).split('-')[1].trim()
+  }
+
+  if (values.variable) {
+    newVariable = `{{${values.variable.toUpperCase()}}}`
+  }
+
+  const result = await PositionUseCasesImpl.getInstance().update({
+    ...values,
+    variable: newVariable,
+    functionary: functionaryDni,
+  })
 
   if (!result) {
     enqueueSnackbar('Error al actualizar el funcionario', {

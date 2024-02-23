@@ -3,7 +3,7 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { PositionModel } from '../../data/models/PositionModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
-import { useFunctionaryMethods } from './useFunctionaryMethods'
+import { useFunctionaryMethods } from './usePositionMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 interface Props {
@@ -29,7 +29,8 @@ export const useFunctionaryView = ({
 }: Props) => {
   const { positions, setPositions } = usePositionStore()
   const { loader } = useLoaderStore()
-  const { fetchData, fetchDataByField } = useFunctionaryMethods()
+  const { fetchData, fetchDataByField, deleteRow, deleteManyRows } =
+    useFunctionaryMethods()
 
   useEffect(() => {
     let isMounted = true
@@ -120,55 +121,43 @@ export const useFunctionaryView = ({
     }
   }
 
-  // const handleUpdateRow = (row: PositionModel) => {
-  //   updateRow(row).then((data) => {
-  //     if (data) {
-  //       setPositions(
-  //         positions.map((functionary) =>
-  //           functionary.id === data.id ? data : functionary,
-  //         ),
-  //       )
-  //       setTableData(
-  //         (positions as PositionModel[]).map((functionary) =>
-  //           functionary.id === data.id ? data : functionary,
-  //         ),
-  //       )
-  //     }
-  //   })
-  // }
+  const handleDeleteRow = (row: PositionModel) => {
+    deleteRow(row.id as number).then((data) => {
+      if (data) {
+        setPositions(positions.filter((position) => position.id !== row.id))
+        setTableData(tableData.filter((position) => position.id !== row.id))
+      }
+    })
+  }
 
-  // const handleUpdateRows = () => {
-  //   const rows = tableData.filter((row) =>
-  //     table.selected.includes(row.id!.toString()),
-  //   )
+  const handleDeleteManyRows = () => {
+    const rows = tableData.filter((row) =>
+      table.selected.includes(row.id!.toString()),
+    )
 
-  //   const rowsData = rows.map((row: PositionModel) => ({
-  //     isActive: !row.isActive,
-  //     id: row.id!,
-  //   }))
+    const rowsData = rows.map((row: PositionModel) => row.id as number)
 
-  //   updateRows(rowsData).then((data) => {
-  //     if (data !== undefined) {
-  //       setPositions(
-  //         positions.map((functionary) => {
-  //           const updatedFunctionary = data.find(
-  //             (updated) => updated.id === functionary.id,
-  //           )
-  //           return updatedFunctionary ? updatedFunctionary : functionary
-  //         }),
-  //       )
-  //     }
-  //     setTableData(
-  //       (positions as PositionModel[]).map((functionary) => {
-  //         const updatedFunctionary = data?.find(
-  //           (updated) => updated.id === functionary.id,
-  //         )
-  //         return updatedFunctionary ? updatedFunctionary : functionary
-  //       }),
-  //     )
-  //     table.setSelected([])
-  //   })
-  // }
+    console.log(rowsData)
+
+    console.log('estoy enfermito')
+
+    // deleteManyRows(rowsData).then((data) => {
+    //   if (data !== undefined) {
+    //     setPositions(
+    //       positions.filter(
+    //         (position) => !rowsData.includes(position.id as number),
+    //       ),
+    //     )
+    //     setTableData(
+    //       tableData.filter(
+    //         (position) => !rowsData.includes(position.id as number),
+    //       ),
+    //     )
+    //   }
+
+    //   table.setSelected([])
+    // })
+  }
 
   const handleSearch = (field: string) => {
     fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
@@ -194,8 +183,8 @@ export const useFunctionaryView = ({
     setPositions,
     handleChangePage,
     handleChangeRowsPerPage,
-    // handleUpdateRow,
-    // handleUpdateRows,
+    handleDeleteRow,
+    handleDeleteManyRows,
     handleSearch,
   }
 }

@@ -4,5 +4,5 @@ export interface IPosition {
   id?: number
   variable: string
   name: string
-  functionary: IFunctionary
+  functionary: IFunctionary | string
 }

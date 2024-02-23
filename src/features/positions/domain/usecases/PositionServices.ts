@@ -1,7 +1,7 @@
 import { PositionModel } from '../../data/models/PositionModel'
 import { PositionRepositoryImpl } from '../../data/repositories/PositionRepositoryImpl'
 import { IPosition } from '../entities/IPosition'
-import { FunctionaryRepository } from '../repositories/PositionRepository'
+import { PositionRepository } from '../repositories/PositionRepository'
 
 interface PositionUseCases {
   getAll(
@@ -41,6 +41,11 @@ interface PositionUseCases {
     status: number
     isDeleted: boolean
   }>
+
+  deleteMany(ids: number[]): Promise<{
+    status: number
+    isDeleted: boolean
+  }>
 }
 
 export class PositionUseCasesImpl implements PositionUseCases {
@@ -54,7 +59,7 @@ export class PositionUseCasesImpl implements PositionUseCases {
     return PositionUseCasesImpl.instance
   }
 
-  private functionaryRepository: FunctionaryRepository =
+  private functionaryRepository: PositionRepository =
     PositionRepositoryImpl.getInstance()
 
   getAll = async (limit: number, offset: number) =>
@@ -70,4 +75,7 @@ export class PositionUseCasesImpl implements PositionUseCases {
     this.functionaryRepository.create(position)
 
   delete = async (id: number) => this.functionaryRepository.delete(id)
+
+  deleteMany = async (ids: number[]) =>
+    this.functionaryRepository.deleteMany(ids)
 }

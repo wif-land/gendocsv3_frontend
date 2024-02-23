@@ -21,7 +21,7 @@ import { getEditedFields } from '../../../../shared/utils/FormUtil'
 export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { functionaries } = usePositionStore()
+  const { positions } = usePositionStore()
   const { enqueueSnackbar } = useSnackbar()
   const { loader } = useLoaderStore()
 
@@ -48,7 +48,10 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
           data,
         )
 
-        await handleUpdate(currentFunctionary.id!, editedFields)
+        await handleUpdate({
+          ...editedFields,
+          id: currentFunctionary.id,
+        })
       }
 
       const newPath = currentFunctionary
@@ -69,7 +72,7 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
 
   return {
     loader,
-    functionaries,
+    functionaries: positions,
     methods,
     onSubmit,
     handleSubmit,

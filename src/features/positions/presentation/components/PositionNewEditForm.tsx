@@ -11,11 +11,12 @@ import { RHFAutocomplete, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { IPosition } from '../../domain/entities/IPosition'
-import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
+import { useFunctionaryForm } from '../hooks/usePositionForm'
 import { useEffect, useState } from 'react'
 import { FunctionaryUseCasesImpl } from '../../../../features/functionaries/domain/usecases/FunctionaryServices'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { useFunctionaryStore } from '../../../../features/functionaries/presentation/state/useFunctionaryStore'
+import { IFunctionary } from '../../../../features/functionaries/domain/entities/IFunctionary'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
 
 type Props = {
   currentPosition?: IPosition
@@ -23,6 +24,11 @@ type Props = {
 
 export const PositionNewEditForm = ({ currentPosition }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const [functionaries, setFunctionaries] = useState<IFunctionary[]>([])
+  const [inputValue, setInputValue] = useState('' as string)
+  const isOpen = useBoolean()
+  const loading = isOpen && functionaries.length === 0
+
   const { methods, onSubmit } = useFunctionaryForm(currentPosition)
 
   const {
@@ -30,76 +36,72 @@ export const PositionNewEditForm = ({ currentPosition }: Props) => {
     formState: { isSubmitting },
   } = methods
 
-  const { functionaries, setFunctionaries } = useFunctionaryStore()
-
-  const [inputValue, setInputValue] = useState('' as string)
   const debouncedValue = useDebounce(inputValue)
 
   useEffect(() => {
-    if (inputValue) {
-      const filteredFunctionaries = async (field: string) => {
-        await FunctionaryUseCasesImpl.getInstance()
+    let isMounted = true
+
+    if (isOpen.value === false) return
+
+    const filteredFunctionaries = async (field: string) => {
+      await FunctionaryUseCasesImpl.getInstance()
+        .getByField(field)
+        .then((res) => {
           // eslint-disable-next-line no-magic-numbers
-          .getByField(field, 5, 0)
-          .then((res) => {
+          if (res.status === 200 && isMounted) {
+            setFunctionaries(res.data.functionaries)
+            return
             // eslint-disable-next-line no-magic-numbers
-            if (res.status === 200) {
-              setFunctionaries(res.data.functionaries)
-              return
-              // eslint-disable-next-line no-magic-numbers
-            } else if (res.status !== 404) {
-              setFunctionaries([])
-              return
-            }
-          })
-      }
-      filteredFunctionaries(debouncedValue)
-    } else {
-      setFunctionaries([])
+          } else {
+            setFunctionaries([])
+            return
+          }
+        })
+    }
+    filteredFunctionaries(debouncedValue)
+
+    return () => {
+      isMounted = false
     }
   }, [debouncedValue])
 
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid md={4} gap={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Variable
+            Detalles
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Es el término que será usado para referirse al funcionario en los
-            documentos.
+          <Typography variant="body2" color="text.secondary">
+            Variable:
+            <br />
+            <Typography variant="caption" color="text.primary">
+              Identificador único (sin espacios) para documentos automatizados.
+              <br />
+              Ej: COOR_SOFTWARE
+            </Typography>
           </Typography>
-        </Grid>
-      )}
+          <br />
 
-      <Grid xs={12} md={8}>
-        <Card>
-          {!mdUp && <CardHeader title="Detalles" />}
-
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField
-              name="variable"
-              label="Variable"
-              required
-              placeholder="Ej: {{COOR_SOFTWARE}} "
-            />
-          </Stack>
-        </Card>
-      </Grid>
-    </>
-  )
-
-  const renderProperties = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Nombre
+          <Typography variant="body2" color="text.secondary">
+            Nombre del cargo:
+            <br />
+            <Typography variant="caption" color="text.primary">
+              Título oficial en la empresa.
+              <br />
+              Ej: Coordinador de Ingeniería en Software
+            </Typography>
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Es el nombre asignado a la variable, este será útil para realizar
-            busquedas más adelante
+          <br />
+
+          <Typography variant="body2" color="text.secondary">
+            Funcionario:
+            <br />
+            <Typography variant="caption" color="text.primary">
+              Nombre de la persona en el cargo.
+              <br />
+              Ej: Juan Pérez - 123456789
+            </Typography>
           </Typography>
         </Grid>
       )}
@@ -108,6 +110,12 @@ export const PositionNewEditForm = ({ currentPosition }: Props) => {
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
           <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFTextField
+              name="variable"
+              label="Variable"
+              required
+              placeholder="Ej: COOR_SOFTWARE "
+            />
             <RHFTextField
               name="name"
               label="Nombre del cargo"
@@ -118,19 +126,46 @@ export const PositionNewEditForm = ({ currentPosition }: Props) => {
             <RHFAutocomplete
               name="functionary"
               label="Funcionario"
-              options={functionaries.map(
-                (option) =>
-                  `${option.firstName} ${option.secondName} ${option.firstLastName} ${option.secondLastName} - ${option.dni}`,
+              open={isOpen.value}
+              onOpen={isOpen.onTrue}
+              onClose={isOpen.onFalse}
+              loading={loading}
+              options={functionaries?.map(
+                (functionary) =>
+                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
               )}
               onInputChange={(event, newInputValue) => {
                 newInputValue !== '' && setInputValue(newInputValue)
               }}
-              onChange={(event, newValue) => {
-                console.log((newValue as string)?.split(' - ')[1])
-                const functionary = functionaries.find((functionary) => {
-                  functionary?.dni === (newValue as string)?.split(' - ')[1]
-                })
-                console.log(functionary)
+              getOptionLabel={(option) => option}
+              renderOption={(props, option) => {
+                const {
+                  dni,
+                  firstName,
+                  firstLastName,
+                  secondName,
+                  secondLastName,
+                } = functionaries.filter(
+                  (functionary) =>
+                    option ===
+                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                )[0]
+
+                if (!dni) {
+                  return null
+                }
+
+                return (
+                  <li {...props} key={dni}>
+                    <Typography variant="body2">
+                      {firstName} {secondName} {firstLastName} {secondLastName}
+                    </Typography>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {dni}
+                    </Typography>
+                  </li>
+                )
               }}
             />
           </Stack>
@@ -161,8 +196,6 @@ export const PositionNewEditForm = ({ currentPosition }: Props) => {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         {renderDetails}
-
-        {renderProperties}
 
         {renderActions}
       </Grid>

@@ -31,39 +31,33 @@ export const useFunctionaryMethods = () => {
     }
   }
 
-  // const updateRow = async (functionary: Partial<PositionModel>) => {
-  //   addLoaderItem('positions')
-  //   try {
-  //     const response = await PositionUseCasesImpl.getInstance().update(
-  //       functionary.id as number,
-  //       {
-  //         isActive: !functionary.isActive,
-  //       },
-  //     )
-  //     if (response.status === HTTP_STATUS_CODES.OK) {
-  //       return response.functionary as PositionModel
-  //     }
-  //   } catch (error) {
-  //     return null
-  //   } finally {
-  //     removeLoaderItem('positions')
-  //   }
-  // }
+  const deleteRow = async (id: number) => {
+    addLoaderItem('positions')
+    try {
+      const response = await PositionUseCasesImpl.getInstance().delete(id)
+      if (response.status === HTTP_STATUS_CODES.OK) {
+        return response.isDeleted
+      }
+    } catch (error) {
+      return null
+    } finally {
+      removeLoaderItem('positions')
+    }
+  }
 
-  // const updateRows = async (positions: Partial<PositionModel>[]) => {
-  //   addLoaderItem('positions')
-  //   try {
-  //     const response =
-  //       await PositionUseCasesImpl.getInstance().bulkUpdate(positions)
-  //     if (response.status === HTTP_STATUS_CODES.OK) {
-  //       return response.positions as PositionModel[]
-  //     }
-  //   } catch (error) {
-  //     return []
-  //   } finally {
-  //     removeLoaderItem('positions')
-  //   }
-  // }
+  const deleteManyRows = async (ids: number[]) => {
+    addLoaderItem('positions')
+    try {
+      const response = await PositionUseCasesImpl.getInstance().deleteMany(ids)
+      if (response.status === HTTP_STATUS_CODES.OK) {
+        return response.isDeleted
+      }
+    } catch (error) {
+      return []
+    } finally {
+      removeLoaderItem('positions')
+    }
+  }
 
   const fetchDataByField = async (
     searchTerm: string,
@@ -104,8 +98,8 @@ export const useFunctionaryMethods = () => {
     positions,
     setPositions,
     fetchData,
-    // updateRow,
-    // updateRows,
+    deleteRow,
+    deleteManyRows,
     fetchDataByField,
   }
 }

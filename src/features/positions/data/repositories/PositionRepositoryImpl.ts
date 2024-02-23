@@ -1,11 +1,11 @@
 import { IPosition } from '../../domain/entities/IPosition'
-import { FunctionaryRepository } from '../../domain/repositories/PositionRepository'
+import { PositionRepository } from '../../domain/repositories/PositionRepository'
 import {
   PositionDataSource,
   PositionDataSourceImpl,
 } from '../datasources/PositionDatasource'
 
-export class PositionRepositoryImpl implements FunctionaryRepository {
+export class PositionRepositoryImpl implements PositionRepository {
   static instance: PositionRepositoryImpl
 
   static getInstance = (): PositionRepositoryImpl => {
@@ -32,4 +32,6 @@ export class PositionRepositoryImpl implements FunctionaryRepository {
   create = async (position: IPosition) => this.datasource.create(position)
 
   delete = async (id: number) => this.datasource.delete(id)
+
+  deleteMany = async (ids: number[]) => this.datasource.deleteMany(ids)
 }

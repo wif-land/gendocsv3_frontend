@@ -44,6 +44,11 @@ export interface PositionDataSource {
     status: number
     isDeleted: boolean
   }>
+
+  deleteMany(ids: number[]): Promise<{
+    status: number
+    isDeleted: boolean
+  }>
 }
 
 export class PositionDataSourceImpl implements PositionDataSource {
@@ -137,6 +142,20 @@ export class PositionDataSourceImpl implements PositionDataSource {
 
   delete = async (id: number) => {
     const result = await AxiosClient.delete(API_ROUTES.POSITIONS.DELETE(id))
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, isDeleted: data.content as boolean }
+    }
+
+    return { status, isDeleted: false }
+  }
+
+  deleteMany = async (ids: number[]) => {
+    const result = await AxiosClient.post(API_ROUTES.POSITIONS.DELETE_MANY, {
+      data: { ids },
+    })
 
     const { status, data } = result
 

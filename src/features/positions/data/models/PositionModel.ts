@@ -12,7 +12,7 @@ export class PositionModel implements IPosition {
     this.id = props.id
     this.variable = props.variable
     this.name = props.name
-    this.functionary = props.functionary
+    this.functionary = props.functionary as IFunctionary
   }
 
   static fromJson(json: Record<string, any>): PositionModel {

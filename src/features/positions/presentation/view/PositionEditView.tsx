@@ -1,25 +1,22 @@
 import { memo } from 'react'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { useParams, usePathname } from 'next/navigation'
-import { useFunctionaryView } from '../hooks/useFunctionaryView'
 import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { PositionNewEditForm } from '../components/PositionNewEditForm'
 import { usePositionStore } from '../state/usePositionStore'
 
-const FunctionaryEditView = () => {
+const PositionEditView = () => {
   const settings = useSettingsContext()
   const pathname = usePathname()
   const params = useParams()
 
   const { id } = params
 
-  const { functionaries } = usePositionStore()
+  const { positions } = usePositionStore()
 
-  const currentFunctionary = functionaries?.find(
-    (functionary) => functionary.id! === +id,
-  )
+  const currentPosition = positions?.find((position) => position.id! === +id)
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -41,9 +38,9 @@ const FunctionaryEditView = () => {
         }}
       />
 
-      <PositionNewEditForm currentFunctionary={currentFunctionary} />
+      <PositionNewEditForm currentPosition={currentPosition} />
     </Container>
   )
 }
 
-export default memo(FunctionaryEditView)
+export default memo(PositionEditView)

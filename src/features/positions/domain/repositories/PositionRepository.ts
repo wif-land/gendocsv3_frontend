@@ -1,7 +1,7 @@
 import { PositionModel } from '../../data/models/PositionModel'
 import { IPosition } from '../entities/IPosition'
 
-export interface FunctionaryRepository {
+export interface PositionRepository {
   getAll(
     limit: number,
     offset: number,
@@ -36,6 +36,11 @@ export interface FunctionaryRepository {
   }>
 
   delete(id: number): Promise<{
+    status: number
+    isDeleted: boolean
+  }>
+
+  deleteMany(ids: number[]): Promise<{
     status: number
     isDeleted: boolean
   }>
