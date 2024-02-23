@@ -49,7 +49,7 @@ export const useFunctionaryMethods = () => {
     addLoaderItem('positions')
     try {
       const response = await PositionUseCasesImpl.getInstance().deleteMany(ids)
-      if (response.status === HTTP_STATUS_CODES.OK) {
+      if (response.status === HTTP_STATUS_CODES.CREATED) {
         return response.isDeleted
       }
     } catch (error) {

@@ -137,26 +137,18 @@ export const useFunctionaryView = ({
 
     const rowsData = rows.map((row: PositionModel) => row.id as number)
 
-    console.log(rowsData)
+    const filterData = positions.filter(
+      (position) => !rowsData.includes(position.id as number),
+    )
 
-    console.log('estoy enfermito')
+    deleteManyRows(rowsData).then((data) => {
+      if (data) {
+        setPositions(filterData)
+        setTableData(filterData as PositionModel[])
+      }
 
-    // deleteManyRows(rowsData).then((data) => {
-    //   if (data !== undefined) {
-    //     setPositions(
-    //       positions.filter(
-    //         (position) => !rowsData.includes(position.id as number),
-    //       ),
-    //     )
-    //     setTableData(
-    //       tableData.filter(
-    //         (position) => !rowsData.includes(position.id as number),
-    //       ),
-    //     )
-    //   }
-
-    //   table.setSelected([])
-    // })
+      table.setSelected([])
+    })
   }
 
   const handleSearch = (field: string) => {

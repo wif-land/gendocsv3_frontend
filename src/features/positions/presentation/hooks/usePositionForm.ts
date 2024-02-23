@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { useSnackbar } from 'notistack'
@@ -17,6 +17,11 @@ import {
   handleUpdate,
 } from '../constants'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { IFunctionary } from '../../../../features/functionaries/domain/entities/IFunctionary'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { FunctionaryUseCasesImpl } from '../../../../features/functionaries/domain/usecases/FunctionaryServices'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const router = useRouter()
@@ -24,6 +29,11 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const { positions } = usePositionStore()
   const { enqueueSnackbar } = useSnackbar()
   const { loader } = useLoaderStore()
+  const [functionaries, setFunctionaries] = useState<IFunctionary[]>([])
+  const [inputValue, setInputValue] = useState('' as string)
+  const isOpen = useBoolean()
+  const [loading, setIsLoading] = useState(false)
+  const debouncedValue = useDebounce(inputValue)
 
   const defaultValues = useMemo(
     () => resolveDefaultValues(currentFunctionary),
@@ -70,11 +80,46 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
     }
   }, [currentFunctionary, defaultValues, reset])
 
+  useEffect(() => {
+    let isMounted = true
+
+    if (isOpen.value === false) return
+
+    setIsLoading(true)
+
+    const filteredFunctionaries = async (field: string) => {
+      await FunctionaryUseCasesImpl.getInstance()
+        .getByField(field)
+        .then((res) => {
+          if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
+            setFunctionaries(res.data.functionaries)
+            return
+          } else {
+            setFunctionaries([])
+            setIsLoading(false)
+            return
+          }
+        })
+    }
+
+    if (debouncedValue.includes('-')) return
+
+    filteredFunctionaries(debouncedValue)
+
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedValue, isOpen.value])
+
   return {
     loader,
-    functionaries: positions,
+    positions,
     methods,
     onSubmit,
     handleSubmit,
+    functionaries,
+    setInputValue,
+    loading,
+    isOpen,
   }
 }

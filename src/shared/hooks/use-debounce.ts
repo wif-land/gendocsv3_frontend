@@ -16,4 +16,4 @@ export const useDebounce = (value: string, delay?: number) => {
   return debouncedValue
 }
 
-const DEFAULT_DELAY = 500
+const DEFAULT_DELAY = 300

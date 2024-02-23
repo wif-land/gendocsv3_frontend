@@ -164,7 +164,7 @@ const PositionListView = () => {
               }
               action={
                 <Button color="primary" onClick={confirm.onTrue}>
-                  Cambiar estado
+                  Eliminar
                 </Button>
               }
             />
@@ -247,7 +247,7 @@ const PositionListView = () => {
         title="Actualizar estado"
         content={
           <>
-            Estás seguro que desear actualizar el estado de{' '}
+            Estás seguro que desear eliminar el estado de{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -260,7 +260,7 @@ const PositionListView = () => {
               confirm.onFalse()
             }}
           >
-            Cambiar
+            Eliminar
           </Button>
         }
       />

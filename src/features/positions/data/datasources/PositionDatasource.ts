@@ -154,12 +154,12 @@ export class PositionDataSourceImpl implements PositionDataSource {
 
   deleteMany = async (ids: number[]) => {
     const result = await AxiosClient.post(API_ROUTES.POSITIONS.DELETE_MANY, {
-      data: { ids },
+      ids,
     })
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.OK) {
+    if (status === HTTP_STATUS_CODES.CREATED) {
       return { status, isDeleted: data.content as boolean }
     }
 

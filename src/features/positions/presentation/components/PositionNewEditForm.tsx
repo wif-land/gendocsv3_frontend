@@ -12,11 +12,6 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { IPosition } from '../../domain/entities/IPosition'
 import { useFunctionaryForm } from '../hooks/usePositionForm'
-import { useEffect, useState } from 'react'
-import { FunctionaryUseCasesImpl } from '../../../../features/functionaries/domain/usecases/FunctionaryServices'
-import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { IFunctionary } from '../../../../features/functionaries/domain/entities/IFunctionary'
-import { useBoolean } from '../../../../shared/hooks/use-boolean'
 
 type Props = {
   currentPosition?: IPosition
@@ -24,46 +19,14 @@ type Props = {
 
 export const PositionNewEditForm = ({ currentPosition }: Props) => {
   const mdUp = useResponsive('up', 'md')
-  const [functionaries, setFunctionaries] = useState<IFunctionary[]>([])
-  const [inputValue, setInputValue] = useState('' as string)
-  const isOpen = useBoolean()
-  const loading = isOpen && functionaries.length === 0
 
-  const { methods, onSubmit } = useFunctionaryForm(currentPosition)
+  const { methods, onSubmit, functionaries, setInputValue, isOpen, loading } =
+    useFunctionaryForm(currentPosition)
 
   const {
     handleSubmit,
     formState: { isSubmitting },
   } = methods
-
-  const debouncedValue = useDebounce(inputValue)
-
-  useEffect(() => {
-    let isMounted = true
-
-    if (isOpen.value === false) return
-
-    const filteredFunctionaries = async (field: string) => {
-      await FunctionaryUseCasesImpl.getInstance()
-        .getByField(field)
-        .then((res) => {
-          // eslint-disable-next-line no-magic-numbers
-          if (res.status === 200 && isMounted) {
-            setFunctionaries(res.data.functionaries)
-            return
-            // eslint-disable-next-line no-magic-numbers
-          } else {
-            setFunctionaries([])
-            return
-          }
-        })
-    }
-    filteredFunctionaries(debouncedValue)
-
-    return () => {
-      isMounted = false
-    }
-  }, [debouncedValue])
 
   const renderDetails = (
     <>
@@ -128,14 +91,18 @@ export const PositionNewEditForm = ({ currentPosition }: Props) => {
               label="Funcionario"
               open={isOpen.value}
               onOpen={isOpen.onTrue}
-              onClose={isOpen.onFalse}
+              onClose={() => {
+                setInputValue('')
+                isOpen.onFalse()
+              }}
               loading={loading}
+              noOptionsText="No hay resultados"
               options={functionaries?.map(
                 (functionary) =>
                   `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
               )}
               onInputChange={(event, newInputValue) => {
-                newInputValue !== '' && setInputValue(newInputValue)
+                setInputValue(newInputValue)
               }}
               getOptionLabel={(option) => option}
               renderOption={(props, option) => {
