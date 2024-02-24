@@ -142,10 +142,9 @@ export class StudentDataSourceImpl implements StudentDataSource {
   }
 
   bulkCreate = async (students: ICreateStudent[]) => {
-    const result = await AxiosClient.post(
-      API_ROUTES.STUDENTS.CREATE_MANY,
+    const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE_MANY, {
       students,
-    )
+    })
 
     const { status, data } = result
 

@@ -1,9 +1,10 @@
 import * as yup from 'yup'
-import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
 import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 import { enqueueSnackbar } from 'notistack'
 import { IStudent } from '../../domain/entities/IStudent'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
+import { ICareer } from '../../../careers/domain/entities/ICareer'
 
 export interface FormValuesProps extends IStudent {}
 
@@ -85,7 +86,7 @@ export const resolveDefaultValues = (
   gender: currentStudent?.gender || '',
   birthdate: currentStudent?.birthdate || '',
   canton: currentStudent?.canton || '',
-  career: currentStudent?.career.id || 0,
+  career: (currentStudent?.career as ICareer).id || 0,
 })
 
 export const handleCreate = async (values: FormValuesProps) => {

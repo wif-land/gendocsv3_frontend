@@ -3,6 +3,8 @@ import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { StudentModel } from '../../data/models/StudentModel'
 import { useStudentStore } from '../state/studentStore'
+import { IStudent } from '../../domain/entities/IStudent'
+import { enqueueSnackbar } from 'notistack'
 
 export const useStudentCommands = () => {
   const { students } = useStudentStore()
@@ -99,10 +101,28 @@ export const useStudentCommands = () => {
     }
   }
 
+  const bulkCreate = async (students: IStudent[]) => {
+    addLoaderItem('students')
+    try {
+      const response =
+        await StudentUseCasesImpl.getInstance().bulkCreate(students)
+      if (response.status !== HTTP_STATUS_CODES.CREATED) {
+        enqueueSnackbar('Error al cargar los estudiantes', { variant: 'error' })
+        return
+      }
+
+      enqueueSnackbar('Estudiantes cargados con éxito', { variant: 'success' })
+      return response.students as StudentModel[]
+    } finally {
+      removeLoaderItem('students')
+    }
+  }
+
   return {
     loader,
     students,
     fetchData,
+    bulkCreate,
     updateRow,
     updateRows,
     fetchDataByField,

@@ -4,13 +4,12 @@ import { useCouncilStore } from '../store/councilsStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { LOADER_DELAY } from '../../../../shared/constants/common'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   const { modules } = useModulesStore()
   const { councils, setCouncils } = useCouncilStore()
-  const { addLoaderItem, removeLoaderItem, loader } = useLoaderStore()
+  const { loader } = useLoaderStore()
 
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
@@ -27,8 +26,6 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
   )
 
   const fetchData = async (rowsPerPage: number, currentPage: number) => {
-    addLoaderItem('council')
-
     try {
       const response =
         await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
@@ -45,16 +42,10 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
         councils: [] as CouncilModel[],
         count: -1,
       }
-    } finally {
-      setTimeout(() => {
-        removeLoaderItem('council')
-      }, LOADER_DELAY)
     }
   }
 
   const updateRow = async (council: Partial<CouncilModel>) => {
-    addLoaderItem('council')
-
     try {
       const response = await CouncilsUseCasesImpl.getInstance().update(
         council.id as number,
@@ -68,10 +59,6 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
       }
     } catch (error) {
       return {} as CouncilModel
-    } finally {
-      setTimeout(() => {
-        removeLoaderItem('council')
-      }, LOADER_DELAY)
     }
   }
 
@@ -80,8 +67,6 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
     currentPage: number,
     filter: string,
   ) => {
-    addLoaderItem('council')
-
     try {
       const response = await CouncilsUseCasesImpl.getInstance().getByField(
         filter,
@@ -100,10 +85,6 @@ export const useCouncilView = ({ moduleId }: { moduleId: string }) => {
         councils: [] as CouncilModel[],
         count: -1,
       }
-    } finally {
-      setTimeout(() => {
-        removeLoaderItem('council')
-      }, LOADER_DELAY)
     }
   }
 

@@ -18,7 +18,7 @@ export class StudentModel implements IStudent {
   isActive: boolean
   registration: string
   approvedCredits: number
-  career: ICareer
+  career: ICareer | number
   updatedAt: string
   personalEmail: string
   outlookEmail: string

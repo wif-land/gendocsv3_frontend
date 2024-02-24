@@ -1,5 +1,8 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useCallback } from 'react'
 
+import * as XLSX from 'xlsx'
 import Button from '@mui/material/Button'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogActions from '@mui/material/DialogActions'
@@ -8,6 +11,10 @@ import Dialog, { DialogProps } from '@mui/material/Dialog'
 
 import { Upload } from '../../../../shared/sdk/upload'
 import Iconify from '../../../../core/iconify'
+import { useCareersStore } from '../../../careers/presentation/state/careerStore'
+import { IStudent } from '../../domain/entities/IStudent'
+import { transformData } from '../utils'
+import { useStudentCommands } from '../hooks/useStudentCommands'
 
 interface Props extends DialogProps {
   title?: string
@@ -26,12 +33,9 @@ export const StudentBulkUploadDialog = ({
   ...other
 }: Props) => {
   const [files, setFiles] = useState<(File | string)[]>([])
-
-  useEffect(() => {
-    if (!open) {
-      setFiles([])
-    }
-  }, [open])
+  const [students, setStudents] = useState<IStudent[]>([])
+  const { careers, get: getCareers } = useCareersStore()
+  const { bulkCreate } = useStudentCommands()
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -48,9 +52,41 @@ export const StudentBulkUploadDialog = ({
     [files],
   )
 
-  const handleUpload = () => {
+  const readAsBinaryStringSync = (file: File) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (evt) => {
+        if (evt.target === null) {
+          reject(new Error('Error loading file'))
+          return
+        }
+        const bstr = evt.target.result
+        resolve(bstr)
+      }
+      reader.onerror = (_evt) => {
+        reject(new Error('Error reading file'))
+      }
+      reader.readAsBinaryString(file)
+    })
+
+  const processFileSynchronously = async (file: string | File) => {
+    try {
+      const bstr = await readAsBinaryStringSync(file as File)
+      const workbook = XLSX.read(bstr, { type: 'binary' })
+      const worksheetName = workbook.SheetNames[0]
+      const worksheet = workbook.Sheets[worksheetName]
+      const data = XLSX.utils.sheet_to_json(worksheet)
+      const transformedData = transformData(data, careers)
+      setStudents(transformedData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleUpload = async () => {
+    await processFileSynchronously(files[0])
+
     onClose()
-    console.info('ON UPLOAD')
   }
 
   const handleRemoveFile = (inputFile: File | string) => {
@@ -61,6 +97,26 @@ export const StudentBulkUploadDialog = ({
   const handleRemoveAllFiles = () => {
     setFiles([])
   }
+
+  useEffect(() => {
+    if (careers.length === 0) {
+      getCareers()
+    }
+  }, [careers])
+
+  useEffect(() => {
+    if (students.length === 0) {
+      return
+    }
+
+    bulkCreate(students)
+  }, [students])
+
+  useEffect(() => {
+    if (!open) {
+      setFiles([])
+    }
+  }, [open])
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other}>

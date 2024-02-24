@@ -33,10 +33,10 @@ export const API_ROUTES = {
     GET_ONE: '/students/:id',
     GET_BY_FIELD: (field: string) => `/students/search/${field}`,
     UPDATE: (id: number) => `/students/${id}`,
-    BULK_UPDATE: '/students/update/bulk',
+    BULK_UPDATE: '/students/bulk',
     DELETE: (id: number) => `/students/${id}`,
     CREATE: '/students',
-    CREATE_MANY: '/students/create/bulk',
+    CREATE_MANY: '/students/bulk',
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',

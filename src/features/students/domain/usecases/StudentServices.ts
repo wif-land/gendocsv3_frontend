@@ -76,6 +76,14 @@ export class StudentUseCasesImpl implements StudentUseCases {
   bulkUpdate = async (students: Partial<IStudent>[]) =>
     await this.repository.bulkUpdate(students)
 
-  bulkCreate = async (students: ICreateStudent[]) =>
-    await this.repository.bulkCreate(students)
+  bulkCreate = async (students: ICreateStudent[]) => {
+    try {
+      return await this.repository.bulkCreate(students)
+    } catch (error) {
+      return {
+        status: 500,
+        students: [],
+      }
+    }
+  }
 }
