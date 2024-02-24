@@ -15,6 +15,7 @@ export const useFunctionaryMethods = () => {
         rowsPerPage,
         currentPage * rowsPerPage,
       )
+
       if (response.status === HTTP_STATUS_CODES.OK) {
         return response.data as {
           positions: PositionModel[]
@@ -49,7 +50,7 @@ export const useFunctionaryMethods = () => {
     addLoaderItem('positions')
     try {
       const response = await PositionUseCasesImpl.getInstance().deleteMany(ids)
-      if (response.status === HTTP_STATUS_CODES.CREATED) {
+      if (response.status === HTTP_STATUS_CODES.OK) {
         return response.isDeleted
       }
     } catch (error) {

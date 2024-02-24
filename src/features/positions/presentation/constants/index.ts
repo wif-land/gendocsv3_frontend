@@ -1,10 +1,10 @@
 import * as Yup from 'yup'
 
-import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
 import { IPosition } from '../../domain/entities/IPosition'
 import { enqueueSnackbar } from 'notistack'
 import { PositionUseCasesImpl } from '../../domain/usecases/PositionServices'
 import { IFunctionary } from '../../../../features/functionaries/domain/entities/IFunctionary'
+import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 
 export interface FormValuesProps extends IPosition {}
 

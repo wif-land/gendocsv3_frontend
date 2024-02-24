@@ -101,7 +101,6 @@ export class AxiosClient {
       useLoaderStore.getState().addLoaderItem('axios-get')
       const response = await this.getInstance().get(path, options)
       useLoaderStore.getState().removeLoaderItem('axios-get')
-
       return handleApiResponse(response)
     } catch (error) {
       useLoaderStore.getState().removeLoaderItem('axios-get')
@@ -155,47 +154,29 @@ export class AxiosClient {
     }
   }
 
-  static async delete<T>(
-    path: string,
-    params?: Record<string, unknown>,
-  ): Promise<AxiosResponse<T>> {
+  static async delete<T>({
+    path,
+    params,
+    body,
+  }: {
+    path: string
+    params?: Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body?: any
+  }): Promise<AxiosResponse<T>> {
     try {
       useLoaderStore.getState().addLoaderItem('axios-delete')
       const response = await this.getInstance().delete(path, {
         params,
+        data: body,
       })
       useLoaderStore.getState().removeLoaderItem('axios-delete')
 
-      const { data, status } = response
-
-      if (status === HTTP_STATUS_CODES.OK) {
-        return {
-          status,
-          data: {
-            message: 'Success',
-            content: data as T,
-          },
-        }
-      }
-
-      return {
-        status,
-        data: {
-          message: 'Error desconocido',
-          content: null as T,
-        },
-      }
+      return handleApiResponse(response)
     } catch (error) {
       useLoaderStore.getState().removeLoaderItem('axios-delete')
       const response = error as AxiosErrorResponse
-
-      return {
-        status: response.response?.status,
-        data: {
-          message: response.response?.data?.message || 'Error desconocido',
-          content: null as T,
-        },
-      }
+      return handleApiError(response)
     }
   }
 
@@ -263,11 +244,20 @@ const handleApiResponse = <T>(response: AxiosResponse<T>) => {
     })
   }
 
+  if (
+    status === HTTP_STATUS_CODES.OK ||
+    status === HTTP_STATUS_CODES.NO_CONTENT
+  ) {
+    enqueueSnackbar('Petición realizada con éxito', {
+      variant: 'success',
+    })
+  }
+
   return {
     status,
     data: {
-      message: data.message || 'Error desconocido',
-      content: data.content as T,
+      message: 'success',
+      content: response.data as T,
     },
   }
 }
