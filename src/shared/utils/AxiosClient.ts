@@ -7,6 +7,7 @@ import axios, {
 } from 'axios'
 import { HTTP_STATUS_CODES } from './app-enums'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
+import useLoaderStore from '../store/useLoaderStore'
 
 type AxiosErrorResponse = AxiosError<AxiosResponse<Record<string, unknown>>> & {
   response: {
@@ -42,13 +43,11 @@ export class AxiosClient {
         async (config) => {
           const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
 
-          if (accessToken) {
-            if (config.headers) {
-              config.headers.Authorization = `Bearer ${accessToken.replaceAll(
-                '"',
-                '',
-              )}`
-            }
+          if (accessToken && config.headers) {
+            config.headers.Authorization = `Bearer ${accessToken.replaceAll(
+              '"',
+              '',
+            )}`
           }
 
           return config
@@ -90,7 +89,9 @@ export class AxiosClient {
     body: unknown,
   ): Promise<AxiosClientResponse<T>> {
     try {
+      useLoaderStore.getState().addLoaderItem('axios-post')
       const response = await this.getInstance().post(path, body)
+      useLoaderStore.getState().removeLoaderItem('axios-post')
 
       const { data, status } = response
 
@@ -112,6 +113,7 @@ export class AxiosClient {
         },
       }
     } catch (error) {
+      useLoaderStore.getState().removeLoaderItem('axios-post')
       const response = error as AxiosErrorResponse
 
       return {
@@ -129,7 +131,9 @@ export class AxiosClient {
     options?: AxiosRequestConfig,
   ): Promise<AxiosClientResponse<T>> {
     try {
+      useLoaderStore.getState().addLoaderItem('axios-get')
       const response = await this.getInstance().get(path, options)
+      useLoaderStore.getState().removeLoaderItem('axios-get')
       const { data, status } = response
 
       if (status === HTTP_STATUS_CODES.OK) {
@@ -150,6 +154,7 @@ export class AxiosClient {
         },
       }
     } catch (error) {
+      useLoaderStore.getState().removeLoaderItem('axios-get')
       const response = error as AxiosErrorResponse
 
       return {
@@ -168,9 +173,11 @@ export class AxiosClient {
     params?: Record<string, unknown>,
   ): Promise<AxiosClientResponse<T>> {
     try {
+      useLoaderStore.getState().addLoaderItem('axios-put')
       const response = await this.getInstance().put(path, body, {
         params,
       })
+      useLoaderStore.getState().removeLoaderItem('axios-put')
 
       const { data, status } = response
 
@@ -192,6 +199,7 @@ export class AxiosClient {
         },
       }
     } catch (error) {
+      useLoaderStore.getState().removeLoaderItem('axios-put')
       const response = error as AxiosErrorResponse
 
       return {
@@ -209,9 +217,11 @@ export class AxiosClient {
     params?: Record<string, unknown>,
   ): Promise<AxiosClientResponse<T>> {
     try {
+      useLoaderStore.getState().addLoaderItem('axios-delete')
       const response = await this.getInstance().delete(path, {
         params,
       })
+      useLoaderStore.getState().removeLoaderItem('axios-delete')
 
       const { data, status } = response
 
@@ -233,6 +243,7 @@ export class AxiosClient {
         },
       }
     } catch (error) {
+      useLoaderStore.getState().removeLoaderItem('axios-delete')
       const response = error as AxiosErrorResponse
 
       return {

@@ -1,4 +1,3 @@
-import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
@@ -9,6 +8,7 @@ import { LoginUseCase } from '../../domain/usecases/loginUseCase'
 import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 
 interface FormValuesProps {
   email: string
