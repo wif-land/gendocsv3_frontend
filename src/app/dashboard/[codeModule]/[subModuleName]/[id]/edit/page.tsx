@@ -7,6 +7,7 @@ import { CareersEditView } from '../../../../../../features/careers/presentation
 import { FunctionaryEditView } from '../../../../../../features/functionaries/presentation/view'
 import { StudentEditView } from '../../../../../../features/students/presentation/view'
 import { PositionEditView } from '../../../../../../features/positions/presentation/view'
+import { UsersEditView } from '../../../../../../features/users/presentation/view'
 
 const Page = () => {
   const { subModuleName } = useParams()
@@ -18,6 +19,7 @@ const Page = () => {
     funcionarios: FunctionaryEditView,
     procesos: ProcessEditView,
     cargos: PositionEditView,
+    usuarios: UsersEditView,
   }
 
   const defaultComponent = () => <div>DEFAULT</div>

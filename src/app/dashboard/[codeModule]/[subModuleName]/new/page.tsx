@@ -11,6 +11,7 @@ import { FunctionaryCreateView } from '../../../../../features/functionaries/pre
 import { ProcessCreateView } from '../../../../../features/processes/presentation/view'
 import { StudentCreateView } from '../../../../../features/students/presentation/view'
 import { PositionCreateView } from '../../../../../features/positions/presentation/view'
+import { UsersCreateView } from '../../../../../features/users/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -25,6 +26,7 @@ const Page = () => {
     funcionarios: FunctionaryCreateView,
     procesos: ProcessCreateView,
     cargos: PositionCreateView,
+    usuarios: UsersCreateView,
   }
 
   const defaultComponent = () => <Stack>404</Stack>

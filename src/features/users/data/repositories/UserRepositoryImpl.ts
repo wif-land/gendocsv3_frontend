@@ -30,8 +30,5 @@ export class UserRepositoryImpl implements UserRepository {
   update = async (data: Partial<UserModel>) =>
     await this.datasource.update(data)
 
-  bulkUpdate = async (data: Partial<IUser>[]) =>
-    await this.datasource.bulkUpdate(data)
-
   create = async (data: IUser) => await this.datasource.create(data)
 }

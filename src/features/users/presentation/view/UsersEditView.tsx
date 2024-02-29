@@ -1,25 +1,23 @@
 import { memo } from 'react'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { useParams, usePathname } from 'next/navigation'
-import { useFunctionaryView } from '../hooks/useFunctionaryView'
 import { Container } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import { FunctionaryNewEditForm } from '../components/FunctionaryNewEditForm'
-import { useFunctionaryStore } from '../state/useFunctionaryStore'
+import { UsersNewEditForm } from '../components/UsersNewEditForm'
+import { useUsersStore } from '../state/usersStore'
+import { IUser } from '../../domain/entities/IUser'
 
-const FunctionaryEditView = () => {
+const UsersEditView = () => {
   const settings = useSettingsContext()
   const pathname = usePathname()
   const params = useParams()
 
   const { id } = params
 
-  const { functionaries } = useFunctionaryStore()
+  const { users } = useUsersStore()
 
-  const currentFunctionary = functionaries?.find(
-    (functionary) => functionary.id! === +id,
-  )
+  const currentUser = users?.find((user) => user.id! === +id)
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -31,19 +29,19 @@ const FunctionaryEditView = () => {
             href: paths.dashboard.root,
           },
           {
-            name: 'Funcionarios',
+            name: 'Usuarios',
             href: pathname.replace(new RegExp(`/${id}/edit`), ''),
           },
-          { name: 'Editar funcionario' },
+          { name: 'Editar usuario' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <FunctionaryNewEditForm currentFunctionary={currentFunctionary} />
+      <UsersNewEditForm currentUser={currentUser as IUser} />
     </Container>
   )
 }
 
-export default memo(FunctionaryEditView)
+export default memo(UsersEditView)

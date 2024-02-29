@@ -6,7 +6,7 @@ import { enqueueSnackbar } from 'notistack'
 
 interface StoreState {
   careers: ICareer[]
-  setCareers: (careers?: ICareer[] | undefined) => void
+  setCareers: (careers?: ICareer[]) => void
   addCareer: (career: ICareer) => void
   updateCareer: (career: Partial<ICareer>) => void
   get: () => void

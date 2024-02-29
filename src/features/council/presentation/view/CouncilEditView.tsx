@@ -17,8 +17,6 @@ const CouncilEditView = () => {
 
   const currentCouncil = councils.find((council) => council.id! === +id)
 
-  console.log('currentCouncil', currentCouncil)
-
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs

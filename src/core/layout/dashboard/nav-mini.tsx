@@ -42,7 +42,7 @@ export default function NavMini() {
         <NavSectionMini
           data={navData}
           config={{
-            currentRole: (user?.roles as string[])[0] || 'admin',
+            currentRole: user?.role || 'admin',
           }}
         />
       </Stack>

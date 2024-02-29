@@ -4,7 +4,7 @@ import { IStudent } from '../../domain/entities/IStudent'
 import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 
 interface StoreState {
-  students: IStudent[] | undefined
+  students: IStudent[]
   setStudents: (students?: IStudent[] | undefined) => void
   get: (limit: number, offset: number) => void
 }

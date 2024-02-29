@@ -3,7 +3,6 @@ import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
@@ -14,21 +13,18 @@ import Iconify from '../../../../core/iconify'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
-
-import { FunctionaryModel } from '../../data/models/FunctionatyModel'
+import { IUser } from '../../domain/entities/IUser'
 
 type Props = {
-  row: FunctionaryModel
+  row: IUser
   selected: boolean
   onEditRow: VoidFunction
-  onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
 }
 
-export const FunctionaryTableRow = ({
+export const UsersTableRow = ({
   row,
   selected,
-  onSelectRow,
   onDeleteRow,
   onEditRow,
 }: Props) => {
@@ -38,10 +34,6 @@ export const FunctionaryTableRow = ({
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
-
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
             disableTypography
@@ -61,7 +53,7 @@ export const FunctionaryTableRow = ({
                 component="div"
                 sx={{ typography: 'body2', color: 'text.disabled' }}
               >
-                {row.dni}
+                {row.role}
               </Box>
             }
           />
@@ -69,7 +61,7 @@ export const FunctionaryTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={row.personalEmail}
+            primary={row.googleEmail}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
@@ -139,11 +131,11 @@ export const FunctionaryTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isActive ? 'Desactivar funcionario' : 'Activar funcionario'}
+        title={row.isActive ? 'Desactivar usuario' : 'Activar usuario'}
         content={
           row.isActive
-            ? 'Está seguro de desactivar el funcionario?'
-            : 'Está seguro de activar el funcionario?'
+            ? 'Está seguro de desactivar el usuario?'
+            : 'Está seguro de activar el usuario?'
         }
         action={
           <Button

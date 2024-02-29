@@ -28,7 +28,7 @@ import { toast } from 'react-toastify'
 import { IUser } from '../../auth/domain/entities/IUser'
 import UpdateUserForm from '../../users/components/updateUserForm'
 import AddUserForm from '../../../features/users/components/AddUserForm'
-import { useUsersStore } from '../../../shared/store/usersStore'
+import { useUsersStore } from '../../users/presentation/state/usersStore'
 
 interface UsersViewProps extends IUser {
   name: string

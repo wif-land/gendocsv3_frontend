@@ -27,12 +27,10 @@ export interface UserRepository {
 
   update: (data: Partial<IUser>) => Promise<{
     status: number
-    user: UserModel
-  }>
-
-  bulkUpdate: (data: Partial<IUser>[]) => Promise<{
-    status: number
-    users: UserModel[]
+    data: {
+      user: UserModel
+      accessToken: string
+    }
   }>
 
   create: (data: IUser) => Promise<{

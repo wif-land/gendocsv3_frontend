@@ -13,8 +13,7 @@ import {
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
-import { useFunctionaryView } from '../hooks/useFunctionaryView'
-import { FunctionaryModel } from '../../data/models/FunctionatyModel'
+import { useFunctionaryView } from '../hooks/useUsersView'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
@@ -28,24 +27,24 @@ import {
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
-import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { RouterLink } from '../../../../core/routes/components'
-import { FunctionaryTableRow } from '../components/FunctionaryTableRow'
+import { UsersTableRow } from '../components/UsersTableRow'
 import {
   FunctionaryTableToolbar,
-  IFunctionaryTableFilterValue,
-  IFunctionaryTableFilters,
-} from '../components/FunctionaryTableToolbar'
+  IUsersTableFilterValue,
+  IUsersTableFilters,
+} from '../components/UsersTableToolbar'
 import { TABLE_HEAD } from '../constants'
-import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
+import { FunctionaryTableResult } from '../components/UsersTableFiltersResult'
+import { IUser } from '../../domain/entities/IUser'
 
-const defaultFilters: IFunctionaryTableFilters = {
+const defaultFilters: IUsersTableFilters = {
   name: '',
   personalEmail: '',
   outlookEmail: '',
 }
 
-const FunctionaryListView = () => {
+const UsersListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
@@ -55,12 +54,11 @@ const FunctionaryListView = () => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const [tableData, setTableData] = useState<FunctionaryModel[]>([])
-  const [filters, setFilters] =
-    useState<IFunctionaryTableFilters>(defaultFilters)
+  const [tableData, setTableData] = useState<IUser[]>([])
+  const [filters, setFilters] = useState<IUsersTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
-    (name: string, value: IFunctionaryTableFilterValue) => {
+    (name: string, value: IUsersTableFilterValue) => {
       table.onResetPage()
       setFilters((prevState) => ({
         ...prevState,
@@ -75,7 +73,6 @@ const FunctionaryListView = () => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
-    handleUpdateRows,
     handleSearch,
   } = useFunctionaryView({
     tableData,
@@ -115,10 +112,10 @@ const FunctionaryListView = () => {
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Funcionarios"
+          heading="Usuarios"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Funcionarios' },
+            { name: 'Usuarios' },
           ]}
           action={
             <Button
@@ -127,7 +124,7 @@ const FunctionaryListView = () => {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              Nuevo funcionario
+              Nuevo usuario
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -142,7 +139,7 @@ const FunctionaryListView = () => {
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            getFilteredFunctionaries={handleSearch}
+            getFilteredUsers={handleSearch}
           />
 
           {isDataFiltered && (
@@ -158,12 +155,6 @@ const FunctionaryListView = () => {
               dense={table.dense}
               numSelected={table.selected.length}
               rowCount={tableData.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id!.toString()),
-                )
-              }
               action={
                 <Button color="primary" onClick={confirm.onTrue}>
                   Cambiar estado
@@ -183,12 +174,6 @@ const FunctionaryListView = () => {
                   rowCount={tableData.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id!.toString()),
-                    )
-                  }
                 />
 
                 <TableBody>
@@ -204,15 +189,12 @@ const FunctionaryListView = () => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <FunctionaryTableRow
+                          <UsersTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
                               row.id!.toString(),
                             )}
-                            onSelectRow={() =>
-                              table.onSelectRow(row.id!.toString())
-                            }
                             onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
@@ -242,31 +224,7 @@ const FunctionaryListView = () => {
           />
         </Card>
       </Container>
-
-      <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Actualizar estado"
-        content={
-          <>
-            Estás seguro que desear actualizar el estado de{' '}
-            <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleUpdateRows()
-              confirm.onFalse()
-            }}
-          >
-            Cambiar
-          </Button>
-        }
-      />
     </div>
   )
 }
-export default memo(FunctionaryListView)
+export default memo(UsersListView)

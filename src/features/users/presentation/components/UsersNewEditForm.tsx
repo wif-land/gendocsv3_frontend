@@ -8,24 +8,35 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
-import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
+import {
+  RHFMultiSelect,
+  RHFSelect,
+  RHFSwitch,
+  RHFTextField,
+} from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
-import { IFunctionary } from '../../domain/entities/IFunctionary'
-import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
+import { useUsersForm } from '../hooks/useUsersForm'
+import { IUser, UserRole, UserTypeLabels } from '../../domain/entities/IUser'
+import { MenuItem } from '@mui/material'
+import useModulesStore from '../../../../shared/store/modulesStore'
 
 type Props = {
-  currentFunctionary?: IFunctionary
+  currentUser?: IUser
 }
 
-export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
+export const UsersNewEditForm = ({ currentUser }: Props) => {
   const mdUp = useResponsive('up', 'md')
-  const { methods, onSubmit } = useFunctionaryForm(currentFunctionary)
+  const { methods, onSubmit } = useUsersForm(currentUser)
+  const { modules } = useModulesStore()
 
   const {
     handleSubmit,
     formState: { isSubmitting },
+    watch,
   } = methods
+
+  const selectedModules = watch('accessModules')
 
   const renderDetails = (
     <>
@@ -35,7 +46,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Información general del funcionario, nombre, apellidos, cédula, etc.
+            Información general del usuario, nombre, apellidos, etc.
           </Typography>
         </Grid>
       )}
@@ -45,10 +56,6 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
           {!mdUp && <CardHeader title="Detalles" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="dni" label="Cédula de identidad" required />
-
-            <Divider />
-
             <Box
               sx={{
                 columnGap: 2,
@@ -94,65 +101,69 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
               />
 
               <RHFTextField
-                name="personalEmail"
+                name="googleEmail"
                 label="Correo personal"
                 type="email"
                 required
               />
-
-              <RHFTextField
-                name="phoneNumber"
-                label="Número de celular"
-                required
-              />
-
-              <RHFTextField
-                name="regularPhoneNumber"
-                label="Teléfono fijo"
-                required
-              />
             </Box>
-          </Stack>
-        </Card>
-      </Grid>
-    </>
-  )
+            <Box
+              sx={{
+                columnGap: 2,
+                rowGap: 3,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'repeat(1, 1fr)',
+                  md: 'repeat(2, 1fr)',
+                },
+              }}
+            >
+              <RHFTextField name="password" label="Contraseña" type="text" />
 
-  const renderProperties = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Títulos
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Títulos de segundo, tercer y cuarto nivel conseguido por el
-            funcionario
-          </Typography>
-        </Grid>
-      )}
+              <RHFSelect name="role" label="Rol" required>
+                {Object.values(UserRole).map((role) => (
+                  <MenuItem value={role}>{UserTypeLabels[role]}</MenuItem>
+                ))}
+              </RHFSelect>
+              <Divider />
+            </Box>
 
-      <Grid xs={12} md={8}>
-        <Card>
-          {!mdUp && <CardHeader title="Properties" />}
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField
-              name="secondLevelDegree"
-              label="Título de segundo nivel"
-              required
-            />
-
-            <RHFTextField
-              name="thirdLevelDegree"
-              label="Título de tercer nivel"
-              required
-            />
-
-            <RHFTextField
-              name="fourthLevelDegree"
-              label="Título de cuarto nivel"
-              required
-            />
+            <Box
+              sx={{
+                columnGap: 2,
+                rowGap: 3,
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'repeat(1, 1fr)',
+                  md: 'repeat(2, 1fr)',
+                },
+              }}
+            >
+              <RHFMultiSelect
+                name="accessModules"
+                label="Módulos de acceso"
+                required
+                options={modules!.map((module) => ({
+                  label: module.name,
+                  value: module.id.toString(),
+                }))}
+                value={selectedModules.map((id) => id.toString())}
+              />
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Módulos seleccionados:
+                </Typography>
+                {selectedModules
+                  ?.map((moduleId) => {
+                    const module = modules!.find(
+                      (m) => m.id.toString() === moduleId.toString(),
+                    )
+                    return module ? module.name : null
+                  })
+                  .filter(Boolean)
+                  .join(', ')}
+              </Typography>
+            </Box>
           </Stack>
         </Card>
       </Grid>
@@ -164,7 +175,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
       {mdUp && <Grid md={4} />}
       <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Funcionario activo" />
+          <RHFSwitch name="isActive" label="Usuario activo" />
         </Box>
 
         <LoadingButton
@@ -173,7 +184,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
           size="large"
           loading={isSubmitting}
         >
-          {!currentFunctionary ? 'Crear' : 'Guardar'}
+          {!currentUser ? 'Crear' : 'Guardar'}
         </LoadingButton>
       </Grid>
     </>
@@ -183,8 +194,6 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         {renderDetails}
-
-        {renderProperties}
 
         {renderActions}
       </Grid>

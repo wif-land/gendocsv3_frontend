@@ -9,7 +9,7 @@ export interface IUser {
   secondLastName: string
   outlookEmail: string
   googleEmail: string
-  roles?: string[] | null
+  role?: string | null
   isActive: boolean
   accessModules?: number[] | null
 }
@@ -23,7 +23,7 @@ export interface IUserPayload {
   secondLastName: string
   outlookEmail: string
   googleEmail: string
-  roles?: string[] | null
+  role?: string | null
   isActive: boolean
   accessModules?: number[] | null
 }
@@ -37,7 +37,7 @@ export interface ICreateUser {
   secondLastName: string
   outlookEmail: string
   googleEmail: string
-  roles?: string[] | null
+  role?: string | null
   isActive: boolean
   accessModules?: number[] | null
   password: string
