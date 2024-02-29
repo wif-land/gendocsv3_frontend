@@ -21,12 +21,9 @@ export const useCareerView = () => {
 
     const fetchingCouncils = async () => {
       if (!isMounted) return
-
       const result = await CareersUseCasesImpl.getInstance().getAll()
-
-      if (result.careers) {
-        setCareers(result.careers)
-      }
+      if (!result) return
+      setCareers(result.careers)
     }
 
     fetchingCouncils()
