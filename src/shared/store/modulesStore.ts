@@ -3,16 +3,19 @@ import { persist } from 'zustand/middleware'
 import { IModule } from '../../features/modules/types/IModule'
 
 interface StoreState {
-  modules: IModule[] | undefined
+  modules: IModule[]
   accessModules: IModule[] | undefined
   setModules: (modules: IModule[]) => void
   setAccessModules: (modulesIds: number[]) => void
 }
 
+const DEFAULT_MODULES: IModule[] = []
+const STORE_NAME = 'modules'
+
 const useModulesStore = create<StoreState>(
   persist(
     (set, get) => ({
-      modules: undefined,
+      modules: DEFAULT_MODULES,
       setModules: (modules: IModule[]) => set({ modules }),
       accessModules: undefined,
       setAccessModules: (modulesIds: number[]) => {
@@ -48,7 +51,7 @@ const useModulesStore = create<StoreState>(
         set({ accessModules })
       },
     }),
-    { name: 'modules' },
+    { name: STORE_NAME },
   ) as StateCreator<StoreState>,
 )
 

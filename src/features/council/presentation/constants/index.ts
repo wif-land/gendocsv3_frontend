@@ -6,6 +6,19 @@ import {
   ICouncil,
 } from '../../domain/entities/ICouncil'
 import { FunctionaryModel } from '../../../functionaries/data/models/FunctionatyModel'
+import { ICouncilTableFilters } from '../components/CouncilTableToolbar'
+
+export const TABLE_HEAD = [
+  { id: 'name', label: 'Consejo' },
+  { id: 'createdAt', label: 'Hora de ejecución', width: 160 },
+  { id: 'date', label: 'Fecha de ejecución', width: 260 },
+  { id: 'isActive', label: 'Estado', width: 140 },
+  { id: 'actions', label: 'Acciones', width: 110 },
+]
+
+export const defaultFilters: ICouncilTableFilters = {
+  name: '',
+}
 
 export const NewCouncilSchema = Yup.object().shape({
   name: Yup.string().required('El nombre es requerido'),
@@ -14,7 +27,6 @@ export const NewCouncilSchema = Yup.object().shape({
   isActive: Yup.boolean().required('El estado es requerido'),
   isArchived: Yup.boolean().required('El estado es requerido'),
   president: Yup.string().required('El presidente es requerido'),
-  subrogant: Yup.string().required('El subrogante es requerido'),
   attendees: Yup.array()
     .of(Yup.string())
     .required('Los asistentes son requeridos'),
@@ -56,14 +68,16 @@ const filterMembers = (attendees: ICouncilAttendee[]) =>
 
 export const resolveDefaultValues = (currentCouncil?: ICouncil) => {
   const president = findPresident(
-    currentCouncil?.attendees as ICouncilAttendee[],
+    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
   )
 
   const subrogate = findSubrogate(
-    currentCouncil?.attendees as ICouncilAttendee[],
+    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
   )
 
-  const members = filterMembers(currentCouncil?.attendees as ICouncilAttendee[])
+  const members = filterMembers(
+    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
+  )
 
   return {
     name: currentCouncil?.name || '',

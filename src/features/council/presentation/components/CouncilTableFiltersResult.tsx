@@ -25,7 +25,7 @@ export const CouncilTableFiltersResult = ({
 
       <Button
         color="error"
-        onClick={onResetFilters}
+        onClick={() => onResetFilters()}
         startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
       >
         Clear
