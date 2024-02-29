@@ -99,7 +99,7 @@ export const StudentBulkUploadDialog = ({
   }
 
   useEffect(() => {
-    if (careers.length === 0) {
+    if (careers?.length === 0) {
       getCareers()
     }
   }, [careers])

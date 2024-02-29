@@ -72,12 +72,8 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAll = async () => await this.councilRepository.getAll()
 
-  getByField = async (
-    field: string,
-    moduleId: number,
-    limit: number,
-    offset: number,
-  ) => await this.councilRepository.getByField(field, moduleId, limit, offset)
+  getByField = async (field: string, moduleId: number, limit = 5, offset = 0) =>
+    await this.councilRepository.getByField(field, moduleId, limit, offset)
 
   update = async (id: number, council: Partial<CouncilModel>) =>
     await this.councilRepository.update({

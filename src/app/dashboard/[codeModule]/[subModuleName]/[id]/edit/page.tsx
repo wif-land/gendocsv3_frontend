@@ -6,6 +6,7 @@ import { CouncilEditView } from '../../../../../../features/council/presentation
 import { CareersEditView } from '../../../../../../features/careers/presentation/view'
 import { FunctionaryEditView } from '../../../../../../features/functionaries/presentation/view'
 import { StudentEditView } from '../../../../../../features/students/presentation/view'
+import { UsersEditView } from '../../../../../../features/users/presentation/view'
 
 const Page = () => {
   const { subModuleName } = useParams()
@@ -16,6 +17,7 @@ const Page = () => {
     carreras: CareersEditView,
     funcionarios: FunctionaryEditView,
     procesos: ProcessEditView,
+    usuarios: UsersEditView,
   }
 
   const defaultComponent = () => <div>DEFAULT</div>

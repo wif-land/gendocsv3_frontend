@@ -10,6 +10,7 @@ import { DocumentCreateView } from '../../../../../features/documents/presentati
 import { FunctionaryCreateView } from '../../../../../features/functionaries/presentation/view'
 import { ProcessCreateView } from '../../../../../features/processes/presentation/view'
 import { StudentCreateView } from '../../../../../features/students/presentation/view'
+import { UsersCreateView } from '../../../../../features/users/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -23,6 +24,7 @@ const Page = () => {
     documentos: DocumentCreateView,
     funcionarios: FunctionaryCreateView,
     procesos: ProcessCreateView,
+    usuarios: UsersCreateView,
   }
 
   const defaultComponent = () => <Stack>404</Stack>

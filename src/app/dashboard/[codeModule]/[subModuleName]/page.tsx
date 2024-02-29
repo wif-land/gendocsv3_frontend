@@ -1,6 +1,5 @@
 'use client'
 
-import { lazy } from 'react'
 import { useParams } from 'next/navigation'
 
 import { CouncilListView } from '../../../../features/council/presentation/view'
@@ -9,10 +8,7 @@ import { DocumentListView } from '../../../../features/documents/presentation/vi
 import { FunctionaryListView } from '../../../../features/functionaries/presentation/view'
 import { ProcessListView } from '../../../../features/processes/presentation/view'
 import { StudentListView } from '../../../../features/students/presentation/view'
-
-const UsersView = lazy(
-  () => import('../../../../features/modules/components/users-view'),
-)
+import { UsersListView } from '../../../../features/users/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -20,7 +16,7 @@ const Page = () => {
   const route = `${codeModule}/${subModuleName}`
 
   const routeToComponent = {
-    usuarios: UsersView,
+    usuarios: UsersListView,
     estudiantes: StudentListView,
     carreras: CareerListView,
     funcionarios: FunctionaryListView,

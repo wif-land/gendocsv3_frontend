@@ -9,9 +9,9 @@ export const API_ROUTES = {
   },
   USERS: {
     GET_ALL: '/users',
-    GET_ONE: '/users/:id',
-    UPDATE: '/users',
-    DELETE: '/users',
+    GET_BY_FIELD: (field: string) => `/users/${field}`,
+    UPDATE: (id: number) => `/users/${id}`,
+    DELETE: '/users/:id',
     CREATE: '/users',
   },
   MODULES: {
