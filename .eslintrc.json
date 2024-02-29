@@ -134,22 +134,22 @@
   "overrides": [
     {
       "files": "**.ts*",
-      "excludedFiles": "*.test.*",
-      "rules": {
-        "no-magic-numbers": [
-          "warn",
-          {
-            "ignore": [
-              1,
-              -1,
-              -2,
-              0,
-              2
-            ],
-            "ignoreArrayIndexes": true
-          }
-        ]
-      }
+      "excludedFiles": "*.test.*"
+      // "rules": {
+      //   "no-magic-numbers": [
+      //     "warn",
+      //     {
+      //       "ignore": [
+      //         1,
+      //         -1,
+      //         -2,
+      //         0,
+      //         2
+      //       ],
+      //       "ignoreArrayIndexes": true
+      //     }
+      //   ]
+      // }
     }
   ]
 }

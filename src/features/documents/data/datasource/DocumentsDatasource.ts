@@ -113,9 +113,9 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
   }
 
   deleteById = async (id: number) => {
-    const result = await AxiosClient.delete(
-      API_ROUTES.DOCUMENTS.DELETE.replace(':id', id.toString()),
-    )
+    const result = await AxiosClient.delete({
+      path: API_ROUTES.DOCUMENTS.DELETE.replace(':id', id.toString()),
+    })
 
     const { status } = result
 

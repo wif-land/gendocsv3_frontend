@@ -53,10 +53,8 @@ export class UserDataSourceImpl implements UserDataSource {
     return UserDataSourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
-    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL, {
-      params: { limit, offset },
-    })
+  getAll = async () => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
 
     const { status, data } = result
 
