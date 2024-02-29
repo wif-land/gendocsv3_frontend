@@ -1,9 +1,9 @@
 import * as Yup from 'yup'
 
-import { VALIDATION_MESSAGES } from '../../../../shared/utils/Messages'
 import { enqueueSnackbar } from 'notistack'
 import { IUser, UserRole } from '../../domain/entities/IUser'
 import { UserUseCasesImpl } from '../../domain/usecases/UserService'
+import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 
 export interface FormValuesProps extends IUser {}
 

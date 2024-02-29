@@ -41,8 +41,7 @@ export const CouncilDetailsSummary = ({
           councilId.toString(),
           moduleId!,
         )
-        console.log('response', response)
-        setCurrentCouncil(response.council[0])
+        setCurrentCouncil(response.data.councils[0])
       } catch (error) {
         console.error('Error al obtener detalles del consejo', error)
       }

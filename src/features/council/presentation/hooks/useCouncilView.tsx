@@ -31,6 +31,7 @@ export const useCouncilView = ({
   const { loader } = useLoaderStore()
   const { fetchData, updateRow, fetchDataByField } = useCouncilsMethods()
   const { modules } = useModulesStore()
+
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
