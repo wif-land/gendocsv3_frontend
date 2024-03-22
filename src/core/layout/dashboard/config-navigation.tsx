@@ -22,7 +22,7 @@ const ICONS: {
 } = {
   consejos: icon('solar:accessibility-bold'),
   documentos: icon('solar:document-bold'),
-  buscar: icon('mdi:magnify'),
+  actasdegrado: icon('mdi:magnify'),
   procesos: icon('mdi:account-arrow-right'),
   estudiantes: icon('solar:user-bold'),
   funcionarios: icon('solar:user-broken'),
@@ -46,7 +46,7 @@ export const useNavData = () => {
     items: module.submodules.map<IRoute>((submodule) => ({
       title: submodule.name,
       path: `/dashboard/${module.code.toLowerCase()}/${submodule.name.toLowerCase()}`,
-      icon: ICONS[submodule.name.toLowerCase()],
+      icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
       children: [
         {
           title: 'Listar',
@@ -57,7 +57,7 @@ export const useNavData = () => {
           path: `/dashboard/${module.code.toLowerCase()}/${submodule.name.toLowerCase()}/new`,
         },
       ],
-    })),
+    }))
   }))
 
   return actualModules || []
