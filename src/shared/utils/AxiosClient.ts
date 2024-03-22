@@ -5,6 +5,8 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 import useLoaderStore from '../store/useLoaderStore'
 import { enqueueSnackbar } from 'notistack'
 
+type HTTP_METHODS = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+
 type AxiosErrorResponse = AxiosError<AxiosResponse<Record<string, unknown>>> & {
   response: {
     status: number
@@ -85,7 +87,7 @@ export class AxiosClient {
       useLoaderStore.getState().addLoaderItem('axios-post')
       const response = await this.getInstance().post(path, body)
       useLoaderStore.getState().removeLoaderItem('axios-post')
-      return handleApiResponse(response)
+      return handleApiResponse(response, 'POST')
     } catch (error) {
       useLoaderStore.getState().removeLoaderItem('axios-post')
       const response = error as AxiosErrorResponse
@@ -101,7 +103,7 @@ export class AxiosClient {
       useLoaderStore.getState().addLoaderItem('axios-get')
       const response = await this.getInstance().get(path, options)
       useLoaderStore.getState().removeLoaderItem('axios-get')
-      return handleApiResponse(response)
+      return handleApiResponse(response, 'GET')
     } catch (error) {
       useLoaderStore.getState().removeLoaderItem('axios-get')
       const response = error as AxiosErrorResponse
@@ -172,7 +174,7 @@ export class AxiosClient {
       })
       useLoaderStore.getState().removeLoaderItem('axios-delete')
 
-      return handleApiResponse(response)
+      return handleApiResponse(response, 'DELETE')
     } catch (error) {
       useLoaderStore.getState().removeLoaderItem('axios-delete')
       const response = error as AxiosErrorResponse
@@ -223,7 +225,10 @@ export class AxiosClient {
   }
 }
 
-const handleApiResponse = <T>(response: AxiosResponse<T>) => {
+const handleApiResponse = <T>(
+  response: AxiosResponse<T>,
+  method: HTTP_METHODS,
+) => {
   const { status, data } = response
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
@@ -245,10 +250,11 @@ const handleApiResponse = <T>(response: AxiosResponse<T>) => {
   }
 
   if (
-    status === HTTP_STATUS_CODES.OK ||
-    status === HTTP_STATUS_CODES.NO_CONTENT
+    (status === HTTP_STATUS_CODES.OK ||
+      status === HTTP_STATUS_CODES.NO_CONTENT) &&
+    method !== 'GET'
   ) {
-    enqueueSnackbar('Petición realizada con éxito', {
+    enqueueSnackbar('Acción realizada con éxito', {
       variant: 'success',
     })
   }
