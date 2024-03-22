@@ -17,7 +17,7 @@ interface FormValuesProps {
 
 export const useAuth = () => {
   const router = useRouter()
-  const { setUser, logout: userStoreLogout } = useAccountStore()
+  const { setUser, logout } = useAccountStore()
 
   const AuthSchema = Yup.object().shape({
     email: Yup.string()
@@ -35,19 +35,10 @@ export const useAuth = () => {
     password: '',
   }
 
-  const logout = async () => {
-    const TIME_TO_SLEEP = 250
-
-    new Promise((resolve) => setTimeout(resolve, TIME_TO_SLEEP))
-      .then(() => {
-        userStoreLogout()
-        enqueueSnackbar('Hasta pronto!')
-      })
-      .then(() => {
-        new Promise((resolve) => setTimeout(resolve, TIME_TO_SLEEP)).then(() =>
-          router.push(appPublicRoutes.login),
-        )
-      })
+  const handleLogout = async () => {
+    logout()
+    enqueueSnackbar('Hasta pronto!')
+    router.push(appPublicRoutes.login)
   }
 
   const methods = useForm<FormValuesProps>({
@@ -73,10 +64,7 @@ export const useAuth = () => {
 
           router.push('/dashboard')
         } else {
-          enqueueSnackbar(
-            'Error al iniciar sesión, por favor verifica tus credenciales.',
-            { variant: 'error' },
-          )
+          throw new Error('Error al iniciar sesión')
         }
         reset()
       } catch (error) {
@@ -89,5 +77,5 @@ export const useAuth = () => {
     [enqueueSnackbar, reset, router],
   )
 
-  return { logout, methods, values, onSubmit }
+  return { logout: handleLogout, methods, values, onSubmit }
 }
