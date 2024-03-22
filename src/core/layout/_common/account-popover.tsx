@@ -19,15 +19,15 @@ export default function AccountPopover() {
 
   const { user } = useAccountStore()
 
-  const { logout } = useAuth()
+  const { handleLogout } = useAuth()
 
   const { enqueueSnackbar } = useSnackbar()
 
   const popover = usePopover()
 
-  const handleLogout = async () => {
+  const handleLogoutMethod = async () => {
     try {
-      await logout()
+      await handleLogout()
       popover.onClose()
       router.replace('/')
     } catch (error) {
@@ -82,7 +82,7 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem
-          onClick={handleLogout}
+          onClick={handleLogoutMethod}
           sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
         >
           Cerrar Sesión

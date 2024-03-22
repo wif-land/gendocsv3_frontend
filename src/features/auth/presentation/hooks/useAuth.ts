@@ -77,5 +77,5 @@ export const useAuth = () => {
     [enqueueSnackbar, reset, router],
   )
 
-  return { logout: handleLogout, methods, values, onSubmit }
+  return { handleLogout, methods, values, onSubmit }
 }
