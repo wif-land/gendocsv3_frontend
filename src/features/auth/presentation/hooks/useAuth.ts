@@ -36,9 +36,9 @@ export const useAuth = () => {
   }
 
   const handleLogout = async () => {
+    router.replace(appPublicRoutes.login)
     logout()
     enqueueSnackbar('Hasta pronto!')
-    router.push(appPublicRoutes.login)
   }
 
   const methods = useForm<FormValuesProps>({

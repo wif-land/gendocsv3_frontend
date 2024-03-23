@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import { NAV } from '../config-layout'
-import { useNavData } from './config-navigation'
+import { useNavConfig } from './useNavConfig'
 import { NavToggleButton } from '../_common'
 import Logo from '../../../shared/sdk/logo'
 import NavSectionMini from '../../../shared/sdk/nav-section/mini/nav-section-mini'
@@ -10,7 +10,7 @@ import { useAccountStore } from '../../../features/auth/presentation/state/useAc
 
 export default function NavMini() {
   const { user } = useAccountStore()
-  const navData = useNavData()
+  const navData = useNavConfig()
 
   return (
     <Box
