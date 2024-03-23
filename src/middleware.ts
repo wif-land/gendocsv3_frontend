@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { getCookie } from './shared/utils/CookiesUtil'
 import {
   appPrivateRoutes,
   appPublicRoutes,
@@ -17,8 +16,8 @@ export const config = {
 
 export const middleware = async (request: NextRequest) => {
   const hasAccessToken =
-    (await getCookie(ACCESS_TOKEN_COOKIE_NAME)) &&
-    (await getCookie(ACCESS_TOKEN_COOKIE_NAME)) !== 'null'
+    request.cookies.get(ACCESS_TOKEN_COOKIE_NAME)?.value &&
+    request.cookies.get(ACCESS_TOKEN_COOKIE_NAME)?.value !== 'null'
 
   const isLoginPage = request.nextUrl.pathname.startsWith(appPublicRoutes.login)
   const isRootPage = request.nextUrl.pathname === '/'

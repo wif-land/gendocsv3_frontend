@@ -4,6 +4,7 @@ import { HTTP_STATUS_CODES } from './app-enums'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 import useLoaderStore from '../store/useLoaderStore'
 import { enqueueSnackbar } from 'notistack'
+import { LogoutnUseCase } from '../../features/auth/domain/usecases/logoutUseCase'
 
 type HTTP_METHODS = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
@@ -40,6 +41,10 @@ export class AxiosClient {
       this.client.interceptors.request.use(
         async (config) => {
           const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+
+          if (!accessToken) {
+            await new LogoutnUseCase().call()
+          }
 
           if (accessToken && config.headers) {
             config.headers.Authorization = `Bearer ${accessToken.replaceAll(

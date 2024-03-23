@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
+import { LogoutnUseCase } from '../../domain/usecases/logoutUseCase'
 
 interface FormValuesProps {
   email: string
@@ -16,7 +17,7 @@ interface FormValuesProps {
 
 export const useAuth = () => {
   const router = useRouter()
-  const { setUser, logout } = useAccountStore()
+  const { setUser } = useAccountStore()
 
   const AuthSchema = Yup.object().shape({
     email: Yup.string()
@@ -34,8 +35,10 @@ export const useAuth = () => {
     password: '',
   }
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await new LogoutnUseCase().call()
+    setUser(undefined)
+    router.push('/login')
     enqueueSnackbar('Hasta pronto!')
   }
 

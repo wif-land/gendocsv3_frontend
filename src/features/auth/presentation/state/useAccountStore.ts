@@ -1,14 +1,13 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { getCookie, setCookie } from '../../../../shared/utils/CookiesUtil'
+import { getCookie } from '../../../../shared/utils/CookiesUtil'
 import { IUser, IUserPayload } from '../../domain/entities/IUser'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../../../../shared/constants/appApiRoutes'
 import { jwtDecode } from 'jwt-decode'
 
 interface StoreState {
   user: IUser | undefined
-  setUser: (user: IUser) => void
-  logout: () => void
+  setUser: (user?: IUser) => void
   retreiveFromCookie: () => Promise<boolean>
 }
 
@@ -32,10 +31,6 @@ export const useAccountStore = create<StoreState>(
       user: DEFAULT_USER,
       setUser: (user?: IUser | undefined) => {
         set({ user })
-      },
-      logout: () => {
-        set({ user: undefined })
-        setCookie(ACCESS_TOKEN_COOKIE_NAME, null)
       },
       retreiveFromCookie: async () => {
         const userToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)

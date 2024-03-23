@@ -3,16 +3,10 @@
 import { cookies } from 'next/headers'
 
 export const setCookie = (key: string, value: unknown) => {
-  const DAY = 24
-  const HOUR = 60
-  const MINUTE = 60
-  const SECOND = 1000
-
-  cookies().set(key, value as string),
-    {
-      path: '/',
-      maxAge: DAY * HOUR * MINUTE * SECOND,
-    }
+  cookies().set(key, value as string, {
+    maxAge: 60 * 60 * 24 * 30,
+    sameSite: 'none',
+  })
 }
 
 export const getCookie = async (key: string) => {

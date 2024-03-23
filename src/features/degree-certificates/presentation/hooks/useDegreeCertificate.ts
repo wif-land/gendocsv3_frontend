@@ -56,7 +56,7 @@ export const useDegreeCertificateView = (moduleId: string) => {
       fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
         (data) => {
           if (data.count === 0) return
-          setTableData(data.councils)
+          setTableData([])
           setCount(data.count)
         },
       )
@@ -94,7 +94,7 @@ export const useDegreeCertificateView = (moduleId: string) => {
       } else {
         fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
           if (data?.councils) {
-            setTableData([...data.councils])
+            setTableData([])
           }
         })
       }
@@ -133,7 +133,7 @@ export const useDegreeCertificateView = (moduleId: string) => {
         table.page,
       ).then((data) => {
         if (data?.councils) {
-          setTableData(data.councils)
+          setTableData([])
         }
         if (data?.count) {
           setCount(data.count)
