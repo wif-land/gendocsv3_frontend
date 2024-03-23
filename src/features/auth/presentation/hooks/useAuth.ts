@@ -2,7 +2,6 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useAccountStore } from '../state/useAccountStore'
-import { appPublicRoutes } from '../../../../shared/constants/appPublicRoutes'
 import { enqueueSnackbar } from 'notistack'
 import { LoginUseCase } from '../../domain/usecases/loginUseCase'
 import { useForm } from 'react-hook-form'
@@ -35,8 +34,7 @@ export const useAuth = () => {
     password: '',
   }
 
-  const handleLogout = async () => {
-    router.replace(appPublicRoutes.login)
+  const handleLogout = () => {
     logout()
     enqueueSnackbar('Hasta pronto!')
   }
