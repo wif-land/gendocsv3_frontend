@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
-import { CouncilTableToolbar } from '../components/DegreeCertificateTableToolbar'
+import { DegreeCertificatesTableToolbar } from '../components/DegreeCertificateTableToolbar'
 import {
   DENSE,
   NO_DENSE,
@@ -101,12 +101,12 @@ export default memo(({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <CouncilTableToolbar
+          <DegreeCertificatesTableToolbar
             filters={filters}
             onFilters={handleFilters}
             setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
-            setIsDataFiltered={isDataFiltered.onTrue}
+            setIsDataFiltered={isDataFiltered.onToggle}
             table={table}
             setDataTable={setTableData}
             getFilteredCouncils={handleSearch}
@@ -133,7 +133,7 @@ export default memo(({ moduleId }: { moduleId: string }) => {
               }
               action={
                 <Button color="primary" onClick={confirm.onTrue}>
-                  Cambiar estado
+                  Eliminar
                 </Button>
               }
             />
@@ -214,11 +214,12 @@ export default memo(({ moduleId }: { moduleId: string }) => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Cambiar estado de consejos"
+        title="Eliminar Actas de Grado"
         content={
           <>
-            Estás seguro de que quieres cambiar el estado de
-            <strong> {table.selected.length} </strong> items?
+            ¿Estás seguro de que quieres elimiar
+            <strong> {table.selected.length} </strong> items? Esta acción no se
+            puede deshacer.
           </>
         }
         action={
@@ -230,7 +231,7 @@ export default memo(({ moduleId }: { moduleId: string }) => {
               confirm.onFalse()
             }}
           >
-            Cambiar
+            Eliminar
           </Button>
         }
       />

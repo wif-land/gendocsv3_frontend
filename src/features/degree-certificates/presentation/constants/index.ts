@@ -14,22 +14,10 @@ export const defaultFilters: ICouncilTableFilters = {
   name: '',
 }
 
-export const NewCouncilSchema = Yup.object().shape({
-  name: Yup.string().required('El nombre es requerido'),
-  date: Yup.date().required('La fecha es requerida'),
-  type: Yup.string().required('El tipo es requerido'),
+export const NewDegreeCertificateSchema = Yup.object().shape({
   isActive: Yup.boolean().required('El estado es requerido'),
-  isArchived: Yup.boolean().required('El estado es requerido'),
-  president: Yup.string().required('El presidente es requerido'),
-  attendees: Yup.array()
-    .of(Yup.string())
-    .required('Los asistentes son requeridos'),
 })
 
-export const resolveDefaultValues = (currentDegreeCertificate?: any) => ({
-  name: currentDegreeCertificate?.name || '',
-  date: currentDegreeCertificate?.date || new Date(Date.now()),
-  type: currentDegreeCertificate?.type,
-  isActive: currentDegreeCertificate?.isActive || true,
-  isArchived: currentDegreeCertificate?.isArchived || false,
+export const resolveDefaultValues = (data?: any) => ({
+  isActive: data?.isActive || true,
 })

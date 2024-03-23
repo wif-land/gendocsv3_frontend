@@ -28,7 +28,7 @@ type Props = {
   getFilteredCouncils: (field: string) => void
 }
 
-export const CouncilTableToolbar = ({
+export const DegreeCertificatesTableToolbar = ({
   filters,
   onFilters,
   setSearchTerm,
@@ -91,7 +91,7 @@ export const CouncilTableToolbar = ({
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Busca por nombre de consejo"
+            placeholder="Busca por nombre de acta"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
