@@ -86,7 +86,7 @@ export const resolveDefaultValues = (
   gender: currentStudent?.gender || '',
   birthdate: currentStudent?.birthdate || '',
   canton: currentStudent?.canton || '',
-  career: (currentStudent?.career as ICareer).id || 0,
+  career: (currentStudent?.career as ICareer)?.id || 0,
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
