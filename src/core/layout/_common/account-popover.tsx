@@ -6,34 +6,23 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import { useRouter } from 'next/navigation'
 import { usePopover } from '../../../shared/sdk/custom-popover'
 import { varHover } from '../../../shared/sdk/animate'
 import CustomPopover from '../../../shared/sdk/custom-popover/custom-popover'
-import { useSnackbar } from '../../../shared/sdk/snackbar'
 import { useAuth } from '../../../features/auth/presentation/hooks/useAuth'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
+import { useEffect } from 'react'
 
 export default function AccountPopover() {
-  const router = useRouter()
-
   const { user } = useAccountStore()
-
   const { handleLogout } = useAuth()
-
-  const { enqueueSnackbar } = useSnackbar()
-
   const popover = usePopover()
 
-  const handleLogoutMethod = async () => {
-    try {
-      await handleLogout()
+  useEffect(() => {
+    return () => {
       popover.onClose()
-      router.replace('/')
-    } catch (error) {
-      enqueueSnackbar('Falla al cerrar sesión!', { variant: 'error' })
     }
-  }
+  }, [])
 
   return (
     <>
@@ -82,7 +71,7 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem
-          onClick={handleLogoutMethod}
+          onClick={handleLogout}
           sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
         >
           Cerrar Sesión

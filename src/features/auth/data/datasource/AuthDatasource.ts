@@ -56,5 +56,12 @@ export class AuthDataSourceImpl implements AuthDataSource {
     return { status, decoded: { ...userWithoutSub, id: sub, sub } }
   }
 
-  logout = () => AxiosClient.get(API_ROUTES.AUTH.LOGOUT)
+  logout = async () => {
+    await setCookie(ACCESS_TOKEN_COOKIE_NAME, '')
+
+    return {
+      status: HTTP_STATUS_CODES.OK,
+      message: 'Sesión cerrada',
+    }
+  }
 }

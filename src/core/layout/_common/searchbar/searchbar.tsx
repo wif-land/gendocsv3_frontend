@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Dialog, { dialogClasses } from '@mui/material/Dialog'
 import ResultItem from './result-item'
-import { useNavData } from '../../dashboard/config-navigation'
+import { useNavConfig } from '../../dashboard/useNavConfig'
 import { applyFilter, groupedData, getAllItems } from './utils'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
@@ -34,7 +34,7 @@ const Searchbar = () => {
 
   const [searchQuery, setSearchQuery] = useState('')
 
-  const navData = useNavData()
+  const navData = useNavConfig()
 
   const handleClose = useCallback(() => {
     search.onFalse()
