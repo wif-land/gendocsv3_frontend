@@ -5,6 +5,7 @@ import Iconify from '../../iconify'
 import { useAuth } from '../../../features/auth/presentation/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { fetchModules } from '../../../features/modules/api/modules'
+import { LogoutnUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
 
 interface IRoute {
   title: string
@@ -35,23 +36,26 @@ const ICONS: {
 }
 
 export const useNavConfig = () => {
-  const { user, logout, retreiveFromCookie } = useAccountStore()
+  const { user, retreiveFromCookie } = useAccountStore()
   const { accessModules, setAccessModules } = useModulesStore()
   const { modules, setModules } = useModulesStore()
 
   useEffect(() => {
     if (modules.length === 0) {
-      fetchModules().then(data => {
+      fetchModules().then((data) => {
         setModules(data.modules || [])
       })
-      
+
       return
     }
 
     if (user && user.id === 0) {
-      retreiveFromCookie().then((isLogged) => {
+      retreiveFromCookie().then(async (isLogged) => {
         if (!isLogged) {
-          logout()
+          new LogoutnUseCase().call().then(() => {
+            const router = useRouter()
+            router.push('/login')
+          })
         }
       })
       return
