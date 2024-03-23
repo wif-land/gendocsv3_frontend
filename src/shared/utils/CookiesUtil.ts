@@ -15,7 +15,7 @@ export const setCookie = (key: string, value: unknown) => {
     }
 }
 
-export const getCookie = (key: string) => {
+export const getCookie = async (key: string) => {
   const cookieData = cookies().get(key)?.value
 
   if (!cookieData) return null

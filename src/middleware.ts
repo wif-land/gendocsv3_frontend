@@ -17,8 +17,8 @@ export const config = {
 
 export const middleware = async (request: NextRequest) => {
   const hasAccessToken =
-    getCookie(ACCESS_TOKEN_COOKIE_NAME) &&
-    getCookie(ACCESS_TOKEN_COOKIE_NAME) !== 'null'
+    (await getCookie(ACCESS_TOKEN_COOKIE_NAME)) &&
+    (await getCookie(ACCESS_TOKEN_COOKIE_NAME)) !== 'null'
 
   const isLoginPage = request.nextUrl.pathname.startsWith(appPublicRoutes.login)
   const isRootPage = request.nextUrl.pathname === '/'

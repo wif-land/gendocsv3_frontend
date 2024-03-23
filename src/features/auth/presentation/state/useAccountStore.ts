@@ -1,13 +1,15 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { setCookie } from '../../../../shared/utils/CookiesUtil'
-import { IUser } from '../../domain/entities/IUser'
+import { getCookie, setCookie } from '../../../../shared/utils/CookiesUtil'
+import { IUser, IUserPayload } from '../../domain/entities/IUser'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../../../../shared/constants/appApiRoutes'
+import { jwtDecode } from 'jwt-decode'
 
 interface StoreState {
   user: IUser | undefined
   setUser: (user: IUser) => void
   logout: () => void
+  retreiveFromCookie: () => Promise<boolean>
 }
 
 const DEFAULT_USER: IUser = {
@@ -34,6 +36,17 @@ export const useAccountStore = create<StoreState>(
       logout: () => {
         set({ user: undefined })
         setCookie(ACCESS_TOKEN_COOKIE_NAME, null)
+      },
+      retreiveFromCookie: async () => {
+        const userToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+
+        if (!userToken) return false
+
+        const userData: IUserPayload = jwtDecode(userToken)
+        const { sub, ...userWithoutSub } = userData
+
+        set({ user: { ...userWithoutSub, id: sub, sub } })
+        return true
       },
     }),
     {

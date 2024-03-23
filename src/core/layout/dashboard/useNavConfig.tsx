@@ -4,6 +4,7 @@ import { useAccountStore } from '../../../features/auth/presentation/state/useAc
 import Iconify from '../../iconify'
 import { useAuth } from '../../../features/auth/presentation/hooks/useAuth'
 import { useRouter } from 'next/navigation'
+import { fetchModules } from '../../../features/modules/api/modules'
 
 interface IRoute {
   title: string
@@ -34,41 +35,61 @@ const ICONS: {
 }
 
 export const useNavConfig = () => {
-  const router = useRouter()
-  const { user, logout } = useAccountStore()
+  const { user, logout, retreiveFromCookie } = useAccountStore()
   const { accessModules, setAccessModules } = useModulesStore()
+  const { modules, setModules } = useModulesStore()
 
   useEffect(() => {
+    if (modules.length === 0) {
+      fetchModules().then(data => {
+        setModules(data.modules || [])
+      })
+      
+      return
+    }
+
+    if (user && user.id === 0) {
+      retreiveFromCookie().then((isLogged) => {
+        if (!isLogged) {
+          logout()
+        }
+      })
+      return
+    }
+
     if (user && user.accessModules) {
       setAccessModules(user.accessModules)
       return
-    } 
-
-    logout()
-    router.replace('/login')
-  }, [user])
+    }
+  }, [user, modules])
 
   const actualModules = accessModules?.map<INavItem>((module) => ({
     subheader: module.name,
-    items: module.submodules.map<IRoute>((submodule) => ({
-      title: submodule.name,
-      path: `/dashboard/${module.code
+    items: module.submodules.map<IRoute>((submodule) => {
+      const mainPath = `/dashboard/${module.code
         .toLowerCase()
         .replaceAll(' ', '_')}/${submodule.name
         .toLowerCase()
-        .replaceAll(' ', '_')}`,
-      icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
-      children: [
-        {
-          title: 'Listar',
-          path: `/dashboard/${module.code.toLowerCase()}/${submodule.name.toLowerCase()}`,
-        },
-        {
-          title: 'crear',
-          path: `/dashboard/${module.code.toLowerCase()}/${submodule.name.toLowerCase()}/new`,
-        },
-      ],
-    })),
+        .replaceAll(' ', '_')}`
+      const listPath = `${mainPath}`
+      const createPath = `${mainPath}/new`
+
+      return {
+        title: submodule.name,
+        path: mainPath,
+        icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
+        children: [
+          {
+            title: 'Listar',
+            path: listPath,
+          },
+          {
+            title: 'Crear',
+            path: createPath,
+          },
+        ],
+      }
+    }),
   }))
 
   return actualModules || []
