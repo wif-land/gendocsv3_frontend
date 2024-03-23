@@ -97,22 +97,22 @@ export const ProcessTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          Detalles
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
         >
           <Iconify icon="solar:pen-bold" />
           Editar
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onViewRow()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="solar:lock-bold" />
+          Cerrar
         </MenuItem>
 
         <MenuItem
