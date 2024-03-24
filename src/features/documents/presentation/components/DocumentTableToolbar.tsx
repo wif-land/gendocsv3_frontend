@@ -1,37 +1,68 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
-import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
-import { MobileDatePicker } from '@mui/x-date-pickers'
+import { useDocumentView } from '../hooks/useDocumentsView'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
 
 export type IDocumentTableFilterValue = string | string[]
 
 export type IDocumentTableFilters = {
   createdAt: Date | null
-  number: number
+  number: number | null
 }
 
 type Props = {
-  filters: IDocumentTableFilters
-  onFilters: (name: string, value: IDocumentTableFilterValue) => void
+  moduleName: string
 }
 
-export const DocumentTableToolbar = ({ filters, onFilters }: Props) => {
+export const DocumentTableToolbar = ({ moduleName }: Props) => {
   const popover = usePopover()
 
-  const handleFilterName = useCallback(
+  const [inputValue, setInputValue] = useState('')
+  const debouncedValue = useDebounce(inputValue)
+
+  const {
+    isDataFiltered,
+    table,
+    setSearchTerm,
+    setVisitedPages,
+    filters,
+    setTableData,
+    handleFilters,
+  } = useDocumentView(moduleName)
+
+  const handleFilterDocument = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onFilters('name', event.target.value)
+      setInputValue(event.target.value)
+      handleFilters('name', event.target.value)
     },
-    [onFilters],
+    [handleFilters],
   )
+
+  const resetValues = () => {
+    setVisitedPages([])
+    setTableData([])
+    isDataFiltered.onFalse()
+  }
+
+  useEffect(() => {
+    table.setPage(0)
+    setVisitedPages([])
+
+    if (inputValue) {
+      isDataFiltered.onTrue()
+      setSearchTerm(inputValue)
+      // getFilteredCouncils(debouncedValue)
+    } else {
+      resetValues()
+    }
+  }, [debouncedValue])
 
   return (
     <>
@@ -47,23 +78,6 @@ export const DocumentTableToolbar = ({ filters, onFilters }: Props) => {
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Creado en</InputLabel>
-
-          <MobileDatePicker
-            value={filters.createdAt}
-            onChange={() => {
-              console.log('change')
-            }}
-            sx={{ textTransform: 'capitalize' }}
-          />
-        </FormControl>
-
         <Stack
           direction="row"
           alignItems="center"
@@ -74,8 +88,8 @@ export const DocumentTableToolbar = ({ filters, onFilters }: Props) => {
           <TextField
             fullWidth
             value={filters.number}
-            onChange={handleFilterName}
-            placeholder="Search..."
+            onChange={handleFilterDocument}
+            placeholder="Buscar por número de documento"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

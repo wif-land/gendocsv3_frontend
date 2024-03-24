@@ -1,3 +1,5 @@
+import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
+import { DefaultResponse } from '../../../documents/domain/repositories/DocumentsRepository'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { ITemplate } from '../entities/ITemplate'
 
@@ -10,4 +12,9 @@ export interface TemplatesRepository {
     status: number
     template: TemplateModel
   }>
+
+  getByProcessId: (
+    processId: number,
+    params: PaginationParams,
+  ) => Promise<DefaultResponse<TemplateModel[]>>
 }

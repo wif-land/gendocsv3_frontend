@@ -69,6 +69,7 @@ export const API_ROUTES = {
     UPDATE: '/templates/:id',
     DELETE: '/templates/:id',
     CREATE: '/templates',
+    GET_BY_PROCESS_ID: (id: number) => `/templates/process/${id}`,
   },
   DOCUMENTS: {
     GET_ALL: '/documents',

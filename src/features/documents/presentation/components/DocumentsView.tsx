@@ -125,12 +125,12 @@ const DocumentsView = ({ moduleId }: { moduleId: string }) => {
       if (!isMounted) return
       setIsFetching(true)
       const result =
-        await DocumentsUseCasesImpl.getInstance().getAllProcessesByModuleId(
+        await DocumentsUseCasesImpl.getInstance().getAllDocumentsByModuleId(
           moduleIdentifier,
         )
 
-      if (result.processes) {
-        setDocuments(result.processes)
+      if (result.documents) {
+        setDocuments(result.documents)
         setIsFetching(false)
       }
     }

@@ -31,6 +31,7 @@ export class DocumentModel implements IDocument {
     this.updatedAt = props.updatedAt
     this.studentNotified = props.studentNotified
   }
+
   static fromJson(json: Record<string, any> | string): DocumentModel {
     if (typeof json === 'string') {
       return JSON.parse(json, DocumentModel.reviver)
