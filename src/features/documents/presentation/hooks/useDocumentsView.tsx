@@ -18,6 +18,8 @@ import {
 } from '../components/DocumentTableToolbar'
 import { defaultFilters } from '../constants/constants'
 import { isEqual } from 'lodash'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 
 export const useDocumentView = (moduleName: string) => {
   const { documents, setDocuments } = useDocumentStore()
@@ -29,6 +31,10 @@ export const useDocumentView = (moduleName: string) => {
 
   const [filters, setFilters] = useState<IDocumentTableFilters>(defaultFilters)
   const [tableData, setTableData] = useState<DocumentModel[]>([])
+  const [visitedPages, setVisitedPages] = useState<number[]>([])
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [count, setCount] = useState(0)
+  const isDataFiltered = useBoolean(false)
 
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleName.toUpperCase())?.id ?? 0
@@ -106,6 +112,63 @@ export const useDocumentView = (moduleName: string) => {
     (!dataFiltered.length && canReset) ||
     (!loader.length && !dataFiltered.length)
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    table.onChangePage(event, newPage)
+    table.setPage(newPage)
+
+    if (visitedPages.includes(newPage)) {
+      return
+    } else {
+      visitedPages.push(newPage)
+    }
+
+    if (newPage > table.page) {
+      if (isDataFiltered.value) {
+        DocumentsUseCasesImpl.getInstance()
+          .getAllDocumentsByModuleId(
+            moduleIdentifier,
+            new PaginationParams(newPage, table.rowsPerPage),
+          )
+          .then((response) => {
+            if (response?.count === 0) return
+            setDocuments([...documents, ...response.documents])
+            setTableData([...documents, ...response.documents])
+          })
+      }
+      // else {
+      //   fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
+      //     if (data?.councils) {
+      //       setCouncils([...councils, ...data.councils])
+      //       setTableData([...councils, ...data.councils])
+      //     }
+      //   })
+      // }
+    }
+  }
+
+  // const handleSearch = (field: string) => {
+  //   fetchDataByField(
+  //     field,
+  //     moduleIdentifier,
+  //     table.rowsPerPage,
+  //     table.page,
+  //   ).then((response) => {
+  //     if (response?.status === HTTP_STATUS_CODES.OK) {
+  //       setDocuments(response.data.councils as CouncilModel[])
+  //       setTableData(response.data.councils as CouncilModel[])
+  //       setCount(response.data.count)
+  //       return
+  //     }
+
+  //     if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+  //       setCouncils([])
+  //       setTableData([])
+  //       setCount(0)
+  //       return
+  //     }
+  //   })
+  // }
+
   useEffect(() => {
     let isMounted = true
 
@@ -115,11 +178,13 @@ export const useDocumentView = (moduleName: string) => {
       const result =
         await DocumentsUseCasesImpl.getInstance().getAllDocumentsByModuleId(
           moduleIdentifier,
+          new PaginationParams(table.page + 1, table.rowsPerPage),
         )
 
-      if (result.documents) {
+      if (result) {
         setDocuments(result.documents)
         setTableData(result.documents)
+        setCount(result.count)
       }
     }
 
@@ -131,6 +196,7 @@ export const useDocumentView = (moduleName: string) => {
   }, [])
 
   return {
+    count,
     loader,
     filters,
     table,
@@ -138,6 +204,12 @@ export const useDocumentView = (moduleName: string) => {
     dataFiltered,
     denseHeight,
     notFound,
+    searchTerm,
+    isDataFiltered,
+    setTableData,
+    setSearchTerm,
+    setVisitedPages,
+    handleChangePage,
     handleFilters,
     handleDeleteRow,
     handleDeleteRows,

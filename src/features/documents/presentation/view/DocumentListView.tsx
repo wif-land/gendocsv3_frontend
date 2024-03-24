@@ -36,15 +36,15 @@ export default memo(() => {
   const { codeModule } = useParams()
   const {
     loader,
-    filters,
     table,
     tableData,
     dataFiltered,
     denseHeight,
     notFound,
-    handleFilters,
+    count,
     handleDeleteRow,
     handleDeleteRows,
+    handleChangePage,
     handleEditRow,
     handleViewRow,
   } = useDocumentView(codeModule as string)
@@ -75,23 +75,13 @@ export default memo(() => {
         />
 
         <Card>
-          <DocumentTableToolbar filters={filters} onFilters={handleFilters} />
-          {/*
-          {canReset && (
-            <ProductTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
-              onResetFilters={handleResetFilters}
-              results={0}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )} */}
+          <DocumentTableToolbar moduleName={codeModule as string} />
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={tableData.length}
+              rowCount={count}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
@@ -178,7 +168,7 @@ export default memo(() => {
             count={dataFiltered.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
+            onPageChange={handleChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}

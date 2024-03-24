@@ -17,5 +17,5 @@ export const TABLE_HEAD = [
 
 export const defaultFilters: IDocumentTableFilters = {
   createdAt: null,
-  number: 0,
+  number: null,
 }

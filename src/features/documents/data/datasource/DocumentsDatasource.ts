@@ -4,6 +4,8 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IDocument } from '../../domain/entities/IDocument'
 import { NumerationModel } from '../models/NumerationModel'
+import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
+import { DefaultResponse } from '../../domain/repositories/DocumentsRepository'
 
 export interface DocumentsDataSource {
   getAll(): Promise<{
@@ -11,10 +13,10 @@ export interface DocumentsDataSource {
     documents: DocumentModel[]
   }>
 
-  getAllDocumentsByModuleId(moduleId: number): Promise<{
-    status: number
-    documents: DocumentModel[]
-  }>
+  getAllDocumentsByModuleId(
+    moduleId: number,
+    paginationParams: PaginationParams,
+  ): Promise<DefaultResponse<DocumentModel[]>>
 
   getById(id: number): Promise<{
     status: number
@@ -34,10 +36,9 @@ export interface DocumentsDataSource {
     status: number
   }>
 
-  getNumerationByCouncil(councilId: number): Promise<{
-    status: number
-    document: NumerationModel
-  }>
+  getNumerationByCouncil(
+    councilId: number,
+  ): Promise<DefaultResponse<NumerationModel>>
 }
 
 export class DocumentsDataSourceImpl implements DocumentsDataSource {
@@ -51,18 +52,24 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     return DocumentsDataSourceImpl.instance
   }
 
-  async getAllDocumentsByModuleId(moduleId: number) {
-    const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.GET_ALL, {
-      params: { moduleId },
+  async getAllDocumentsByModuleId(
+    moduleId: number,
+    paginationParams: PaginationParams,
+  ) {
+    const result = await AxiosClient.get<{
+      count: number
+      documents: DocumentModel[]
+    }>(API_ROUTES.DOCUMENTS.GET_ALL, {
+      params: { moduleId, ...paginationParams },
     })
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, documents: [] as DocumentModel[] }
+    if (status !== HTTP_STATUS_CODES.OK) {
+      return { status, data: { count: 0, documents: [] } }
     }
 
-    return { status, documents: data.content as DocumentModel[] }
+    return { status, data: data.content }
   }
 
   create = async (process: DocumentModel) => {
@@ -125,19 +132,22 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
   }
 
   getNumerationByCouncil = async (councilId: number) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.DOCUMENT_NUMERATION.GET_BY_COUNCIL,
-      {
-        params: { councilId },
-      },
-    )
+    const result = await AxiosClient.get<{
+      count: number
+      document: NumerationModel
+    }>(API_ROUTES.DOCUMENT_NUMERATION.GET_BY_COUNCIL, {
+      params: { councilId },
+    })
 
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, document: {} as NumerationModel }
+      return { status, data: { count: 0, document: {} as NumerationModel } }
     }
 
-    return { status, document: data.content as NumerationModel }
+    return {
+      status,
+      data: data.content,
+    }
   }
 }

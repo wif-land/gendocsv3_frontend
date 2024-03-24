@@ -1,3 +1,4 @@
+import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { NumerationModel } from '../../data/models/NumerationModel'
 import { DocumentsRepositoryImpl } from '../../data/repositories/DocumentsRepositoryImpl'
@@ -27,8 +28,11 @@ interface DocumentUseCases {
     status: number
   }>
 
-  getAllDocumentsByModuleId(moduleId: number): Promise<{
-    status: number
+  getAllDocumentsByModuleId(
+    moduleId: number,
+    params: PaginationParams,
+  ): Promise<{
+    count: number
     documents: DocumentModel[]
   }>
 
@@ -37,7 +41,7 @@ interface DocumentUseCases {
   }>
 
   getNumerationByCouncil(councilId: number): Promise<{
-    status: number
+    count: number
     document: NumerationModel
   }>
 }
@@ -71,11 +75,23 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
       id,
     })
 
-  getAllDocumentsByModuleId = async (moduleId: number) =>
-    await this.modelRepository.getAllDocumentsByModuleId(moduleId)
+  getAllDocumentsByModuleId = async (
+    moduleId: number,
+    params: PaginationParams,
+  ) => {
+    const result = await this.modelRepository.getAllDocumentsByModuleId(
+      moduleId,
+      params,
+    )
+
+    return result.data as { count: number; documents: DocumentModel[] }
+  }
 
   deleteById = async (id: number) => await this.modelRepository.deleteById(id)
 
-  getNumerationByCouncil = async (councilId: number) =>
-    await this.modelRepository.getNumerationByCouncil(councilId)
+  getNumerationByCouncil = async (councilId: number) => {
+    const result = await this.modelRepository.getNumerationByCouncil(councilId)
+
+    return result.data as { count: number; document: NumerationModel }
+  }
 }
