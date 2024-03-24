@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams, usePathname, useRouter } from 'next/navigation'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { useParams, usePathname } from 'next/navigation'
+import { memo } from 'react'
 import {
-  DENSE,
-  NO_DENSE,
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
@@ -11,14 +9,8 @@ import {
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
-  getComparator,
-  useTable,
 } from '../../../../shared/sdk/table'
-import {
-  DocumentTableToolbar,
-  IDocumentTableFilterValue,
-  IDocumentTableFilters,
-} from '../components/DocumentTableToolbar'
+import { DocumentTableToolbar } from '../components/DocumentTableToolbar'
 import { RouterLink } from '../../../../core/routes/components'
 import {
   Card,
@@ -33,119 +25,31 @@ import {
 import Iconify from '../../../../core/iconify'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
-import { DocumentModel } from '../../data/models/DocumentsModel'
-import { isEqual } from 'lodash'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { DocumentTableRow } from '../components/DocumentTableRow'
 import { useDocumentView } from '../hooks/useDocumentsView'
+import { TABLE_HEAD } from '../constants/constants'
 
-const TABLE_HEAD = [
-  {
-    key: 'number',
-    label: 'Número',
-  },
-  {
-    key: 'description',
-    label: 'Descripción',
-  },
-  {
-    key: 'actions',
-    label: 'Acciones',
-  },
-]
-
-const defaultFilters: IDocumentTableFilters = {
-  createdAt: null,
-  number: 0,
-}
-
-const DocumentListView = () => {
+export default memo(() => {
   const { codeModule } = useParams()
-  const { documents, loader } = useDocumentView(codeModule as string)
-  const table = useTable()
-  const router = useRouter()
-  const pathname = usePathname()
-
-  const [filters, setFilters] = useState<IDocumentTableFilters>(defaultFilters)
-
-  const handleFilters = useCallback(
-    (name: string, value: IDocumentTableFilterValue) => {
-      table.onResetPage()
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }))
-    },
-    [table],
-  )
-
-  const [tableData, setTableData] = useState<DocumentModel[]>([])
-
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
+  const {
+    loader,
     filters,
-  })
-
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage,
-  )
-
-  const denseHeight = table.dense ? NO_DENSE : DENSE
-  const canReset = !isEqual(defaultFilters, filters)
-
-  useEffect(() => {
-    if (documents?.length) {
-      setTableData(documents as DocumentModel[])
-    }
-  }, [documents])
-
+    table,
+    tableData,
+    dataFiltered,
+    denseHeight,
+    notFound,
+    handleFilters,
+    handleDeleteRow,
+    handleDeleteRows,
+    handleEditRow,
+    handleViewRow,
+  } = useDocumentView(codeModule as string)
+  const pathname = usePathname()
   const confirm = useBoolean()
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
-    },
-    [dataInPage.length, table, tableData],
-  )
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
-    )
-    setTableData(deleteRows)
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
-  }, [dataFiltered.length, dataInPage.length, table, tableData])
-
-  const handleEditRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}/edit`)
-    },
-    [router],
-  )
-
-  const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}`)
-    },
-    [router],
-  )
-
-  const notFound =
-    (!dataFiltered.length && canReset) ||
-    (!loader.length && !dataFiltered.length)
-
   const settings = useSettingsContext()
 
   return (
@@ -307,45 +211,4 @@ const DocumentListView = () => {
       />
     </div>
   )
-}
-
-const applyFilter = ({
-  inputData,
-  comparator,
-  filters,
-}: {
-  inputData: DocumentModel[]
-  comparator: (a: any, b: any) => number
-  filters: IDocumentTableFilters
-}) => {
-  let currentInputData = [...inputData]
-  const { createdAt, number } = filters
-
-  const stabilizedThis = currentInputData.map(
-    (el, index) => [el, index] as const,
-  )
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  currentInputData = stabilizedThis.map((el) => el[0])
-
-  if (number) {
-    currentInputData = currentInputData.filter(
-      (document) => document.number === number,
-    )
-  }
-
-  if (createdAt) {
-    currentInputData = currentInputData.filter(
-      (council) => council.createdAt === createdAt,
-    )
-  }
-
-  return currentInputData
-}
-
-export default memo(DocumentListView)
+})

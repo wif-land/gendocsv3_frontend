@@ -7,12 +7,12 @@ import { DocumentsRepository } from '../repositories/DocumentsRepository'
 interface DocumentUseCases {
   create(process: IDocument): Promise<{
     status: number
-    process: DocumentModel
+    document: DocumentModel
   }>
 
   getAll(): Promise<{
     status: number
-    processes: DocumentModel[]
+    documents: DocumentModel[]
   }>
 
   getById(id: number): Promise<{
@@ -22,14 +22,14 @@ interface DocumentUseCases {
 
   update(
     id: number,
-    process: Partial<DocumentModel>,
+    document: Partial<DocumentModel>,
   ): Promise<{
     status: number
   }>
 
-  getAllProcessesByModuleId(moduleId: number): Promise<{
+  getAllDocumentsByModuleId(moduleId: number): Promise<{
     status: number
-    processes: DocumentModel[]
+    documents: DocumentModel[]
   }>
 
   deleteById(id: number): Promise<{
@@ -38,7 +38,7 @@ interface DocumentUseCases {
 
   getNumerationByCouncil(councilId: number): Promise<{
     status: number
-    process: NumerationModel
+    document: NumerationModel
   }>
 }
 
@@ -71,7 +71,7 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
       id,
     })
 
-  getAllProcessesByModuleId = async (moduleId: number) =>
+  getAllDocumentsByModuleId = async (moduleId: number) =>
     await this.modelRepository.getAllDocumentsByModuleId(moduleId)
 
   deleteById = async (id: number) => await this.modelRepository.deleteById(id)

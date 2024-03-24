@@ -8,17 +8,17 @@ import { NumerationModel } from '../models/NumerationModel'
 export interface DocumentsDataSource {
   getAll(): Promise<{
     status: number
-    processes: DocumentModel[]
+    documents: DocumentModel[]
   }>
 
   getAllDocumentsByModuleId(moduleId: number): Promise<{
     status: number
-    processes: DocumentModel[]
+    documents: DocumentModel[]
   }>
 
   getById(id: number): Promise<{
     status: number
-    process: DocumentModel
+    document: DocumentModel
   }>
 
   update(process: Partial<IDocument>): Promise<{
@@ -27,7 +27,7 @@ export interface DocumentsDataSource {
 
   create(process: IDocument): Promise<{
     status: number
-    process: DocumentModel
+    document: DocumentModel
   }>
 
   deleteById(id: number): Promise<{
@@ -36,7 +36,7 @@ export interface DocumentsDataSource {
 
   getNumerationByCouncil(councilId: number): Promise<{
     status: number
-    process: NumerationModel
+    document: NumerationModel
   }>
 }
 
@@ -51,9 +51,7 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     return DocumentsDataSourceImpl.instance
   }
 
-  async getAllDocumentsByModuleId(
-    moduleId: number,
-  ): Promise<{ status: number; processes: DocumentModel[] }> {
+  async getAllDocumentsByModuleId(moduleId: number) {
     const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.GET_ALL, {
       params: { moduleId },
     })
@@ -61,10 +59,10 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, processes: [] as DocumentModel[] }
+      return { status, documents: [] as DocumentModel[] }
     }
 
-    return { status, processes: data.content as DocumentModel[] }
+    return { status, documents: data.content as DocumentModel[] }
   }
 
   create = async (process: DocumentModel) => {
@@ -73,10 +71,10 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, process: {} as DocumentModel }
+      return { status, document: {} as DocumentModel }
     }
 
-    return { status, process: data.content as DocumentModel }
+    return { status, document: data.content as DocumentModel }
   }
 
   getAll = async () => {
@@ -85,10 +83,10 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, processes: [] as DocumentModel[] }
+      return { status, documents: [] as DocumentModel[] }
     }
 
-    return { status, processes: data.content as DocumentModel[] }
+    return { status, documents: data.content as DocumentModel[] }
   }
 
   update = async (process: Partial<IDocument>) => {
@@ -105,7 +103,7 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
       return { status }
     }
 
-    return { status, process: data.content as DocumentModel }
+    return { status, document: data.content as DocumentModel }
   }
 
   getById = async (id: number) => {
@@ -137,9 +135,9 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, process: {} as NumerationModel }
+      return { status, document: {} as NumerationModel }
     }
 
-    return { status, process: data.content as NumerationModel }
+    return { status, document: data.content as NumerationModel }
   }
 }

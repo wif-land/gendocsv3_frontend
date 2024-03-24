@@ -67,7 +67,7 @@ export const DocumentsForm = ({
       setCouncilSelected(false)
       return
     }
-    const { status, process } =
+    const { status, document: process } =
       await DocumentsUseCasesImpl.getInstance().getNumerationByCouncil(
         Number(value.currentKey),
       )

@@ -5,7 +5,7 @@ import { IDocument } from '../entities/IDocument'
 export interface DocumentsRepository {
   getAll: () => Promise<{
     status: number
-    processes: DocumentModel[]
+    documents: DocumentModel[]
   }>
 
   update: (data: Partial<IDocument>) => Promise<{
@@ -14,12 +14,12 @@ export interface DocumentsRepository {
 
   create: (processData: IDocument) => Promise<{
     status: number
-    process: DocumentModel
+    document: DocumentModel
   }>
 
   getAllDocumentsByModuleId: (moduleId: number) => Promise<{
     status: number
-    processes: DocumentModel[]
+    documents: DocumentModel[]
   }>
 
   deleteById: (id: number) => Promise<{
@@ -28,6 +28,6 @@ export interface DocumentsRepository {
 
   getNumerationByCouncil: (councilId: number) => Promise<{
     status: number
-    process: NumerationModel
+    document: NumerationModel
   }>
 }

@@ -36,12 +36,12 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
       const { status } = result
 
       if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, process: {} as DocumentModel }
+        return { status, document: {} as DocumentModel }
       }
 
-      return { status, process: result.process }
+      return { status, document: result.document }
     } catch (error) {
-      return { status: 500, process: {} as DocumentModel }
+      return { status: 500, document: {} as DocumentModel }
     }
   }
 

@@ -58,8 +58,8 @@ export const useDocumentsForm = (
   const handleCreateDocument = async (values: IDocument) => {
     try {
       const result = await DocumentsUseCasesImpl.getInstance().create(values)
-      if (result.process) {
-        setDocuments([...documents, result.process])
+      if (result.document) {
+        setDocuments([...documents, result.document])
         toast.success('Documento creado exitosamente')
         formik.resetForm()
       } else {
