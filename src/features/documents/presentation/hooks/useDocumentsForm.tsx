@@ -4,18 +4,25 @@ import { useDocumentStore } from '../store/documentsStore'
 import { IDocument } from '../../domain/entities/IDocument'
 import { DocumentsUseCasesImpl } from '../../domain/usecases/DocumentServices'
 import { DocumentModel } from '../../data/models/DocumentsModel'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { NewDocumentSchema, resolveDefaultValues } from '../constants/constants'
 import { usePathname, useRouter } from 'next/navigation'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { enqueueSnackbar } from 'notistack'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useCouncilStore } from '../../../council/presentation/store/councilsStore'
+import { CouncilsUseCasesImpl } from '../../../council/domain/usecases/CouncilServices'
+import { NumerationModel } from '../../data/models/NumerationModel'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { documents, setDocuments } = useDocumentStore()
   const router = useRouter()
   const pathname = usePathname()
+  const isCouncilSelected = useBoolean(false)
+  const { councils, setCouncils } = useCouncilStore()
+  const [numbers, setNumbers] = useState<NumerationModel>()
 
   const defaultValues: Partial<DocumentModel> = useMemo(
     () => resolveDefaultValues(currentDocument),
@@ -26,6 +33,23 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     resolver: yupResolver(NewDocumentSchema),
     defaultValues,
   })
+
+  const handleCouncilSelection = async (value: any) => {
+    if (value.size === 0) {
+      isCouncilSelected.onFalse()
+      return
+    }
+    const { document: process } =
+      await DocumentsUseCasesImpl.getInstance().getNumerationByCouncil(
+        Number(value.currentKey),
+      )
+
+    setNumbers(process)
+
+    methods.setValue('councilId', Number(value.currentKey))
+    methods.setValue('number', process.nextAvailableNumber)
+    isCouncilSelected.onTrue()
+  }
 
   // const formik = useFormik<IDocument>({
   //   enableReinitialize: true,
@@ -160,9 +184,24 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     [currentDocument, enqueueSnackbar, methods.reset, router],
   )
 
+  useEffect(() => {
+    if (councils.length === 0) {
+      CouncilsUseCasesImpl.getInstance()
+        .getAllCouncilsByModuleId(1, 10, 0)
+        .then((result) => {
+          if (result.data.councils) {
+            setCouncils(result.data.councils)
+          }
+        })
+    }
+  }, [councils])
+
   return {
+    councils,
     processes: documents,
     setProcesses: setDocuments,
+    isCouncilSelected,
+    handleCouncilSelection,
     methods,
     onSubmit,
   }

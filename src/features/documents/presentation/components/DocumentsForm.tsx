@@ -67,13 +67,11 @@ export const DocumentsForm = ({
       setCouncilSelected(false)
       return
     }
-    const { status, document: process } =
+    const { document: process } =
       await DocumentsUseCasesImpl.getInstance().getNumerationByCouncil(
         Number(value.currentKey),
       )
-    if (status === HTTP_STATUS_CODES.OK) {
-      setNumbers(process)
-    }
+    setNumbers(process)
     formik.setFieldValue('councilId', Number(value.currentKey))
     formik.setFieldValue('number', process.nextAvailableNumber)
     setCouncilSelected(true)
