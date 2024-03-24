@@ -101,7 +101,7 @@ export const ProcessTableRow = ({
             popover.onClose()
           }}
         >
-          <Iconify icon="solar:doc-bold" />
+          <Iconify icon="solar:documents-linear" />
           Plantillas
         </MenuItem>
 

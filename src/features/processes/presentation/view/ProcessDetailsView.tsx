@@ -21,6 +21,7 @@ import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
 import { useProcessStore } from '../state/useProcessStore'
 import { ProcessDetailsSummary } from '../components/ProcessDetailSummary'
 import { ProcessDetailsSkeleton } from '../components/ProcessSkeleton'
+import ProcessesView from '../../../../features/templates/presentation/components/TemplatesView'
 
 const SUMMARY = [
   {
@@ -152,6 +153,7 @@ const ProcessDetailsView = () => {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       {false ? renderSkeleton : <>{false ? renderError : renderProcess}</>}
+      <ProcessesView processId={id as string} />
     </Container>
   )
 }
