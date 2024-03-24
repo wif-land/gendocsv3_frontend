@@ -10,11 +10,10 @@ import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import {
   RHFAutocomplete,
   RHFSelect,
-  RHFSwitch,
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Box, MenuItem } from '@mui/material'
+import { MenuItem } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
@@ -33,6 +32,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     isTemplateSelected,
     processes,
     students,
+    functionaries,
     selectedProcess,
     onSubmit,
     setSelectedProcess,
@@ -165,27 +165,10 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               className="w-full"
               placeholder="Estudiante"
               freeSolo
-              value={(() => {
-                const selectedStudent = students?.find(
-                  (student) => student.id === currentDocument?.studentId,
-                )
-                if (!selectedStudent) return null
-
-                return {
-                  id: selectedStudent?.id,
-                  label: `${selectedStudent?.dni} - ${selectedStudent?.firstLastName} ${selectedStudent?.secondLastName} ${selectedStudent?.firstName}`,
-                }
-              })()}
               options={students?.map((student) => ({
                 id: student.id,
                 label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
               }))}
-              onChange={(e, value) => {
-                methods.setValue(
-                  'studentId',
-                  (value as { id: number; label: string })?.id,
-                )
-              }}
             />
 
             <RHFAutocomplete
@@ -195,10 +178,10 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               placeholder="Funcionarios"
               freeSolo
               multiple
-              options={students
-                ?.map((student) => ({
-                  id: student.id,
-                  label: `${student.dni} - ${student.firstLastName} ${student.firstName}`,
+              options={functionaries
+                ?.map((functionary) => ({
+                  id: functionary.id,
+                  label: `${functionary.dni} - ${functionary.firstLastName} ${functionary.firstName}`,
                 }))
                 .filter(
                   (student) =>
@@ -229,10 +212,6 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
         md={8}
         sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
       >
-        <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Documento activo" />
-        </Box>
-
         <LoadingButton type="submit" variant="contained" size="large">
           {!currentDocument ? 'Crear' : 'Guardar'}
         </LoadingButton>

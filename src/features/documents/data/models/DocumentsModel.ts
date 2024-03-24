@@ -44,8 +44,10 @@ export class DocumentModel implements IDocument {
         driveId: json.driveId,
         userId: json.userId,
         templateId: json.templateId,
-        studentId: json.studentId,
-        functionariesIds: json.functionariesIds,
+        studentId: json.studentId?.id,
+        functionariesIds: json.functionariesIds?.map(
+          (data: { id: any; label: string }) => data.id,
+        ),
         description: json.description,
         variables: json.variables,
         updatedAt: json.updatedAt,

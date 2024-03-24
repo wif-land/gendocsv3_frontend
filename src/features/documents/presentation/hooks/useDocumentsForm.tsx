@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { toast } from 'react-toastify'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useDocumentStore } from '../store/documentsStore'
 import { IDocument } from '../../domain/entities/IDocument'
@@ -23,6 +22,9 @@ import { ProcessesUseCasesImpl } from '../../../processes/domain/usecases/Proces
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { StudentUseCasesImpl } from '../../../students/domain/usecases/StudentServices'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
+import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
+import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { documents, setDocuments } = useDocumentStore()
@@ -45,6 +47,8 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { councils, setCouncils } = useCouncilStore()
   const { processes, setProcesses } = useProcessStore()
   const { students, setStudents } = useStudentStore()
+  const { functionaries, setFunctionaries } = useFunctionaryStore()
+  const { user } = useAccountStore()
 
   const [selectedProcess, setSelectedProcess] = useState<ProcessModel>(
     {} as ProcessModel,
@@ -83,19 +87,11 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   }, [values.councilId])
 
   const handleCreateDocument = async (values: IDocument) => {
-    try {
-      const result = await DocumentsUseCasesImpl.getInstance().create(values)
-      if (result.document) {
-        setDocuments([...documents, result.document])
-        toast.success('Documento creado exitosamente')
-        methods.reset()
-      } else {
-        toast.error('Error al crear el documento', {
-          closeButton: false,
-        })
-      }
-    } catch (error) {
-      toast.error('Ocurrió un error al crear el documento')
+    const result = await DocumentsUseCasesImpl.getInstance().create(values)
+
+    if (result.document) {
+      setDocuments([...documents, result.document])
+      methods.reset()
     }
   }
 
@@ -120,23 +116,22 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
               : process,
           ),
         )
-        toast.success('Documento actualizado exitosamente')
         methods.reset()
       } else {
-        toast.error('Error al actualizar el documento', {
-          closeButton: false,
-        })
       }
-    } catch (error) {
-      toast.error('Ocurrió un error al actualizar el documento')
-    }
+    } catch (error) {}
   }
 
   const onSubmit = useCallback(
-    async (data: DocumentModel) => {
+    async (data: IDocument) => {
       try {
         if (!currentDocument) {
-          await handleCreateDocument(data)
+          await handleCreateDocument(
+            DocumentModel.fromJson({
+              ...data,
+              userId: user?.id,
+            }),
+          )
         } else {
           const editedFields = getEditedFields<Partial<DocumentModel>>(
             defaultValues,
@@ -156,19 +151,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
             ? pathname.replace(new RegExp(`/${currentDocument.id}/edit`), '')
             : pathname.replace('/new', ''),
         )
-        enqueueSnackbar(
-          !currentDocument
-            ? 'Consejo creado correctamente'
-            : 'Consejo actualizado correctamente',
-          { variant: 'success' },
-        )
       } catch (error) {
-        enqueueSnackbar(
-          !currentDocument
-            ? 'Error al crear el consejo'
-            : 'Error al actualizar el consejo',
-          { variant: 'error' },
-        )
       } finally {
         methods.reset()
       }
@@ -207,6 +190,14 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
           setStudents(result.data.students)
         }
       })
+
+    FunctionaryUseCasesImpl.getInstance()
+      .getAll(10, 0)
+      .then((result) => {
+        if (result.data.functionaries) {
+          setFunctionaries(result.data.functionaries)
+        }
+      })
   }, [pathname])
 
   return {
@@ -219,6 +210,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     numbers,
     selectedProcess,
     students,
+    functionaries,
     onSubmit,
     setProcesses,
     setSelectedProcess,

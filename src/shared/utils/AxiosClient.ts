@@ -243,7 +243,7 @@ const handleApiResponse = <T>(
   }
 
   if (status === HTTP_STATUS_CODES.BAD_REQUEST) {
-    enqueueSnackbar(data.message, {
+    enqueueSnackbar(data.message ?? 'Ocurrió un error, intenta de nuevo', {
       variant: 'error',
     })
   }
