@@ -1,4 +1,3 @@
-import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { TemplatesRepositoryImpl } from '../../data/repositories/TemplatesRepositoryImpl'
 import { ITemplate } from '../entities/ITemplate'
@@ -15,9 +14,18 @@ interface TemplateUseCases {
     template: Partial<TemplateModel>,
   ): Promise<{
     status: number
+    template: TemplateModel
   }>
 
   getTemplatesByProcessId(processId: number): Promise<{
+    count: number
+    templates: TemplateModel[]
+  }>
+
+  getTemplatesByProcessAndField(
+    processId: number,
+    field: string,
+  ): Promise<{
     count: number
     templates: TemplateModel[]
   }>
@@ -40,14 +48,26 @@ export class TemplatesUseCasesImpl implements TemplateUseCases {
   async getTemplatesByProcessId(
     processId: number,
   ): Promise<{ count: number; templates: TemplateModel[] }> {
-    const result = await this.templateRepository.getByProcessId(
+    const result = await this.templateRepository.getByProcessId(processId)
+
+    return result.data as {
+      count: number
+      templates: TemplateModel[]
+    }
+  }
+
+  async getTemplatesByProcessAndField(
+    processId: number,
+    field: string,
+  ): Promise<{ count: number; templates: TemplateModel[] }> {
+    const result = await this.templateRepository.getByProcessAndField(
       processId,
-      new PaginationParams(),
+      field,
     )
 
-    return {
-      count: result.data.count,
-      templates: result.data.templates as TemplateModel[],
+    return result.data as {
+      count: number
+      templates: TemplateModel[]
     }
   }
 

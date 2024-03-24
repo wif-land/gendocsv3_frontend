@@ -2,7 +2,7 @@
 'use client'
 
 import { memo, useCallback, useState } from 'react'
-import { useProcessView } from '../hooks/useProcessView'
+import { useTemplateView } from '../hooks/useTemplatesView'
 import {
   Button,
   Card,
@@ -20,7 +20,6 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TablePaginationCustom,
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
@@ -32,38 +31,19 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
-import { ProcessTableRow } from '../components/ProcessTableRow'
 
-import {
-  IProcessTableFilters,
-  IProcessTableFilterValue,
-  TemplateTableToolbar,
-} from './TemplateTableTooldar'
-import { defaultFilters, TABLE_HEAD } from '../constants'
-import { ProcessTableFiltersResult } from './TemplateTableFiltersResult'
+import { TemplateTableToolbar } from '../components/TemplateTableTooldar'
+import { TABLE_HEAD } from '../constants'
+import { TemplateTableRow } from '../components/TemplateTableRow'
 
-const TemplateListView = ({ moduleId }: { moduleId: string }) => {
+const TemplateListView = ({ processId }: { processId: number }) => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
   const settings = useSettingsContext()
   const confirm = useBoolean()
-  const [visitedPages, setVisitedPages] = useState<number[]>([0])
-  const [isDataFiltered, setIsDataFiltered] = useState(false)
+
   const [searchTerm, setSearchTerm] = useState('')
-
-  const [filters, setFilters] = useState<IProcessTableFilters>(defaultFilters)
-
-  const handleFilters = useCallback(
-    (name: string, value: IProcessTableFilterValue) => {
-      table.onResetPage()
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }))
-    },
-    [table],
-  )
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -79,46 +59,34 @@ const TemplateListView = ({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const handleResetFilters = () => {
-    setFilters(defaultFilters)
-    setSearchTerm('')
-    setVisitedPages([])
-    setIsDataFiltered(false)
-    setTableData([])
-  }
-
   const {
     loader,
     tableData,
     count,
     setTableData,
-    handleChangePage,
-    handleChangeRowsPerPage,
     handleSearch,
     handleUpdateRow,
-  } = useProcessView({
+  } = useTemplateView({
     table,
-    isDataFiltered,
-    visitedPages,
-    setVisitedPages,
     field: searchTerm,
-    moduleId,
+    processId,
   })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
-  const notFound =
+  const notFound = !!(
     (!loader.length && count === 0) ||
-    (!loader.length && count === 0 && isDataFiltered)
+    (loader.length && tableData.length === 0)
+  )
 
   return (
-    <div key={moduleId}>
+    <div key={processId}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Procesos"
+          heading="Plantillas"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Procesos' },
+            { name: 'Plantillas' },
           ]}
           action={
             <Button
@@ -135,23 +103,11 @@ const TemplateListView = ({ moduleId }: { moduleId: string }) => {
 
         <Card>
           <TemplateTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
             setSearchTerm={setSearchTerm}
-            setVisitedPages={setVisitedPages}
-            setIsDataFiltered={setIsDataFiltered}
+            filters={{ name: searchTerm }}
             table={table}
             setDataTable={setTableData}
-            getFilteredProcesss={handleSearch}
           />
-
-          {isDataFiltered && (
-            <ProcessTableFiltersResult
-              onResetFilters={handleResetFilters}
-              results={count}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -204,7 +160,7 @@ const TemplateListView = ({ moduleId }: { moduleId: string }) => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <ProcessTableRow
+                          <TemplateTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
@@ -231,16 +187,6 @@ const TemplateListView = ({ moduleId }: { moduleId: string }) => {
               </Table>
             </Scrollbar>
           </TableContainer>
-
-          <TablePaginationCustom
-            count={count}
-            page={table.page}
-            rowsPerPage={table.rowsPerPage}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
-          />
         </Card>
       </Container>
 
