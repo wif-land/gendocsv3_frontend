@@ -5,5 +5,9 @@ export const resolveModuleId = (modules: IModule[], codeModule: string) => {
     (module) => module.code === (codeModule as string).toUpperCase(),
   )
 
-  return module?.id
+  if (!module) {
+    return 0
+  }
+
+  return module.id
 }

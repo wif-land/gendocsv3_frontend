@@ -97,6 +97,16 @@ export const ProcessTableRow = ({
       >
         <MenuItem
           onClick={() => {
+            onViewRow()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="solar:doc-bold" />
+          Plantillas
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
@@ -107,34 +117,44 @@ export const ProcessTableRow = ({
 
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:lock-bold" />
-          Cerrar
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={{ color: 'error.main' }}
+          sx={row.isActive ? { color: 'error.main' } : { color: 'green' }}
         >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Borrar
+          {row.isActive ? (
+            <>
+              <Iconify icon="radix-icons:lock-closed" />
+              Desactivar
+            </>
+          ) : (
+            <>
+              <Iconify icon="radix-icons:lock-open-2" />
+              Activar
+            </>
+          )}
         </MenuItem>
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar proceso"
-        content="¿Estás seguro de que quieres eliminar este proceso?"
+        title={row.isActive ? 'Desactivar proceso' : 'Activar proceso'}
+        content={
+          row.isActive
+            ? '¿Está seguro de desactivar este proceso?'
+            : '¿Está seguro de activar este proceso?'
+        }
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Borrar
+          <Button
+            variant="contained"
+            color={isActive ? 'error' : 'success'}
+            onClick={() => {
+              onDeleteRow()
+              confirm.onFalse()
+            }}
+          >
+            {isActive ? 'Desactivar' : 'Activar'}
           </Button>
         }
       />
