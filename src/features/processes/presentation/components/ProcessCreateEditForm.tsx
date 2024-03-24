@@ -52,33 +52,6 @@ export const ProcessNewEditForm = ({ currentProcess }: Props) => {
     </>
   )
 
-  const renderProperties = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Títulos
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Títulos que se otorgan al finalizar la carrera, masculino y
-            femenino. Asimismo las horas de vinculación y prácticas.
-          </Typography>
-        </Grid>
-      )}
-
-      <Grid xs={12} md={8}>
-        <Card>
-          {!mdUp && <CardHeader title="Properties" />}
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="menDegree" label="Título Masculino" required />
-
-            <RHFTextField name="womenDegree" label="Título Femenino" required />
-          </Stack>
-        </Card>
-      </Grid>
-    </>
-  )
-
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
@@ -103,8 +76,6 @@ export const ProcessNewEditForm = ({ currentProcess }: Props) => {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         {renderGeneralInfo}
-
-        {renderProperties}
 
         {renderActions}
       </Grid>
