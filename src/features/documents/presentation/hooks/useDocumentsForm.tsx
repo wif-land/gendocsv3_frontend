@@ -20,8 +20,9 @@ import { useProcessStore } from '../../../processes/presentation/state/useProces
 import { IModule } from '../../../modules/types/IModule'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { ProcessesUseCasesImpl } from '../../../processes/domain/usecases/ProcessServices'
-import { TemplatesUseCasesImpl } from '../../../templates/domain/usecases/TemplateServices'
-import { TemplateModel } from '../../../templates/data/models/TemplatesModel'
+import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
+import { useStudentStore } from '../../../students/presentation/state/studentStore'
+import { StudentUseCasesImpl } from '../../../students/domain/usecases/StudentServices'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { documents, setDocuments } = useDocumentStore()
@@ -43,10 +44,12 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
 
   const { councils, setCouncils } = useCouncilStore()
   const { processes, setProcesses } = useProcessStore()
+  const { students, setStudents } = useStudentStore()
 
-  const [selectedProcessId, setSelectedProcessId] = useState(0)
+  const [selectedProcess, setSelectedProcess] = useState<ProcessModel>(
+    {} as ProcessModel,
+  )
   const [numbers, setNumbers] = useState<NumerationModel>()
-  const [templates, setTemplates] = useState<TemplateModel[]>([])
 
   const [moduleId, setModuleId] = useState<number>(
     resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
@@ -69,18 +72,15 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   }
 
   useEffect(() => {
-    if (selectedProcessId) {
-      isProcessSelected.onTrue()
+    if (!values.councilId) return
 
-      TemplatesUseCasesImpl.getInstance()
-        .getTemplatesByProcessId(selectedProcessId)
-        .then((result) => {
-          if (result.templates) {
-            setTemplates(result.templates)
-          }
-        })
-    }
-  }, [selectedProcessId])
+    DocumentsUseCasesImpl.getInstance()
+      .getNumerationByCouncil(values.councilId as number)
+      .then((result) => {
+        setNumbers(result)
+        methods.setValue('number', result.nextAvailableNumber)
+      })
+  }, [values.councilId])
 
   // const formik = useFormik<IDocument>({
   //   enableReinitialize: true,
@@ -238,6 +238,14 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
           setProcesses(result.data.processes)
         }
       })
+
+    StudentUseCasesImpl.getInstance()
+      .getAll(10, 0)
+      .then((result) => {
+        if (result.data.students) {
+          setStudents(result.data.students)
+        }
+      })
   }, [pathname])
 
   return {
@@ -247,9 +255,11 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     methods,
     isProcessSelected,
     isTemplateSelected,
-    templates,
+    numbers,
+    selectedProcess,
+    students,
     onSubmit,
     setProcesses,
-    setSelectedProcessId,
+    setSelectedProcess,
   }
 }

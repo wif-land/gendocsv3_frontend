@@ -40,10 +40,7 @@ interface DocumentUseCases {
     status: number
   }>
 
-  getNumerationByCouncil(councilId: number): Promise<{
-    count: number
-    document: NumerationModel
-  }>
+  getNumerationByCouncil(councilId: number): Promise<NumerationModel>
 }
 
 export class DocumentsUseCasesImpl implements DocumentUseCases {
@@ -89,9 +86,6 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
 
   deleteById = async (id: number) => await this.modelRepository.deleteById(id)
 
-  getNumerationByCouncil = async (councilId: number) => {
-    const result = await this.modelRepository.getNumerationByCouncil(councilId)
-
-    return result.data as { count: number; document: NumerationModel }
-  }
+  getNumerationByCouncil = async (councilId: number) =>
+    await this.modelRepository.getNumerationByCouncil(councilId)
 }

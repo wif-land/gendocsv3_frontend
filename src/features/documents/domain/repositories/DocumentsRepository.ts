@@ -35,7 +35,5 @@ export interface DocumentsRepository {
     status: number
   }>
 
-  getNumerationByCouncil: (
-    councilId: number,
-  ) => Promise<DefaultResponse<NumerationModel>>
+  getNumerationByCouncil: (councilId: number) => Promise<NumerationModel>
 }

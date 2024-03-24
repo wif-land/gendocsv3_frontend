@@ -23,12 +23,12 @@ export const defaultFilters: IDocumentTableFilters = {
 }
 
 export const resolveDefaultValues = (currentDocument?: DocumentModel) => ({
-  number: currentDocument?.number || 0,
-  councilId: currentDocument?.councilId || 0,
-  templateId: currentDocument?.templateId || 0,
-  studentId: currentDocument?.studentId || 0,
+  number: currentDocument?.number,
+  councilId: currentDocument?.councilId,
+  templateId: currentDocument?.templateId,
+  studentId: currentDocument?.studentId,
   functionariesIds: currentDocument?.functionariesIds || [],
-  userId: currentDocument?.userId || 0,
+  userId: currentDocument?.userId,
   description: currentDocument?.description || '',
 })
 

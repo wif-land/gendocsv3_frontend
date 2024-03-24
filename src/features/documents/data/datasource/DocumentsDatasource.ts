@@ -36,9 +36,9 @@ export interface DocumentsDataSource {
     status: number
   }>
 
-  getNumerationByCouncil(
-    councilId: number,
-  ): Promise<DefaultResponse<NumerationModel>>
+  getNumerationByCouncil(councilId: number): Promise<{
+    data: NumerationModel
+  }>
 }
 
 export class DocumentsDataSourceImpl implements DocumentsDataSource {
@@ -132,22 +132,21 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
   }
 
   getNumerationByCouncil = async (councilId: number) => {
-    const result = await AxiosClient.get<{
-      count: number
-      document: NumerationModel
-    }>(API_ROUTES.DOCUMENT_NUMERATION.GET_BY_COUNCIL, {
-      params: { councilId },
-    })
+    const result = await AxiosClient.get<NumerationModel>(
+      API_ROUTES.DOCUMENT_NUMERATION.GET_BY_COUNCIL,
+      {
+        params: { councilId },
+      },
+    )
 
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, data: { count: 0, document: {} as NumerationModel } }
+      return { data: {} as NumerationModel }
     }
 
     return {
-      status,
-      data: data.content,
+      data: data.content as NumerationModel,
     }
   }
 }

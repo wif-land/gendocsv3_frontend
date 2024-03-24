@@ -61,6 +61,9 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
     }
   }
 
-  getNumerationByCouncil = async (councilId: number) =>
-    await this.datasource.getNumerationByCouncil(councilId)
+  getNumerationByCouncil = async (councilId: number) => {
+    const result = await this.datasource.getNumerationByCouncil(councilId)
+
+    return result.data
+  }
 }

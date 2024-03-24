@@ -8,6 +8,7 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import {
+  RHFAutocomplete,
   RHFSelect,
   RHFSwitch,
   RHFTextField,
@@ -16,6 +17,7 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Box, MenuItem } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
+import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -30,9 +32,10 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     isProcessSelected,
     isTemplateSelected,
     processes,
-    templates,
+    students,
+    selectedProcess,
     onSubmit,
-    setSelectedProcessId,
+    setSelectedProcess,
   } = useDocumentsForm(currentDocument)
 
   const { handleSubmit } = methods
@@ -61,7 +64,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               className="w-full"
               placeholder="Consejo"
             >
-              {councils! &&
+              {councils &&
                 councils.map((council) => (
                   <MenuItem
                     key={council.id as number}
@@ -80,7 +83,11 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   className="w-full"
                   placeholder="Proceso"
                   onChange={(e) => {
-                    setSelectedProcessId(Number(e.target.value))
+                    setSelectedProcess(
+                      processes!.find(
+                        (process) => process.id === Number(e.target.value),
+                      ) || ({} as ProcessModel),
+                    )
                     isProcessSelected.onTrue()
                   }}
                 >
@@ -105,8 +112,8 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   className="w-full"
                   placeholder="Plantilla"
                 >
-                  {templates! &&
-                    templates.map((template) => (
+                  {selectedProcess! &&
+                    selectedProcess.templateProcesses?.map((template) => (
                       <MenuItem
                         key={template.id as number}
                         value={template.id as number}
@@ -118,13 +125,13 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               </>
             )}
 
-            {isTemplateSelected.value && (
+            {!isTemplateSelected.value && (
               <>
                 <RHFTextField
                   name="number"
-                  label="Número"
+                  label="Siguiente número disponible"
                   type="number"
-                  about="Número del documento"
+                  disabled
                 />
               </>
             )}
@@ -142,7 +149,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
             Participantes
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Se elijen
+            Se elijen estudiantes y funcionarios
           </Typography>
         </Grid>
       )}
@@ -150,7 +157,37 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
       <Grid xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
+
           <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFAutocomplete
+              name="studentId"
+              label="Estudiante"
+              className="w-full"
+              placeholder="Estudiante"
+              freeSolo
+              value={(() => {
+                const selectedStudent = students?.find(
+                  (student) => student.id === currentDocument?.studentId,
+                )
+                if (!selectedStudent) return null
+
+                return {
+                  id: selectedStudent?.id,
+                  label: `${selectedStudent?.dni} - ${selectedStudent?.firstLastName} ${selectedStudent?.secondLastName} ${selectedStudent?.firstName}`,
+                }
+              })()}
+              options={students?.map((student) => ({
+                id: student.id,
+                label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
+              }))}
+              onChange={(e, value) => {
+                methods.setValue(
+                  'studentId',
+                  (value as { id: number; label: string })?.id,
+                )
+              }}
+            />
+
             <RHFTextField
               name="description"
               label="Descripción"
