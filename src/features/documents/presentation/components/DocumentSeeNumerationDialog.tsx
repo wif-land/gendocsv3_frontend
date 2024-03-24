@@ -40,15 +40,32 @@ export const DocumentSeeNumerationDialog = ({
       </DialogTitle>
 
       <DialogContent dividers sx={{ pt: 1, pb: 0, border: 'none' }}>
-        {/* show enqueue numbers in the numerationmodels using box */}
+        <h2>Numeración en cola</h2>
+
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
+            flexWrap: 'wrap',
             gap: 2,
           }}
         >
           {numeration?.enqueuedNumbers?.map((number, index) => (
+            <Box key={index} onClick={() => handleChangeNumber(number)}>
+              {number}
+            </Box>
+          ))}
+        </Box>
+
+        <h2>Números reservados</h2>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          {numeration?.reservedNumbers?.map((number, index) => (
             <Box key={index} onClick={() => handleChangeNumber(number)}>
               {number}
             </Box>
