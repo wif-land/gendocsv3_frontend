@@ -38,7 +38,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     setSelectedProcess,
   } = useDocumentsForm(currentDocument)
 
-  const { handleSubmit } = methods
+  const { handleSubmit, getValues } = methods
 
   const renderDetails = (
     <>
@@ -65,7 +65,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               placeholder="Consejo"
             >
               {councils &&
-                councils.map((council) => (
+                councils.map((council: any) => (
                   <MenuItem
                     key={council.id as number}
                     value={council.id as number}
@@ -186,6 +186,26 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   (value as { id: number; label: string })?.id,
                 )
               }}
+            />
+
+            <RHFAutocomplete
+              name="functionariesIds"
+              label="Funcionarios"
+              className="w-full"
+              placeholder="Funcionarios"
+              freeSolo
+              multiple
+              options={students
+                ?.map((student) => ({
+                  id: student.id,
+                  label: `${student.dni} - ${student.firstLastName} ${student.firstName}`,
+                }))
+                .filter(
+                  (student) =>
+                    getValues('functionariesIds')?.some(
+                      (value) => value.id === student.id,
+                    ) === false,
+                )}
             />
 
             <RHFTextField

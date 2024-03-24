@@ -82,45 +82,6 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       })
   }, [values.councilId])
 
-  // const formik = useFormik<IDocument>({
-  //   enableReinitialize: true,
-  //   initialValues: {
-  //     number: initialValues.number || 0,
-  //     councilId: initialValues.councilId || 0,
-  //     templateId: initialValues.templateId || 0,
-  //     studentId: initialValues.studentId || 0,
-  //     functionariesIds: initialValues.functionariesIds || [],
-  //     userId: initialValues.userId || 0,
-  //     description: initialValues.description || '',
-  //   },
-  //   validationSchema,
-  //   onSubmit: async (values) => {
-  //     if (!initialValues.id) {
-  //       await handleCreateDocument(values)
-  //       onClose()
-  //       return
-  //     }
-
-  //     const editedFields: { [key: string]: unknown } = {}
-
-  //     Object.keys(initialValues).forEach((key) => {
-  //       if (
-  //         initialValues[key as keyof IDocument] !==
-  //         values[key as keyof IDocument]
-  //       ) {
-  //         editedFields[key] = values[key as keyof IDocument]
-  //       }
-  //     })
-
-  //     if (Object.keys(editedFields).length === 0) {
-  //       onClose()
-  //       return
-  //     }
-  //     await handleUpdateDocument(initialValues.id, editedFields)
-  //     onClose()
-  //   },
-  // })
-
   const handleCreateDocument = async (values: IDocument) => {
     try {
       const result = await DocumentsUseCasesImpl.getInstance().create(values)
