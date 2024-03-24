@@ -10,9 +10,29 @@ export interface ProcessesDataSource {
     processes: ProcessModel[]
   }>
 
-  getAllProcessesByModuleId(moduleId: number): Promise<{
+  getAllProcessesByModuleId(
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
     status: number
-    processes: ProcessModel[]
+    data: {
+      processes: ProcessModel[]
+      count: number
+    }
+  }>
+
+  getByField(
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      processes: ProcessModel[]
+      count: number
+    }
   }>
 
   getById(id: number): Promise<{
@@ -22,6 +42,12 @@ export interface ProcessesDataSource {
 
   update(process: Partial<IProcess>): Promise<{
     status: number
+    process: ProcessModel
+  }>
+
+  bulkUpdate(processes: Partial<IProcess>[]): Promise<{
+    status: number
+    processes: ProcessModel[]
   }>
 
   create(process: IProcess): Promise<{
@@ -41,20 +67,25 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     return ProcessesDataSourceImpl.instance
   }
 
-  async getAllProcessesByModuleId(
+  getAllProcessesByModuleId = async (
     moduleId: number,
-  ): Promise<{ status: number; processes: ProcessModel[] }> {
+    limit: number,
+    offset: number,
+  ) => {
     const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_ALL, {
-      params: { moduleId },
+      params: { moduleId, limit, offset },
     })
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, processes: [] as ProcessModel[] }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as { processes: ProcessModel[]; count: number },
+      }
     }
 
-    return { status, processes: data.content as ProcessModel[] }
+    return { status, data: { processes: [], count: 0 } }
   }
 
   create = async (process: ProcessModel) => {
@@ -81,6 +112,30 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     return { status, processes: data.content as ProcessModel[] }
   }
 
+  getByField = async (
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.PROCESSES.GET_BY_FIELD(field),
+      {
+        params: { moduleId, limit, offset },
+      },
+    )
+
+    const { status, data } = result
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      return {
+        status,
+        data: data.content as { processes: ProcessModel[]; count: number },
+      }
+    }
+    return { status, data: { processes: [], count: 0 } }
+  }
+
   update = async (process: Partial<IProcess>) => {
     const { id, ...rest } = process
 
@@ -91,11 +146,22 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, process: data.content as ProcessModel }
     }
 
-    return { status, process: data.content as ProcessModel }
+    return { status, process: {} as ProcessModel }
+  }
+
+  bulkUpdate = async (processes: IProcess[]) => {
+    const result = AxiosClient.patch(API_ROUTES.COUNCILS.BULK_UPDATE, processes)
+
+    return result.then(({ status, data }) => {
+      if (status === HTTP_STATUS_CODES.OK) {
+        return { status, processes: data.content as ProcessModel[] }
+      }
+      return { status, processes: [] as ProcessModel[] }
+    })
   }
 
   getById = async (id: number) => {

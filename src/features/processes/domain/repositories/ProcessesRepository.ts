@@ -7,8 +7,22 @@ export interface ProcessesRepository {
     processes: ProcessModel[]
   }>
 
+  getByField: (
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => Promise<{
+    status: number
+    data: {
+      count: number
+      processes: ProcessModel[]
+    }
+  }>
+
   update: (data: Partial<IProcess>) => Promise<{
     status: number
+    process: ProcessModel
   }>
 
   create: (processData: IProcess) => Promise<{
@@ -16,7 +30,19 @@ export interface ProcessesRepository {
     process: ProcessModel
   }>
 
-  getAllProcessesByModuleId: (moduleId: number) => Promise<{
+  getAllProcessesByModuleId: (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => Promise<{
+    status: number
+    data: {
+      processes: ProcessModel[]
+      count: number
+    }
+  }>
+
+  bulkUpdate: (processes: Partial<IProcess>[]) => Promise<{
     status: number
     processes: ProcessModel[]
   }>
