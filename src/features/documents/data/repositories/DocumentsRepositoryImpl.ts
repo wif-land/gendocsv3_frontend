@@ -6,7 +6,6 @@ import {
   DocumentsDataSource,
   DocumentsDataSourceImpl,
 } from '../datasource/DocumentsDatasource'
-import { DocumentModel } from '../models/DocumentsModel'
 
 export class DocumentsRepositoryImpl implements DocumentsRepository {
   static instance: DocumentsRepositoryImpl
@@ -30,22 +29,11 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
 
   getAll = async () => await this.datasource.getAll()
 
-  update = async (data: Partial<DocumentModel>) =>
-    await this.datasource.update(data)
-
   create = async (processData: IDocument) => {
-    try {
-      const result = await this.datasource.create(processData)
-      const { status } = result
+    const result = await this.datasource.create(processData)
+    const { status } = result
 
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, document: {} as DocumentModel }
-      }
-
-      return { status, document: result.document }
-    } catch (error) {
-      return { status: 500, document: {} as DocumentModel }
-    }
+    return { status, document: result.document }
   }
 
   deleteById = async (id: number) => {

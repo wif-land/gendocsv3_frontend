@@ -193,7 +193,7 @@ export const useDocumentView = (moduleName: string) => {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [moduleIdentifier])
 
   return {
     count,

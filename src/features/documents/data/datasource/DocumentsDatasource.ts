@@ -23,10 +23,6 @@ export interface DocumentsDataSource {
     document: DocumentModel
   }>
 
-  update(process: Partial<IDocument>): Promise<{
-    status: number
-  }>
-
   create(process: IDocument): Promise<{
     status: number
     document: DocumentModel
@@ -72,14 +68,10 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     return { status, data: data.content }
   }
 
-  create = async (process: DocumentModel) => {
-    const result = await AxiosClient.post(API_ROUTES.DOCUMENTS.CREATE, process)
+  create = async (document: DocumentModel) => {
+    const result = await AxiosClient.post(API_ROUTES.DOCUMENTS.CREATE, document)
 
     const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, document: {} as DocumentModel }
-    }
 
     return { status, document: data.content as DocumentModel }
   }
@@ -89,28 +81,7 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, documents: [] as DocumentModel[] }
-    }
-
     return { status, documents: data.content as DocumentModel[] }
-  }
-
-  update = async (process: Partial<IDocument>) => {
-    const { id, ...rest } = process
-
-    const result = await AxiosClient.patch(
-      API_ROUTES.DOCUMENTS.UPDATE.replace(':id', id?.toString() || ''),
-      rest,
-    )
-
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
-    }
-
-    return { status, document: data.content as DocumentModel }
   }
 
   getById = async (id: number) => {
@@ -124,10 +95,6 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
 
     const { status } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
-    }
-
     return { status }
   }
 
@@ -139,11 +106,7 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
       },
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { data: {} as NumerationModel }
-    }
+    const { data } = result
 
     return {
       data: data.content as NumerationModel,

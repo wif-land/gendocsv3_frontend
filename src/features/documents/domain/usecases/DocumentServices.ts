@@ -21,13 +21,6 @@ interface DocumentUseCases {
     process: DocumentModel
   }>
 
-  update(
-    id: number,
-    document: Partial<DocumentModel>,
-  ): Promise<{
-    status: number
-  }>
-
   getAllDocumentsByModuleId(
     moduleId: number,
     params: PaginationParams,
@@ -65,12 +58,6 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
   getById = async (id: number) => {
     throw new Error(`Method not implemented.${id}`)
   }
-
-  update = async (id: number, process: Partial<DocumentModel>) =>
-    await this.modelRepository.update({
-      ...process,
-      id,
-    })
 
   getAllDocumentsByModuleId = async (
     moduleId: number,

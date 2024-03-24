@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDocumentStore } from '../store/documentsStore'
 import { IDocument } from '../../domain/entities/IDocument'
 import { DocumentsUseCasesImpl } from '../../domain/usecases/DocumentServices'
 import { DocumentModel } from '../../data/models/DocumentsModel'
@@ -25,7 +24,6 @@ import { useFunctionaryStore } from '../../../functionaries/presentation/state/u
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
-  const { documents, setDocuments } = useDocumentStore()
   const router = useRouter()
   const pathname = usePathname()
   const { codeModule } = useParams()
@@ -74,12 +72,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   }
 
   const handleCreateDocument = async (values: IDocument) => {
-    const result = await DocumentsUseCasesImpl.getInstance().create(values)
-
-    if (result.document) {
-      setDocuments([...documents, result.document])
-      methods.reset()
-    }
+    await DocumentsUseCasesImpl.getInstance().create(values)
   }
 
   const onSubmit = useCallback(
