@@ -13,9 +13,10 @@ import {
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Box, MenuItem } from '@mui/material'
+import { Box, MenuItem, Select } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
+import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -26,12 +27,19 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
   const {
     methods,
     councils,
-    onSubmit,
-    handleCouncilSelection,
     isCouncilSelected,
+    isProcessSelected,
+    isTemplateSelected,
+    processes,
+    onSubmit,
+    setSelectedProcessId,
   } = useDocumentsForm(currentDocument)
 
-  const { handleSubmit } = methods
+  const { handleSubmit, watch } = methods
+
+  const values = watch()
+
+  console.log({ values })
 
   const renderDetails = (
     <>
@@ -41,8 +49,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            El nombre del consejo, tipo, fecha y hora de inicio. Y si está
-            activo o no
+            Se elije el consejo, proceso, plantilla y numeración del documento
           </Typography>
         </Grid>
       )}
@@ -52,16 +59,11 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           {!mdUp && <CardHeader title="Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="name" label="Nombre" required />
-
             <RHFSelect
               name="councilId"
               label="Consejo"
               className="w-full"
               placeholder="Consejo"
-              onChange={(value: any) => {
-                handleCouncilSelection(value)
-              }}
             >
               {councils! &&
                 councils.map((council) => (
@@ -74,20 +76,18 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                 ))}
             </RHFSelect>
 
-            {isCouncilSelected && (
+            {isCouncilSelected.value && (
               <>
                 <RHFSelect
                   name="process"
                   label="Proceso"
                   className="w-full"
                   placeholder="Proceso"
-                  onChange={(value: any) => {
-                    setSelectedProcess(
-                      processes?.find(
-                        (process) =>
-                          process.id?.toString() === value.currentKey,
-                      ),
-                    )
+                  onChange={(e) => {
+                    console.log(e.target.value)
+
+                    setSelectedProcessId(e.target.value as ProcessModel)
+                    isProcessSelected.onTrue()
                   }}
                 >
                   {processes! &&
@@ -100,195 +100,31 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                       </MenuItem>
                     ))}
                 </RHFSelect>
-                {/* <Select
-                  name="templateId"
+              </>
+            )}
+
+            {isProcessSelected.value && (
+              <>
+                <Select
+                  name="template"
                   label="Plantilla"
                   className="w-full"
                   placeholder="Plantilla"
-                  variant="underlined"
-                  onSelectionChange={(value: any) => {
-                    if (value.size === 0) {
-                      setTemplateSelected(false)
-                      return
-                    }
-                    formik.setFieldValue('templateId', Number(value.currentKey))
-                    setTemplateSelected(true)
-                  }}
                 >
-                  {selectedProcess! &&
-                    (selectedProcess?.templateProcesses || []).map(
-                      (template) => (
-                        <SelectItem
-                          key={template.id as number}
-                          value={template.id as number}
-                        >
-                          {template.name}
-                        </SelectItem>
-                      ),
-                    )}
+                  <MenuItem value={1}>Plantilla 1</MenuItem>
+                  <MenuItem value={2}>Plantilla 2</MenuItem>
                 </Select>
-                {templateSelected && (
-                  <>
-                    <Modal
-                      isOpen={isNumerationOpen}
-                      onOpenChange={onOpenChangeNumeration}
-                    >
-                      <ModalContent>
-                        {(onClose) => (
-                          <>
-                            <ModalHeader className=" text-xl">
-                              Numeración
-                            </ModalHeader>
-                            <ModalBody>
-                              <h1 className="text-lg font-semibold">
-                                Número actual
-                              </h1>
-                              <p className="text-gray-500">
-                                {numbers?.nextAvailableNumber.toString()}
-                              </p>
-                              <h1 className="text-lg font-semibold">
-                                Números Reservados
-                              </h1>
-                              <p className="text-gray-500">
-                                {numbers!.reservedNumbers.length > 0
-                                  ? numbers?.reservedNumbers.toString()
-                                  : 'Sin numeros reservados'}
-                              </p>
-                              <h1 className="text-lg font-semibold">
-                                Números encolados
-                              </h1>
-                              <p className="text-gray-500">
-                                {numbers!.enqueuedNumbers.length > 0
-                                  ? numbers?.enqueuedNumbers.toString()
-                                  : 'Sin numeros encolados'}
-                              </p>
-                              <h1 className="text-lg font-semibold">
-                                Números utilizados
-                              </h1>
-                              <p className="text-gray-500">
-                                {numbers!.usedNumbers.length > 0
-                                  ? numbers?.usedNumbers.toString()
-                                  : 'Sin numeros utilizados'}
-                              </p>
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button
-                                color="danger"
-                                variant="light"
-                                onPress={onClose}
-                              >
-                                Close
-                              </Button>
-                              <Button color="primary" onPress={onClose}>
-                                Action
-                              </Button>
-                            </ModalFooter>
-                          </>
-                        )}
-                      </ModalContent>
-                    </Modal>
-                    <div className="flex gap-4 items-end">
-                      <Input
-                        id="number"
-                        name="number"
-                        type="number"
-                        label="Número"
-                        variant="underlined"
-                        className="w-full flex-1"
-                        defaultValue={numbers?.nextAvailableNumber.toString()}
-                        // value={formik.values.number.toString()}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        size="lg"
-                        errorMessage={
-                          formik.touched.number && formik.errors.number
-                            ? formik.errors.number
-                            : ''
-                        }
-                      />
-                      <Button
-                        color="primary"
-                        variant="solid"
-                        className="flex-3"
-                        onClick={() => {
-                          onOpenNumeration()
-                        }}
-                      >
-                        Numeración
-                      </Button>
-                    </div>
-                    <Autocomplete
-                      name="studentId"
-                      label="Estudiante"
-                      className="w-full"
-                      placeholder="Estudiante"
-                      variant="underlined"
-                      onSelectionChange={(value) => {
-                        formik.setFieldValue('studentId', Number(value))
-                      }}
-                    >
-                      {students! &&
-                        students.map(
-                          (student) => (
-                            (studentFullName = `${student.firstLastName} ${student.secondLastName} ${student.firstName} ${student.secondName} | ${student.dni}`),
-                            (
-                              <AutocompleteItem
-                                key={student.id}
-                                value={student.id}
-                              >
-                                {studentFullName}
-                              </AutocompleteItem>
-                            )
-                          ),
-                        )}
-                    </Autocomplete>
-                    <Select
-                      selectionMode="multiple"
-                      name="functionariesIds"
-                      label="Funcionarios"
-                      className="w-full"
-                      placeholder="Funcionarios"
-                      variant="underlined"
-                      onSelectionChange={(value) => {
-                        const valueArray: number[] =
-                          Array.from(value).map(Number)
-                        formik.setFieldValue('functionariesIds', valueArray)
-                      }}
-                    >
-                      {functionaries! &&
-                        functionaries.map(
-                          (functionaries) => (
-                            (functionaryFullName = `${functionaries.firstLastName} ${functionaries.secondLastName} ${functionaries.firstName} ${functionaries.secondName} | ${functionaries.dni}`),
-                            (
-                              <SelectItem
-                                key={functionaries.id!}
-                                value={functionaries.id}
-                              >
-                                {functionaryFullName}
-                              </SelectItem>
-                            )
-                          ),
-                        )}
-                    </Select>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      type="textarea"
-                      label="Descripción"
-                      variant="underlined"
-                      className="w-full"
-                      value={formik.values.description.toString()}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      size="lg"
-                      errorMessage={
-                        formik.touched.description && formik.errors.description
-                          ? formik.errors.description
-                          : ''
-                      }
-                    />
-                  </>
-                )} */}
+              </>
+            )}
+
+            {isTemplateSelected.value && (
+              <>
+                <RHFTextField
+                  name="number"
+                  label="Número"
+                  type="number"
+                  about="Número del documento"
+                />
               </>
             )}
           </Stack>
@@ -311,7 +147,18 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
       )}
 
       <Grid xs={12} md={8}>
-        <Card>{!mdUp && <CardHeader title="Properties" />}</Card>
+        <Card>
+          {!mdUp && <CardHeader title="Properties" />}
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFTextField
+              name="description"
+              label="Descripción"
+              multiline
+              about="Descripción del documento"
+              rows={2}
+            />
+          </Stack>
+        </Card>
       </Grid>
     </>
   )

@@ -13,17 +13,17 @@ export default memo(() => {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Crear un nuevo consejo"
+        heading="Crear un nuevo documento"
         links={[
           {
             name: 'Dashboard',
             href: paths.dashboard.root,
           },
           {
-            name: 'Consejos',
+            name: 'Documentos',
             href: pathname.replace('/new', ''),
           },
-          { name: 'Nuevo consejo' },
+          { name: 'Nuevo documento' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from 'react-toastify'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useDocumentStore } from '../store/documentsStore'
@@ -7,7 +8,7 @@ import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { NewDocumentSchema, resolveDefaultValues } from '../constants/constants'
-import { usePathname, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { enqueueSnackbar } from 'notistack'
@@ -15,14 +16,38 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useCouncilStore } from '../../../council/presentation/store/councilsStore'
 import { CouncilsUseCasesImpl } from '../../../council/domain/usecases/CouncilServices'
 import { NumerationModel } from '../../data/models/NumerationModel'
+import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
+import { IModule } from '../../../modules/types/IModule'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
+import { ProcessesUseCasesImpl } from '../../../processes/domain/usecases/ProcessServices'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { documents, setDocuments } = useDocumentStore()
   const router = useRouter()
   const pathname = usePathname()
+  const { codeModule } = useParams()
+
+  const resolveModuleId = (modules: IModule[], codeModule: string) => {
+    const module = modules.find(
+      (module) => module.code === (codeModule as string).toUpperCase(),
+    )
+
+    return module?.id
+  }
+
   const isCouncilSelected = useBoolean(false)
+  const isProcessSelected = useBoolean(false)
+  const isTemplateSelected = useBoolean(false)
+
   const { councils, setCouncils } = useCouncilStore()
   const [numbers, setNumbers] = useState<NumerationModel>()
+  const { processes, setProcesses } = useProcessStore()
+  const [selectedProcessId, setSelectedProcessId] = useState<ProcessModel>()
+
+  const [moduleId, setModuleId] = useState<number>(
+    resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
+  )
 
   const defaultValues: Partial<DocumentModel> = useMemo(
     () => resolveDefaultValues(currentDocument),
@@ -34,20 +59,9 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     defaultValues,
   })
 
-  const handleCouncilSelection = async (value: any) => {
-    if (value.size === 0) {
-      isCouncilSelected.onFalse()
-      return
-    }
-    const { document: process } =
-      await DocumentsUseCasesImpl.getInstance().getNumerationByCouncil(
-        Number(value.currentKey),
-      )
+  const values = methods.watch()
 
-    setNumbers(process)
-
-    methods.setValue('councilId', Number(value.currentKey))
-    methods.setValue('number', process.nextAvailableNumber)
+  if (values.councilId && !isCouncilSelected.value) {
     isCouncilSelected.onTrue()
   }
 
@@ -185,24 +199,39 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   )
 
   useEffect(() => {
-    if (councils.length === 0) {
-      CouncilsUseCasesImpl.getInstance()
-        .getAllCouncilsByModuleId(1, 10, 0)
-        .then((result) => {
-          if (result.data.councils) {
-            setCouncils(result.data.councils)
-          }
-        })
+    if (!moduleId) {
+      setModuleId(
+        resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
+      )
+      return
     }
-  }, [councils])
+
+    CouncilsUseCasesImpl.getInstance()
+      .getAllCouncilsByModuleId(moduleId, 10, 0)
+      .then((result) => {
+        if (result.data.councils) {
+          setCouncils(result.data.councils)
+        }
+      })
+
+    ProcessesUseCasesImpl.getInstance()
+      .getAllProcessesByModuleId(moduleId)
+      .then((result) => {
+        if (result.processes) {
+          setProcesses(result.processes)
+        }
+      })
+  }, [pathname])
 
   return {
     councils,
-    processes: documents,
-    setProcesses: setDocuments,
+    processes,
     isCouncilSelected,
-    handleCouncilSelection,
     methods,
+    isProcessSelected,
+    isTemplateSelected,
     onSubmit,
+    setProcesses,
+    setSelectedProcessId,
   }
 }
