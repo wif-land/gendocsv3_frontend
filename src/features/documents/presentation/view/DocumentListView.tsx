@@ -45,7 +45,6 @@ export default memo(() => {
     handleDeleteRow,
     handleDeleteRows,
     handleChangePage,
-    handleEditRow,
     handleViewRow,
   } = useDocumentView(codeModule as string)
   const pathname = usePathname()
@@ -142,7 +141,7 @@ export default memo(() => {
                             onDeleteRow={() =>
                               handleDeleteRow(row.id!.toString())
                             }
-                            onEditRow={() => handleEditRow(row.id!.toString())}
+                            onEditRow={() => console.log('edit')}
                             onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}

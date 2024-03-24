@@ -13,10 +13,14 @@ import {
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { MenuItem } from '@mui/material'
+import { IconButton, InputAdornment, MenuItem } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
+import Iconify from '../../../../core/iconify'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { DocumentSeeNumerationDialog } from './DocumentSeeNumerationDialog'
+import { NumerationModel } from '../../data/models/NumerationModel'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -33,12 +37,14 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     processes,
     students,
     functionaries,
+    numbers,
     selectedProcess,
     onSubmit,
     setSelectedProcess,
   } = useDocumentsForm(currentDocument)
 
   const { handleSubmit, getValues } = methods
+  const seeNumeration = useBoolean(false)
 
   const renderDetails = (
     <>
@@ -125,15 +131,21 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               </>
             )}
 
-            {!isTemplateSelected.value && (
-              <>
-                <RHFTextField
-                  name="number"
-                  label="Siguiente número disponible"
-                  type="number"
-                  disabled
-                />
-              </>
+            {!isTemplateSelected.value && isCouncilSelected.value && (
+              <RHFTextField
+                name="number"
+                label="Siguiente número disponible"
+                type="number"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={seeNumeration.onToggle} edge="end">
+                        <Iconify icon={'solar:eye-bold'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
             )}
           </Stack>
         </Card>
@@ -227,6 +239,12 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
         {renderProperties}
 
         {renderActions}
+
+        <DocumentSeeNumerationDialog
+          open={seeNumeration.value}
+          onClose={seeNumeration.onFalse}
+          numeration={numbers || ({} as NumerationModel)}
+        />
       </Grid>
     </FormProvider>
   )
