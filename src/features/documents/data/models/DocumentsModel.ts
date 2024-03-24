@@ -36,7 +36,7 @@ export class DocumentModel implements IDocument {
     if (typeof json === 'string') {
       return JSON.parse(json, DocumentModel.reviver)
     } else {
-      const process = new DocumentModel({
+      return new DocumentModel({
         id: json.id,
         number: json.number,
         councilId: json.councilId,
@@ -53,8 +53,6 @@ export class DocumentModel implements IDocument {
         updatedAt: json.updatedAt,
         studentNotified: json.studentNotified,
       })
-
-      return process
     }
   }
 

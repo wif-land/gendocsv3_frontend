@@ -111,27 +111,25 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
             )}
 
             {isProcessSelected.value && (
-              <>
-                <RHFSelect
-                  name="template"
-                  label="Plantilla"
-                  className="w-full"
-                  placeholder="Plantilla"
-                >
-                  {selectedProcess! &&
-                    selectedProcess.templateProcesses?.map((template) => (
-                      <MenuItem
-                        key={template.id as number}
-                        value={template.id as number}
-                      >
-                        {template.name}
-                      </MenuItem>
-                    ))}
-                </RHFSelect>
-              </>
+              <RHFSelect
+                name="templateId"
+                label="Plantilla"
+                className="w-full"
+                placeholder="Plantilla"
+              >
+                {selectedProcess! &&
+                  selectedProcess.templateProcesses?.map((template) => (
+                    <MenuItem
+                      key={template.id as number}
+                      value={template.id as number}
+                    >
+                      {template.name}
+                    </MenuItem>
+                  ))}
+              </RHFSelect>
             )}
 
-            {!isTemplateSelected.value && isCouncilSelected.value && (
+            {isTemplateSelected.value && isCouncilSelected.value && (
               <RHFTextField
                 name="number"
                 label="Siguiente número disponible"
@@ -244,6 +242,10 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           open={seeNumeration.value}
           onClose={seeNumeration.onFalse}
           numeration={numbers || ({} as NumerationModel)}
+          setNumeration={(number) => {
+            methods.setValue('number', number)
+            seeNumeration.onFalse()
+          }}
         />
       </Grid>
     </FormProvider>

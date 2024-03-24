@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useDocumentStore } from '../store/documentsStore'
 import { IDocument } from '../../domain/entities/IDocument'
 import { DocumentsUseCasesImpl } from '../../domain/usecases/DocumentServices'
@@ -9,7 +8,6 @@ import { useForm } from 'react-hook-form'
 import { NewDocumentSchema, resolveDefaultValues } from '../constants/constants'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useCouncilStore } from '../../../council/presentation/store/councilsStore'
@@ -75,17 +73,6 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     isCouncilSelected.onTrue()
   }
 
-  useEffect(() => {
-    if (!values.councilId) return
-
-    DocumentsUseCasesImpl.getInstance()
-      .getNumerationByCouncil(values.councilId as number)
-      .then((result) => {
-        setNumbers(result)
-        methods.setValue('number', result.nextAvailableNumber)
-      })
-  }, [values.councilId])
-
   const handleCreateDocument = async (values: IDocument) => {
     const result = await DocumentsUseCasesImpl.getInstance().create(values)
 
@@ -95,62 +82,17 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     }
   }
 
-  const handleUpdateDocument = async (
-    id: number,
-    editedFields: Partial<IDocument>,
-  ) => {
-    try {
-      const { status } = await DocumentsUseCasesImpl.getInstance().update(
-        id,
-        editedFields,
-      )
-
-      if (status === HTTP_STATUS_CODES.OK) {
-        setDocuments(
-          documents!.map((process) =>
-            process.id === id
-              ? new DocumentModel({
-                  ...process,
-                  ...editedFields,
-                })
-              : process,
-          ),
-        )
-        methods.reset()
-      } else {
-      }
-    } catch (error) {}
-  }
-
   const onSubmit = useCallback(
     async (data: IDocument) => {
       try {
-        if (!currentDocument) {
-          await handleCreateDocument(
-            DocumentModel.fromJson({
-              ...data,
-              userId: user?.id,
-            }),
-          )
-        } else {
-          const editedFields = getEditedFields<Partial<DocumentModel>>(
-            defaultValues,
-            data,
-          )
-
-          if (editedFields) {
-            await handleUpdateDocument(
-              currentDocument.id as number,
-              editedFields,
-            )
-          }
-        }
-
-        router.push(
-          currentDocument
-            ? pathname.replace(new RegExp(`/${currentDocument.id}/edit`), '')
-            : pathname.replace('/new', ''),
+        await handleCreateDocument(
+          DocumentModel.fromJson({
+            ...data,
+            userId: user?.id,
+          }),
         )
+
+        router.push(pathname.replace('/new', ''))
       } catch (error) {
       } finally {
         methods.reset()
@@ -158,6 +100,27 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     },
     [currentDocument, enqueueSnackbar, methods.reset, router],
   )
+
+  useEffect(() => {
+    if (!values.councilId) {
+      return
+    }
+
+    DocumentsUseCasesImpl.getInstance()
+      .getNumerationByCouncil(values.councilId as number)
+      .then((result) => {
+        setNumbers(result)
+        methods.setValue('number', result.nextAvailableNumber)
+      })
+  }, [values.councilId])
+
+  useEffect(() => {
+    if (!values.templateId) {
+      return
+    }
+
+    isTemplateSelected.onTrue()
+  }, [values.templateId])
 
   useEffect(() => {
     if (!moduleId) {
@@ -198,7 +161,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
           setFunctionaries(result.data.functionaries)
         }
       })
-  }, [pathname])
+  }, [])
 
   return {
     councils,

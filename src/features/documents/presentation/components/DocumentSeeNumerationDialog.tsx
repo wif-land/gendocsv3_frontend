@@ -8,7 +8,6 @@ import Dialog, { DialogProps } from '@mui/material/Dialog'
 
 import { Box } from '@mui/material'
 import { NumerationModel } from '../../data/models/NumerationModel'
-import { useDocumentsForm } from '../hooks/useDocumentsForm'
 
 interface Props extends DialogProps {
   onCreate?: VoidFunction
@@ -16,21 +15,18 @@ interface Props extends DialogProps {
   open: boolean
   onClose: VoidFunction
   numeration?: NumerationModel
+  setNumeration: (number: number) => void
 }
 
 export const DocumentSeeNumerationDialog = ({
   open,
   onClose,
   numeration,
+  setNumeration,
   ...other
 }: Props) => {
-  const { methods } = useDocumentsForm()
   const handleUpload = async () => {
     onClose()
-  }
-
-  const handleChangeNumber = (number: number) => {
-    methods.setValue('number', number)
   }
 
   return (
@@ -50,7 +46,7 @@ export const DocumentSeeNumerationDialog = ({
           }}
         >
           {numeration?.enqueuedNumbers?.map((number, index) => (
-            <Box key={index} onClick={() => handleChangeNumber(number)}>
+            <Box key={index} onClick={() => setNumeration(number)}>
               {number}
             </Box>
           ))}
@@ -66,7 +62,7 @@ export const DocumentSeeNumerationDialog = ({
           }}
         >
           {numeration?.reservedNumbers?.map((number, index) => (
-            <Box key={index} onClick={() => handleChangeNumber(number)}>
+            <Box key={index} onClick={() => setNumeration(number)}>
               {number}
             </Box>
           ))}

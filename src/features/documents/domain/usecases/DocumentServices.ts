@@ -57,8 +57,8 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
   private modelRepository: DocumentsRepository =
     DocumentsRepositoryImpl.getInstance()
 
-  create = async (process: IDocument) =>
-    await this.modelRepository.create(process)
+  create = async (document: IDocument) =>
+    await this.modelRepository.create(document)
 
   getAll = async () => await this.modelRepository.getAll()
 
