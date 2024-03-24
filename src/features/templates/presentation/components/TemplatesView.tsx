@@ -59,7 +59,7 @@ const COLUMNS = [
   },
 ]
 
-const ProcessesView = ({ processId }: { processId: string }) => {
+const TemplatesView = ({ processId }: { processId: string }) => {
   const [isFetching, setIsFetching] = useState(false)
   const { processes } = useProcessStore()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -222,4 +222,4 @@ const ProcessesView = ({ processId }: { processId: string }) => {
   )
 }
 
-export default ProcessesView
+export default TemplatesView

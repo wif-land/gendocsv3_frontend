@@ -102,7 +102,7 @@ export const useProcessesMethods = () => {
   return {
     loader,
     processes,
-    setUsers: setProcesses,
+    setProcesses,
     fetchData,
     updateRow,
     fetchDataByField,

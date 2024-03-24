@@ -3,12 +3,12 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ITemplate } from '../../domain/entities/ITemplate'
-import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 import { DefaultResponse } from '../../../documents/domain/repositories/DocumentsRepository'
 
 export interface TemplatesDataSource {
   update(template: Partial<ITemplate>): Promise<{
     status: number
+    template: TemplateModel
   }>
 
   create(template: ITemplate): Promise<{
@@ -16,9 +16,11 @@ export interface TemplatesDataSource {
     template: TemplateModel
   }>
 
-  getByProcessId(
+  getByProcessId(processId: number): Promise<DefaultResponse<TemplateModel[]>>
+
+  getByProcessAndField(
     processId: number,
-    params: PaginationParams,
+    field: string,
   ): Promise<DefaultResponse<TemplateModel[]>>
 }
 
@@ -33,17 +35,30 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
     return TemplatesDataSourceImpl.instance
   }
 
-  async getByProcessId(processId: number, params: PaginationParams) {
+  async getByProcessId(processId: number) {
     const result = await AxiosClient.get<{
       count: number
       templates: TemplateModel[]
-    }>(API_ROUTES.TEMPLATES.GET_BY_PROCESS_ID(processId), {
-      params,
-    })
+    }>(API_ROUTES.TEMPLATES.GET_BY_PROCESS_ID(processId))
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+    if (status !== HTTP_STATUS_CODES.OK) {
+      return { status, data: { count: 0, templates: [] } }
+    }
+
+    return { status, data: data.content }
+  }
+
+  async getByProcessAndField(processId: number, field: string) {
+    const result = await AxiosClient.get<{
+      count: number
+      templates: TemplateModel[]
+    }>(API_ROUTES.TEMPLATES.GET_BY_PROCESS_AND_FIELD(processId, field))
+
+    const { status, data } = result
+
+    if (status !== HTTP_STATUS_CODES.OK) {
       return { status, data: { count: 0, templates: [] } }
     }
 
@@ -55,7 +70,7 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+    if (status !== HTTP_STATUS_CODES.OK) {
       return { status, template: {} as TemplateModel }
     }
 
@@ -72,10 +87,10 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
+    if (status === HTTP_STATUS_CODES.OK) {
+      return { status, template: data.content as TemplateModel }
     }
 
-    return { status, template: data.content as TemplateModel }
+    return { status, template: {} as TemplateModel }
   }
 }

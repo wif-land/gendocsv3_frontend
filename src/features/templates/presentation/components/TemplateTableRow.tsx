@@ -14,11 +14,10 @@ import Label from '../../../../shared/sdk/label'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
-
-import { ProcessModel } from '../../data/models/ProcessesModel'
+import { TemplateModel } from '../../data/models/TemplatesModel'
 
 type Props = {
-  row: ProcessModel
+  row: TemplateModel
   selected: boolean
   onEditRow: VoidFunction
   onViewRow: VoidFunction
@@ -26,7 +25,7 @@ type Props = {
   onDeleteRow: VoidFunction
 }
 
-export const ProcessTableRow = ({
+export const TemplateTableRow = ({
   row,
   selected,
   onSelectRow,
@@ -97,16 +96,6 @@ export const ProcessTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:documents-linear" />
-          Plantillas
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
@@ -139,11 +128,11 @@ export const ProcessTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isActive ? 'Desactivar proceso' : 'Activar proceso'}
+        title={row.isActive ? 'Desactivar plantilla' : 'Activar plantilla'}
         content={
           row.isActive
-            ? '¿Está seguro de desactivar este proceso?'
-            : '¿Está seguro de activar este proceso?'
+            ? '¿Está seguro de desactivar esta plantilla?'
+            : '¿Está seguro de activar esta plantilla?'
         }
         action={
           <Button
