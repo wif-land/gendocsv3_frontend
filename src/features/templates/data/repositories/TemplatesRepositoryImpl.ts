@@ -1,3 +1,4 @@
+import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ITemplate } from '../../domain/entities/ITemplate'
 import { TemplatesRepository } from '../../domain/repositories/TemplatesRepository'
@@ -21,6 +22,9 @@ export class TemplatesRepositoryImpl implements TemplatesRepository {
   }
 
   private constructor(private readonly datasource: TemplatesDataSource) {}
+
+  getByProcessId = (processId: number, params: PaginationParams) =>
+    this.datasource.getByProcessId(processId, params)
 
   update = async (data: Partial<TemplateModel>) =>
     await this.datasource.update(data)

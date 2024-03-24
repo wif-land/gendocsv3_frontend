@@ -19,8 +19,9 @@ import { NumerationModel } from '../../data/models/NumerationModel'
 import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
 import { IModule } from '../../../modules/types/IModule'
 import useModulesStore from '../../../../shared/store/modulesStore'
-import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 import { ProcessesUseCasesImpl } from '../../../processes/domain/usecases/ProcessServices'
+import { TemplatesUseCasesImpl } from '../../../templates/domain/usecases/TemplateServices'
+import { TemplateModel } from '../../../templates/data/models/TemplatesModel'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { documents, setDocuments } = useDocumentStore()
@@ -41,9 +42,11 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const isTemplateSelected = useBoolean(false)
 
   const { councils, setCouncils } = useCouncilStore()
-  const [numbers, setNumbers] = useState<NumerationModel>()
   const { processes, setProcesses } = useProcessStore()
-  const [selectedProcessId, setSelectedProcessId] = useState<ProcessModel>()
+
+  const [selectedProcessId, setSelectedProcessId] = useState(0)
+  const [numbers, setNumbers] = useState<NumerationModel>()
+  const [templates, setTemplates] = useState<TemplateModel[]>([])
 
   const [moduleId, setModuleId] = useState<number>(
     resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
@@ -64,6 +67,20 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   if (values.councilId && !isCouncilSelected.value) {
     isCouncilSelected.onTrue()
   }
+
+  useEffect(() => {
+    if (selectedProcessId) {
+      isProcessSelected.onTrue()
+
+      TemplatesUseCasesImpl.getInstance()
+        .getTemplatesByProcessId(selectedProcessId)
+        .then((result) => {
+          if (result.templates) {
+            setTemplates(result.templates)
+          }
+        })
+    }
+  }, [selectedProcessId])
 
   // const formik = useFormik<IDocument>({
   //   enableReinitialize: true,
@@ -215,10 +232,10 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       })
 
     ProcessesUseCasesImpl.getInstance()
-      .getAllProcessesByModuleId(moduleId)
+      .getAllProcessesByModuleId(moduleId, 10, 0)
       .then((result) => {
-        if (result.processes) {
-          setProcesses(result.processes)
+        if (result.data.processes) {
+          setProcesses(result.data.processes)
         }
       })
   }, [pathname])
@@ -230,6 +247,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     methods,
     isProcessSelected,
     isTemplateSelected,
+    templates,
     onSubmit,
     setProcesses,
     setSelectedProcessId,

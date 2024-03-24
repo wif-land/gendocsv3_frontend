@@ -13,10 +13,9 @@ import {
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Box, MenuItem, Select } from '@mui/material'
+import { Box, MenuItem } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
-import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -31,15 +30,12 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     isProcessSelected,
     isTemplateSelected,
     processes,
+    templates,
     onSubmit,
     setSelectedProcessId,
   } = useDocumentsForm(currentDocument)
 
-  const { handleSubmit, watch } = methods
-
-  const values = watch()
-
-  console.log({ values })
+  const { handleSubmit } = methods
 
   const renderDetails = (
     <>
@@ -84,9 +80,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   className="w-full"
                   placeholder="Proceso"
                   onChange={(e) => {
-                    console.log(e.target.value)
-
-                    setSelectedProcessId(e.target.value as ProcessModel)
+                    setSelectedProcessId(Number(e.target.value))
                     isProcessSelected.onTrue()
                   }}
                 >
@@ -105,15 +99,22 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
 
             {isProcessSelected.value && (
               <>
-                <Select
+                <RHFSelect
                   name="template"
                   label="Plantilla"
                   className="w-full"
                   placeholder="Plantilla"
                 >
-                  <MenuItem value={1}>Plantilla 1</MenuItem>
-                  <MenuItem value={2}>Plantilla 2</MenuItem>
-                </Select>
+                  {templates! &&
+                    templates.map((template) => (
+                      <MenuItem
+                        key={template.id as number}
+                        value={template.id as number}
+                      >
+                        {template.name}
+                      </MenuItem>
+                    ))}
+                </RHFSelect>
               </>
             )}
 

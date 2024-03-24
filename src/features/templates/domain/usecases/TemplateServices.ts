@@ -1,3 +1,4 @@
+import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { TemplatesRepositoryImpl } from '../../data/repositories/TemplatesRepositoryImpl'
 import { ITemplate } from '../entities/ITemplate'
@@ -15,6 +16,11 @@ interface TemplateUseCases {
   ): Promise<{
     status: number
   }>
+
+  getTemplatesByProcessId(processId: number): Promise<{
+    count: number
+    templates: TemplateModel[]
+  }>
 }
 
 export class TemplatesUseCasesImpl implements TemplateUseCases {
@@ -30,6 +36,20 @@ export class TemplatesUseCasesImpl implements TemplateUseCases {
 
   private templateRepository: TemplatesRepository =
     TemplatesRepositoryImpl.getInstance()
+
+  async getTemplatesByProcessId(
+    processId: number,
+  ): Promise<{ count: number; templates: TemplateModel[] }> {
+    const result = await this.templateRepository.getByProcessId(
+      processId,
+      new PaginationParams(),
+    )
+
+    return {
+      count: result.data.count,
+      templates: result.data.templates as TemplateModel[],
+    }
+  }
 
   create = async (template: ITemplate) =>
     await this.templateRepository.create(template)
