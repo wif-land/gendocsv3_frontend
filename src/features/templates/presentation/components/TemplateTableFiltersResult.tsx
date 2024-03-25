@@ -8,7 +8,7 @@ type Props = StackProps & {
   results: number
 }
 
-export const ProcessTableFiltersResult = ({
+export const TemplatesTableFiltersResult = ({
   onResetFilters,
   results,
   ...other

@@ -36,7 +36,10 @@ export class TemplatesRepositoryImpl implements TemplatesRepository {
       const result = await this.datasource.create(templateData)
       const { status } = result
 
-      if (status === HTTP_STATUS_CODES.OK) {
+      if (
+        status === HTTP_STATUS_CODES.OK ||
+        status === HTTP_STATUS_CODES.CREATED
+      ) {
         return { status, template: result.template }
       }
 

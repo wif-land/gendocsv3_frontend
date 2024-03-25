@@ -1,78 +1,83 @@
 import * as yup from 'yup'
-import { toast } from 'react-toastify'
-import { useFormik } from 'formik'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
 import { ITemplate } from '../../domain/entities/ITemplate'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { enqueueSnackbar } from 'notistack'
+import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
-export const useTemplatesForm = (
-  initialValues: ITemplate,
-  onClose: () => void,
-) => {
+interface FormValuesProps extends ITemplate {}
+
+export const useTemplatesForm = (currentTemplate?: ITemplate) => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const { id } = useParams()
+  const { user } = useAccountStore()
+  const { processes } = useProcessStore()
+
   const { addTemplateToProcess, updateTemplate } = useProcessStore()
 
-  const validationSchema = yup.object({
+  const process = processes.find((process) => process.id === +id)
+
+  const validationSchema = yup.object().shape({
     name: yup.string().required('El nombre es requerido'),
   })
 
-  const formik = useFormik<ITemplate>({
-    enableReinitialize: true,
-    initialValues: {
-      name: initialValues.name || '',
-      isActive: initialValues.isActive || false,
-      hasStudent: initialValues.hasStudent || false,
-      hasFunctionary: initialValues.hasFunctionary || false,
-      processId: initialValues.processId || 0,
-      userId: initialValues.userId || 0,
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      if (!initialValues.id) {
-        await handleCreateTemplate(values)
-        onClose()
-        return
-      }
+  const defaultValues = useMemo(
+    () =>
+      ({
+        name: currentTemplate?.name || '',
+        isActive: currentTemplate?.isActive || true,
+        hasStudent: currentTemplate?.hasStudent || false,
+        hasFunctionary: currentTemplate?.hasFunctionary || false,
+        processId: currentTemplate?.processId || process?.id,
+        userId: currentTemplate?.userId || (user?.id as number),
+      }) as ITemplate,
+    [currentTemplate],
+  )
 
-      const editedFields: { [key: string]: unknown } = {}
-
-      Object.keys(initialValues).forEach((key) => {
-        if (
-          initialValues[key as keyof ITemplate] !==
-          values[key as keyof ITemplate]
-        ) {
-          editedFields[key] = values[key as keyof ITemplate]
-        }
-      })
-
-      if (Object.keys(editedFields).length === 0) {
-        onClose()
-        return
-      }
-      await handleUpdateTemplate(initialValues, editedFields)
-      onClose()
-    },
+  const methods = useForm<FormValuesProps>({
+    // @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'DeepPartial<FormValuesProps> | undefined'.
+    resolver: yupResolver(validationSchema),
+    defaultValues,
   })
 
-  const handleCreateTemplate = async (values: ITemplate) => {
+  const {
+    reset,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods
+
+  const handleCreate = useCallback(async (values: ITemplate) => {
     try {
       const result = await TemplatesUseCasesImpl.getInstance().create(values)
 
-      if (result.template) {
+      if (
+        result.status === HTTP_STATUS_CODES.OK ||
+        result.status === HTTP_STATUS_CODES.CREATED
+      ) {
+        console.log('result', result)
         addTemplateToProcess(result.template, values.processId as number)
-        toast.success('Plantilla creado exitosamente')
-        formik.resetForm()
+        enqueueSnackbar('Plantilla creada exitosamente')
+        reset()
       } else {
-        toast.error('Error al crear el plantilla', {
-          closeButton: false,
+        enqueueSnackbar('Error al crear el plantilla', {
+          variant: 'error',
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al crear el plantilla')
+      enqueueSnackbar('Ocurrió un error al crear el plantilla', {
+        variant: 'error',
+      })
     }
-  }
+  }, [])
 
-  const handleUpdateTemplate = async (
+  const handleUpdate = async (
     initialValues: ITemplate,
     editedFields: Partial<ITemplate>,
   ) => {
@@ -88,17 +93,58 @@ export const useTemplatesForm = (
           initialValues.id as number,
           editedFields,
         )
-        toast.success('Planitlla actualizado exitosamente')
-        formik.resetForm()
+        enqueueSnackbar('Planitlla actualizado exitosamente')
+        reset()
       } else {
-        toast.error('Error al actualizar el plantilla', {
-          closeButton: false,
+        enqueueSnackbar('Error al actualizar el plantilla', {
+          variant: 'error',
         })
       }
     } catch (error) {
-      toast.error('Ocurrió un error al actualizar el plantilla')
+      enqueueSnackbar('Ocurrió un error al actualizar el plantilla')
     }
   }
 
-  return { formik }
+  const onSubmit = useCallback(
+    async (data: FormValuesProps) => {
+      try {
+        if (!currentTemplate?.id) {
+          await handleCreate({ ...data })
+        } else {
+          const editedFields = getEditedFields<FormValuesProps>(
+            defaultValues,
+            data,
+          )
+
+          if (editedFields) {
+            await handleUpdate(currentTemplate, editedFields)
+          }
+        }
+
+        if (currentTemplate) {
+          router.push(
+            pathname.replace(
+              new RegExp(`template/${currentTemplate.id}/edit`),
+              '',
+            ),
+          )
+        }
+
+        reset()
+      } catch (error) {
+        enqueueSnackbar('Ocurrió un error al actualizar el plantilla', {
+          variant: 'error',
+        })
+      }
+    },
+    [currentTemplate, enqueueSnackbar, reset, router],
+  )
+
+  useEffect(() => {
+    if (currentTemplate?.id) {
+      reset()
+    }
+  }, [reset, currentTemplate, defaultValues])
+
+  return { isSubmitting, methods, onSubmit, handleSubmit }
 }

@@ -35,57 +35,72 @@ import { RouterLink } from '../../../../core/routes/components'
 import { TemplateTableToolbar } from '../components/TemplateTableTooldar'
 import { TABLE_HEAD } from '../constants'
 import { TemplateTableRow } from '../components/TemplateTableRow'
+import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
+import { TemplatesTableFiltersResult } from '../components/TemplateTableFiltersResult'
 
-const TemplateListView = ({ processId }: { processId: number }) => {
+const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
   const settings = useSettingsContext()
   const confirm = useBoolean()
+  const [isDataFiltered, setIsDataFiltered] = useState(false)
+  const pathNameWithoutId = pathname.split('/').slice(0, -1).join('/')
 
   const [searchTerm, setSearchTerm] = useState('')
 
   const handleEditRow = useCallback(
     (id: string) => {
-      router.push(`${pathname}/${id}/edit`)
+      router.push(`${pathname}/template/${id}/edit`)
     },
     [router],
   )
 
   const handleViewRow = useCallback(
     (id: string) => {
-      router.push(`${pathname}/${id}`)
+      router.push(`${pathname}/template/${id}`)
     },
     [router],
   )
 
-  const { loader, tableData, count, setTableData, handleUpdateRow } =
-    useTemplateView({
-      table,
-      field: searchTerm,
-      processId,
-    })
+
+  const handleResetFilters = () => {
+    setSearchTerm('')
+    setIsDataFiltered(false)
+    setTemplates([])
+  }
+
+  const {
+    loader,
+    templates,
+    count,
+    setTemplates,
+    handleSearch,
+    handleUpdateRow,
+  } = useTemplateView({
+    processId: process.id!,
+    isDataFiltered,
+  })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
-  const notFound = !!(
+  const notFound =
     (!loader.length && count === 0) ||
-    (loader.length && tableData.length === 0)
-  )
+    (!loader.length && count === 0 && isDataFiltered)
 
   return (
-    <div key={processId}>
+    <div key={process!.id}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Plantillas"
           links={[
-            { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Plantillas' },
+            { name: 'Procesos', href: pathNameWithoutId },
+            { name: process!.name },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={`${pathname}/new`}
+              href={`${pathname}/template/new`}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -97,11 +112,20 @@ const TemplateListView = ({ processId }: { processId: number }) => {
 
         <Card>
           <TemplateTableToolbar
+            searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            filters={{ name: searchTerm }}
-            table={table}
-            setDataTable={setTableData}
+            setDataTable={setTemplates}
+            setIsDataFiltered={setIsDataFiltered}
+            getFilteredTemplates={handleSearch}
           />
+
+          {isDataFiltered && (
+            <TemplatesTableFiltersResult
+              onResetFilters={handleResetFilters}
+              results={count}
+              sx={{ p: 2.5, pt: 0 }}
+            />
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -111,7 +135,7 @@ const TemplateListView = ({ processId }: { processId: number }) => {
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.id!.toString()),
+                  templates.map((row) => row.id!.toString()),
                 )
               }
               action={
@@ -136,7 +160,7 @@ const TemplateListView = ({ processId }: { processId: number }) => {
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id!.toString()),
+                      templates.map((row) => row.id!.toString()),
                     )
                   }
                 />
@@ -148,26 +172,19 @@ const TemplateListView = ({ processId }: { processId: number }) => {
                     ))
                   ) : (
                     <>
-                      {tableData
-                        .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage,
-                        )
-                        .map((row) => (
-                          <TemplateTableRow
-                            key={row.id}
-                            row={row}
-                            selected={table.selected.includes(
-                              row.id!.toString(),
-                            )}
-                            onSelectRow={() =>
-                              table.onSelectRow(row.id!.toString())
-                            }
-                            onDeleteRow={() => handleUpdateRow(row)}
-                            onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
-                          />
-                        ))}
+                      {templates.map((row) => (
+                        <TemplateTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id!.toString())}
+                          onSelectRow={() =>
+                            table.onSelectRow(row.id!.toString())
+                          }
+                          onDeleteRow={() => handleUpdateRow(row)}
+                          onEditRow={() => handleEditRow(row.id!.toString())}
+                          onViewRow={() => handleViewRow(row.id!.toString())}
+                        />
+                      ))}
                     </>
                   )}
 
@@ -187,7 +204,7 @@ const TemplateListView = ({ processId }: { processId: number }) => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Cambiar estado de procesos"
+        title="Cambiar estado de la plantilla"
         content={
           <>
             Estás seguro de que quieres cambiar el estado de

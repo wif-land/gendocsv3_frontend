@@ -15,6 +15,8 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { TemplateModel } from '../../data/models/TemplatesModel'
+import { useUsersStore } from '../../../users/presentation/state/usersStore'
+import { fUserNamesShort } from '../../../../shared/utils/format-names'
 
 type Props = {
   row: TemplateModel
@@ -35,6 +37,9 @@ export const TemplateTableRow = ({
 }: Props) => {
   const confirm = useBoolean()
   const popover = usePopover()
+  const { users } = useUsersStore()
+
+  const user = users.find((user) => user.id === row.userId)
 
   const { name, isActive, createdAt } = row
 
@@ -71,6 +76,15 @@ export const TemplateTableRow = ({
         </TableCell>
 
         <TableCell>
+          <Box
+            component="div"
+            sx={{ typography: 'body2', color: 'text.disabled' }}
+          >
+            {user ? fUserNamesShort(user) : 'Sin usuario'}
+          </Box>
+        </TableCell>
+
+        <TableCell>
           <Label
             variant="soft"
             color={(isActive === true && 'success') || 'primary'}
@@ -94,6 +108,16 @@ export const TemplateTableRow = ({
         arrow="right-top"
         sx={{ width: 140 }}
       >
+        <MenuItem
+          onClick={() => {
+            onViewRow()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="solar:document-linear" />
+          Ver documento
+        </MenuItem>
+
         <MenuItem
           onClick={() => {
             onEditRow()
