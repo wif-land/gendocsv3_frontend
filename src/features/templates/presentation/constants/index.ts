@@ -5,6 +5,7 @@ import { ITemplateTableFilters } from '../components/TemplateTableTooldar'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Template' },
+  { id: 'userId', label: 'Creado Por', width: 140 },
   { id: 'isActive', label: 'Estado', width: 140 },
   { id: 'actions', label: 'Acciones', width: 110 },
 ]

@@ -11,9 +11,8 @@ import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { TemplateNewEditForm } from '../components/TemplateCreateEditForm'
 import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
 
-const TemplateEditView = () => {
+const TemplateFileView = () => {
   const settings = useSettingsContext()
-  const pathname = usePathname()
   const params = useParams()
 
   const { id, templateId } = params
@@ -24,30 +23,15 @@ const TemplateEditView = () => {
 
   const templates = currentProcess?.templateProcesses
 
-  console.log('templates', templates)
   const currentTemplate = templates?.find(
     (template) => template.id === +templateId,
   )
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
-        heading={`Edita la plantilla ${currentTemplate?.name}`}
-        links={[
-          {
-            name: 'Plantillas',
-            href: pathname.replace(`template/${templateId}/edit`, ''),
-          },
-          { name: 'Editar plantilla' },
-        ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      />
-
-      <TemplateNewEditForm currentTemplate={currentTemplate} />
+      <frame src="https://www.youtube.com/embed/1y_kfWUCFDQ" />
     </Container>
   )
 }
 
-export default memo(TemplateEditView)
+export default memo(TemplateFileView)

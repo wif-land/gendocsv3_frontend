@@ -51,14 +51,14 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
 
   const handleEditRow = useCallback(
     (id: string) => {
-      router.push(`${pathname}/${id}/edit`)
+      router.push(`${pathname}/template/${id}/edit`)
     },
     [router],
   )
 
   const handleViewRow = useCallback(
     (id: string) => {
-      router.push(`${pathname}/${id}`)
+      router.push(`${pathname}/template/${id}`)
     },
     [router],
   )
@@ -99,7 +99,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
           action={
             <Button
               component={RouterLink}
-              href={`${pathname}/new`}
+              href={`${pathname}/template/new`}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -171,26 +171,19 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
                     ))
                   ) : (
                     <>
-                      {templates
-                        .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage,
-                        )
-                        .map((row) => (
-                          <TemplateTableRow
-                            key={row.id}
-                            row={row}
-                            selected={table.selected.includes(
-                              row.id!.toString(),
-                            )}
-                            onSelectRow={() =>
-                              table.onSelectRow(row.id!.toString())
-                            }
-                            onDeleteRow={() => handleUpdateRow(row)}
-                            onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
-                          />
-                        ))}
+                      {templates.map((row) => (
+                        <TemplateTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id!.toString())}
+                          onSelectRow={() =>
+                            table.onSelectRow(row.id!.toString())
+                          }
+                          onDeleteRow={() => handleUpdateRow(row)}
+                          onEditRow={() => handleEditRow(row.id!.toString())}
+                          onViewRow={() => handleViewRow(row.id!.toString())}
+                        />
+                      ))}
                     </>
                   )}
 

@@ -67,13 +67,14 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
 
   create = async (template: TemplateModel) => {
     const result = await AxiosClient.post(API_ROUTES.TEMPLATES.CREATE, template)
-
     const { status, data } = result
 
-    if (status !== HTTP_STATUS_CODES.OK) {
+    if (
+      status !== HTTP_STATUS_CODES.OK &&
+      status !== HTTP_STATUS_CODES.CREATED
+    ) {
       return { status, template: {} as TemplateModel }
     }
-
     return { status, template: data.content as TemplateModel }
   }
 
@@ -87,7 +88,10 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
 
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.OK) {
+    if (
+      status === HTTP_STATUS_CODES.OK ||
+      status === HTTP_STATUS_CODES.CREATED
+    ) {
       return { status, template: data.content as TemplateModel }
     }
 
