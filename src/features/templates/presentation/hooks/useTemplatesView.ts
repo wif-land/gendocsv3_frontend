@@ -2,20 +2,17 @@ import { useEffect, useState } from 'react'
 
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 
-import { TableProps } from '../../../../shared/sdk/table/types'
 import { useTemplatesMethods } from './useTemplatesMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { ITemplate } from '../../domain/entities/ITemplate'
 
 interface Props {
-  table: TableProps
-  field: string
   processId: number
+  isDataFiltered: boolean
 }
 
-export const useTemplateView = ({ table, processId }: Props) => {
-  const [tableData, setTableData] = useState<TemplateModel[]>([])
+export const useTemplateView = ({ processId, isDataFiltered }: Props) => {
   const [count, setCount] = useState(0)
   const [templates, setTemplates] = useState<TemplateModel[]>([])
   const { loader } = useLoaderStore()
@@ -23,13 +20,12 @@ export const useTemplateView = ({ table, processId }: Props) => {
 
   useEffect(() => {
     let isMounted = true
-    if (tableData.length !== 0) return
+    if (templates.length !== 0) return
 
-    if (isMounted) {
+    if (isMounted && !isDataFiltered) {
       fetchData(processId).then((data) => {
         if (data.count === 0) return
         setTemplates(data.templates)
-        setTableData(data.templates)
         setCount(data.count)
       })
     }
@@ -37,7 +33,7 @@ export const useTemplateView = ({ table, processId }: Props) => {
     return () => {
       isMounted = false
     }
-  }, [tableData])
+  }, [templates])
 
   const handleUpdateRow = (row: ITemplate) => {
     updateRow(row).then((data) => {
@@ -46,23 +42,22 @@ export const useTemplateView = ({ table, processId }: Props) => {
           template.id === data.template.id ? data.template : template,
         )
         setTemplates(updatedTemplates)
-        setTableData(updatedTemplates)
       }
     })
   }
 
   const handleSearch = (field: string) => {
-    fetchDataByField(field, table.page).then((response) => {
+    fetchDataByField(field, processId).then((response) => {
+      console.log(response)
+
       if (response?.status === HTTP_STATUS_CODES.OK) {
         setTemplates(response.data.templates as TemplateModel[])
-        setTableData(response.data.templates as TemplateModel[])
         setCount(response.data.count)
         return
       }
 
       if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
         setTemplates([])
-        setTableData([])
         setCount(0)
         return
       }
@@ -71,10 +66,9 @@ export const useTemplateView = ({ table, processId }: Props) => {
 
   return {
     count,
-    tableData,
     loader,
     templates,
-    setTableData,
+    setTemplates,
     handleUpdateRow,
     // handleUpdateRows,
     handleSearch,

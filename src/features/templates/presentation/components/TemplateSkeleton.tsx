@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton'
 import Paper, { PaperProps } from '@mui/material/Paper'
 import Grid, { Grid2Props } from '@mui/material/Unstable_Grid2'
 
-export const ProcessItemSkeleton = ({ sx, ...other }: PaperProps) => (
+export const TemplateItemSkeleton = ({ sx, ...other }: PaperProps) => (
   <Paper
     variant="outlined"
     sx={{
@@ -30,7 +30,7 @@ export const ProcessItemSkeleton = ({ sx, ...other }: PaperProps) => (
   </Paper>
 )
 
-export const ProcessDetailsSkeleton = ({ ...other }: Grid2Props) => (
+export const TemplateDetailsSkeleton = ({ ...other }: Grid2Props) => (
   <Grid container spacing={8} {...other}>
     <Grid xs={12} md={6} lg={7}>
       <Skeleton sx={{ paddingTop: '100%' }} />

@@ -8,7 +8,6 @@ import Iconify from '../../../../core/iconify'
 
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TemplateModel } from '../../data/models/TemplatesModel'
-import { TableProps } from '../../../../shared/sdk/table/types'
 
 export type ITemplateTableFilterValue = string | string[]
 
@@ -17,23 +16,26 @@ export type ITemplateTableFilters = {
 }
 
 type Props = {
+  searchTerm: string
   setSearchTerm: (value: string) => void
-  filters: ITemplateTableFilters
-  table: TableProps
   setDataTable: (value: TemplateModel[]) => void
+  getFilteredTemplates: (field: string) => void
+  setIsDataFiltered: (value: boolean) => void
 }
 
 export const TemplateTableToolbar = ({
+  searchTerm,
   setSearchTerm,
-  filters = { name: '' },
-  table,
   setDataTable,
+  setIsDataFiltered,
+  getFilteredTemplates,
 }: Props) => {
-  const [inputValue, setInputValue] = useState('' as string)
+  const [inputValue, setInputValue] = useState(searchTerm)
   const debouncedValue = useDebounce(inputValue)
 
   const resetValues = () => {
     setDataTable([])
+    setIsDataFiltered(false)
   }
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,14 +43,35 @@ export const TemplateTableToolbar = ({
   }
 
   useEffect(() => {
-    table.setPage(0)
+    let isMounted = true
 
-    if (inputValue) {
+    if (!isMounted) return
+
+    if (inputValue && inputValue !== '') {
+      setIsDataFiltered(true)
       setSearchTerm(inputValue)
+      getFilteredTemplates(debouncedValue)
     } else {
       resetValues()
     }
+    return () => {
+      isMounted = false
+    }
   }, [debouncedValue])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
+    if (searchTerm === '') {
+      setInputValue('')
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [searchTerm])
 
   return (
     <>
@@ -73,9 +96,9 @@ export const TemplateTableToolbar = ({
         >
           <TextField
             fullWidth
-            value={filters.name}
+            value={inputValue}
             onChange={handleFilterName}
-            placeholder="Busca por nombre de proceso"
+            placeholder="Busca por nombre de plantilla"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
