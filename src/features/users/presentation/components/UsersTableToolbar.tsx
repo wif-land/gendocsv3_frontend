@@ -10,6 +10,8 @@ import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
 import { IUser } from '../../domain/entities/IUser'
+import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
+import { SelectChangeEvent } from '@mui/material'
 
 export type IUsersTableFilterValue = string | string[]
 
@@ -17,6 +19,7 @@ export type IUsersTableFilters = {
   name: string
   personalEmail: string
   outlookEmail: string
+  state: string[]
 }
 
 type Props = {
@@ -43,6 +46,7 @@ export const FunctionaryTableToolbar = ({
   const popover = usePopover()
   const [inputValue, setInputValue] = useState('' as string)
   const debouncedValue = useDebounce(inputValue)
+  const [userState, setUserState] = useState<string[]>([])
 
   const resetValues = () => {
     setVisitedPages([])
@@ -68,6 +72,28 @@ export const FunctionaryTableToolbar = ({
     }
   }, [debouncedValue])
 
+  const handleChange = (event: SelectChangeEvent<typeof userState>) => {
+    const {
+      target: { value },
+    } = event
+    setIsDataFiltered(true)
+
+    if (value.length === 0) {
+      resetValues()
+      onFilters('state', [])
+      return
+    }
+
+    console.log(handleState(value as string[]))
+    console.log(debouncedValue)
+
+    setUserState(typeof value === 'string' ? value.split(',') : value)
+    onFilters('state', value)
+  }
+
+  const handleState = (values: string[]) =>
+    values.map((value) => value === 'Activo')
+
   return (
     <>
       <Stack
@@ -89,6 +115,8 @@ export const FunctionaryTableToolbar = ({
           flexGrow={1}
           sx={{ width: 1 }}
         >
+          <StatusFilter filters={filters} onChange={handleChange} />
+
           <TextField
             fullWidth
             value={filters.name}

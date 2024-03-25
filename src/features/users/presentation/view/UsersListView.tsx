@@ -42,6 +42,7 @@ const defaultFilters: IUsersTableFilters = {
   name: '',
   personalEmail: '',
   outlookEmail: '',
+  state: [],
 }
 
 const UsersListView = () => {

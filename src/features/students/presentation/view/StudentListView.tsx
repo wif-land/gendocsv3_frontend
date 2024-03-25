@@ -46,6 +46,7 @@ const defaultFilters: IStudentTableFilters = {
   name: '',
   personalEmail: '',
   outlookEmail: '',
+  state: [],
 }
 
 const StudentListView = () => {

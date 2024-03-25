@@ -43,6 +43,7 @@ const defaultFilters: IFunctionaryTableFilters = {
   name: '',
   personalEmail: '',
   outlookEmail: '',
+  state: [],
 }
 
 const FunctionaryListView = () => {

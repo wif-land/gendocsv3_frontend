@@ -11,12 +11,16 @@ import { TableProps } from '../../../../shared/sdk/table'
 import { StudentModel } from '../../data/models/StudentModel'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 
+import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
+import { SelectChangeEvent } from '@mui/material'
+
 export type IStudentTableFilterValue = string | string[]
 
 export type IStudentTableFilters = {
   name: string
   personalEmail: string
   outlookEmail: string
+  state: string[]
 }
 
 type Props = {
@@ -43,6 +47,7 @@ export const StudentTableToolbar = ({
   const popover = usePopover()
   const [inputValue, setInputValue] = useState('' as string)
   const debouncedValue = useDebounce(inputValue)
+  const [userState, setUserState] = useState<string[]>([])
 
   const resetValues = () => {
     setVisitedPages([])
@@ -62,14 +67,36 @@ export const StudentTableToolbar = ({
     table.setPage(0)
     setVisitedPages([])
 
-    if (inputValue) {
+    if (inputValue || userState.length > 0) {
       setIsDataFiltered(true)
       setSearchTerm(inputValue)
       getFilteredFunctionaries(debouncedValue)
     } else {
       resetValues()
     }
-  }, [debouncedValue])
+  }, [debouncedValue, userState])
+
+  const handleChange = (event: SelectChangeEvent<typeof userState>) => {
+    const {
+      target: { value },
+    } = event
+    setIsDataFiltered(true)
+
+    if (value.length === 0) {
+      resetValues()
+      onFilters('state', [])
+      return
+    }
+
+    console.log(handleState(value as string[]))
+    console.log(debouncedValue)
+
+    setUserState(typeof value === 'string' ? value.split(',') : value)
+    onFilters('state', value)
+  }
+
+  const handleState = (values: string[]) =>
+    values.map((value) => value === 'Activo')
 
   return (
     <>
@@ -85,13 +112,9 @@ export const StudentTableToolbar = ({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={2}
-          flexGrow={1}
-          sx={{ width: 1 }}
-        >
+        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1}>
+          <StatusFilter filters={filters} onChange={handleChange} />
+
           <TextField
             fullWidth
             value={filters.name}

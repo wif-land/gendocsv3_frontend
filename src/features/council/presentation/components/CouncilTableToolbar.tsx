@@ -10,11 +10,26 @@ import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
 import { CouncilModel } from '../../data/models/CouncilModel'
+import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
+import {
+  Divider,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material'
+import { MobileDatePicker } from '@mui/x-date-pickers'
 
-export type ICouncilTableFilterValue = string | string[]
+export type ICouncilTableFilterValue = string | string[] | Date | null | number
 
 export type ICouncilTableFilters = {
   name: string
+  state: string[]
+  startDate: Date | null
+  endDate: Date | null
+  dateType: number | null
+  councilType: number | null
 }
 
 type Props = {
@@ -41,6 +56,11 @@ export const CouncilTableToolbar = ({
   const popover = usePopover()
   const [inputValue, setInputValue] = useState('' as string)
   const debouncedValue = useDebounce(inputValue)
+  const [userState, setUserState] = useState<string[]>([])
+  const [areFiltersActive, setAreFiltersActive] = useState(false)
+  const [isDateTypeSelected, setDateTypeSelected] = useState(false)
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
 
   const resetValues = () => {
     setVisitedPages([])
@@ -66,6 +86,28 @@ export const CouncilTableToolbar = ({
     }
   }, [debouncedValue])
 
+  const handleChange = (event: SelectChangeEvent<typeof userState>) => {
+    const {
+      target: { value },
+    } = event
+    setIsDataFiltered(true)
+
+    if (value.length === 0) {
+      resetValues()
+      onFilters('state', [])
+      return
+    }
+
+    console.log(handleState(value as string[]))
+    console.log(debouncedValue)
+
+    setUserState(typeof value === 'string' ? value.split(',') : value)
+    onFilters('state', value)
+  }
+
+  const handleState = (values: string[]) =>
+    values.map((value) => value === 'Activo')
+
   return (
     <>
       <Stack
@@ -87,6 +129,8 @@ export const CouncilTableToolbar = ({
           flexGrow={1}
           sx={{ width: 1 }}
         >
+          <StatusFilter filters={filters} onChange={handleChange} />
+
           <TextField
             fullWidth
             value={filters.name}
@@ -104,11 +148,123 @@ export const CouncilTableToolbar = ({
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
+          <IconButton
+            onClick={() => setAreFiltersActive(!areFiltersActive)}
+            title="Más filtros"
+          >
+            <Iconify icon="icon-park-outline:filter" />
           </IconButton>
         </Stack>
       </Stack>
+
+      {areFiltersActive && (
+        <Stack
+          spacing={2}
+          alignItems={{ xs: 'flex-end', md: 'center' }}
+          direction={{
+            xs: 'column',
+            md: 'row',
+          }}
+          sx={{
+            p: 2.5,
+            pt: 0,
+            pr: { xs: 2.5, md: 2 },
+            ml: 1.2,
+          }}
+        >
+          <FormControl
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
+            }}
+          >
+            <InputLabel id="council-type-label">Tipo de Consejo</InputLabel>
+            <Select
+              labelId="council-type-label"
+              id="council-simple-select"
+              label="Tipo de Consejo"
+              value={filters.councilType}
+              input={<OutlinedInput label="Tipo de Consejo" />}
+              onChange={(event) => {
+                const {
+                  target: { value },
+                } = event
+                onFilters('councilType', value as unknown as number)
+                setIsDataFiltered(true)
+              }}
+            >
+              <MenuItem value={1}>Ordinario </MenuItem>
+              <MenuItem value={2}>Extraordinario</MenuItem>
+            </Select>
+          </FormControl>
+          <Divider orientation="vertical" flexItem />
+          <FormControl
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
+            }}
+          >
+            <InputLabel id="date-type-label">Tipo de fecha</InputLabel>
+            <Select
+              labelId="date-type-label"
+              id="demo-simple-select"
+              label="Tipo de fecha"
+              value={filters.dateType}
+              input={<OutlinedInput label="Tipo de Fecha" />}
+              onChange={(event) => {
+                setDateTypeSelected(true)
+                const {
+                  target: { value },
+                } = event
+                onFilters('dateType', value as unknown as number)
+              }}
+            >
+              <MenuItem value={1}>Fecha de creación </MenuItem>
+              <MenuItem value={2}>Fecha de Ejecución</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
+            }}
+          >
+            <MobileDatePicker
+              disabled={!filters.dateType}
+              value={filters.startDate}
+              onAccept={(e) => {
+                setStartDate(e)
+                onFilters('startDate', e)
+                if (!filters.endDate) {
+                  setEndDate(e)
+                  onFilters('endDate', e)
+                }
+                setIsDataFiltered(true)
+              }}
+              sx={{ textTransform: 'capitalize' }}
+              label="Fecha de inicio"
+            />
+          </FormControl>
+          <FormControl
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
+            }}
+          >
+            <MobileDatePicker
+              disabled={!filters.dateType || !filters.startDate}
+              value={filters.endDate}
+              minDate={startDate}
+              onAccept={(e) => {
+                setEndDate(e)
+                onFilters('endDate', e as Date)
+              }}
+              sx={{ textTransform: 'capitalize' }}
+              label="Fecha de fin"
+            />
+          </FormControl>
+        </Stack>
+      )}
 
       <CustomPopover
         open={popover.open}
