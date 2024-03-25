@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { toast } from 'react-toastify'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { useDocumentStore } from '../store/documentsStore'
 import { IDocument } from '../../domain/entities/IDocument'
 import { DocumentsUseCasesImpl } from '../../domain/usecases/DocumentServices'
 import { DocumentModel } from '../../data/models/DocumentsModel'
@@ -10,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { NewDocumentSchema, resolveDefaultValues } from '../constants/constants'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useCouncilStore } from '../../../council/presentation/store/councilsStore'
@@ -20,11 +16,15 @@ import { useProcessStore } from '../../../processes/presentation/state/useProces
 import { IModule } from '../../../modules/types/IModule'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { ProcessesUseCasesImpl } from '../../../processes/domain/usecases/ProcessServices'
-import { TemplatesUseCasesImpl } from '../../../templates/domain/usecases/TemplateServices'
-import { TemplateModel } from '../../../templates/data/models/TemplatesModel'
+import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
+import { useStudentStore } from '../../../students/presentation/state/studentStore'
+import { StudentUseCasesImpl } from '../../../students/domain/usecases/StudentServices'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
+import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
+import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
-  const { documents, setDocuments } = useDocumentStore()
   const router = useRouter()
   const pathname = usePathname()
   const { codeModule } = useParams()
@@ -43,10 +43,14 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
 
   const { councils, setCouncils } = useCouncilStore()
   const { processes, setProcesses } = useProcessStore()
+  const { students, setStudents } = useStudentStore()
+  const { functionaries, setFunctionaries } = useFunctionaryStore()
+  const { user } = useAccountStore()
 
-  const [selectedProcessId, setSelectedProcessId] = useState(0)
+  const [selectedProcess, setSelectedProcess] = useState<ProcessModel>(
+    {} as ProcessModel,
+  )
   const [numbers, setNumbers] = useState<NumerationModel>()
-  const [templates, setTemplates] = useState<TemplateModel[]>([])
 
   const [moduleId, setModuleId] = useState<number>(
     resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
@@ -68,152 +72,53 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     isCouncilSelected.onTrue()
   }
 
-  useEffect(() => {
-    if (selectedProcessId) {
-      isProcessSelected.onTrue()
-
-      TemplatesUseCasesImpl.getInstance()
-        .getTemplatesByProcessId(selectedProcessId)
-        .then((result) => {
-          if (result.templates) {
-            setTemplates(result.templates)
-          }
-        })
-    }
-  }, [selectedProcessId])
-
-  // const formik = useFormik<IDocument>({
-  //   enableReinitialize: true,
-  //   initialValues: {
-  //     number: initialValues.number || 0,
-  //     councilId: initialValues.councilId || 0,
-  //     templateId: initialValues.templateId || 0,
-  //     studentId: initialValues.studentId || 0,
-  //     functionariesIds: initialValues.functionariesIds || [],
-  //     userId: initialValues.userId || 0,
-  //     description: initialValues.description || '',
-  //   },
-  //   validationSchema,
-  //   onSubmit: async (values) => {
-  //     if (!initialValues.id) {
-  //       await handleCreateDocument(values)
-  //       onClose()
-  //       return
-  //     }
-
-  //     const editedFields: { [key: string]: unknown } = {}
-
-  //     Object.keys(initialValues).forEach((key) => {
-  //       if (
-  //         initialValues[key as keyof IDocument] !==
-  //         values[key as keyof IDocument]
-  //       ) {
-  //         editedFields[key] = values[key as keyof IDocument]
-  //       }
-  //     })
-
-  //     if (Object.keys(editedFields).length === 0) {
-  //       onClose()
-  //       return
-  //     }
-  //     await handleUpdateDocument(initialValues.id, editedFields)
-  //     onClose()
-  //   },
-  // })
-
-  const handleCreateDocument = async (values: IDocument) => {
-    try {
-      const result = await DocumentsUseCasesImpl.getInstance().create(values)
-      if (result.document) {
-        setDocuments([...documents, result.document])
-        toast.success('Documento creado exitosamente')
-        methods.reset()
-      } else {
-        toast.error('Error al crear el documento', {
-          closeButton: false,
-        })
-      }
-    } catch (error) {
-      toast.error('Ocurrió un error al crear el documento')
-    }
-  }
-
-  const handleUpdateDocument = async (
-    id: number,
-    editedFields: Partial<IDocument>,
-  ) => {
-    try {
-      const { status } = await DocumentsUseCasesImpl.getInstance().update(
-        id,
-        editedFields,
-      )
-
-      if (status === HTTP_STATUS_CODES.OK) {
-        setDocuments(
-          documents!.map((process) =>
-            process.id === id
-              ? new DocumentModel({
-                  ...process,
-                  ...editedFields,
-                })
-              : process,
-          ),
-        )
-        toast.success('Documento actualizado exitosamente')
-        methods.reset()
-      } else {
-        toast.error('Error al actualizar el documento', {
-          closeButton: false,
-        })
-      }
-    } catch (error) {
-      toast.error('Ocurrió un error al actualizar el documento')
-    }
-  }
+  const handleCreateDocument = async (values: IDocument) =>
+    await DocumentsUseCasesImpl.getInstance().create(values)
 
   const onSubmit = useCallback(
-    async (data: DocumentModel) => {
+    async (data: IDocument) => {
       try {
-        if (!currentDocument) {
-          await handleCreateDocument(data)
-        } else {
-          const editedFields = getEditedFields<Partial<DocumentModel>>(
-            defaultValues,
-            data,
-          )
+        const { status } = await handleCreateDocument(
+          DocumentModel.fromJson({
+            ...data,
+            userId: user?.id,
+          }),
+        )
 
-          if (editedFields) {
-            await handleUpdateDocument(
-              currentDocument.id as number,
-              editedFields,
-            )
-          }
+        if (status !== HTTP_STATUS_CODES.CREATED) {
+          methods.reset()
+          return
         }
 
-        router.push(
-          currentDocument
-            ? pathname.replace(new RegExp(`/${currentDocument.id}/edit`), '')
-            : pathname.replace('/new', ''),
-        )
-        enqueueSnackbar(
-          !currentDocument
-            ? 'Consejo creado correctamente'
-            : 'Consejo actualizado correctamente',
-          { variant: 'success' },
-        )
+        router.push(pathname.replace('/new', ''))
       } catch (error) {
-        enqueueSnackbar(
-          !currentDocument
-            ? 'Error al crear el consejo'
-            : 'Error al actualizar el consejo',
-          { variant: 'error' },
-        )
       } finally {
         methods.reset()
       }
     },
     [currentDocument, enqueueSnackbar, methods.reset, router],
   )
+
+  useEffect(() => {
+    if (!values.councilId) {
+      return
+    }
+
+    DocumentsUseCasesImpl.getInstance()
+      .getNumerationByCouncil(values.councilId as number)
+      .then((result) => {
+        setNumbers(result)
+        methods.setValue('number', result.nextAvailableNumber)
+      })
+  }, [values.councilId])
+
+  useEffect(() => {
+    if (!values.templateId) {
+      return
+    }
+
+    isTemplateSelected.onTrue()
+  }, [values.templateId])
 
   useEffect(() => {
     if (!moduleId) {
@@ -238,7 +143,23 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
           setProcesses(result.data.processes)
         }
       })
-  }, [pathname])
+
+    StudentUseCasesImpl.getInstance()
+      .getAll(10, 0)
+      .then((result) => {
+        if (result.data.students) {
+          setStudents(result.data.students)
+        }
+      })
+
+    FunctionaryUseCasesImpl.getInstance()
+      .getAll(10, 0)
+      .then((result) => {
+        if (result.data.functionaries) {
+          setFunctionaries(result.data.functionaries)
+        }
+      })
+  }, [])
 
   return {
     councils,
@@ -247,9 +168,12 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     methods,
     isProcessSelected,
     isTemplateSelected,
-    templates,
+    numbers,
+    selectedProcess,
+    students,
+    functionaries,
     onSubmit,
     setProcesses,
-    setSelectedProcessId,
+    setSelectedProcess,
   }
 }

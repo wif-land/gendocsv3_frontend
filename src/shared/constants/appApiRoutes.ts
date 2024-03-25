@@ -76,7 +76,7 @@ export const API_ROUTES = {
   DOCUMENTS: {
     GET_ALL: '/documents',
     GET_ONE: '/documents/:id',
-    UPDATE: '/documents/:id',
+    UPDATE: (id: number) => `/documents/${id}`,
     DELETE: '/documents/:id',
     CREATE: '/documents',
   },

@@ -45,7 +45,6 @@ export default memo(() => {
     handleDeleteRow,
     handleDeleteRows,
     handleChangePage,
-    handleEditRow,
     handleViewRow,
   } = useDocumentView(codeModule as string)
   const pathname = usePathname()
@@ -142,8 +141,12 @@ export default memo(() => {
                             onDeleteRow={() =>
                               handleDeleteRow(row.id!.toString())
                             }
-                            onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
+                            onViewRow={() =>
+                              handleViewRow(
+                                row.id!.toString(),
+                                row.driveId as string,
+                              )
+                            }
                           />
                         ))}
                     </>
@@ -179,10 +182,10 @@ export default memo(() => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Borrar"
         content={
           <>
-            Are you sure want to delete{' '}
+            Estás seguro de que deseas borrar{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }

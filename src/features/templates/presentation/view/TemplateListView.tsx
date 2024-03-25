@@ -63,6 +63,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
     [router],
   )
 
+
   const handleResetFilters = () => {
     setSearchTerm('')
     setIsDataFiltered(false)

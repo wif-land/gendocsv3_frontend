@@ -17,10 +17,6 @@ export interface DocumentsRepository {
     documents: DocumentModel[]
   }>
 
-  update: (data: Partial<IDocument>) => Promise<{
-    status: number
-  }>
-
   create: (processData: IDocument) => Promise<{
     status: number
     document: DocumentModel
@@ -35,7 +31,5 @@ export interface DocumentsRepository {
     status: number
   }>
 
-  getNumerationByCouncil: (
-    councilId: number,
-  ) => Promise<DefaultResponse<NumerationModel>>
+  getNumerationByCouncil: (councilId: number) => Promise<NumerationModel>
 }

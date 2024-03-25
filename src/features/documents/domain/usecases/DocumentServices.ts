@@ -21,13 +21,6 @@ interface DocumentUseCases {
     process: DocumentModel
   }>
 
-  update(
-    id: number,
-    document: Partial<DocumentModel>,
-  ): Promise<{
-    status: number
-  }>
-
   getAllDocumentsByModuleId(
     moduleId: number,
     params: PaginationParams,
@@ -40,10 +33,7 @@ interface DocumentUseCases {
     status: number
   }>
 
-  getNumerationByCouncil(councilId: number): Promise<{
-    count: number
-    document: NumerationModel
-  }>
+  getNumerationByCouncil(councilId: number): Promise<NumerationModel>
 }
 
 export class DocumentsUseCasesImpl implements DocumentUseCases {
@@ -60,20 +50,14 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
   private modelRepository: DocumentsRepository =
     DocumentsRepositoryImpl.getInstance()
 
-  create = async (process: IDocument) =>
-    await this.modelRepository.create(process)
+  create = async (document: IDocument) =>
+    await this.modelRepository.create(document)
 
   getAll = async () => await this.modelRepository.getAll()
 
   getById = async (id: number) => {
     throw new Error(`Method not implemented.${id}`)
   }
-
-  update = async (id: number, process: Partial<DocumentModel>) =>
-    await this.modelRepository.update({
-      ...process,
-      id,
-    })
 
   getAllDocumentsByModuleId = async (
     moduleId: number,
@@ -89,9 +73,6 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
 
   deleteById = async (id: number) => await this.modelRepository.deleteById(id)
 
-  getNumerationByCouncil = async (councilId: number) => {
-    const result = await this.modelRepository.getNumerationByCouncil(councilId)
-
-    return result.data as { count: number; document: NumerationModel }
-  }
+  getNumerationByCouncil = async (councilId: number) =>
+    await this.modelRepository.getNumerationByCouncil(councilId)
 }

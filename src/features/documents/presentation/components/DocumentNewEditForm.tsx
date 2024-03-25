@@ -8,14 +8,19 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import {
+  RHFAutocomplete,
   RHFSelect,
-  RHFSwitch,
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Box, MenuItem } from '@mui/material'
+import { IconButton, InputAdornment, MenuItem } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
+import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
+import Iconify from '../../../../core/iconify'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { DocumentSeeNumerationDialog } from './DocumentSeeNumerationDialog'
+import { NumerationModel } from '../../data/models/NumerationModel'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -30,12 +35,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     isProcessSelected,
     isTemplateSelected,
     processes,
-    templates,
+    students,
+    functionaries,
+    numbers,
+    selectedProcess,
     onSubmit,
-    setSelectedProcessId,
+    setSelectedProcess,
   } = useDocumentsForm(currentDocument)
 
-  const { handleSubmit } = methods
+  const { handleSubmit, getValues } = methods
+  const seeNumeration = useBoolean(false)
 
   const renderDetails = (
     <>
@@ -61,8 +70,8 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               className="w-full"
               placeholder="Consejo"
             >
-              {councils! &&
-                councils.map((council) => (
+              {councils &&
+                councils.map((council: any) => (
                   <MenuItem
                     key={council.id as number}
                     value={council.id as number}
@@ -80,7 +89,11 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   className="w-full"
                   placeholder="Proceso"
                   onChange={(e) => {
-                    setSelectedProcessId(Number(e.target.value))
+                    setSelectedProcess(
+                      processes!.find(
+                        (process) => process.id === Number(e.target.value),
+                      ) || ({} as ProcessModel),
+                    )
                     isProcessSelected.onTrue()
                   }}
                 >
@@ -98,35 +111,39 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
             )}
 
             {isProcessSelected.value && (
-              <>
-                <RHFSelect
-                  name="template"
-                  label="Plantilla"
-                  className="w-full"
-                  placeholder="Plantilla"
-                >
-                  {templates! &&
-                    templates.map((template) => (
-                      <MenuItem
-                        key={template.id as number}
-                        value={template.id as number}
-                      >
-                        {template.name}
-                      </MenuItem>
-                    ))}
-                </RHFSelect>
-              </>
+              <RHFSelect
+                name="templateId"
+                label="Plantilla"
+                className="w-full"
+                placeholder="Plantilla"
+              >
+                {selectedProcess! &&
+                  selectedProcess.templateProcesses?.map((template) => (
+                    <MenuItem
+                      key={template.id as number}
+                      value={template.id as number}
+                    >
+                      {template.name}
+                    </MenuItem>
+                  ))}
+              </RHFSelect>
             )}
 
-            {isTemplateSelected.value && (
-              <>
-                <RHFTextField
-                  name="number"
-                  label="Número"
-                  type="number"
-                  about="Número del documento"
-                />
-              </>
+            {isTemplateSelected.value && isCouncilSelected.value && (
+              <RHFTextField
+                name="number"
+                label="Siguiente número disponible"
+                type="number"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={seeNumeration.onToggle} edge="end">
+                        <Iconify icon={'solar:eye-bold'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
             )}
           </Stack>
         </Card>
@@ -142,7 +159,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
             Participantes
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Se elijen
+            Se elijen estudiantes y funcionarios
           </Typography>
         </Grid>
       )}
@@ -150,7 +167,40 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
       <Grid xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
+
           <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFAutocomplete
+              name="studentId"
+              label="Estudiante"
+              className="w-full"
+              placeholder="Estudiante"
+              freeSolo
+              options={students?.map((student) => ({
+                id: student.id,
+                label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
+              }))}
+            />
+
+            <RHFAutocomplete
+              name="functionariesIds"
+              label="Funcionarios"
+              className="w-full"
+              placeholder="Funcionarios"
+              freeSolo
+              multiple
+              options={functionaries
+                ?.map((functionary) => ({
+                  id: functionary.id,
+                  label: `${functionary.dni} - ${functionary.firstLastName} ${functionary.firstName}`,
+                }))
+                .filter(
+                  (student) =>
+                    getValues('functionariesIds')?.some(
+                      (value: any) => value.id === student.id,
+                    ) === false,
+                )}
+            />
+
             <RHFTextField
               name="description"
               label="Descripción"
@@ -172,10 +222,6 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
         md={8}
         sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
       >
-        <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Documento activo" />
-        </Box>
-
         <LoadingButton type="submit" variant="contained" size="large">
           {!currentDocument ? 'Crear' : 'Guardar'}
         </LoadingButton>
@@ -191,6 +237,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
         {renderProperties}
 
         {renderActions}
+
+        <DocumentSeeNumerationDialog
+          open={seeNumeration.value}
+          onClose={seeNumeration.onFalse}
+          numeration={numbers || ({} as NumerationModel)}
+          setNumeration={(number) => {
+            methods.setValue('number', number)
+            seeNumeration.onFalse()
+          }}
+        />
       </Grid>
     </FormProvider>
   )
