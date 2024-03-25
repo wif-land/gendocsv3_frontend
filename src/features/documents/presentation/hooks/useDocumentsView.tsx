@@ -100,8 +100,8 @@ export const useDocumentView = (moduleName: string) => {
   )
 
   const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}`)
+    (id: string, driveId: string) => {
+      router.push(`documents/${id}/view/${driveId}`)
     },
     [router],
   )
