@@ -110,6 +110,16 @@ export const TemplateTableRow = ({
       >
         <MenuItem
           onClick={() => {
+            onViewRow()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="solar:document-linear" />
+          Ver documento
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             onEditRow()
             popover.onClose()
           }}

@@ -1,14 +1,12 @@
 'use client'
 
 import { memo } from 'react'
-import { useParams, usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 import Container from '@mui/material/Container'
 
-import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 
-import { TemplateNewEditForm } from '../components/TemplateCreateEditForm'
 import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
 
 const TemplateFileView = () => {
@@ -26,10 +24,11 @@ const TemplateFileView = () => {
   const currentTemplate = templates?.find(
     (template) => template.id === +templateId,
   )
+  const documentURL = `https://docs.google.com/document/d/${currentTemplate?.driveId}/edit?usp=sharing`
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <frame src="https://www.youtube.com/embed/1y_kfWUCFDQ" />
+      <iframe src={documentURL} width="100%" height="1000px" />
     </Container>
   )
 }
