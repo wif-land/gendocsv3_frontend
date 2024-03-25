@@ -22,6 +22,7 @@ import { StudentUseCasesImpl } from '../../../students/domain/usecases/StudentSe
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const router = useRouter()
@@ -71,19 +72,20 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     isCouncilSelected.onTrue()
   }
 
-  const handleCreateDocument = async (values: IDocument) => {
+  const handleCreateDocument = async (values: IDocument) =>
     await DocumentsUseCasesImpl.getInstance().create(values)
-  }
 
   const onSubmit = useCallback(
     async (data: IDocument) => {
       try {
-        await handleCreateDocument(
+        const { status } = await handleCreateDocument(
           DocumentModel.fromJson({
             ...data,
             userId: user?.id,
           }),
         )
+
+        if (status !== HTTP_STATUS_CODES.CREATED) return
 
         router.push(pathname.replace('/new', ''))
       } catch (error) {
