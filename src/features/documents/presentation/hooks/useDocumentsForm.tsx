@@ -85,7 +85,10 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
           }),
         )
 
-        if (status !== HTTP_STATUS_CODES.CREATED) return
+        if (status !== HTTP_STATUS_CODES.CREATED) {
+          methods.reset()
+          return
+        }
 
         router.push(pathname.replace('/new', ''))
       } catch (error) {

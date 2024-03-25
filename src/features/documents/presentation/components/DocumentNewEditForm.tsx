@@ -196,7 +196,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                 .filter(
                   (student) =>
                     getValues('functionariesIds')?.some(
-                      (value) => value.id === student.id,
+                      (value: any) => value.id === student.id,
                     ) === false,
                 )}
             />

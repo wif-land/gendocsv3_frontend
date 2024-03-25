@@ -59,18 +59,12 @@ const TemplateListView = ({ processId }: { processId: number }) => {
     [router],
   )
 
-  const {
-    loader,
-    tableData,
-    count,
-    setTableData,
-    handleSearch,
-    handleUpdateRow,
-  } = useTemplateView({
-    table,
-    field: searchTerm,
-    processId,
-  })
+  const { loader, tableData, count, setTableData, handleUpdateRow } =
+    useTemplateView({
+      table,
+      field: searchTerm,
+      processId,
+    })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 

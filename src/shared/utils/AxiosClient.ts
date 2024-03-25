@@ -237,7 +237,7 @@ const handleApiError = <T>(error: AxiosErrorResponse) => {
     }
 
     if (status === HTTP_STATUS_CODES.BAD_REQUEST) {
-      enqueueSnackbar(error.response?.data?.message, {
+      enqueueSnackbar(error.response?.data?.message || 'Intenta de nuevo', {
         variant: 'error',
       })
     }
