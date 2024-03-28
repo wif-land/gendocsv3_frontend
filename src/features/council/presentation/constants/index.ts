@@ -22,7 +22,7 @@ export const defaultFilters: ICouncilTableFilters = {
   startDate: undefined,
   endDate: undefined,
   dateType: undefined,
-  councilType: undefined,
+  type: undefined,
 }
 
 export const NewCouncilSchema = Yup.object().shape({

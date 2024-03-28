@@ -20,23 +20,32 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import { MobileDatePicker } from '@mui/x-date-pickers'
-import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
+import {
+  DATE_TYPES,
+  ICouncilFilters,
+} from '../../domain/entities/ICouncilFilters'
+import { COUNCIL_TYPES } from '../../domain/entities/ICouncil'
+import dayjs, { Dayjs } from 'dayjs'
 
-export type ICouncilTableFilterValue = string | Date | number | undefined
+export type ICouncilTableFilterValue =
+  | string
+  | Date
+  | typeof DATE_TYPES
+  | typeof COUNCIL_TYPES
+  | undefined
 
 export type ICouncilTableFilters = {
   name: string | undefined
   state: boolean | undefined
   startDate: Date | undefined
   endDate: Date | undefined
-  dateType: number | undefined
-  councilType: number | undefined
+  dateType: typeof DATE_TYPES | undefined
+  type: typeof COUNCIL_TYPES | undefined
 }
 
 type Props = {
   filters: ICouncilTableFilters
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
-  setSearchFilters: (value: string) => void
   setVisitedPages: (value: number[]) => void
   setIsDataFiltered: (value: boolean) => void
   table: TableProps
@@ -47,7 +56,6 @@ type Props = {
 export const CouncilTableToolbar = ({
   filters,
   onFilters,
-  setSearchFilters,
   setVisitedPages,
   setIsDataFiltered,
   table,
@@ -55,8 +63,8 @@ export const CouncilTableToolbar = ({
   getFilteredCouncils,
 }: Props) => {
   const popover = usePopover()
-  const [inputValue, setInputValue] = useState(undefined)
-  const debouncedValue = useDebounce(inputValue)
+  const [inputValue, setInputValue] = useState(undefined as string | undefined)
+  const debouncedValue = useDebounce(inputValue ? inputValue : '')
   const [areFiltersActive, setAreFiltersActive] = useState(false)
 
   const resetValues = () => {
@@ -89,13 +97,35 @@ export const CouncilTableToolbar = ({
     return () => {
       isMounted = false
     }
-  }, [debouncedValue, filters.startDate, filters.endDate, filters.state])
+  }, [debouncedValue, filters.state, filters.type])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
+    table.setPage(0)
+    setVisitedPages([])
+
+    if (areFiltersAdded()) {
+      setIsDataFiltered(true)
+      onFilters('name', inputValue)
+      getFilteredCouncils(filters as ICouncilFilters)
+    } else {
+      resetValues()
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [filters.endDate, filters.startDate])
 
   const areFiltersAdded = () =>
     (inputValue !== undefined && inputValue !== '') ||
     filters.startDate !== undefined ||
     filters.endDate !== undefined ||
-    filters.state !== undefined
+    filters.state !== undefined ||
+    filters.type !== undefined
 
   const handleChange = (event: SelectChangeEvent) => {
     const {
@@ -180,18 +210,21 @@ export const CouncilTableToolbar = ({
               labelId="council-type-label"
               id="council-simple-select"
               label="Tipo de Consejo"
-              value={filters.councilType}
+              value={filters.type}
               input={<OutlinedInput label="Tipo de Consejo" />}
               onChange={(event) => {
                 const {
                   target: { value },
                 } = event
-                onFilters('councilType', value as unknown as number)
+                onFilters('type', value)
                 setIsDataFiltered(true)
               }}
             >
-              <MenuItem value={1}>Ordinario </MenuItem>
-              <MenuItem value={2}>Extraordinario</MenuItem>
+              {COUNCIL_TYPES.map((item) => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <Divider orientation="vertical" flexItem />
@@ -212,11 +245,15 @@ export const CouncilTableToolbar = ({
                 const {
                   target: { value },
                 } = event
-                onFilters('dateType', value as unknown as number)
+
+                onFilters('dateType', value)
               }}
             >
-              <MenuItem value={1}>Fecha de creación </MenuItem>
-              <MenuItem value={2}>Fecha de Ejecución</MenuItem>
+              {DATE_TYPES.map((item) => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl
@@ -227,13 +264,13 @@ export const CouncilTableToolbar = ({
           >
             <MobileDatePicker
               disabled={!filters.dateType}
-              value={filters.startDate}
+              value={dayjs(filters.startDate)}
+              format="YYYY-MM-DD"
               onAccept={(e) => {
-                onFilters('startDate', e)
+                e && onFilters('startDate', (e as unknown as Dayjs).toDate())
                 if (!filters.endDate) {
-                  onFilters('endDate', e)
+                  e && onFilters('endDate', (e as unknown as Dayjs).toDate())
                 }
-                setIsDataFiltered(true)
               }}
               sx={{ textTransform: 'capitalize' }}
               label="Fecha de inicio"
@@ -247,10 +284,11 @@ export const CouncilTableToolbar = ({
           >
             <MobileDatePicker
               disabled={!filters.dateType || !filters.startDate}
-              value={filters.endDate}
-              minDate={filters.startDate}
+              value={dayjs(filters.endDate)}
+              minDate={filters.startDate ? dayjs(filters.startDate) : null}
+              format="YYYY-MM-DD"
               onAccept={(e) => {
-                onFilters('endDate', e as Date)
+                onFilters('endDate', (e as unknown as Dayjs).toDate())
               }}
               sx={{ textTransform: 'capitalize' }}
               label="Fecha de fin"

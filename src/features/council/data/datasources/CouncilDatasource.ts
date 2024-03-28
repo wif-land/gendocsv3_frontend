@@ -111,8 +111,23 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     offset: number,
     filters: ICouncilFilters,
   ) => {
+    const { startDate, endDate } = filters
+
+    const formattedFilters = {
+      moduleId,
+      limit,
+      offset,
+      ...filters,
+      startDate: startDate
+        ? (startDate as Date).toISOString().split('T')[0]
+        : undefined,
+      endDate: endDate
+        ? (endDate as Date).toISOString().split('T')[0]
+        : undefined,
+    }
+
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_BY_FILTERS, {
-      params: { moduleId, limit, offset, ...filters },
+      params: formattedFilters,
     })
 
     const { status, data } = result

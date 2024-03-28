@@ -138,13 +138,11 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
           <CouncilTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setSearchFilters={setSearchFields}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
             getFilteredCouncils={handleSearch}
-            searchFields={searchFields}
           />
 
           {isDataFiltered && (
