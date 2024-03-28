@@ -20,33 +20,34 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import { MobileDatePicker } from '@mui/x-date-pickers'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
-export type ICouncilTableFilterValue = string | string[] | Date | null | number
+export type ICouncilTableFilterValue = string | Date | number | undefined
 
 export type ICouncilTableFilters = {
-  name: string
-  state: string[]
-  startDate: Date | null
-  endDate: Date | null
-  dateType: number | null
-  councilType: number | null
+  name: string | undefined
+  state: boolean | undefined
+  startDate: Date | undefined
+  endDate: Date | undefined
+  dateType: number | undefined
+  councilType: number | undefined
 }
 
 type Props = {
   filters: ICouncilTableFilters
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
-  setSearchTerm: (value: string) => void
+  setSearchFilters: (value: string) => void
   setVisitedPages: (value: number[]) => void
   setIsDataFiltered: (value: boolean) => void
   table: TableProps
   setDataTable: (value: CouncilModel[]) => void
-  getFilteredCouncils: (field: string) => void
+  getFilteredCouncils: (filters: ICouncilFilters) => void
 }
 
 export const CouncilTableToolbar = ({
   filters,
   onFilters,
-  setSearchTerm,
+  setSearchFilters,
   setVisitedPages,
   setIsDataFiltered,
   table,
@@ -54,13 +55,9 @@ export const CouncilTableToolbar = ({
   getFilteredCouncils,
 }: Props) => {
   const popover = usePopover()
-  const [inputValue, setInputValue] = useState('' as string)
+  const [inputValue, setInputValue] = useState(undefined)
   const debouncedValue = useDebounce(inputValue)
-  const [userState, setUserState] = useState<string[]>([])
   const [areFiltersActive, setAreFiltersActive] = useState(false)
-  const [isDateTypeSelected, setDateTypeSelected] = useState(false)
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [endDate, setEndDate] = useState<Date | null>(null)
 
   const resetValues = () => {
     setVisitedPages([])
@@ -74,39 +71,39 @@ export const CouncilTableToolbar = ({
   }
 
   useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
     table.setPage(0)
     setVisitedPages([])
 
-    if (inputValue) {
+    if (areFiltersAdded()) {
       setIsDataFiltered(true)
-      setSearchTerm(inputValue)
-      getFilteredCouncils(debouncedValue)
+      onFilters('name', inputValue)
+      getFilteredCouncils(filters as ICouncilFilters)
     } else {
       resetValues()
     }
-  }, [debouncedValue])
 
-  const handleChange = (event: SelectChangeEvent<typeof userState>) => {
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedValue, filters.startDate, filters.endDate, filters.state])
+
+  const areFiltersAdded = () =>
+    (inputValue !== undefined && inputValue !== '') ||
+    filters.startDate !== undefined ||
+    filters.endDate !== undefined ||
+    filters.state !== undefined
+
+  const handleChange = (event: SelectChangeEvent) => {
     const {
       target: { value },
     } = event
-    setIsDataFiltered(true)
 
-    if (value.length === 0) {
-      resetValues()
-      onFilters('state', [])
-      return
-    }
-
-    console.log(handleState(value as string[]))
-    console.log(debouncedValue)
-
-    setUserState(typeof value === 'string' ? value.split(',') : value)
     onFilters('state', value)
   }
-
-  const handleState = (values: string[]) =>
-    values.map((value) => value === 'Activo')
 
   return (
     <>
@@ -212,7 +209,6 @@ export const CouncilTableToolbar = ({
               value={filters.dateType}
               input={<OutlinedInput label="Tipo de Fecha" />}
               onChange={(event) => {
-                setDateTypeSelected(true)
                 const {
                   target: { value },
                 } = event
@@ -233,10 +229,8 @@ export const CouncilTableToolbar = ({
               disabled={!filters.dateType}
               value={filters.startDate}
               onAccept={(e) => {
-                setStartDate(e)
                 onFilters('startDate', e)
                 if (!filters.endDate) {
-                  setEndDate(e)
                   onFilters('endDate', e)
                 }
                 setIsDataFiltered(true)
@@ -254,9 +248,8 @@ export const CouncilTableToolbar = ({
             <MobileDatePicker
               disabled={!filters.dateType || !filters.startDate}
               value={filters.endDate}
-              minDate={startDate}
+              minDate={filters.startDate}
               onAccept={(e) => {
-                setEndDate(e)
                 onFilters('endDate', e as Date)
               }}
               sx={{ textTransform: 'capitalize' }}

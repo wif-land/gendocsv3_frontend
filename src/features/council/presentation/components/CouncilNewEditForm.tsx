@@ -336,7 +336,12 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           <RHFSwitch name="isActive" label="Consejo activo" />
         </Box>
 
-        <LoadingButton type="submit" variant="contained" size="large">
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={loading.value}
+        >
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>
       </Grid>

@@ -1,8 +1,6 @@
 import {
-  Checkbox,
   FormControl,
   InputLabel,
-  ListItemText,
   MenuItem,
   OutlinedInput,
   Select,
@@ -10,7 +8,7 @@ import {
 } from '@mui/material'
 
 interface IStatusFilterProps {
-  onChange: (event: SelectChangeEvent<string[]>) => void
+  onChange: (event: SelectChangeEvent) => void
   filters: any
 }
 
@@ -41,25 +39,17 @@ export const StatusFilter = ({ onChange, filters }: IStatusFilterProps) => {
     <FormControl sx={{ m: 1, width: 300 }}>
       <InputLabel id="demo-multiple-checkbox-label">Estado</InputLabel>
       <Select
-        labelId="demo-multiple-checkbox-label"
-        id="demo-multiple-checkbox"
-        multiple
-        value={filters.state}
+        labelId="council-type-label"
+        id="council-simple-select"
+        label="Tipo de Consejo"
+        value={filters.councilType}
+        input={<OutlinedInput label="Tipo de Consejo" />}
         onChange={onChange}
-        input={<OutlinedInput label="Estado" />}
-        renderValue={(selected) => (
-          Array.isArray(selected) ? selected.join(', ') : selected
-        )}
-        MenuProps={MenuProps}
       >
-        {states.map((name) => (
-          <MenuItem key={name.label} value={name.label}>
-            <Checkbox checked={filters.state.indexOf(name.label) > -1} />
-            <ListItemText primary={name.label} />
-          </MenuItem>
+        {states.map((state) => (
+          <MenuItem key={state.label} value={state.value as unknown as string}>{state.label}</MenuItem>
         ))}
       </Select>
     </FormControl>
   )
 }
-

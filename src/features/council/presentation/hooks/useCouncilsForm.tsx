@@ -159,6 +159,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
+      loading.onTrue()
       try {
         if (!currentCouncil) {
           await handleCreateCouncil(data)
@@ -194,6 +195,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       } finally {
         methods.reset()
       }
+      loading.onFalse()
     },
     [currentCouncil, enqueueSnackbar, methods.reset, router],
   )

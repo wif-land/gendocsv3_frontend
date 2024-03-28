@@ -1,5 +1,6 @@
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { ICouncil } from '../entities/ICouncil'
+import { ICouncilFilters } from '../entities/ICouncilFilters'
 
 export interface CouncilRepository {
   getAll: () => Promise<{
@@ -7,11 +8,11 @@ export interface CouncilRepository {
     councils: CouncilModel[]
   }>
 
-  getByField: (
-    field: string,
+  getByFilters: (
     moduleId: number,
     limit: number,
     offset: number,
+    filters: ICouncilFilters,
   ) => Promise<{
     status: number
     data: {
