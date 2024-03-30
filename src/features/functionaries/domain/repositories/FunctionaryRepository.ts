@@ -1,5 +1,6 @@
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { IFunctionary } from '../entities/IFunctionary'
+import { IFunctionaryFilters } from '../entities/IFunctionaryFilters'
 
 export interface FunctionaryRepository {
   getAll: (
@@ -13,8 +14,8 @@ export interface FunctionaryRepository {
     }
   }>
 
-  getByField: (
-    field: string,
+  getByFilters: (
+    filters: IFunctionaryFilters,
     limit: number,
     offset: number,
   ) => Promise<{

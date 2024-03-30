@@ -239,7 +239,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     let isMounted = true
     loading.onTrue()
     FunctionaryUseCasesImpl.getInstance()
-      .getByField(searchDebounced)
+      .getByFilters({ field: searchDebounced })
       .then((result) => {
         if (!isMounted) return
 

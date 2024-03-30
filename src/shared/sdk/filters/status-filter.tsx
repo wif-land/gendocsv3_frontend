@@ -12,17 +12,6 @@ interface IStatusFilterProps {
   filters: any
 }
 
-const ITEM_HEIGHT = 48
-const ITEM_PADDING_TOP = 8
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 150,
-    },
-  },
-}
-
 const states = [
   {
     label: 'Activo',
@@ -35,15 +24,16 @@ const states = [
 ]
 
 export const StatusFilter = ({ onChange, filters }: IStatusFilterProps) => {
+
   return (
     <FormControl sx={{ m: 1, width: 300 }}>
       <InputLabel id="demo-multiple-checkbox-label">Estado</InputLabel>
       <Select
         labelId="council-type-label"
         id="council-simple-select"
-        label="Tipo de Consejo"
-        value={filters.councilType}
-        input={<OutlinedInput label="Tipo de Consejo" />}
+        label="Estado del Consejo"
+        value={filters.state !== undefined ? filters.state : ''}
+        input={<OutlinedInput label="Estado" />}
         onChange={onChange}
       >
         {states.map((state) => (

@@ -24,10 +24,10 @@ export interface CouncilsDataSource {
   }>
 
   getByFilters(
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
-    filters: ICouncilFilters,
   ): Promise<{
     status: number
     data: {
@@ -106,10 +106,10 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
   }
 
   getByFilters = async (
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
-    filters: ICouncilFilters,
   ) => {
     const { startDate, endDate } = filters
 

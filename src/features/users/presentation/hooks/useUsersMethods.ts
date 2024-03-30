@@ -3,6 +3,7 @@ import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { UserUseCasesImpl } from '../../domain/usecases/UserService'
 import { IUser } from '../../domain/entities/IUser'
 import { useUsersStore } from '../state/usersStore'
+import { IUserFilters } from '../../domain/entities/IUserFilters'
 
 export const useUsersMethods = () => {
   const { users, setUsers } = useUsersStore()
@@ -47,17 +48,17 @@ export const useUsersMethods = () => {
     }
   }
 
-  const fetchDataByField = async (
-    searchTerm: string,
+  const fetchDataByFilters = async (
     rowsPerPage: number,
     currentPage: number,
+    filters: IUserFilters,
   ) => {
     addLoaderItem('users')
     try {
-      const response = await UserUseCasesImpl.getInstance().getByField(
-        searchTerm,
+      const response = await UserUseCasesImpl.getInstance().getByFiters(
         rowsPerPage,
         currentPage * rowsPerPage,
+        filters,
       )
       if (
         response.status === HTTP_STATUS_CODES.OK ||
@@ -87,6 +88,6 @@ export const useUsersMethods = () => {
     setUsers,
     fetchData,
     updateRow,
-    fetchDataByField,
+    fetchDataByField: fetchDataByFilters,
   }
 }

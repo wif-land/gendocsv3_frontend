@@ -1,6 +1,7 @@
 import { UserModel } from '../../data/models/UserModel'
 import { UserRepositoryImpl } from '../../data/repositories/UserRepositoryImpl'
 import { IUser } from '../entities/IUser'
+import { IUserFilters } from '../entities/IUserFilters'
 import { UserRepository } from '../repositories/UserRepository'
 
 interface UserUseCases {
@@ -17,10 +18,10 @@ interface UserUseCases {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFiters(
     limit: number,
     offset: number,
+    filters: IUserFilters,
   ): Promise<{
     status: number
     data: {
@@ -59,8 +60,8 @@ export class UserUseCasesImpl implements UserUseCases {
   getAll = async (limit: number, offset: number) =>
     await this.userRepository.getAll(limit, offset)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    await this.userRepository.getByField(field, limit, offset)
+  getByFiters = async (limit: number, offset: number, filters: IUserFilters) =>
+    await this.userRepository.getByFilters(limit, offset, filters)
 
   update = async (id: number, data: Partial<UserModel>) =>
     await this.userRepository.update({

@@ -4,6 +4,7 @@ import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { StudentModel } from '../models/StudentModel'
 import { IStudent } from '../../domain/entities/IStudent'
 import { ICreateStudent } from '../../domain/entities/ICreateStudent'
+import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 
 export interface StudentDataSource {
   getAll(
@@ -17,8 +18,8 @@ export interface StudentDataSource {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilter(
+    filter: IStudentFilters,
     limit: number,
     offset: number,
   ): Promise<{
@@ -77,13 +78,14 @@ export class StudentDataSourceImpl implements StudentDataSource {
     return { status, data: { count: 0, students: [] } }
   }
 
-  getByField = async (field: string, limit: number, offset: number) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.STUDENTS.GET_BY_FIELD(field),
-      {
-        params: { limit, offset },
-      },
-    )
+  getByFilter = async (
+    filters: IStudentFilters,
+    limit: number,
+    offset: number,
+  ) => {
+    const result = await AxiosClient.get(API_ROUTES.STUDENTS.GET_BY_FILTERS, {
+      params: { limit, offset, ...filters },
+    })
 
     const { status, data } = result
 

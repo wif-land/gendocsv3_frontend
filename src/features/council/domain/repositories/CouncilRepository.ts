@@ -9,10 +9,10 @@ export interface CouncilRepository {
   }>
 
   getByFilters: (
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
-    filters: ICouncilFilters,
   ) => Promise<{
     status: number
     data: {

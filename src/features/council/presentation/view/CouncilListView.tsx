@@ -49,10 +49,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const confirm = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [searchFields, setSearchFields] = useState<ICouncilFilters>(
-    {} as ICouncilFilters,
-  )
-
   const [filters, setFilters] = useState<ICouncilTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
@@ -82,7 +78,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
 
   const handleResetFilters = () => {
     setFilters(defaultFilters)
-    setSearchFields({} as ICouncilFilters)
     setVisitedPages([])
     setIsDataFiltered(false)
     setTableData([])
@@ -102,7 +97,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    filters: searchFields,
+    filters: filters as ICouncilFilters,
     moduleId,
   })
 

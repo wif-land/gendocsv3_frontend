@@ -48,6 +48,7 @@ type Props = {
   onFilters: (name: string, value: ICouncilTableFilterValue) => void
   setVisitedPages: (value: number[]) => void
   setIsDataFiltered: (value: boolean) => void
+  isDataFiltered: boolean
   table: TableProps
   setDataTable: (value: CouncilModel[]) => void
   getFilteredCouncils: (filters: ICouncilFilters) => void
@@ -58,6 +59,7 @@ export const CouncilTableToolbar = ({
   onFilters,
   setVisitedPages,
   setIsDataFiltered,
+  isDataFiltered,
   table,
   setDataTable,
   getFilteredCouncils,
@@ -75,6 +77,7 @@ export const CouncilTableToolbar = ({
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
+    !isDataFiltered && setIsDataFiltered(true)
     onFilters('name', event.target.value)
   }
 
@@ -86,13 +89,9 @@ export const CouncilTableToolbar = ({
     table.setPage(0)
     setVisitedPages([])
 
-    if (areFiltersAdded()) {
-      setIsDataFiltered(true)
-      onFilters('name', inputValue)
-      getFilteredCouncils(filters as ICouncilFilters)
-    } else {
-      resetValues()
-    }
+    areFiltersAdded() === true
+      ? getFilteredCouncils(filters as ICouncilFilters)
+      : resetValues()
 
     return () => {
       isMounted = false
@@ -107,13 +106,9 @@ export const CouncilTableToolbar = ({
     table.setPage(0)
     setVisitedPages([])
 
-    if (areFiltersAdded()) {
-      setIsDataFiltered(true)
-      onFilters('name', inputValue)
-      getFilteredCouncils(filters as ICouncilFilters)
-    } else {
-      resetValues()
-    }
+    areFiltersAdded() === true
+      ? getFilteredCouncils(filters as ICouncilFilters)
+      : resetValues()
 
     return () => {
       isMounted = false
@@ -131,6 +126,8 @@ export const CouncilTableToolbar = ({
     const {
       target: { value },
     } = event
+
+    !isDataFiltered && setIsDataFiltered(true)
 
     onFilters('state', value)
   }
@@ -160,7 +157,7 @@ export const CouncilTableToolbar = ({
 
           <TextField
             fullWidth
-            value={filters.name}
+            value={filters.name || ''}
             onChange={handleFilterName}
             placeholder="Busca por nombre de consejo"
             InputProps={{
@@ -210,7 +207,7 @@ export const CouncilTableToolbar = ({
               labelId="council-type-label"
               id="council-simple-select"
               label="Tipo de Consejo"
-              value={filters.type}
+              value={filters.type || ''}
               input={<OutlinedInput label="Tipo de Consejo" />}
               onChange={(event) => {
                 const {
@@ -239,7 +236,7 @@ export const CouncilTableToolbar = ({
               labelId="date-type-label"
               id="demo-simple-select"
               label="Tipo de fecha"
-              value={filters.dateType}
+              value={filters.dateType || ''}
               input={<OutlinedInput label="Tipo de Fecha" />}
               onChange={(event) => {
                 const {
@@ -264,7 +261,7 @@ export const CouncilTableToolbar = ({
           >
             <MobileDatePicker
               disabled={!filters.dateType}
-              value={dayjs(filters.startDate)}
+              value={dayjs(filters.startDate) || null}
               format="YYYY-MM-DD"
               onAccept={(e) => {
                 e && onFilters('startDate', (e as unknown as Dayjs).toDate())
@@ -284,7 +281,7 @@ export const CouncilTableToolbar = ({
           >
             <MobileDatePicker
               disabled={!filters.dateType || !filters.startDate}
-              value={dayjs(filters.endDate)}
+              value={dayjs(filters.endDate) || null}
               minDate={filters.startDate ? dayjs(filters.startDate) : null}
               format="YYYY-MM-DD"
               onAccept={(e) => {

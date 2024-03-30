@@ -3,6 +3,7 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { FunctionaryModel } from '../models/FunctionatyModel'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
+import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 
 export interface FunctionaryDataSource {
   getAll(
@@ -16,8 +17,8 @@ export interface FunctionaryDataSource {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
+    filters: IFunctionaryFilters,
     limit: number,
     offset: number,
   ): Promise<{
@@ -78,11 +79,15 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     }
   }
 
-  getByField = async (field: string, limit: number, offset: number) => {
+  getByFilters = async (
+    filters: IFunctionaryFilters,
+    limit: number,
+    offset: number,
+  ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.FUNCTIONARIES.GET_BY_FIELD(field),
+      API_ROUTES.FUNCTIONARIES.GET_BY_FILTERS,
       {
-        params: { limit, offset },
+        params: { limit, offset, ...filters },
       },
     )
 

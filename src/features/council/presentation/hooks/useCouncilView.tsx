@@ -69,10 +69,10 @@ export const useCouncilView = ({
     if (newPage > table.page) {
       if (isDataFiltered) {
         fetchDataByField(
+          filters,
           moduleIdentifier,
           table.rowsPerPage,
           newPage,
-          filters,
         ).then((response) => {
           if (response?.status === HTTP_STATUS_CODES.OK) {
             setCouncils([
@@ -106,10 +106,10 @@ export const useCouncilView = ({
 
     if (isDataFiltered) {
       fetchDataByField(
+        filters,
         moduleIdentifier,
         parseInt(event.target.value, 10),
         0,
-        filters,
       ).then((response) => {
         if (response?.status === HTTP_STATUS_CODES.OK) {
           setCouncils(response.data.councils as CouncilModel[])
@@ -192,10 +192,10 @@ export const useCouncilView = ({
 
   const handleSearch = (filters: ICouncilFilters) => {
     fetchDataByField(
+      filters,
       moduleIdentifier,
       table.rowsPerPage,
       table.page,
-      filters,
     ).then((response) => {
       if (response?.status === HTTP_STATUS_CODES.OK) {
         setCouncils(response.data.councils as CouncilModel[])

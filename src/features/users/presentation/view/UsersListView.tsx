@@ -39,10 +39,8 @@ import { FunctionaryTableResult } from '../components/UsersTableFiltersResult'
 import { IUser } from '../../domain/entities/IUser'
 
 const defaultFilters: IUsersTableFilters = {
-  name: '',
-  personalEmail: '',
-  outlookEmail: '',
-  state: [],
+  field: undefined,
+  state: undefined,
 }
 
 const UsersListView = () => {
@@ -53,7 +51,6 @@ const UsersListView = () => {
   const [count, setCount] = useState(0)
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
 
   const [tableData, setTableData] = useState<IUser[]>([])
   const [filters, setFilters] = useState<IUsersTableFilters>(defaultFilters)
@@ -83,7 +80,7 @@ const UsersListView = () => {
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    field: searchTerm,
+    filters,
   })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
@@ -99,7 +96,6 @@ const UsersListView = () => {
 
   const handleResetFilters = () => {
     setFilters(defaultFilters)
-    setSearchTerm('')
     setVisitedPages([])
     setIsDataFiltered(false)
     setTableData([])
@@ -135,7 +131,6 @@ const UsersListView = () => {
           <FunctionaryTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
             table={table}

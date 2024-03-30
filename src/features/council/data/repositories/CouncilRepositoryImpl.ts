@@ -32,11 +32,11 @@ export class CouncilRepositoryImpl implements CouncilRepository {
   getAll = async () => await this.datasource.getAll()
 
   getByFilters = async (
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
-    filters: ICouncilFilters,
-  ) => await this.datasource.getByFilters(moduleId, limit, offset, filters)
+  ) => await this.datasource.getByFilters(filters, moduleId, limit, offset)
 
   update = async (data: Partial<CouncilModel>) =>
     await this.datasource.update(data)

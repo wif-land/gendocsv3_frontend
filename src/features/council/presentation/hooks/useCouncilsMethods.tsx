@@ -65,18 +65,18 @@ export const useCouncilsMethods = () => {
   }
 
   const fetchDataByField = async (
+    filters: ICouncilFilters,
     moduleId: number,
     rowsPerPage: number,
     currentPage: number,
-    filters: ICouncilFilters,
   ) => {
     addLoaderItem('councils')
     try {
       const response = await CouncilsUseCasesImpl.getInstance().getByFilters(
+        filters,
         moduleId,
         rowsPerPage,
         currentPage * rowsPerPage,
-        filters,
       )
       if (
         response.status === HTTP_STATUS_CODES.OK ||

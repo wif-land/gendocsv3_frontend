@@ -1,5 +1,6 @@
 import { UserModel } from '../../data/models/UserModel'
 import { IUser } from '../entities/IUser'
+import { IUserFilters } from '../entities/IUserFilters'
 
 export interface UserRepository {
   getAll: (
@@ -13,10 +14,10 @@ export interface UserRepository {
     }
   }>
 
-  getByField: (
-    field: string,
+  getByFilters: (
     limit: number,
     offset: number,
+    filters: IUserFilters,
   ) => Promise<{
     status: number
     data: {

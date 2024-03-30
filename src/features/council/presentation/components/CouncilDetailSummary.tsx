@@ -7,10 +7,7 @@ import { format } from 'date-fns'
 import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
 import { Box, Button } from '@mui/material'
 import Iconify from '../../../../core/iconify'
-import { usePathname, useRouter } from 'next/navigation'
-import useModulesStore from '../../../../shared/store/modulesStore'
-import { useEffect, useState } from 'react'
-import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   council: CouncilModel
@@ -24,36 +21,6 @@ export const CouncilDetailsSummary = ({
   ...other
 }: Props) => {
   const router = useRouter()
-  const pathname = usePathname()
-  const { modules } = useModulesStore()
-  const moduleId = modules?.find(
-    (module) => module.code === pathname.split('/')[2].toUpperCase(),
-  )?.id
-
-  const [currentCouncil, setCurrentCouncil] = useState<CouncilModel>(council)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  useEffect(() => {
-    const fetchCouncil = async () => {
-      setIsLoading(true)
-      try {
-        const response = await CouncilsUseCasesImpl.getInstance().getByFilters(
-          councilId.toString(),
-          moduleId!,
-        )
-        setCurrentCouncil(response.data.councils[0])
-      } catch (error) {
-        console.error('Error al obtener detalles del consejo', error)
-      }
-      setIsLoading(false)
-    }
-
-    if (!council) {
-      fetchCouncil()
-    }
-  }, [councilId, moduleId])
-
-  const { name, id } = currentCouncil as CouncilModel
 
   const SUMMARY = [
     {
@@ -89,7 +56,7 @@ export const CouncilDetailsSummary = ({
   const renderError = (
     <EmptyContent
       filled
-      title={`No hay consejo con el id ${id}`}
+      title={`No hay consejo con el id ${councilId}`}
       action={
         <Button
           onClick={() => router.back()}
@@ -104,7 +71,6 @@ export const CouncilDetailsSummary = ({
   )
   const renderAttendees = () => (
     <>
-      {isLoading && <EmptyContent filled title="Cargando..." sx={{ py: 10 }} />}
       <Box
         gap={5}
         display="grid"
@@ -130,7 +96,7 @@ export const CouncilDetailsSummary = ({
   return (
     <Stack spacing={3} sx={{ pt: 3 }} {...other}>
       <Stack spacing={2} alignItems="flex-start">
-        <Typography variant="h5">{name}</Typography>
+        <Typography variant="h5">{council.name}</Typography>
 
         {renderType}
       </Stack>

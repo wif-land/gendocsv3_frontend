@@ -16,10 +16,10 @@ interface CouncilUseCases {
   }>
 
   getByFilters(
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
-    filters: ICouncilFilters,
   ): Promise<{
     status: number
     data: {
@@ -74,12 +74,12 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   getAll = async () => await this.councilRepository.getAll()
 
   getByFilters = async (
+    filters: ICouncilFilters,
     moduleId: number,
     limit = 5,
     offset = 0,
-    filters: ICouncilFilters,
   ) =>
-    await this.councilRepository.getByFilters(moduleId, limit, offset, filters)
+    await this.councilRepository.getByFilters(filters, moduleId, limit, offset)
 
   update = async (id: number, council: Partial<CouncilModel>) =>
     await this.councilRepository.update({

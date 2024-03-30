@@ -9,7 +9,7 @@ export const API_ROUTES = {
   },
   USERS: {
     GET_ALL: '/users',
-    GET_BY_FIELD: (field: string) => `/users/${field}`,
+    GET_BY_FILTERS: `/users/filter`,
     UPDATE: (id: number) => `/users/${id}`,
     DELETE: '/users/:id',
     CREATE: '/users',
@@ -30,7 +30,7 @@ export const API_ROUTES = {
   STUDENTS: {
     GET_ALL: '/students',
     GET_ONE: '/students/:id',
-    GET_BY_FIELD: (field: string) => `/students/search/${field}`,
+    GET_BY_FILTERS: `/students/filter`,
     UPDATE: (id: number) => `/students/${id}`,
     BULK_UPDATE: '/students/bulk',
     DELETE: (id: number) => `/students/${id}`,
@@ -39,7 +39,7 @@ export const API_ROUTES = {
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
-    GET_BY_FIELD: (field: string) => `/functionaries/${field}`,
+    GET_BY_FILTERS: `/functionaries/filter`,
     UPDATE: (id: number) => `/functionaries/${id}`,
     BULK_UPDATE: '/functionaries/bulk',
     DELETE: '/functionaries/:id',
