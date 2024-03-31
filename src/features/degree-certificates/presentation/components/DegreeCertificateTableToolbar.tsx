@@ -9,7 +9,7 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { DegreeCertificateModel } from '../../data/model'
 
 export type IDegreeCertificateTableFilterValue = string | string[]
 

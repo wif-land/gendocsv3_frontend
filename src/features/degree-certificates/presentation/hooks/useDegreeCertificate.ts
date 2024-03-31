@@ -9,7 +9,7 @@ import {
   IDegreeCertificateTableFilterValue,
   IDegreeCertificateTableFilters,
 } from '../components/DegreeCertificateTableToolbar'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { DegreeCertificateModel } from '../../data/model'
 import { defaultFilters } from '../constants'
 
 export const useDegreeCertificateView = (moduleId: string) => {

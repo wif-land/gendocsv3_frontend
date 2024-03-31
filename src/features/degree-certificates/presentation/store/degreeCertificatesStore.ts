@@ -1,6 +1,6 @@
 import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { DegreeCertificateModel } from '../../data/model'
 
 interface StoreState {
   degreeCertificate: DegreeCertificateModel

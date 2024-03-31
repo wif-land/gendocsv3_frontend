@@ -48,8 +48,6 @@ export const useTemplateView = ({ processId, isDataFiltered }: Props) => {
 
   const handleSearch = (field: string) => {
     fetchDataByField(field, processId).then((response) => {
-      console.log(response)
-
       if (response?.status === HTTP_STATUS_CODES.OK) {
         setTemplates(response.data.templates as TemplateModel[])
         setCount(response.data.count)

@@ -25,7 +25,7 @@ export class StudentModel implements IStudent {
   phoneNumber: string
   createdAt: string
   studyStartDate: string
-  bachelorDegree?: string | undefined
+  bachelorDegree: string
   vinculationHours?: number | undefined
   internshipHours?: number | undefined
   studyEndDate?: string | undefined

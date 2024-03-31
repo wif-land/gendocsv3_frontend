@@ -11,11 +11,11 @@ export const fetchModules = async (): Promise<{
 }> => {
   const result = await AxiosClient.get(API_ROUTES.MODULES.GET_ALL)
 
-  const { status, data } = result
-
-  if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-    return { status, message: data?.message }
+  if ('error' in result) {
+    return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
   }
+
+  const { status, data } = result
 
   return { status, modules: data.content as IModule[] }
 }

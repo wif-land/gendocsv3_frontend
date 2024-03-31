@@ -37,7 +37,6 @@ import {
 import { TABLE_HEAD } from '../constants'
 import { FunctionaryTableResult } from '../components/UsersTableFiltersResult'
 import { IUser } from '../../domain/entities/IUser'
-import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
 const defaultFilters: IUsersTableFilters = {
   name: '',
@@ -54,7 +53,6 @@ const UsersListView = () => {
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const { user } = useAccountStore()
 
   const [tableData, setTableData] = useState<IUser[]>([])
   const [filters, setFilters] = useState<IUsersTableFilters>(defaultFilters)

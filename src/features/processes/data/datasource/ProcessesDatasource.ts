@@ -35,11 +35,6 @@ export interface ProcessesDataSource {
     }
   }>
 
-  getById(id: number): Promise<{
-    status: number
-    process: ProcessModel
-  }>
-
   update(process: Partial<IProcess>): Promise<{
     status: number
     process: ProcessModel
@@ -76,26 +71,31 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
       params: { moduleId, limit, offset },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { processes: ProcessModel[]; count: number },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { processes: [], count: 0 },
       }
     }
 
-    return { status, data: { processes: [], count: 0 } }
+    const { status, data } = result
+
+    return {
+      status,
+      data: data.content as { processes: ProcessModel[]; count: number },
+    }
   }
 
   create = async (process: ProcessModel) => {
     const result = await AxiosClient.post(API_ROUTES.PROCESSES.CREATE, process)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, process: {} as ProcessModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        process: {} as ProcessModel,
+      }
     }
+    const { status, data } = result
 
     return { status, process: data.content as ProcessModel }
   }
@@ -103,11 +103,13 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_ALL)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, processes: [] as ProcessModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        processes: [] as ProcessModel[],
+      }
     }
+    const { status, data } = result
 
     return { status, processes: data.content as ProcessModel[] }
   }
@@ -125,15 +127,19 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
       },
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { processes: ProcessModel[]; count: number },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { processes: [], count: 0 },
       }
     }
-    return { status, data: { processes: [], count: 0 } }
+
+    const { status, data } = result
+
+    return {
+      status,
+      data: data.content as { processes: ProcessModel[]; count: number },
+    }
   }
 
   update = async (process: Partial<IProcess>) => {
@@ -144,27 +150,33 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
       rest,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, process: data.content as ProcessModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        process: {} as ProcessModel,
+      }
     }
 
-    return { status, process: {} as ProcessModel }
+    const { status, data } = result
+
+    return { status, process: data.content as ProcessModel }
   }
 
   bulkUpdate = async (processes: IProcess[]) => {
-    const result = AxiosClient.patch(API_ROUTES.COUNCILS.BULK_UPDATE, processes)
+    const result = await AxiosClient.patch(
+      API_ROUTES.COUNCILS.BULK_UPDATE,
+      processes,
+    )
 
-    return result.then(({ status, data }) => {
-      if (status === HTTP_STATUS_CODES.OK) {
-        return { status, processes: data.content as ProcessModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        processes: [] as ProcessModel[],
       }
-      return { status, processes: [] as ProcessModel[] }
-    })
-  }
+    }
 
-  getById = async (id: number) => {
-    throw new Error(`Method not implemented.${id}`)
+    const { status, data } = result
+
+    return { status, processes: data.content as ProcessModel[] }
   }
 }

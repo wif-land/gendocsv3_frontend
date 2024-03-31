@@ -6,7 +6,7 @@ import {
 import {
   DegreeCertificateDatasourceImpl,
   IDegreeCertificateDatasource,
-} from './DegreeCertificateDatasource'
+} from './datasource'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository

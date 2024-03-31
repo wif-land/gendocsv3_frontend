@@ -61,7 +61,6 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
         result.status === HTTP_STATUS_CODES.OK ||
         result.status === HTTP_STATUS_CODES.CREATED
       ) {
-        console.log('result', result)
         addTemplateToProcess(result.template, values.processId as number)
         enqueueSnackbar('Plantilla creada exitosamente')
         reset()
