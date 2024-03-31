@@ -37,21 +37,13 @@ export const NewFunctionarySchema = Yup.object().shape({
   secondLastName: Yup.string(),
   outlookEmail: Yup.string()
     .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
+    .matches(/^[A-Z0-9._%+-]+@uta\.edu\.ec$/i, `Debe contener (uta.edu.ec)`),
   googleEmail: Yup.string()
     .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
+    .matches(/^[A-Z0-9._%+-]+@gmail\.com$/i, ` Debe contener (gmail.com)`),
   password: Yup.string(),
   role: Yup.string().required(VALIDATION_MESSAGES.required),
-  accessModules: Yup.array()
-    .of(Yup.number())
-    .required(VALIDATION_MESSAGES.required),
+  accessModules: Yup.array().required(VALIDATION_MESSAGES.required),
 })
 
 export const resolveDefaultValues = (currentUser?: IUser) => ({
@@ -68,14 +60,12 @@ export const resolveDefaultValues = (currentUser?: IUser) => ({
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
-  const result = await UserUseCasesImpl.getInstance().create(values)
+  const result = await UserUseCasesImpl.getInstance().create({
+    ...values,
+    accessModules: values.accessModules.map((module) => module.id),
+  })
 
-  if (!result) {
-    enqueueSnackbar('Error al crear el usuario', { variant: 'error' })
-    return
-  }
-
-  enqueueSnackbar('Usuario creado con éxito', { variant: 'success' })
+  return result.status !== 500
 }
 
 export const handleUpdate = async (
@@ -86,17 +76,11 @@ export const handleUpdate = async (
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
     })
-    return
+
+    return false
   }
 
   const result = await UserUseCasesImpl.getInstance().update(id, values)
 
-  if (!result) {
-    enqueueSnackbar('Error al actualizar el usuario', {
-      variant: 'error',
-    })
-    return
-  }
-
-  enqueueSnackbar('Usuario actualizado con éxito', { variant: 'success' })
+  return result.status !== 500
 }

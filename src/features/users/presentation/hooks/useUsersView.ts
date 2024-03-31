@@ -18,7 +18,7 @@ interface Props {
   field: string
 }
 
-export const useFunctionaryView = ({
+export const useUserView = ({
   tableData,
   setTableData,
   table,
@@ -39,7 +39,7 @@ export const useFunctionaryView = ({
         fetchData(table.rowsPerPage, table.page).then((data) => {
           if (data?.users) {
             setTableData(data.users)
-            setUsers(data.users as IUser[])
+            setUsers(data.users)
           }
           if (data?.count) {
             setCount(data.count)
@@ -122,9 +122,7 @@ export const useFunctionaryView = ({
     updateRow(row).then((data) => {
       if (data) {
         setUsers(users?.map((user) => (user.id === data.id ? data : user)))
-        setTableData(
-          (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
-        )
+        setTableData(users.map((user) => (user.id === data.id ? data : user)))
       }
     })
   }

@@ -14,6 +14,7 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { IUser } from '../../domain/entities/IUser'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
 type Props = {
   row: IUser
@@ -30,6 +31,7 @@ export const UsersTableRow = ({
 }: Props) => {
   const confirm = useBoolean()
   const popover = usePopover()
+  const { user } = useAccountStore()
 
   return (
     <>
@@ -105,27 +107,29 @@ export const UsersTableRow = ({
           Editar
         </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue()
-            popover.onClose()
-          }}
-          sx={
-            row.isActive ? { color: 'error.main' } : { color: 'success.main' }
-          }
-        >
-          {row.isActive ? (
-            <>
-              <Iconify icon="eva:slash-fill" />
-              Desactivar
-            </>
-          ) : (
-            <>
-              <Iconify icon="eva:checkmark-circle-fill" />
-              Activar
-            </>
-          )}
-        </MenuItem>
+        {row.id !== user?.id && (
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue()
+              popover.onClose()
+            }}
+            sx={
+              row.isActive ? { color: 'error.main' } : { color: 'success.main' }
+            }
+          >
+            {row.isActive ? (
+              <>
+                <Iconify icon="eva:slash-fill" />
+                Desactivar
+              </>
+            ) : (
+              <>
+                <Iconify icon="eva:checkmark-circle-fill" />
+                Activar
+              </>
+            )}
+          </MenuItem>
+        )}
       </CustomPopover>
 
       <ConfirmDialog

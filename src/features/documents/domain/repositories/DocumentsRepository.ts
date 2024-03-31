@@ -1,15 +1,8 @@
+import { DefaultResponse } from '../../../../core/utils/default-response'
 import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { NumerationModel } from '../../data/models/NumerationModel'
 import { IDocument } from '../entities/IDocument'
-
-export interface DefaultResponse<T> {
-  status: number
-  data: {
-    count: number
-    [key: string]: T | number
-  }
-}
 
 export interface DocumentsRepository {
   getAll: () => Promise<{
@@ -17,19 +10,14 @@ export interface DocumentsRepository {
     documents: DocumentModel[]
   }>
 
-  create: (processData: IDocument) => Promise<{
-    status: number
-    document: DocumentModel
-  }>
+  create: (processData: IDocument) => Promise<DocumentModel | boolean>
 
   getAllDocumentsByModuleId: (
     moduleId: number,
     params: PaginationParams,
   ) => Promise<DefaultResponse<DocumentModel[]>>
 
-  deleteById: (id: number) => Promise<{
-    status: number
-  }>
+  deleteById: (id: number) => Promise<boolean>
 
   getNumerationByCouncil: (councilId: number) => Promise<NumerationModel>
 }

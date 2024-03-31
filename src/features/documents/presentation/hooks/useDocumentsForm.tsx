@@ -22,7 +22,6 @@ import { StudentUseCasesImpl } from '../../../students/domain/usecases/StudentSe
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const router = useRouter()
@@ -77,24 +76,19 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
 
   const onSubmit = useCallback(
     async (data: IDocument) => {
-      try {
-        const { status } = await handleCreateDocument(
-          DocumentModel.fromJson({
-            ...data,
-            userId: user?.id,
-          }),
-        )
+      const result = await handleCreateDocument(
+        DocumentModel.fromJson({
+          ...data,
+          userId: user?.id,
+        }),
+      )
 
-        if (status !== HTTP_STATUS_CODES.CREATED) {
-          methods.reset()
-          return
-        }
-
-        router.push(pathname.replace('/new', ''))
-      } catch (error) {
-      } finally {
-        methods.reset()
+      if (!result) {
+        return
       }
+
+      methods.reset()
+      router.push(pathname.replace('/new', ''))
     },
     [currentDocument, enqueueSnackbar, methods.reset, router],
   )

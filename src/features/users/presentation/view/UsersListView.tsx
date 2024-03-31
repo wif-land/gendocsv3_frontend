@@ -13,7 +13,7 @@ import {
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
-import { useFunctionaryView } from '../hooks/useUsersView'
+import { useUserView } from '../hooks/useUsersView'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
@@ -37,6 +37,7 @@ import {
 import { TABLE_HEAD } from '../constants'
 import { FunctionaryTableResult } from '../components/UsersTableFiltersResult'
 import { IUser } from '../../domain/entities/IUser'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
 const defaultFilters: IUsersTableFilters = {
   name: '',
@@ -53,6 +54,7 @@ const UsersListView = () => {
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const { user } = useAccountStore()
 
   const [tableData, setTableData] = useState<IUser[]>([])
   const [filters, setFilters] = useState<IUsersTableFilters>(defaultFilters)
@@ -74,7 +76,7 @@ const UsersListView = () => {
     handleChangeRowsPerPage,
     handleUpdateRow,
     handleSearch,
-  } = useFunctionaryView({
+  } = useUserView({
     tableData,
     setTableData,
     table,

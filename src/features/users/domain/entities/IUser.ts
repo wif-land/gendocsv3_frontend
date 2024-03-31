@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export enum UserRole {
   ADMIN = 'ADMIN',
   WRITER = 'WRITER',
@@ -28,5 +29,5 @@ export interface IUser {
   password?: string
   role: UserRole
   isActive: boolean
-  accessModules: number[]
+  accessModules: number[] | any[]
 }
