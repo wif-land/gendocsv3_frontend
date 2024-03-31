@@ -1,31 +1,45 @@
 'use client'
+
 import { useParams } from 'next/navigation'
-import UsersView from '../../../../features/modules/components/users-view'
-import CareersView from '../../../../features/careers/components/CareersView'
-import StudentsView from '../../../../features/modules/components/students-view'
-import FunctionaryView from '../../../../features/modules/components/functionary-view'
+
+import { CouncilListView } from '../../../../features/council/presentation/view'
+import { CareerListView } from '../../../../features/careers/presentation/view'
+import { DocumentListView } from '../../../../features/documents/presentation/view'
+import { FunctionaryListView } from '../../../../features/functionaries/presentation/view'
+import { ProcessListView } from '../../../../features/processes/presentation/view'
+import { StudentListView } from '../../../../features/students/presentation/view'
+import { PositionListView } from '../../../../features/positions/presentation/view'
+import { UsersListView } from '../../../../features/users/presentation/view'
+import { DegreeCertificateListView } from '../../../../features/degree-certificates/presentation/views'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
 
   const route = `${codeModule}/${subModuleName}`
 
-  const resolveViewByRoute = (route: string) => {
-    switch (route) {
-      case 'admin/usuarios':
-        return <UsersView />
-      case 'admin/estudiantes':
-        return <StudentsView />
-      case 'admin/carreras':
-        return <CareersView />
-      case 'admin/funcionarios':
-        return <FunctionaryView />
-      default:
-        return <div>DEFAULT</div>
-    }
+  const routeToComponent = {
+    usuarios: UsersListView,
+    estudiantes: StudentListView,
+    carreras: CareerListView,
+    funcionarios: FunctionaryListView,
+    procesos: ProcessListView,
+    consejos: CouncilListView,
+    documentos: DocumentListView,
+    cargos: PositionListView,
+    actas_de_grado: DegreeCertificateListView,
   }
 
-  return resolveViewByRoute(route)
+  const defaultComponent = () => <div>Not found</div>
+
+  const matchedRoute = Object.keys(routeToComponent).find((key) =>
+    RegExp(key).test(route),
+  )
+
+  const Component =
+    routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
+    defaultComponent
+
+  return <Component moduleId={codeModule as string} />
 }
 
 export default Page

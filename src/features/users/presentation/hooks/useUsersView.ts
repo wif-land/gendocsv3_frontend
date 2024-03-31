@@ -1,0 +1,158 @@
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { useEffect } from 'react'
+import { TableProps } from '../../../../shared/sdk/table'
+import { useUsersMethods } from './useUsersMethods'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { IUser } from '../../domain/entities/IUser'
+import { useUsersStore } from '../state/usersStore'
+import { UserModel } from '../../data/models/UserModel'
+
+interface Props {
+  tableData: IUser[]
+  setTableData: (data: IUser[]) => void
+  table: TableProps
+  setCount: (count: number) => void
+  isDataFiltered: boolean
+  visitedPages: number[]
+  setVisitedPages: (value: number[]) => void
+  field: string
+}
+
+export const useFunctionaryView = ({
+  tableData,
+  setTableData,
+  table,
+  setCount,
+  isDataFiltered,
+  visitedPages,
+  setVisitedPages,
+  field,
+}: Props) => {
+  const { users, setUsers } = useUsersStore()
+  const { loader } = useLoaderStore()
+  const { fetchData, updateRow, fetchDataByField } = useUsersMethods()
+
+  useEffect(() => {
+    let isMounted = true
+    if (tableData.length === 0) {
+      if (isMounted && !isDataFiltered) {
+        fetchData(table.rowsPerPage, table.page).then((data) => {
+          if (data?.users) {
+            setTableData(data.users)
+            setUsers(data.users as IUser[])
+          }
+          if (data?.count) {
+            setCount(data.count)
+          }
+        })
+      }
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [tableData, isDataFiltered])
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    table.onChangePage(event, newPage)
+    table.setPage(newPage)
+
+    if (visitedPages.includes(newPage)) {
+      return
+    } else {
+      visitedPages.push(newPage)
+    }
+
+    if (newPage > table.page) {
+      if (isDataFiltered) {
+        fetchDataByField(field, table.rowsPerPage, newPage).then((response) => {
+          if (response?.status === HTTP_STATUS_CODES.OK) {
+            setUsers([...users, ...response.data.users])
+            setTableData([...(users as IUser[]), ...response.data.users])
+          }
+        })
+      } else {
+        fetchData(table.rowsPerPage, newPage).then((data) => {
+          if (data?.users) {
+            setUsers([...users, ...data.users])
+            setTableData([...(users as UserModel[]), ...data.users])
+          }
+        })
+      }
+    }
+  }
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    table.onChangeRowsPerPage(event)
+    table.setPage(0)
+    setTableData([])
+    setVisitedPages([])
+
+    if (isDataFiltered) {
+      fetchDataByField(field, parseInt(event.target.value, 10), 0).then(
+        (response) => {
+          if (response?.status === HTTP_STATUS_CODES.OK) {
+            setUsers(response.data.users)
+            setTableData(response.data.users)
+            setCount(response.data.count)
+          }
+
+          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+            setUsers([])
+            setTableData([])
+            setCount(0)
+          }
+        },
+      )
+    } else {
+      fetchData(parseInt(event.target.value, 10), table.page).then((data) => {
+        if (data?.users) {
+          setUsers(data.users)
+          setTableData(data.users)
+        }
+        if (data?.count) {
+          setCount(data.count)
+        }
+      })
+    }
+  }
+
+  const handleUpdateRow = (row: IUser) => {
+    updateRow(row).then((data) => {
+      if (data) {
+        setUsers(users?.map((user) => (user.id === data.id ? data : user)))
+        setTableData(
+          (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
+        )
+      }
+    })
+  }
+
+  const handleSearch = (field: string) => {
+    fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
+      if (response?.status === HTTP_STATUS_CODES.OK) {
+        setUsers(response.data.users)
+        setTableData(response.data.users)
+        setCount(response.data.count)
+        return
+      }
+
+      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+        setUsers([])
+        setTableData([])
+        setCount(0)
+        return
+      }
+    })
+  }
+
+  return {
+    loader,
+    users,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+    handleSearch,
+  }
+}

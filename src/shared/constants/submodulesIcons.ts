@@ -1,20 +1,28 @@
-// submodulesIcons.js
+import {
+  PiStudent,
+  PiSquaresFour,
+  PiBuildings,
+  PiUserRectangle,
+  PiGraduationCap,
+  PiFolders,
+  PiUsersFour,
+  PiUser,
+  PiToolbox,
+  PiArrowsClockwise,
+  PiReadCvLogo,
+} from 'react-icons/pi'
+import { LiaSearchSolid } from 'react-icons/lia'
 
-import { PiStudent,PiSquaresFour,PiBuildings ,PiUserRectangle,PiGraduationCap, PiFolders,  PiUsersFour, PiUser, PiToolbox, PiArrowsClockwise, PiReadCvLogo} from "react-icons/pi";
-import { LiaSearchSolid } from "react-icons/lia"
-
-export const defaultIcon = PiSquaresFour;
+export const defaultIcon = PiSquaresFour
 
 export type IconType = typeof PiArrowsClockwise
 
-
 interface ISubmoduleIcons {
-  [key: string]: IconType | undefined; // Agrega una firma de índice aquí
+  [key: string]: IconType | undefined
 }
 
-
-export const submoduleIcons  : ISubmoduleIcons = {
-  Buscar: LiaSearchSolid ,
+export const submoduleIcons: ISubmoduleIcons = {
+  Buscar: LiaSearchSolid,
   Consejos: PiUsersFour,
   Procesos: PiArrowsClockwise,
   Documentos: PiReadCvLogo,
@@ -22,9 +30,7 @@ export const submoduleIcons  : ISubmoduleIcons = {
   Funcionarios: PiUserRectangle,
   Carreras: PiBuildings,
   Usuarios: PiUser,
-  'Actas de Grado': PiGraduationCap,
+  ['Actas de Grado']: PiGraduationCap,
   Historial: PiFolders,
   Cargos: PiToolbox,
-};
-
-
+}

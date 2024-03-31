@@ -1,23 +1,16 @@
 'use client'
 
-import { Avatar, AvatarIcon, ScrollShadow, Divider } from '@nextui-org/react'
-import { useAuth } from '../../features/auth/hooks/useAuth'
-import CareerModule from '../../shared/components/CareerModule'
-import React, { Suspense } from 'react'
+import React from 'react'
+import DashboardLayout from '../../core/layout/dashboard/layout'
 
 interface LayoutProps {
   children: React.ReactNode
 }
-const layout: React.FC<LayoutProps> = ({ children }) => {
-  const { logout } = useAuth()
-
-  const PrivateRoute = React.lazy(
-    () => import('../../shared/components/PrivateRoute'),
-  )
-
-  return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
+const layout: React.FC<LayoutProps> = ({ children }) => (
+  <div>
+    <DashboardLayout>{children}</DashboardLayout>
+    {/*
+      <Suspense fallback={<LoadingScreen />}>
         <PrivateRoute>
           <div className="h-screen flex">
             <nav className="fixed top-0 z-50 py-5 w-full bg-red-800 flex justify-end items-center px-10">
@@ -51,9 +44,8 @@ const layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           </div>
         </PrivateRoute>
-      </Suspense>
-    </div>
-  )
-}
+      </Suspense> */}
+  </div>
+)
 
 export default layout
