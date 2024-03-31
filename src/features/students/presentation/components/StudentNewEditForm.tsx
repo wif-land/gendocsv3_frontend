@@ -126,6 +126,74 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 name="approvedCredits"
                 label="Créditos aprobados"
                 required
+                type="number"
+              />
+
+              <RHFTextField
+                name="vinculationHours"
+                label="Horas de vinculación"
+                type="number"
+              />
+
+              <RHFTextField
+                name="internshipHours"
+                label="Horas de pasantía"
+                type="number"
+              />
+
+              <Controller
+                name="studyStartDate"
+                rules={{ required: true }}
+                control={control}
+                render={({ field }) => (
+                  <MobileDatePicker
+                    {...field}
+                    value={dayjs(field.value)}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        field.onChange(newValue)
+                      }
+                    }}
+                    label="Fecha de inicio de estudios"
+                    format="dddd/MM/YYYY"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                      },
+                    }}
+                    closeOnSelect
+                  />
+                )}
+              />
+
+              <Controller
+                name="studyEndDate"
+                control={control}
+                render={({ field }) => (
+                  <MobileDatePicker
+                    {...field}
+                    value={dayjs(field.value)}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        field.onChange(newValue)
+                      }
+                    }}
+                    label="Fecha de fin de estudios"
+                    format="dddd/MM/YYYY"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                      },
+                    }}
+                    closeOnSelect
+                  />
+                )}
+              />
+
+              <RHFTextField
+                name="bachelorDegree"
+                label="Título de Bachillerato"
+                required
               />
 
               <RHFTextField name="folio" label="Folio" required />

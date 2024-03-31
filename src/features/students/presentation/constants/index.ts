@@ -2,7 +2,6 @@ import * as yup from 'yup'
 import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 import { enqueueSnackbar } from 'notistack'
 import { IStudent } from '../../domain/entities/IStudent'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 
@@ -61,10 +60,15 @@ export const NewStudentSchema = yup.object().shape({
   approvedCredits: yup
     .number()
     .required(VALIDATION_MESSAGES.required)
-    .max(MAX_CREDITS_TO_APPROVE)
-    .min(0),
+    .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 140')
+    .min(0, 'Debe ser entre 0 y 140'),
   folio: yup.string().required(VALIDATION_MESSAGES.required),
   career: yup.number().required(VALIDATION_MESSAGES.required),
+  studyStartDate: yup.string().required(VALIDATION_MESSAGES.required),
+  vinculationHours: yup.number(),
+  internshipHours: yup.number(),
+  studyEndDate: yup.string(),
+  bachelorDegree: yup.string(),
 })
 
 export const resolveDefaultValues = (
@@ -81,22 +85,21 @@ export const resolveDefaultValues = (
   regularPhoneNumber: currentStudent?.regularPhoneNumber || '',
   isActive: currentStudent?.isActive || true,
   registration: currentStudent?.registration || '',
-  approvedCredits: currentStudent?.approvedCredits || 0,
   folio: currentStudent?.folio || '',
   gender: currentStudent?.gender || '',
   birthdate: currentStudent?.birthdate || '',
   canton: currentStudent?.canton || '',
-  career: (currentStudent?.career as ICareer)?.id || 0,
+  career: (currentStudent?.career as ICareer)?.id || null,
+  approvedCredits: currentStudent?.approvedCredits || null,
+  studyStartDate: currentStudent?.studyStartDate || null,
+  bachelorDegree: currentStudent?.bachelorDegree || null,
+  vinculationHours: currentStudent?.vinculationHours || null,
+  internshipHours: currentStudent?.internshipHours || null,
+  studyEndDate: currentStudent?.studyEndDate || null,
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
-  const result = await StudentUseCasesImpl.getInstance().create(values)
-
-  if (result.status === HTTP_STATUS_CODES.CREATED) {
-    enqueueSnackbar('Estudiante creado con éxito')
-    return
-  }
-  enqueueSnackbar('Error al crear el Estudiante', { variant: 'error' })
+  await StudentUseCasesImpl.getInstance().create(values)
 }
 
 export const handleUpdate = async (

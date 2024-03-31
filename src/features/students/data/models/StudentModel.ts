@@ -17,13 +17,18 @@ export class StudentModel implements IStudent {
   folio: string
   isActive: boolean
   registration: string
-  approvedCredits: number
+  approvedCredits?: number
   career: ICareer | number
   updatedAt: string
   personalEmail: string
   outlookEmail: string
   phoneNumber: string
   createdAt: string
+  studyStartDate: string
+  bachelorDegree?: string | undefined
+  vinculationHours?: number | undefined
+  internshipHours?: number | undefined
+  studyEndDate?: string | undefined
 
   constructor(props: IStudent) {
     this.id = props.id
@@ -47,6 +52,11 @@ export class StudentModel implements IStudent {
     this.outlookEmail = props.outlookEmail
     this.phoneNumber = props.phoneNumber
     this.createdAt = props.createdAt
+    this.studyStartDate = props.studyStartDate
+    this.bachelorDegree = props.bachelorDegree
+    this.vinculationHours = props.vinculationHours
+    this.internshipHours = props.internshipHours
+    this.studyEndDate = props.studyEndDate
   }
 
   static fromJson(json: Record<string, any>): StudentModel {
@@ -72,6 +82,11 @@ export class StudentModel implements IStudent {
       updatedAt: json.updatedAt,
       cellphone: json.cellphone,
       regularPhoneNumber: json.regularPhoneNumber,
+      studyStartDate: json.studyStartDate,
+      bachelorDegree: json.bachelorDegree,
+      vinculationHours: json.vinculationHours,
+      internshipHours: json.internshipHours,
+      studyEndDate: json.studyEndDate,
     })
   }
 
@@ -87,6 +102,7 @@ export class StudentModel implements IStudent {
       personalEmail: this.personalEmail,
       phoneNumber: this.phoneNumber,
       regularPhoneNumber: this.regularPhoneNumber,
+      cellphone: this.cellphone,
     }
   }
 }
