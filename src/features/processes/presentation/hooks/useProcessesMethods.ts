@@ -4,6 +4,7 @@ import { enqueueSnackbar } from 'notistack'
 import { useProcessStore } from '../state/useProcessStore'
 import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
 import { IProcess } from '../../domain/entities/IProcess'
+import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 
 export const useProcessesMethods = () => {
   const { processes, setProcesses } = useProcessStore()
@@ -64,15 +65,15 @@ export const useProcessesMethods = () => {
   }
 
   const fetchDataByField = async (
-    searchTerm: string,
+    filters: IProcessFilters,
     moduleId: number,
     rowsPerPage: number,
     currentPage: number,
   ) => {
     addLoaderItem('processes')
     try {
-      const response = await ProcessesUseCasesImpl.getInstance().getByField(
-        searchTerm,
+      const response = await ProcessesUseCasesImpl.getInstance().getByFilters(
+        filters,
         moduleId,
         rowsPerPage,
         currentPage * rowsPerPage,

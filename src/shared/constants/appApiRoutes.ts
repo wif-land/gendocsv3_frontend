@@ -48,7 +48,7 @@ export const API_ROUTES = {
   PROCESSES: {
     GET_ALL: '/processes',
     GET_ONE: '/processes/:id',
-    GET_BY_FIELD: (field: string) => `/processes/${field}`,
+    GET_BY_FILTERS: `/processes/filter`,
     UPDATE: '/processes/:id',
     DELETE: '/processes/:id',
     CREATE: '/processes',

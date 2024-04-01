@@ -32,8 +32,12 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
 
-import { TemplateTableToolbar } from '../components/TemplateTableTooldar'
-import { TABLE_HEAD } from '../constants'
+import {
+  ITemplateTableFilters,
+  ITemplateTableFilterValue,
+  TemplateTableToolbar,
+} from '../components/TemplateTableTooldar'
+import { TABLE_HEAD, defaultFilters } from '../constants'
 import { TemplateTableRow } from '../components/TemplateTableRow'
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 import { TemplatesTableFiltersResult } from '../components/TemplateTableFiltersResult'
@@ -47,7 +51,15 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const pathNameWithoutId = pathname.split('/').slice(0, -1).join('/')
 
-  const [searchTerm, setSearchTerm] = useState('')
+  const [filters, setFilters] = useState<ITemplateTableFilters>(defaultFilters)
+
+  const handleFilters = useCallback(
+    (name: string, value: ITemplateTableFilterValue) => {
+      table.onResetPage()
+      setFilters((prevState) => ({ ...prevState, [name]: value }))
+    },
+    [table],
+  )
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -64,7 +76,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
   )
 
   const handleResetFilters = () => {
-    setSearchTerm('')
+    setFilters(defaultFilters)
     setIsDataFiltered(false)
     setTemplates([])
   }
@@ -111,11 +123,13 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
 
         <Card>
           <TemplateTableToolbar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+            filters={filters}
+            onFilters={handleFilters}
             setDataTable={setTemplates}
-            setIsDataFiltered={setIsDataFiltered}
+            table={table}
             getFilteredTemplates={handleSearch}
+            setIsDataFiltered={setIsDataFiltered}
+            isDataFiltered={isDataFiltered}
           />
 
           {isDataFiltered && (

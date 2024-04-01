@@ -1,5 +1,6 @@
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IProcess } from '../../domain/entities/IProcess'
+import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 import { ProcessesRepository } from '../../domain/repositories/ProcessesRepository'
 import {
   ProcessesDataSource,
@@ -30,12 +31,12 @@ export class ProcessesRepositoryImpl implements ProcessesRepository {
 
   getAll = async () => await this.datasource.getAll()
 
-  getByField = async (
-    field: string,
+  getByFilters = async (
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,
-  ) => await this.datasource.getByField(field, moduleId, limit, offset)
+  ) => await this.datasource.getByFilter(filters, moduleId, limit, offset)
 
   update = async (data: Partial<ProcessModel>) =>
     await this.datasource.update(data)

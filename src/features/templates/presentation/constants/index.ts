@@ -11,7 +11,8 @@ export const TABLE_HEAD = [
 ]
 
 export const defaultFilters: ITemplateTableFilters = {
-  name: '',
+  field: undefined,
+  state: undefined,
 }
 
 export const NewTemplateSchema = Yup.object().shape({

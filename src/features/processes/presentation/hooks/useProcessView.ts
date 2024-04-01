@@ -11,13 +11,14 @@ import { TableProps } from '../../../../shared/sdk/table/types'
 import { useProcessesMethods } from './useProcessesMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IProcess } from '../../domain/entities/IProcess'
+import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 
 interface Props {
   table: TableProps
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  field: string
+  filters: IProcessFilters
   moduleId: string
 }
 
@@ -26,7 +27,7 @@ export const useProcessView = ({
   isDataFiltered,
   visitedPages,
   setVisitedPages,
-  field,
+  filters,
   moduleId,
 }: Props) => {
   const [tableData, setTableData] = useState<ProcessModel[]>([])
@@ -70,7 +71,7 @@ export const useProcessView = ({
     if (newPage > table.page) {
       if (isDataFiltered) {
         fetchDataByField(
-          field,
+          filters,
           moduleIdentifier,
           table.rowsPerPage,
           newPage,
@@ -107,7 +108,7 @@ export const useProcessView = ({
 
     if (isDataFiltered) {
       fetchDataByField(
-        field,
+        filters,
         moduleIdentifier,
         parseInt(event.target.value, 10),
         0,
@@ -153,9 +154,9 @@ export const useProcessView = ({
     })
   }
 
-  const handleSearch = (field: string) => {
+  const handleSearch = (filters: IProcessFilters) => {
     fetchDataByField(
-      field,
+      filters,
       moduleIdentifier,
       table.rowsPerPage,
       table.page,

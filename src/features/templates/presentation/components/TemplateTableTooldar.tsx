@@ -8,30 +8,38 @@ import Iconify from '../../../../core/iconify'
 
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TemplateModel } from '../../data/models/TemplatesModel'
+import { TableProps } from '../../../../shared/sdk/table'
+import { SelectChangeEvent } from '@mui/material'
+import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
 
-export type ITemplateTableFilterValue = string | string[]
+export type ITemplateTableFilterValue = string | boolean | undefined
 
 export type ITemplateTableFilters = {
-  name: string
+  field: string | undefined
+  state: boolean | undefined
 }
 
 type Props = {
-  searchTerm: string
-  setSearchTerm: (value: string) => void
+  filters: ITemplateTableFilters
+  onFilters: (name: string, value: ITemplateTableFilterValue) => void
   setDataTable: (value: TemplateModel[]) => void
+  table: TableProps
   getFilteredTemplates: (field: string) => void
   setIsDataFiltered: (value: boolean) => void
+  isDataFiltered: boolean
 }
 
 export const TemplateTableToolbar = ({
-  searchTerm,
-  setSearchTerm,
+  filters,
+  onFilters,
   setDataTable,
+  table,
   setIsDataFiltered,
   getFilteredTemplates,
+  isDataFiltered,
 }: Props) => {
-  const [inputValue, setInputValue] = useState(searchTerm)
-  const debouncedValue = useDebounce(inputValue)
+  const [inputValue, setInputValue] = useState(undefined as string | undefined)
+  const debouncedValue = useDebounce(inputValue || '')
 
   const resetValues = () => {
     setDataTable([])
@@ -40,6 +48,8 @@ export const TemplateTableToolbar = ({
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
+    !isDataFiltered && setIsDataFiltered(true)
+    onFilters('field', event.target.value)
   }
 
   useEffect(() => {
@@ -47,31 +57,30 @@ export const TemplateTableToolbar = ({
 
     if (!isMounted) return
 
-    if (inputValue && inputValue !== '') {
-      setIsDataFiltered(true)
-      setSearchTerm(inputValue)
-      getFilteredTemplates(debouncedValue)
-    } else {
-      resetValues()
-    }
+    table.setPage(0)
+
+    areFiltersAdded() === true
+      ? getFilteredTemplates(debouncedValue)
+      : resetValues()
+
     return () => {
       isMounted = false
     }
   }, [debouncedValue])
 
-  useEffect(() => {
-    let isMounted = true
+  const areFiltersAdded = () =>
+    (inputValue !== undefined && inputValue !== '') ||
+    filters.state !== undefined
 
-    if (!isMounted) return
+  const handleChange = (event: SelectChangeEvent) => {
+    const {
+      target: { value },
+    } = event
 
-    if (searchTerm === '') {
-      setInputValue('')
-    }
+    !isDataFiltered && setIsDataFiltered(true)
 
-    return () => {
-      isMounted = false
-    }
-  }, [searchTerm])
+    onFilters('state', value)
+  }
 
   return (
     <>
@@ -94,6 +103,8 @@ export const TemplateTableToolbar = ({
           flexGrow={1}
           sx={{ width: 1 }}
         >
+          <StatusFilter filters={filters} onChange={handleChange} />
+
           <TextField
             fullWidth
             value={inputValue}

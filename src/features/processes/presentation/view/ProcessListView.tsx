@@ -38,7 +38,7 @@ import {
   IProcessTableFilters,
   IProcessTableFilterValue,
   ProcessTableToolbar,
-} from '../components/ProcessTableTooldar'
+} from '../components/ProcessTableToolbar'
 import { defaultFilters, TABLE_HEAD } from '../constants'
 import { ProcessTableFiltersResult } from '../components/ProcessTableFiltersResult'
 
@@ -101,7 +101,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    field: searchTerm,
+    filters,
     moduleId,
   })
 
@@ -137,9 +137,9 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
           <ProcessTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
+            isDataFiltered={isDataFiltered}
             table={table}
             setDataTable={setTableData}
             getFilteredProcesss={handleSearch}

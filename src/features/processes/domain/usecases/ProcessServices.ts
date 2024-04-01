@@ -1,7 +1,7 @@
 import { ProcessModel } from '../../data/models/ProcessesModel'
-// eslint-disable-next-line import/namespace
 import { ProcessesRepositoryImpl } from '../../data/repositories/ProcessesRepositoryImpl'
 import { IProcess } from '../entities/IProcess'
+import { IProcessFilters } from '../entities/IProcessFilters'
 import { ProcessesRepository } from '../repositories/ProcessesRepository'
 
 interface ProcessUseCases {
@@ -20,8 +20,8 @@ interface ProcessUseCases {
     process: ProcessModel
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,
@@ -81,8 +81,13 @@ export class ProcessesUseCasesImpl implements ProcessUseCases {
     throw new Error(`Method not implemented.${id}`)
   }
 
-  getByField = async (field: string, moduleId: number, limit = 5, offset = 0) =>
-    await this.processRepository.getByField(field, moduleId, limit, offset)
+  getByFilters = async (
+    filters: IProcessFilters,
+    moduleId: number,
+    limit = 5,
+    offset = 0,
+  ) =>
+    await this.processRepository.getByFilters(filters, moduleId, limit, offset)
 
   update = async (id: number, process: Partial<ProcessModel>) =>
     await this.processRepository.update({
