@@ -1,15 +1,13 @@
-import { useCallback } from 'react'
+import { useEffect, useState } from 'react'
 
 import Stack from '@mui/material/Stack'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 
 import Iconify from '../../../../core/iconify'
-
-import { usePopover } from '../../../../shared/sdk/custom-popover'
-import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { TableProps } from '../../../../shared/sdk/table'
+import { ProcessModel } from '../../data/models/ProcessesModel'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
 
 export type IProcessTableFilterValue = string | string[]
 
@@ -20,17 +18,50 @@ export type IProcessTableFilters = {
 type Props = {
   filters: IProcessTableFilters
   onFilters: (name: string, value: IProcessTableFilterValue) => void
+  setSearchTerm: (value: string) => void
+  setVisitedPages: (value: number[]) => void
+  setIsDataFiltered: (value: boolean) => void
+  table: TableProps
+  setDataTable: (value: ProcessModel[]) => void
+  getFilteredProcesss: (field: string) => void
 }
 
-export const ProcessTableToolbar = ({ filters, onFilters }: Props) => {
-  const popover = usePopover()
+export const ProcessTableToolbar = ({
+  filters,
+  onFilters,
+  setSearchTerm,
+  setVisitedPages,
+  setIsDataFiltered,
+  table,
+  setDataTable,
+  getFilteredProcesss,
+}: Props) => {
+  const [inputValue, setInputValue] = useState('' as string)
+  const debouncedValue = useDebounce(inputValue)
 
-  const handleFilterName = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onFilters('name', event.target.value)
-    },
-    [onFilters],
-  )
+  const resetValues = () => {
+    setVisitedPages([])
+    setDataTable([])
+    setIsDataFiltered(false)
+  }
+
+  const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value)
+    onFilters('name', event.target.value)
+  }
+
+  useEffect(() => {
+    table.setPage(0)
+    setVisitedPages([])
+
+    if (inputValue) {
+      setIsDataFiltered(true)
+      setSearchTerm(inputValue)
+      getFilteredProcesss(debouncedValue)
+    } else {
+      resetValues()
+    }
+  }, [debouncedValue])
 
   return (
     <>
@@ -69,46 +100,8 @@ export const ProcessTableToolbar = ({ filters, onFilters }: Props) => {
               ),
             }}
           />
-
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
         </Stack>
       </Stack>
-
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
-      >
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:import-bold" />
-          Import
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:export-bold" />
-          Export
-        </MenuItem>
-      </CustomPopover>
     </>
   )
 }

@@ -22,10 +22,20 @@ export class ProcessesRepositoryImpl implements ProcessesRepository {
 
   private constructor(private readonly datasource: ProcessesDataSource) {}
 
-  getAllProcessesByModuleId = async (moduleId: number) =>
-    await this.datasource.getAllProcessesByModuleId(moduleId)
+  getAllProcessesByModuleId = async (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getAllProcessesByModuleId(moduleId, limit, offset)
 
   getAll = async () => await this.datasource.getAll()
+
+  getByField = async (
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getByField(field, moduleId, limit, offset)
 
   update = async (data: Partial<ProcessModel>) =>
     await this.datasource.update(data)
@@ -44,4 +54,7 @@ export class ProcessesRepositoryImpl implements ProcessesRepository {
       return { status: 500, process: {} as ProcessModel }
     }
   }
+
+  bulkUpdate = async (processes: Partial<IProcess>[]) =>
+    await this.datasource.bulkUpdate(processes)
 }

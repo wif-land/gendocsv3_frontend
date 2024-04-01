@@ -14,6 +14,20 @@ interface TemplateUseCases {
     template: Partial<TemplateModel>,
   ): Promise<{
     status: number
+    template: TemplateModel
+  }>
+
+  getTemplatesByProcessId(processId: number): Promise<{
+    count: number
+    templates: TemplateModel[]
+  }>
+
+  getTemplatesByProcessAndField(
+    processId: number,
+    field: string,
+  ): Promise<{
+    count: number
+    templates: TemplateModel[]
   }>
 }
 
@@ -30,6 +44,32 @@ export class TemplatesUseCasesImpl implements TemplateUseCases {
 
   private templateRepository: TemplatesRepository =
     TemplatesRepositoryImpl.getInstance()
+
+  async getTemplatesByProcessId(
+    processId: number,
+  ): Promise<{ count: number; templates: TemplateModel[] }> {
+    const result = await this.templateRepository.getByProcessId(processId)
+
+    return result.data as {
+      count: number
+      templates: TemplateModel[]
+    }
+  }
+
+  async getTemplatesByProcessAndField(
+    processId: number,
+    field: string,
+  ): Promise<{ count: number; templates: TemplateModel[] }> {
+    const result = await this.templateRepository.getByProcessAndField(
+      processId,
+      field,
+    )
+
+    return result.data as {
+      count: number
+      templates: TemplateModel[]
+    }
+  }
 
   create = async (template: ITemplate) =>
     await this.templateRepository.create(template)

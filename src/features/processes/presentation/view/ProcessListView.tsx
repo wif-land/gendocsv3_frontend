@@ -1,23 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { isEqual } from 'lodash'
-
-import { memo, useCallback, useEffect, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-
+import { memo, useCallback, useState } from 'react'
+import { useProcessView } from '../hooks/useProcessView'
 import {
   Button,
   Card,
   Container,
-  IconButton,
   Table,
   TableBody,
   TableContainer,
-  Tooltip,
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
+
 import {
   DENSE,
   NO_DENSE,
@@ -28,40 +24,33 @@ import {
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
-  getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
-import { ProcessModel } from '../../data/models/ProcessesModel'
-
-import {
-  ProcessTableToolbar,
-  IProcessTableFilterValue,
-  IProcessTableFilters,
-} from '../components/ProcessTableTooldar'
-import { useProcessView } from '../hooks/useProcessView'
 import { ProcessTableRow } from '../components/ProcessTableRow'
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Proceso' },
-  { id: 'isActive', label: 'Estado', width: 100 },
-  { id: 'actions', label: 'Acciones', width: 110 },
-]
-
-const defaultFilters: IProcessTableFilters = {
-  name: '',
-}
+import {
+  IProcessTableFilters,
+  IProcessTableFilterValue,
+  ProcessTableToolbar,
+} from '../components/ProcessTableTooldar'
+import { defaultFilters, TABLE_HEAD } from '../constants'
+import { ProcessTableFiltersResult } from '../components/ProcessTableFiltersResult'
 
 const ProcessListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
-
-  const { loader, processes } = useProcessView({ moduleId })
+  const settings = useSettingsContext()
+  const confirm = useBoolean()
+  const [visitedPages, setVisitedPages] = useState<number[]>([0])
+  const [isDataFiltered, setIsDataFiltered] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const [filters, setFilters] = useState<IProcessTableFilters>(defaultFilters)
 
@@ -75,54 +64,6 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
     },
     [table],
   )
-
-  const [tableData, setTableData] = useState<ProcessModel[]>([])
-
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters,
-  })
-
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage,
-  )
-
-  const denseHeight = table.dense ? NO_DENSE : DENSE
-
-  const canReset = !isEqual(defaultFilters, filters)
-
-  useEffect(() => {
-    if (processes?.length) {
-      setTableData(processes as ProcessModel[])
-    }
-  }, [processes])
-
-  const confirm = useBoolean()
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
-    },
-    [dataInPage.length, table, tableData],
-  )
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
-    )
-    setTableData(deleteRows)
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
-  }, [dataFiltered.length, dataInPage.length, table, tableData])
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -138,11 +79,37 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const notFound =
-    (!dataFiltered.length && canReset) ||
-    (!loader.length && !dataFiltered.length)
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setSearchTerm('')
+    setVisitedPages([])
+    setIsDataFiltered(false)
+    setTableData([])
+  }
 
-  const settings = useSettingsContext()
+  const {
+    loader,
+    tableData,
+    count,
+    setTableData,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleSearch,
+    handleUpdateRow,
+  } = useProcessView({
+    table,
+    isDataFiltered,
+    visitedPages,
+    setVisitedPages,
+    field: searchTerm,
+    moduleId,
+  })
+
+  const denseHeight = table.dense ? NO_DENSE : DENSE
+
+  const notFound =
+    (!loader.length && count === 0) ||
+    (!loader.length && count === 0 && isDataFiltered)
 
   return (
     <div key={moduleId}>
@@ -167,23 +134,30 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <ProcessTableToolbar filters={filters} onFilters={handleFilters} />
-          {/*
-          {canReset && (
-            <ProductTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
+          <ProcessTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            setSearchTerm={setSearchTerm}
+            setVisitedPages={setVisitedPages}
+            setIsDataFiltered={setIsDataFiltered}
+            table={table}
+            setDataTable={setTableData}
+            getFilteredProcesss={handleSearch}
+          />
+
+          {isDataFiltered && (
+            <ProcessTableFiltersResult
               onResetFilters={handleResetFilters}
-              results={0}
+              results={count}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )} */}
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={tableData.length}
+              rowCount={count}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
@@ -191,11 +165,9 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                 )
               }
               action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
+                <Button color="primary" onClick={confirm.onTrue}>
+                  Cambiar estado
+                </Button>
               }
             />
 
@@ -208,7 +180,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
+                  rowCount={count}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
@@ -226,7 +198,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                     ))
                   ) : (
                     <>
-                      {dataFiltered
+                      {tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -241,9 +213,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() =>
-                              handleDeleteRow(row.id!.toString())
-                            }
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onViewRow={() => handleViewRow(row.id!.toString())}
                           />
@@ -253,11 +223,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(
-                      table.page,
-                      table.rowsPerPage,
-                      tableData.length,
-                    )}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, count)}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -267,11 +233,11 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={count}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
@@ -281,10 +247,10 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Cambiar estado de procesos"
         content={
           <>
-            Estás seguro que desear borrar{' '}
+            Estás seguro de que quieres cambiar el estado de
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -293,50 +259,16 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows()
+              // handleDeleteRows()
               confirm.onFalse()
             }}
           >
-            Borrar
+            Cambiar
           </Button>
         }
       />
     </div>
   )
-}
-
-const applyFilter = ({
-  inputData,
-  comparator,
-  filters,
-}: {
-  inputData: ProcessModel[]
-  comparator: (a: any, b: any) => number
-  filters: IProcessTableFilters
-}) => {
-  let currentInputData = [...inputData]
-  const { name } = filters
-
-  const stabilizedThis = currentInputData.map(
-    (el, index) => [el, index] as const,
-  )
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  currentInputData = stabilizedThis.map((el) => el[0])
-
-  if (name) {
-    currentInputData = currentInputData.filter(
-      (product) =>
-        product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
-    )
-  }
-
-  return currentInputData
 }
 
 export default memo(ProcessListView)

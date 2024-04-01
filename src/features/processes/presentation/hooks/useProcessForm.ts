@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,21 +8,28 @@ import { useForm } from 'react-hook-form'
 import { enqueueSnackbar } from 'notistack'
 
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
-
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { IProcess } from '../../domain/entities/IProcess'
 import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
 
 import { useProcessStore } from '../state/useProcessStore'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
 interface FormValuesProps extends IProcess {}
 
 export const useProcessForm = (currentProcess?: IProcess) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { functionaries, get } = useFunctionaryStore()
   const { processes, setProcesses } = useProcessStore()
+  const { codeModule } = useParams()
+  const { user } = useAccountStore()
+
+  const moduleIdentifier = resolveModuleId(
+    useModulesStore().modules,
+    codeModule as string,
+  )
 
   const NewProcessSchema = Yup.object().shape({
     name: Yup.string().required('Campo requerido'),
@@ -33,11 +40,11 @@ export const useProcessForm = (currentProcess?: IProcess) => {
       ({
         name: currentProcess?.name || '',
         isActive: currentProcess?.isActive || true,
-        moduleId: currentProcess?.moduleId || 0,
-        userId: currentProcess?.userId || 0,
-        createdAt: currentProcess?.createdAt || '',
-        updatedAt: currentProcess?.updatedAt || '',
-        templateProcesses: currentProcess?.templateProcesses || [],
+        moduleId: currentProcess?.moduleId || moduleIdentifier,
+        userId: currentProcess?.userId || (user?.id as number),
+        createdAt: currentProcess?.createdAt || undefined,
+        updatedAt: currentProcess?.updatedAt || undefined,
+        templateProcesses: undefined,
       }) as IProcess,
     [currentProcess],
   )
@@ -58,7 +65,7 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     try {
       const result = await ProcessesUseCasesImpl.getInstance().create(values)
 
-      if (result.process) {
+      if (result.status === HTTP_STATUS_CODES.CREATED) {
         setProcesses([...processes, result.process])
         enqueueSnackbar('Proceso creado exitosamente')
         reset()
@@ -124,14 +131,15 @@ export const useProcessForm = (currentProcess?: IProcess) => {
           }
         }
 
-        router.push(
-          currentProcess
-            ? pathname.replace(new RegExp(`/${currentProcess.id}/edit`), '')
-            : pathname.replace('/new', ''),
-        )
+        if (currentProcess) {
+          router.push(
+            pathname.replace(new RegExp(`/${currentProcess.id}/edit`), ''),
+          )
+        }
+
         reset()
       } catch (error) {
-        enqueueSnackbar('Error al crear la carrera', {
+        enqueueSnackbar('Error al crear el proceso', {
           variant: 'error',
         })
       }
@@ -145,14 +153,7 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     }
   }, [reset, currentProcess, defaultValues])
 
-  useEffect(() => {
-    if (!functionaries) {
-      get()
-    }
-  }, [])
-
   return {
-    functionaries,
     isSubmitting,
     methods,
     onSubmit,

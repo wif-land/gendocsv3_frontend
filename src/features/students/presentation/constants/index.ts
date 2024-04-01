@@ -14,12 +14,12 @@ export const TABLE_HEAD = [
     label: 'Estudiante',
   },
   {
-    id: 'personalEmail',
-    label: 'Email personal',
+    id: 'outlookEmail',
+    label: 'Email',
   },
   {
-    id: 'outlookEmail',
-    label: 'Email universitario',
+    id: 'career',
+    label: 'Carrrera',
   },
   {
     id: 'isActive',

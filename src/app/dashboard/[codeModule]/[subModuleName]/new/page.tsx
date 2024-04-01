@@ -12,6 +12,7 @@ import { ProcessCreateView } from '../../../../../features/processes/presentatio
 import { StudentCreateView } from '../../../../../features/students/presentation/view'
 import { PositionCreateView } from '../../../../../features/positions/presentation/view'
 import { UsersCreateView } from '../../../../../features/users/presentation/view'
+import DegreeCertificateCreateView from '../../../../../features/degree-certificates/presentation/views/DegreeCertificateCreateView'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -27,6 +28,7 @@ const Page = () => {
     procesos: ProcessCreateView,
     cargos: PositionCreateView,
     usuarios: UsersCreateView,
+    actas_de_grado: DegreeCertificateCreateView,
   }
 
   const defaultComponent = () => <Stack>404</Stack>

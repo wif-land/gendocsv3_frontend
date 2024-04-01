@@ -16,6 +16,7 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 
 import { StudentModel } from '../../data/models/StudentModel'
+import { ICareer } from '../../../careers/domain/entities/ICareer'
 
 type Props = {
   row: StudentModel
@@ -69,14 +70,14 @@ export const StudentTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={row.personalEmail}
+            primary={row.outlookEmail}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
-            primary={row.outlookEmail}
+            primary={(row.career as ICareer).name}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>

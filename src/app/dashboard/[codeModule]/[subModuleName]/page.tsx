@@ -10,6 +10,7 @@ import { ProcessListView } from '../../../../features/processes/presentation/vie
 import { StudentListView } from '../../../../features/students/presentation/view'
 import { PositionListView } from '../../../../features/positions/presentation/view'
 import { UsersListView } from '../../../../features/users/presentation/view'
+import { DegreeCertificateListView } from '../../../../features/degree-certificates/presentation/views'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -25,6 +26,7 @@ const Page = () => {
     consejos: CouncilListView,
     documentos: DocumentListView,
     cargos: PositionListView,
+    actas_de_grado: DegreeCertificateListView,
   }
 
   const defaultComponent = () => <div>Not found</div>

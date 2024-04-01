@@ -19,7 +19,6 @@ import { DocumentModel } from '../../data/models/DocumentsModel'
 type Props = {
   row: DocumentModel
   selected: boolean
-  onEditRow: VoidFunction
   onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
@@ -30,7 +29,6 @@ export const DocumentTableRow = ({
   selected,
   onSelectRow,
   onDeleteRow,
-  onEditRow,
   onViewRow,
 }: Props) => {
   const { number, description, createdAt } = row
@@ -102,16 +100,6 @@ export const DocumentTableRow = ({
         >
           <Iconify icon="solar:eye-bold" />
           Detalles
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            onEditRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-          Editar
         </MenuItem>
 
         <MenuItem

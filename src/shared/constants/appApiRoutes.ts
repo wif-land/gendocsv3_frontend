@@ -48,6 +48,7 @@ export const API_ROUTES = {
   PROCESSES: {
     GET_ALL: '/processes',
     GET_ONE: '/processes/:id',
+    GET_BY_FIELD: (field: string) => `/processes/${field}`,
     UPDATE: '/processes/:id',
     DELETE: '/processes/:id',
     CREATE: '/processes',
@@ -68,11 +69,14 @@ export const API_ROUTES = {
     UPDATE: '/templates/:id',
     DELETE: '/templates/:id',
     CREATE: '/templates',
+    GET_BY_PROCESS_ID: (id: number) => `/templates/process/${id}`,
+    GET_BY_PROCESS_AND_FIELD: (processId: number, field: string) =>
+      `/templates/process/${processId}/${field}`,
   },
   DOCUMENTS: {
     GET_ALL: '/documents',
     GET_ONE: '/documents/:id',
-    UPDATE: '/documents/:id',
+    UPDATE: (id: number) => `/documents/${id}`,
     DELETE: '/documents/:id',
     CREATE: '/documents',
   },

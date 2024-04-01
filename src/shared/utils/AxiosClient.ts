@@ -4,6 +4,7 @@ import { HTTP_STATUS_CODES } from './app-enums'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 import useLoaderStore from '../store/useLoaderStore'
 import { enqueueSnackbar } from 'notistack'
+import { LogoutnUseCase } from '../../features/auth/domain/usecases/logoutUseCase'
 
 type HTTP_METHODS = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
@@ -40,6 +41,10 @@ export class AxiosClient {
       this.client.interceptors.request.use(
         async (config) => {
           const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+
+          if (!accessToken) {
+            await new LogoutnUseCase().call()
+          }
 
           if (accessToken && config.headers) {
             config.headers.Authorization = `Bearer ${accessToken.replaceAll(
@@ -123,36 +128,11 @@ export class AxiosClient {
       })
       useLoaderStore.getState().removeLoaderItem('axios-put')
 
-      const { data, status } = response
-
-      if (status === HTTP_STATUS_CODES.OK) {
-        return {
-          status,
-          data: {
-            message: 'Success',
-            content: data as T,
-          },
-        }
-      }
-
-      return {
-        status,
-        data: {
-          message: 'Error desconocido',
-          content: null as T,
-        },
-      }
+      return handleApiResponse(response, 'PUT')
     } catch (error) {
       useLoaderStore.getState().removeLoaderItem('axios-put')
       const response = error as AxiosErrorResponse
-
-      return {
-        status: response.response?.status,
-        data: {
-          message: response.response?.data?.message || 'Error desconocido',
-          content: null as T,
-        },
-      }
+      return handleApiError(response)
     }
   }
 
@@ -192,35 +172,11 @@ export class AxiosClient {
         params,
       })
 
-      const { data, status } = response
-
-      if (status === HTTP_STATUS_CODES.OK) {
-        return {
-          status,
-          data: {
-            message: 'Success',
-            content: data as T,
-          },
-        }
-      }
-
-      return {
-        status,
-        data: {
-          message: 'Error desconocido',
-          content: null as T,
-        },
-      }
+      return handleApiResponse(response, 'PATCH')
     } catch (error) {
       const response = error as AxiosErrorResponse
 
-      return {
-        status: response.response?.status,
-        data: {
-          message: response.response?.data?.message || 'Error desconocido',
-          content: null as T,
-        },
-      }
+      return handleApiError(response)
     }
   }
 }
@@ -238,7 +194,7 @@ const handleApiResponse = <T>(
   }
 
   if (status === HTTP_STATUS_CODES.BAD_REQUEST) {
-    enqueueSnackbar(data.message, {
+    enqueueSnackbar(data.message ?? 'Ocurrió un error, intenta de nuevo', {
       variant: 'error',
     })
   }
@@ -249,11 +205,7 @@ const handleApiResponse = <T>(
     })
   }
 
-  if (
-    (status === HTTP_STATUS_CODES.OK ||
-      status === HTTP_STATUS_CODES.NO_CONTENT) &&
-    method !== 'GET'
-  ) {
+  if (method !== 'GET') {
     enqueueSnackbar('Acción realizada con éxito', {
       variant: 'success',
     })
@@ -285,7 +237,7 @@ const handleApiError = <T>(error: AxiosErrorResponse) => {
     }
 
     if (status === HTTP_STATUS_CODES.BAD_REQUEST) {
-      enqueueSnackbar(error.response?.data?.message, {
+      enqueueSnackbar(error.response?.data?.message || 'Intenta de nuevo', {
         variant: 'error',
       })
     }

@@ -1,4 +1,5 @@
 import { ProcessModel } from '../../data/models/ProcessesModel'
+// eslint-disable-next-line import/namespace
 import { ProcessesRepositoryImpl } from '../../data/repositories/ProcessesRepositoryImpl'
 import { IProcess } from '../entities/IProcess'
 import { ProcessesRepository } from '../repositories/ProcessesRepository'
@@ -19,6 +20,19 @@ interface ProcessUseCases {
     process: ProcessModel
   }>
 
+  getByField(
+    field: string,
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ): Promise<{
+    status: number
+    data: {
+      count: number
+      processes: ProcessModel[]
+    }
+  }>
+
   update(
     id: number,
     process: Partial<ProcessModel>,
@@ -26,9 +40,21 @@ interface ProcessUseCases {
     status: number
   }>
 
-  getAllProcessesByModuleId(moduleId: number): Promise<{
+  toggleProcessStatus(processes: Partial<IProcess>[]): Promise<{
     status: number
     processes: ProcessModel[]
+  }>
+
+  getAllProcessesByModuleId: (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => Promise<{
+    status: number
+    data: {
+      processes: ProcessModel[]
+      count: number
+    }
   }>
 }
 
@@ -55,12 +81,26 @@ export class ProcessesUseCasesImpl implements ProcessUseCases {
     throw new Error(`Method not implemented.${id}`)
   }
 
+  getByField = async (field: string, moduleId: number, limit = 5, offset = 0) =>
+    await this.processRepository.getByField(field, moduleId, limit, offset)
+
   update = async (id: number, process: Partial<ProcessModel>) =>
     await this.processRepository.update({
       ...process,
       id,
     })
 
-  getAllProcessesByModuleId = async (moduleId: number) =>
-    await this.processRepository.getAllProcessesByModuleId(moduleId)
+  getAllProcessesByModuleId = async (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) =>
+    await this.processRepository.getAllProcessesByModuleId(
+      moduleId,
+      limit,
+      offset,
+    )
+
+  toggleProcessStatus = async (processes: Partial<IProcess>[]) =>
+    await this.processRepository.bulkUpdate(processes)
 }

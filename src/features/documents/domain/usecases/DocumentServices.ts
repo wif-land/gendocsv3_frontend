@@ -1,3 +1,4 @@
+import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { NumerationModel } from '../../data/models/NumerationModel'
 import { DocumentsRepositoryImpl } from '../../data/repositories/DocumentsRepositoryImpl'
@@ -7,12 +8,12 @@ import { DocumentsRepository } from '../repositories/DocumentsRepository'
 interface DocumentUseCases {
   create(process: IDocument): Promise<{
     status: number
-    process: DocumentModel
+    document: DocumentModel
   }>
 
   getAll(): Promise<{
     status: number
-    processes: DocumentModel[]
+    documents: DocumentModel[]
   }>
 
   getById(id: number): Promise<{
@@ -20,26 +21,19 @@ interface DocumentUseCases {
     process: DocumentModel
   }>
 
-  update(
-    id: number,
-    process: Partial<DocumentModel>,
+  getAllDocumentsByModuleId(
+    moduleId: number,
+    params: PaginationParams,
   ): Promise<{
-    status: number
-  }>
-
-  getAllProcessesByModuleId(moduleId: number): Promise<{
-    status: number
-    processes: DocumentModel[]
+    count: number
+    documents: DocumentModel[]
   }>
 
   deleteById(id: number): Promise<{
     status: number
   }>
 
-  getNumerationByCouncil(councilId: number): Promise<{
-    status: number
-    process: NumerationModel
-  }>
+  getNumerationByCouncil(councilId: number): Promise<NumerationModel>
 }
 
 export class DocumentsUseCasesImpl implements DocumentUseCases {
@@ -56,8 +50,8 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
   private modelRepository: DocumentsRepository =
     DocumentsRepositoryImpl.getInstance()
 
-  create = async (process: IDocument) =>
-    await this.modelRepository.create(process)
+  create = async (document: IDocument) =>
+    await this.modelRepository.create(document)
 
   getAll = async () => await this.modelRepository.getAll()
 
@@ -65,14 +59,17 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
     throw new Error(`Method not implemented.${id}`)
   }
 
-  update = async (id: number, process: Partial<DocumentModel>) =>
-    await this.modelRepository.update({
-      ...process,
-      id,
-    })
+  getAllDocumentsByModuleId = async (
+    moduleId: number,
+    params: PaginationParams,
+  ) => {
+    const result = await this.modelRepository.getAllDocumentsByModuleId(
+      moduleId,
+      params,
+    )
 
-  getAllProcessesByModuleId = async (moduleId: number) =>
-    await this.modelRepository.getAllDocumentsByModuleId(moduleId)
+    return result.data as { count: number; documents: DocumentModel[] }
+  }
 
   deleteById = async (id: number) => await this.modelRepository.deleteById(id)
 

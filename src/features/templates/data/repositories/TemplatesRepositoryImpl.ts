@@ -22,6 +22,12 @@ export class TemplatesRepositoryImpl implements TemplatesRepository {
 
   private constructor(private readonly datasource: TemplatesDataSource) {}
 
+  getByProcessId = (processId: number) =>
+    this.datasource.getByProcessId(processId)
+
+  getByProcessAndField = (processId: number, field: string) =>
+    this.datasource.getByProcessAndField(processId, field)
+
   update = async (data: Partial<TemplateModel>) =>
     await this.datasource.update(data)
 
@@ -30,11 +36,14 @@ export class TemplatesRepositoryImpl implements TemplatesRepository {
       const result = await this.datasource.create(templateData)
       const { status } = result
 
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, template: {} as TemplateModel }
+      if (
+        status === HTTP_STATUS_CODES.OK ||
+        status === HTTP_STATUS_CODES.CREATED
+      ) {
+        return { status, template: result.template }
       }
 
-      return { status, template: result.template }
+      return { status, template: {} as TemplateModel }
     } catch (error) {
       return { status: 500, template: {} as TemplateModel }
     }
