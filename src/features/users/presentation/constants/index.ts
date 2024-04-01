@@ -31,9 +31,13 @@ export const TABLE_HEAD = [
 ]
 
 export const NewFunctionarySchema = Yup.object().shape({
-  firstName: Yup.string().required(VALIDATION_MESSAGES.required),
+  firstName: Yup.string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚüÜ]+$/, VALIDATION_MESSAGES.invalidFormat),
   secondName: Yup.string(),
-  firstLastName: Yup.string().required(VALIDATION_MESSAGES.required),
+  firstLastName: Yup.string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚüÜ]+$/, VALIDATION_MESSAGES.invalidFormat),
   secondLastName: Yup.string(),
   outlookEmail: Yup.string()
     .required(VALIDATION_MESSAGES.required)

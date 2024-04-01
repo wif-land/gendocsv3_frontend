@@ -62,7 +62,6 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
               <RHFAutocomplete
                 name="coordinator"
                 label="Coordinador"
-                placeholder="Escribe el nombre del coordinador"
                 freeSolo
                 options={functionaries!.map(
                   (functionary) =>
