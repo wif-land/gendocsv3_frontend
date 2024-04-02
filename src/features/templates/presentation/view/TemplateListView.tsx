@@ -20,9 +20,11 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
+  TablePaginationCustom,
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
+  getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
@@ -41,6 +43,7 @@ import { TABLE_HEAD, defaultFilters } from '../constants'
 import { TemplateTableRow } from '../components/TemplateTableRow'
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 import { TemplatesTableFiltersResult } from '../components/TemplateTableFiltersResult'
+import { TemplateModel } from '../../data/models/TemplatesModel'
 
 const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const table = useTable()
@@ -51,7 +54,19 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const pathNameWithoutId = pathname.split('/').slice(0, -1).join('/')
 
+  const { loader, templates, count, setTemplates, handleUpdateRow } =
+    useTemplateView({
+      processId: process.id!,
+      isDataFiltered,
+    })
+
   const [filters, setFilters] = useState<ITemplateTableFilters>(defaultFilters)
+
+  const dataFiltered = applyFilter({
+    inputData: templates,
+    comparator: getComparator(table.order, table.orderBy),
+    filters,
+  })
 
   const handleFilters = useCallback(
     (name: string, value: ITemplateTableFilterValue) => {
@@ -80,24 +95,10 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
     setIsDataFiltered(false)
     setTemplates([])
   }
-
-  const {
-    loader,
-    templates,
-    count,
-    setTemplates,
-    handleSearch,
-    handleUpdateRow,
-  } = useTemplateView({
-    processId: process.id!,
-    isDataFiltered,
-  })
-
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
   const notFound =
-    (!loader.length && count === 0) ||
-    (!loader.length && count === 0 && isDataFiltered)
+    !dataFiltered.length || (!loader.length && !dataFiltered.length)
 
   return (
     <div key={process!.id}>
@@ -125,17 +126,13 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
           <TemplateTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setDataTable={setTemplates}
-            table={table}
-            getFilteredTemplates={handleSearch}
             setIsDataFiltered={setIsDataFiltered}
-            isDataFiltered={isDataFiltered}
           />
 
           {isDataFiltered && (
             <TemplatesTableFiltersResult
               onResetFilters={handleResetFilters}
-              results={count}
+              results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
@@ -185,19 +182,26 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
                     ))
                   ) : (
                     <>
-                      {templates.map((row) => (
-                        <TemplateTableRow
-                          key={row.id}
-                          row={row}
-                          selected={table.selected.includes(row.id!.toString())}
-                          onSelectRow={() =>
-                            table.onSelectRow(row.id!.toString())
-                          }
-                          onDeleteRow={() => handleUpdateRow(row)}
-                          onEditRow={() => handleEditRow(row.id!.toString())}
-                          onViewRow={() => handleViewRow(row.id!.toString())}
-                        />
-                      ))}
+                      {dataFiltered
+                        .slice(
+                          table.page * table.rowsPerPage,
+                          table.page * table.rowsPerPage + table.rowsPerPage,
+                        )
+                        .map((row) => (
+                          <TemplateTableRow
+                            key={row.id}
+                            row={row}
+                            selected={table.selected.includes(
+                              row.id!.toString(),
+                            )}
+                            onSelectRow={() =>
+                              table.onSelectRow(row.id!.toString())
+                            }
+                            onDeleteRow={() => handleUpdateRow(row)}
+                            onEditRow={() => handleEditRow(row.id!.toString())}
+                            onViewRow={() => handleViewRow(row.id!.toString())}
+                          />
+                        ))}
                     </>
                   )}
 
@@ -211,6 +215,15 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
               </Table>
             </Scrollbar>
           </TableContainer>
+          <TablePaginationCustom
+            count={dataFiltered.length}
+            page={table.page}
+            rowsPerPage={table.rowsPerPage}
+            onPageChange={table.onChangePage}
+            onRowsPerPageChange={table.onChangeRowsPerPage}
+            dense={table.dense}
+            onChangeDense={table.onChangeDense}
+          />
         </Card>
       </Container>
 
@@ -239,6 +252,43 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
       />
     </div>
   )
+}
+
+const applyFilter = ({
+  inputData,
+  comparator,
+  filters,
+}: {
+  inputData: TemplateModel[]
+  comparator: (a: any, b: any) => number
+  filters: ITemplateTableFilters
+}) => {
+  let currentInputData = [...inputData]
+  const { field, state } = filters
+
+  const stabilizedThis = currentInputData.map(
+    (el, index) => [el, index] as const,
+  )
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0])
+    if (order !== 0) return order
+    return a[1] - b[1]
+  })
+  currentInputData = stabilizedThis.map((el) => el[0])
+
+  if (field) {
+    currentInputData = currentInputData.filter(
+      (career) => career.name.toLowerCase().indexOf(field.toLowerCase()) !== -1,
+    )
+  }
+
+  if (state !== undefined) {
+    currentInputData = currentInputData.filter(
+      (career) => career.isActive === state,
+    )
+  }
+
+  return currentInputData
 }
 
 export default memo(TemplateListView)

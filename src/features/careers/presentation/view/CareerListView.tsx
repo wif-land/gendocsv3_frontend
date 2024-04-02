@@ -40,6 +40,7 @@ import {
   ICareerTableFilterValue,
   ICareerTableFilters,
 } from '../components/CareerTableToolbar'
+import { CareerTableFiltersResult } from '../components/CareerTableFiltersResult'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Carrera' },
@@ -51,7 +52,8 @@ const TABLE_HEAD = [
 ]
 
 const defaultFilters: ICareerTableFilters = {
-  name: '',
+  name: undefined,
+  state: undefined,
 }
 
 const CareerListView = ({ moduleId }: { moduleId: string }) => {
@@ -59,7 +61,10 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
   const router = useRouter()
   const pathname = usePathname()
 
-  const { loader, careers } = useCareerView()
+  const { loader, careers, setCareers } = useCareerView()
+  const [isDataFiltered, setIsDataFiltered] = useState(
+    undefined as boolean | undefined,
+  )
 
   const [filters, setFilters] = useState<ICareerTableFilters>(defaultFilters)
 
@@ -135,6 +140,12 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
 
   const settings = useSettingsContext()
 
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setIsDataFiltered(false)
+    setCareers([])
+  }
+
   return (
     <div key={moduleId}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -158,17 +169,19 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <CareerTableToolbar filters={filters} onFilters={handleFilters} />
-          {/*
-          {canReset && (
-            <ProductTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
+          <CareerTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            setIsDataFiltered={setIsDataFiltered}
+          />
+
+          {isDataFiltered && (
+            <CareerTableFiltersResult
               onResetFilters={handleResetFilters}
-              results={0}
+              results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )} */}
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -305,24 +318,27 @@ const applyFilter = ({
   filters: ICareerTableFilters
 }) => {
   let currentInputData = [...inputData]
-  const { name } = filters
+  const { name, state } = filters
 
   const stabilizedThis = currentInputData.map(
     (el, index) => [el, index] as const,
   )
-
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
     if (order !== 0) return order
     return a[1] - b[1]
   })
-
   currentInputData = stabilizedThis.map((el) => el[0])
 
   if (name) {
     currentInputData = currentInputData.filter(
-      (product) =>
-        product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+      (career) => career.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+    )
+  }
+
+  if (state !== undefined) {
+    currentInputData = currentInputData.filter(
+      (career) => career.isActive === state,
     )
   }
 

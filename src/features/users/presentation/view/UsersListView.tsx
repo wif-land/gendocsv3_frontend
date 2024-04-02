@@ -133,6 +133,7 @@ const UsersListView = () => {
             onFilters={handleFilters}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
+            isDataFiltered={isDataFiltered}
             table={table}
             setDataTable={setTableData}
             getFilteredUsers={handleSearch}

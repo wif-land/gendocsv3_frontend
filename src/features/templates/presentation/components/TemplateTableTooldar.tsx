@@ -1,14 +1,9 @@
-import { useEffect, useState } from 'react'
-
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 
 import Iconify from '../../../../core/iconify'
 
-import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { TemplateModel } from '../../data/models/TemplatesModel'
-import { TableProps } from '../../../../shared/sdk/table'
 import { SelectChangeEvent } from '@mui/material'
 import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
 
@@ -22,64 +17,28 @@ export type ITemplateTableFilters = {
 type Props = {
   filters: ITemplateTableFilters
   onFilters: (name: string, value: ITemplateTableFilterValue) => void
-  setDataTable: (value: TemplateModel[]) => void
-  table: TableProps
-  getFilteredTemplates: (field: string) => void
   setIsDataFiltered: (value: boolean) => void
-  isDataFiltered: boolean
 }
 
 export const TemplateTableToolbar = ({
   filters,
   onFilters,
-  setDataTable,
-  table,
   setIsDataFiltered,
-  getFilteredTemplates,
-  isDataFiltered,
 }: Props) => {
-  const [inputValue, setInputValue] = useState(undefined as string | undefined)
-  const debouncedValue = useDebounce(inputValue || '')
-
-  const resetValues = () => {
-    setDataTable([])
-    setIsDataFiltered(false)
-  }
-
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value)
-    !isDataFiltered && setIsDataFiltered(true)
     onFilters('field', event.target.value)
+    event.target.value !== '' || filters.state !== undefined
+      ? setIsDataFiltered(true)
+      : setIsDataFiltered(false)
   }
-
-  useEffect(() => {
-    let isMounted = true
-
-    if (!isMounted) return
-
-    table.setPage(0)
-
-    areFiltersAdded() === true
-      ? getFilteredTemplates(debouncedValue)
-      : resetValues()
-
-    return () => {
-      isMounted = false
-    }
-  }, [debouncedValue])
-
-  const areFiltersAdded = () =>
-    (inputValue !== undefined && inputValue !== '') ||
-    filters.state !== undefined
 
   const handleChange = (event: SelectChangeEvent) => {
     const {
       target: { value },
     } = event
 
-    !isDataFiltered && setIsDataFiltered(true)
-
     onFilters('state', value)
+    setIsDataFiltered(true)
   }
 
   return (
@@ -107,7 +66,7 @@ export const TemplateTableToolbar = ({
 
           <TextField
             fullWidth
-            value={inputValue}
+            value={filters.field || ''}
             onChange={handleFilterName}
             placeholder="Busca por nombre de plantilla"
             InputProps={{

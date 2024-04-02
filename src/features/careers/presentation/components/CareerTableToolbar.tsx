@@ -7,27 +7,48 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
+import { SelectChangeEvent } from '@mui/material'
 
 export type ICareerTableFilterValue = string | string[]
 
 export type ICareerTableFilters = {
-  name: string
+  name: string | undefined
+  state: boolean | undefined
 }
 
 type Props = {
   filters: ICareerTableFilters
   onFilters: (name: string, value: ICareerTableFilterValue) => void
+  setIsDataFiltered: (value: boolean) => void
 }
 
-export const CareerTableToolbar = ({ filters, onFilters }: Props) => {
+export const CareerTableToolbar = ({
+  filters,
+  onFilters,
+  setIsDataFiltered,
+}: Props) => {
   const popover = usePopover()
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value)
+      event.target.value !== '' || filters.state !== undefined
+        ? setIsDataFiltered(true)
+        : setIsDataFiltered(false)
     },
     [onFilters],
   )
+
+  const handleChange = (event: SelectChangeEvent) => {
+    const {
+      target: { value },
+    } = event
+
+    setIsDataFiltered(true)
+
+    onFilters('state', value)
+  }
 
   return (
     <>
@@ -50,9 +71,11 @@ export const CareerTableToolbar = ({ filters, onFilters }: Props) => {
           flexGrow={1}
           sx={{ width: 1 }}
         >
+          <StatusFilter filters={filters} onChange={handleChange} />
+
           <TextField
             fullWidth
-            value={filters.name}
+            value={filters.name || ''}
             onChange={handleFilterName}
             placeholder="Busca por nombre de carrera"
             InputProps={{
