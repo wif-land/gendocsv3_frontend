@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ICareer } from '../../domain/entities/ICareer'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { usePathname, useRouter } from 'next/navigation'
@@ -13,11 +13,18 @@ import { useCareersStore } from '../state/careerStore'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { FunctionaryUseCasesImpl } from '../../../.../../../features/functionaries/domain/usecases/FunctionaryServices'
 
 interface FormValuesProps extends ICareer {}
 
 export const useCareerForm = (currentCareer?: ICareer) => {
   let coordinator = ''
+  const [inputValue, setInputValue] = useState('' as string)
+  const debouncedValue = useDebounce(inputValue)
+  const [loading, setIsLoading] = useState(false)
+  const isOpen = useBoolean()
 
   if (currentCareer?.coordinator) {
     coordinator = `${(currentCareer?.coordinator as IFunctionary).firstName} ${
@@ -29,7 +36,7 @@ export const useCareerForm = (currentCareer?: ICareer) => {
 
   const router = useRouter()
   const pathname = usePathname()
-  const { functionaries, get } = useFunctionaryStore()
+  const { functionaries, get, setFunctionaries } = useFunctionaryStore()
   const { enqueueSnackbar } = useSnackbar()
   const { addCareer, updateCareer } = useCareersStore()
 
@@ -148,11 +155,45 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     }
   }, [])
 
+  useEffect(() => {
+    let isMounted = true
+
+    if (isOpen.value === false) return
+
+    setIsLoading(true)
+
+    const filteredFunctionaries = async (field: string) => {
+      await FunctionaryUseCasesImpl.getInstance()
+        .getByFilters({ field })
+        .then((res) => {
+          if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
+            setFunctionaries(res.data.functionaries)
+            return
+          } else {
+            setFunctionaries([])
+            setIsLoading(false)
+            return
+          }
+        })
+    }
+
+    if (debouncedValue.includes('-')) return
+
+    filteredFunctionaries(debouncedValue)
+
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedValue, isOpen.value])
+
   return {
     functionaries,
     isSubmitting,
     methods,
     onSubmit,
     handleSubmit,
+    setInputValue,
+    isOpen,
+    loading,
   }
 }

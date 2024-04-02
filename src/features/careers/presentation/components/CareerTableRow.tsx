@@ -138,21 +138,40 @@ export const CareerTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={{ color: 'error.main' }}
+          sx={
+            row.isActive ? { color: 'error.main' } : { color: 'success.main' }
+          }
         >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Borrar
+          {row.isActive ? (
+            <>
+              <Iconify icon="eva:slash-fill" />
+              Desactivar
+            </>
+          ) : (
+            <>
+              <Iconify icon="eva:checkmark-circle-fill" />
+              Activar
+            </>
+          )}
         </MenuItem>
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Borrar carrera"
-        content="¿Estás seguro de que quieres eliminar esta carrera?"
+        title={row.isActive ? 'Desactivar carrera' : 'Activar carrera'}
+        content={
+          row.isActive
+            ? 'Está seguro de desactivar la carrera?'
+            : 'Está seguro de activar la carrera?'
+        }
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Borrar
+          <Button
+            variant="contained"
+            color={row.isActive ? 'error' : 'success'}
+            onClick={onDeleteRow}
+          >
+            {row.isActive ? 'Desactivar' : 'Activar'}
           </Button>
         }
       />

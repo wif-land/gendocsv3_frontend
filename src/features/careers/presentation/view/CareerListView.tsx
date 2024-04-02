@@ -25,7 +25,6 @@ import {
   getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
-import { isEqual } from 'lodash'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
@@ -60,13 +59,17 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
+  const settings = useSettingsContext()
+  const confirm = useBoolean()
+  const denseHeight = table.dense ? 60 : 80
 
-  const { loader, careers, setCareers } = useCareerView()
+  const { loader, careers, setCareers, handleUpdateRow } = useCareerView()
   const [isDataFiltered, setIsDataFiltered] = useState(
     undefined as boolean | undefined,
   )
 
   const [filters, setFilters] = useState<ICareerTableFilters>(defaultFilters)
+  const [tableData, setTableData] = useState<CareerModel[]>([])
 
   const handleFilters = useCallback(
     (name: string, value: ICareerTableFilterValue) => {
@@ -79,53 +82,11 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
     [table],
   )
 
-  const [tableData, setTableData] = useState<CareerModel[]>([])
-
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   })
-
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage,
-  )
-
-  const denseHeight = table.dense ? 60 : 80
-
-  const canReset = !isEqual(defaultFilters, filters)
-
-  useEffect(() => {
-    if (careers?.length) {
-      setTableData(careers as CareerModel[])
-    }
-  }, [careers])
-
-  const confirm = useBoolean()
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
-    },
-    [dataInPage.length, table, tableData],
-  )
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
-    )
-    setTableData(deleteRows)
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
-  }, [dataFiltered.length, dataInPage.length, table, tableData])
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -135,16 +96,19 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
   )
 
   const notFound =
-    (!dataFiltered.length && canReset) ||
-    (!loader.length && !dataFiltered.length)
-
-  const settings = useSettingsContext()
+    !dataFiltered.length || (!loader.length && !dataFiltered.length)
 
   const handleResetFilters = () => {
     setFilters(defaultFilters)
     setIsDataFiltered(false)
     setCareers([])
   }
+
+  useEffect(() => {
+    if (careers?.length) {
+      setTableData(careers as CareerModel[])
+    }
+  }, [careers])
 
   return (
     <div key={moduleId}>
@@ -245,9 +209,7 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() =>
-                              handleDeleteRow(row.id!.toString())
-                            }
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
                         ))}
@@ -287,7 +249,7 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
         title="Delete"
         content={
           <>
-            Are you sure want to delete{' '}
+            Estás seguro de que deseas cambiar el estado de{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -296,11 +258,10 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows()
               confirm.onFalse()
             }}
           >
-            Delete
+            Cambiar
           </Button>
         }
       />
