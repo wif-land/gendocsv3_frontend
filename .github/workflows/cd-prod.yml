@@ -26,10 +26,18 @@ jobs:
         run: |
           echo "$ENV_FILE_CREDENTIALS" > ./.env
 
-      - name: Build and push
+      - name: Build and push tag to Docker Hub
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile.production
           push: true
           tags: leninner/gendocsv3-frontend:${{ github.ref_name }}
+
+      - name: Build and push latest tag to Docker Hub
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.production
+          push: true
+          tags: leninner/gendocsv3-frontend:latest
