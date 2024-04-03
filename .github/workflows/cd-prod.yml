@@ -1,9 +1,9 @@
-name: Continuous deployment for Gendocs frontend
+name: Continuous deployment for Gendocs frontend - Production
 
 on:
   push:
-    branches:
-      - 'main'
+    tags:
+      - 'v*.*.*'
 
 jobs:
   deploy-production:
@@ -32,4 +32,4 @@ jobs:
           context: .
           file: ./Dockerfile.production
           push: true
-          tags: leninner/gendocsv3-frontend:latest
+          tags: leninner/gendocsv3-frontend:${{ github.ref_name }}
