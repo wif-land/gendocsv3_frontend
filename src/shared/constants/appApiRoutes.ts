@@ -85,7 +85,7 @@ export const API_ROUTES = {
   },
   POSITIONS: {
     GET_ALL: '/positions',
-    GET_BY_FIELD: (field: string) => `/positions/${field}`,
+    GET_BY_FIELD: (field: string) => `/positions/filter/${field}`,
     UPDATE: (id: number) => `/positions/${id}`,
     DELETE: (id: number) => `/positions/${id}`,
     DELETE_MANY: '/positions/delete/bulk',

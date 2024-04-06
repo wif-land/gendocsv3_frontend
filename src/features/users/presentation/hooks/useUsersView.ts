@@ -128,6 +128,7 @@ export const useFunctionaryView = ({
         setTableData(
           (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
         )
+        console.log(data)
       }
     })
   }

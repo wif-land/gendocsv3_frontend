@@ -54,16 +54,15 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const pathNameWithoutId = pathname.split('/').slice(0, -1).join('/')
 
-  const { loader, templates, count, setTemplates, handleUpdateRow } =
-    useTemplateView({
-      processId: process.id!,
-      isDataFiltered,
-    })
+  const { loader, templates, handleUpdateRow } = useTemplateView({
+    processId: process.id!,
+    isDataFiltered,
+  })
 
   const [filters, setFilters] = useState<ITemplateTableFilters>(defaultFilters)
 
   const dataFiltered = applyFilter({
-    inputData: templates,
+    inputData: templates as TemplateModel[],
     comparator: getComparator(table.order, table.orderBy),
     filters,
   })
@@ -93,7 +92,6 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const handleResetFilters = () => {
     setFilters(defaultFilters)
     setIsDataFiltered(false)
-    setTemplates([])
   }
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
@@ -141,11 +139,11 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={count}
+              rowCount={dataFiltered.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  templates.map((row) => row.id!.toString()),
+                  templates!.map((row) => row.id!.toString()),
                 )
               }
               action={
@@ -164,13 +162,13 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={count}
+                  rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      templates.map((row) => row.id!.toString()),
+                      templates!.map((row) => row.id!.toString()),
                     )
                   }
                 />
@@ -191,6 +189,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
                           <TemplateTableRow
                             key={row.id}
                             row={row}
+                            rowUserId={row.userId}
                             selected={table.selected.includes(
                               row.id!.toString(),
                             )}
@@ -207,7 +206,11 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, count)}
+                    emptyRows={emptyRows(
+                      table.page,
+                      table.rowsPerPage,
+                      dataFiltered.length,
+                    )}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -263,6 +266,7 @@ const applyFilter = ({
   comparator: (a: any, b: any) => number
   filters: ITemplateTableFilters
 }) => {
+  if (!inputData) return []
   let currentInputData = [...inputData]
   const { field, state } = filters
 

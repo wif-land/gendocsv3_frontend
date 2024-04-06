@@ -50,7 +50,6 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
   const confirm = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
 
   const [filters, setFilters] = useState<IProcessTableFilters>(defaultFilters)
 
@@ -81,7 +80,6 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
 
   const handleResetFilters = () => {
     setFilters(defaultFilters)
-    setSearchTerm('')
     setVisitedPages([])
     setIsDataFiltered(false)
     setTableData([])
