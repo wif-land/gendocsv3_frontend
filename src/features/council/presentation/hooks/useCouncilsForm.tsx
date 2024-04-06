@@ -236,6 +236,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   useEffect(() => {
     let isMounted = true
     loading.onTrue()
+    if (searchDebounced.includes('-')) return
     FunctionaryUseCasesImpl.getInstance()
       .getByField(searchDebounced)
       .then((result) => {
