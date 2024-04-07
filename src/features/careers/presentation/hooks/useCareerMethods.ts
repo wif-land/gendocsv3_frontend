@@ -2,9 +2,9 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { CareerModel } from '../../data/models/CareerModel'
-import { useCareersStore } from '../state/careerStore'
+import { useCareersStore } from '../store/careerStore'
 
-export const useCareerCommands = () => {
+export const useCareerMethods = () => {
   const { careers } = useCareersStore()
   const { loader, addLoaderItem, removeLoaderItem } = useLoaderStore()
 

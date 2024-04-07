@@ -1,5 +1,5 @@
 import { CareerModel } from '../../data/models/CareerModel'
-import { CareerRepositoryImpl } from '../../data/repositories/CouncilRepositoryImpl'
+import { CareerRepositoryImpl } from '../../data/repositories/CareerRepositoryImpl'
 import { ICareer } from '../entities/ICareer'
 
 interface CareerUseCases {

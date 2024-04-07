@@ -40,20 +40,7 @@ import {
   ICareerTableFilters,
 } from '../components/CareerTableToolbar'
 import { CareerTableFiltersResult } from '../components/CareerTableFiltersResult'
-
-const TABLE_HEAD = [
-  { id: 'name', label: 'Carrera' },
-  { id: 'credits', label: 'Créditos', width: 160 },
-  { id: 'internshipHours', label: 'Horas de prácticas', width: 160 },
-  { id: 'vinculationHours', label: 'Horas de Vinculación', width: 260 },
-  { id: 'isActive', label: 'Estado', width: 100 },
-  { id: 'actions', label: 'Acciones', width: 110 },
-]
-
-const defaultFilters: ICareerTableFilters = {
-  name: undefined,
-  state: undefined,
-}
+import { TABLE_HEAD, defaultFilters } from '../constants'
 
 const CareerListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()

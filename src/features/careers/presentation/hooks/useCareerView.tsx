@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { useCareersStore } from '../state/careerStore'
+import { useCareersStore } from '../store/careerStore'
 import { CareerModel } from '../../data/models/CareerModel'
-import { useCareerCommands } from './useCareerCommands'
+import { useCareerMethods } from './useCareerMethods'
 import { ICareer } from '../../domain/entities/ICareer'
 
 export const useCareerView = () => {
   const { careers, setCareers } = useCareersStore()
   const { loader } = useLoaderStore()
   const [selectedCareer, setSelectedCareer] = useState<CareerModel | null>(null)
-  const { fetchData, updateRow } = useCareerCommands()
+  const { fetchData, updateRow } = useCareerMethods()
 
   const handleSelectedCouncil = useCallback(
     (item: CareerModel | null) => {

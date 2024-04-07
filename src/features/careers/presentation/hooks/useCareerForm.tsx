@@ -9,13 +9,20 @@ import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
-import { useCareersStore } from '../state/careerStore'
+import { useCareersStore } from '../store/careerStore'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { FunctionaryUseCasesImpl } from '../../../.../../../features/functionaries/domain/usecases/FunctionaryServices'
+import { resolve } from 'path'
+import {
+  resolveDefaultValues,
+  handleCreate,
+  handleUpdate,
+  NewCareerSchema,
+} from '../constants'
 
 interface FormValuesProps extends ICareer {}
 
@@ -40,27 +47,8 @@ export const useCareerForm = (currentCareer?: ICareer) => {
   const { enqueueSnackbar } = useSnackbar()
   const { addCareer, updateCareer } = useCareersStore()
 
-  const NewCareerSchema = Yup.object().shape({
-    name: Yup.string().required('Campo requerido'),
-    credits: Yup.number().required('Campo requerido').max(140).min(130),
-    coordinator: Yup.string().required('Campo requerido'),
-    menDegree: Yup.string().required('Campo requerido'),
-    womenDegree: Yup.string().required('Campo requerido'),
-    internshipHours: Yup.number().required('Campo requerido').max(250).min(230),
-    vinculationHours: Yup.number().required('Campo requerido').max(95).min(80),
-  })
-
   const defaultValues = useMemo(
-    () => ({
-      name: currentCareer?.name || '',
-      credits: currentCareer?.credits || 0,
-      menDegree: currentCareer?.menDegree || '',
-      womenDegree: currentCareer?.womenDegree || '',
-      coordinator: coordinator || '',
-      internshipHours: currentCareer?.internshipHours || 0,
-      vinculationHours: currentCareer?.vinculationHours || 0,
-      isActive: currentCareer?.isActive || true,
-    }),
+    () => resolveDefaultValues(currentCareer),
     [currentCareer],
   )
 
@@ -75,31 +63,6 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     handleSubmit,
     formState: { isSubmitting },
   } = methods
-
-  const handleCreate = useCallback(async (values: ICareer) => {
-    const result = await CareersUseCasesImpl.getInstance().create(values)
-
-    if (result.career) {
-      addCareer(result.career)
-      enqueueSnackbar('Carrera creada exitosamente')
-    } else {
-      throw new Error('Error al crear el consejo')
-    }
-  }, [])
-
-  const handleUpdate = async (id: number, editedFields: Partial<ICareer>) => {
-    const { status } = await CareersUseCasesImpl.getInstance().update(
-      id,
-      editedFields,
-    )
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      updateCareer(editedFields)
-      enqueueSnackbar('Carrera actualizada exitosamente')
-    } else {
-      throw new Error('Error al actualizar el consejo')
-    }
-  }
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {

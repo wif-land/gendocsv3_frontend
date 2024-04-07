@@ -11,7 +11,7 @@ import Dialog, { DialogProps } from '@mui/material/Dialog'
 
 import { Upload } from '../../../../shared/sdk/upload'
 import Iconify from '../../../../core/iconify'
-import { useCareersStore } from '../../../careers/presentation/state/careerStore'
+import { useCareersStore } from '../../../careers/presentation/store/careerStore'
 import { IStudent } from '../../domain/entities/IStudent'
 import { transformData } from '../utils'
 import { useStudentCommands } from '../hooks/useStudentCommands'
