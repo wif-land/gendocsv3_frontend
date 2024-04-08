@@ -35,20 +35,6 @@ export const NewCareerSchema = Yup.object().shape({
   vinculationHours: Yup.number().required('Campo requerido').max(95).min(80),
 })
 
-export const resolveDefaultValues = (
-  currentCareer?: ICareer,
-  coordinator?: number,
-) => ({
-  name: currentCareer?.name || '',
-  credits: currentCareer?.credits || 0,
-  menDegree: currentCareer?.menDegree || '',
-  womenDegree: currentCareer?.womenDegree || '',
-  coordinator: coordinator || '',
-  internshipHours: currentCareer?.internshipHours || 0,
-  vinculationHours: currentCareer?.vinculationHours || 0,
-  isActive: currentCareer?.isActive || true,
-})
-
 export const handleCreate = async (values: FormValuesProps) => {
   const { addCareer, updateCareer } = useCareersStore()
   const result = await CareersUseCasesImpl.getInstance().create(values)

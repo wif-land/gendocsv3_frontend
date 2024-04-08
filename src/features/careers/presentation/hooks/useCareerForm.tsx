@@ -15,14 +15,8 @@ import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionar
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { NewCareerSchema, handleCreate, handleUpdate } from '../constants'
 import { FunctionaryUseCasesImpl } from '../../../.../../../features/functionaries/domain/usecases/FunctionaryServices'
-import { resolve } from 'path'
-import {
-  resolveDefaultValues,
-  handleCreate,
-  handleUpdate,
-  NewCareerSchema,
-} from '../constants'
 
 interface FormValuesProps extends ICareer {}
 
@@ -41,16 +35,25 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     } - ${(currentCareer?.coordinator as IFunctionary).dni}`
   }
 
+  const defaultValues = useMemo(
+    () => ({
+      name: currentCareer?.name || '',
+      credits: currentCareer?.credits || 0,
+      menDegree: currentCareer?.menDegree || '',
+      womenDegree: currentCareer?.womenDegree || '',
+      coordinator: coordinator || '',
+      internshipHours: currentCareer?.internshipHours || 0,
+      vinculationHours: currentCareer?.vinculationHours || 0,
+      isActive: currentCareer?.isActive || true,
+    }),
+    [currentCareer],
+  )
+
   const router = useRouter()
   const pathname = usePathname()
   const { functionaries, get, setFunctionaries } = useFunctionaryStore()
   const { enqueueSnackbar } = useSnackbar()
   const { addCareer, updateCareer } = useCareersStore()
-
-  const defaultValues = useMemo(
-    () => resolveDefaultValues(currentCareer),
-    [currentCareer],
-  )
 
   const methods = useForm<FormValuesProps>({
     // @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'DeepPartial<FormValuesProps> | undefined'.
@@ -63,6 +66,31 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     handleSubmit,
     formState: { isSubmitting },
   } = methods
+
+  const handleCreate = useCallback(async (values: ICareer) => {
+    const result = await CareersUseCasesImpl.getInstance().create(values)
+
+    if (result.career) {
+      addCareer(result.career)
+      enqueueSnackbar('Carrera creada exitosamente')
+    } else {
+      throw new Error('Error al crear el consejo')
+    }
+  }, [])
+
+  const handleUpdate = async (id: number, editedFields: Partial<ICareer>) => {
+    const { status } = await CareersUseCasesImpl.getInstance().update(
+      id,
+      editedFields,
+    )
+
+    if (status === HTTP_STATUS_CODES.OK) {
+      updateCareer(editedFields)
+      enqueueSnackbar('Carrera actualizada exitosamente')
+    } else {
+      throw new Error('Error al actualizar el consejo')
+    }
+  }
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
