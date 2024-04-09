@@ -40,9 +40,8 @@ import { TABLE_HEAD } from '../constants'
 import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
 
 const defaultFilters: IFunctionaryTableFilters = {
-  name: '',
-  personalEmail: '',
-  outlookEmail: '',
+  field: undefined,
+  state: undefined,
 }
 
 const FunctionaryListView = () => {
@@ -53,7 +52,6 @@ const FunctionaryListView = () => {
   const [count, setCount] = useState(0)
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
 
   const [tableData, setTableData] = useState<FunctionaryModel[]>([])
   const [filters, setFilters] =
@@ -85,7 +83,7 @@ const FunctionaryListView = () => {
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    field: searchTerm,
+    filters,
   })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
@@ -101,7 +99,6 @@ const FunctionaryListView = () => {
 
   const handleResetFilters = () => {
     setFilters(defaultFilters)
-    setSearchTerm('')
     setVisitedPages([])
     setIsDataFiltered(false)
     setTableData([])
@@ -137,9 +134,9 @@ const FunctionaryListView = () => {
           <FunctionaryTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
+            isDataFiltered={isDataFiltered}
             table={table}
             setDataTable={setTableData}
             getFilteredFunctionaries={handleSearch}

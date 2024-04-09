@@ -1,5 +1,6 @@
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { IProcess } from '../entities/IProcess'
+import { IProcessFilters } from '../entities/IProcessFilters'
 
 export interface ProcessesRepository {
   getAll: () => Promise<{
@@ -7,8 +8,8 @@ export interface ProcessesRepository {
     processes: ProcessModel[]
   }>
 
-  getByField: (
-    field: string,
+  getByFilters: (
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,

@@ -3,6 +3,7 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { UserModel } from '../models/UserModel'
 import { IUser } from '../../domain/entities/IUser'
+import { IUserFilters } from '../../domain/entities/IUserFilters'
 
 export interface UserDataSource {
   getAll(
@@ -16,10 +17,10 @@ export interface UserDataSource {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
     limit: number,
     offset: number,
+    filters: IUserFilters,
   ): Promise<{
     status: number
     data: {
@@ -74,9 +75,13 @@ export class UserDataSourceImpl implements UserDataSource {
     }
   }
 
-  getByField = async (field: string, limit: number, offset: number) => {
-    const result = await AxiosClient.get(API_ROUTES.USERS.GET_BY_FIELD(field), {
-      params: { limit, offset },
+  getByFilters = async (
+    limit: number,
+    offset: number,
+    filters: IUserFilters,
+  ) => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_BY_FILTERS, {
+      params: { limit, offset, ...filters },
     })
 
     const { status, data } = result

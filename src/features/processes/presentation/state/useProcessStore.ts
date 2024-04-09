@@ -84,38 +84,31 @@ export const useProcessStore = create<StoreState>(
           return
         }
 
-        const updatedTemplates = templates.map((template, index) => {
-          if (index === templateIndex) {
-            const updatedTemplate = { ...template }
-            Object.keys(updatedTemplateData).forEach((key) => {
-              const keyOfTemplate = key as keyof ITemplate
-              const value = updatedTemplateData[keyOfTemplate]
+        console.log('templateData', updatedTemplateData)
 
-              if (value !== undefined) {
-                const updatedTemplate: {
-                  [key: string]: string | number | boolean | Date
-                } = { ...template }
-                updatedTemplate[keyOfTemplate] = value
-              }
-            })
-
-            return updatedTemplate
+        const updatedTemplate: ITemplate = { ...templates[templateIndex] }
+        Object.keys(updatedTemplateData).forEach((key) => {
+          const keyOfTemplate = key as keyof ITemplate
+          const value = updatedTemplateData[keyOfTemplate]
+          if (value !== undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ;(updatedTemplate as any)[keyOfTemplate] = value
           }
-          return template
         })
 
-        const updatedProcesses = processes.map((process, index) => {
-          if (index === processIndex) {
-            return {
-              ...process,
-              templateProcesses: updatedTemplates,
-              toJson: process.toJson,
-            }
-          }
-          return process
-        })
+        console.log('updatedTemplate', updatedTemplate)
 
-        set({ processes: updatedProcesses })
+        const updatedTemplates = templates.map((template, index) =>
+          index === templateIndex ? updatedTemplate : template,
+        )
+
+        const updatedProcesses = processes.map((process, index) =>
+          index === processIndex
+            ? { ...process, templateProcesses: updatedTemplates }
+            : process,
+        )
+
+        set({ processes: updatedProcesses as ProcessModel[] })
       },
     }),
     {

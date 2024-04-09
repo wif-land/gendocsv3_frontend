@@ -82,16 +82,17 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
     editedFields: Partial<ITemplate>,
   ) => {
     try {
-      const { status } = await TemplatesUseCasesImpl.getInstance().update(
-        initialValues.id as number,
-        editedFields,
-      )
+      const { status, template } =
+        await TemplatesUseCasesImpl.getInstance().update(
+          initialValues.id as number,
+          editedFields,
+        )
 
       if (status === HTTP_STATUS_CODES.OK) {
         updateTemplate(
-          initialValues.processId as number,
+          process?.id as number,
           initialValues.id as number,
-          editedFields,
+          template as ITemplate,
         )
         enqueueSnackbar('Planitlla actualizado exitosamente')
         reset()

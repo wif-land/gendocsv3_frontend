@@ -89,7 +89,7 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
 
     const filteredFunctionaries = async (field: string) => {
       await FunctionaryUseCasesImpl.getInstance()
-        .getByField(field)
+        .getByFilters({ field })
         .then((res) => {
           if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
             setFunctionaries(res.data.functionaries)

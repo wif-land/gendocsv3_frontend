@@ -9,7 +9,7 @@ export const API_ROUTES = {
   },
   USERS: {
     GET_ALL: '/users',
-    GET_BY_FIELD: (field: string) => `/users/${field}`,
+    GET_BY_FILTERS: `/users/filter`,
     UPDATE: (id: number) => `/users/${id}`,
     DELETE: '/users/:id',
     CREATE: '/users',
@@ -30,7 +30,7 @@ export const API_ROUTES = {
   STUDENTS: {
     GET_ALL: '/students',
     GET_ONE: '/students/:id',
-    GET_BY_FIELD: (field: string) => `/students/search/${field}`,
+    GET_BY_FILTERS: `/students/filter`,
     UPDATE: (id: number) => `/students/${id}`,
     BULK_UPDATE: '/students/bulk',
     DELETE: (id: number) => `/students/${id}`,
@@ -39,7 +39,7 @@ export const API_ROUTES = {
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
-    GET_BY_FIELD: (field: string) => `/functionaries/${field}`,
+    GET_BY_FILTERS: `/functionaries/filter`,
     UPDATE: (id: number) => `/functionaries/${id}`,
     BULK_UPDATE: '/functionaries/bulk',
     DELETE: '/functionaries/:id',
@@ -48,7 +48,7 @@ export const API_ROUTES = {
   PROCESSES: {
     GET_ALL: '/processes',
     GET_ONE: '/processes/:id',
-    GET_BY_FIELD: (field: string) => `/processes/${field}`,
+    GET_BY_FILTERS: `/processes/filter`,
     UPDATE: '/processes/:id',
     DELETE: '/processes/:id',
     CREATE: '/processes',
@@ -56,7 +56,7 @@ export const API_ROUTES = {
   },
   COUNCILS: {
     GET_ALL: '/councils',
-    GET_BY_FIELD: (field: string) => `/councils/${field}`,
+    GET_BY_FILTERS: `/councils/filter`,
     GET_COUNT: '/councils/count',
     UPDATE: (id: number) => `/councils/${id}`,
     DELETE: '/councils/:id',
@@ -85,7 +85,7 @@ export const API_ROUTES = {
   },
   POSITIONS: {
     GET_ALL: '/positions',
-    GET_BY_FIELD: (field: string) => `/positions/${field}`,
+    GET_BY_FIELD: (field: string) => `/positions/filter/${field}`,
     UPDATE: (id: number) => `/positions/${id}`,
     DELETE: (id: number) => `/positions/${id}`,
     DELETE_MANY: '/positions/delete/bulk',

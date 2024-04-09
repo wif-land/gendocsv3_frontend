@@ -1,5 +1,6 @@
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
+import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 import { FunctionaryRepository } from '../../domain/repositories/FunctionaryRepository'
 import {
   FunctionaryDataSource,
@@ -25,8 +26,11 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
   getAll = async (limit: number, offset: number) =>
     await this.datasource.getAll(limit, offset)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    await this.datasource.getByField(field, limit, offset)
+  getByFilters = async (
+    filters: IFunctionaryFilters,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getByFilters(filters, limit, offset)
 
   update = async (data: Partial<FunctionaryModel>) =>
     await this.datasource.update(data)

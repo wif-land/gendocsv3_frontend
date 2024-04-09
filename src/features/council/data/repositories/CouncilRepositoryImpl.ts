@@ -6,6 +6,7 @@ import {
   CouncilsDataSourceImpl,
 } from '../datasources/CouncilDatasource'
 import { CouncilModel } from '../models/CouncilModel'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export class CouncilRepositoryImpl implements CouncilRepository {
   static instance: CouncilRepositoryImpl
@@ -30,12 +31,12 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   getAll = async () => await this.datasource.getAll()
 
-  getByField = async (
-    field: string,
+  getByFilters = async (
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
-  ) => await this.datasource.getByField(field, moduleId, limit, offset)
+  ) => await this.datasource.getByFilters(filters, moduleId, limit, offset)
 
   update = async (data: Partial<CouncilModel>) =>
     await this.datasource.update(data)

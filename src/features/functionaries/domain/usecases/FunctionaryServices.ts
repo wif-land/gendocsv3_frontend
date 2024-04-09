@@ -1,6 +1,7 @@
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { FunctionaryRepositoryImpl } from '../../data/repositories/FunctionaryRepositoryImpl'
 import { IFunctionary } from '../entities/IFunctionary'
+import { IFunctionaryFilters } from '../entities/IFunctionaryFilters'
 import { FunctionaryRepository } from '../repositories/FunctionaryRepository'
 
 interface FunctionaryUseCases {
@@ -19,8 +20,8 @@ interface FunctionaryUseCases {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
+    filters: IFunctionaryFilters,
     limit: number,
     offset: number,
   ): Promise<{
@@ -70,9 +71,17 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
   getAll = async (limit: number, offset: number) =>
     await this.functionaryRepository.getAll(limit, offset)
 
-  getByField = async (field: string, limit = 5, offset = 0) => {
+  getByFilters = async (
+    filters: IFunctionaryFilters,
+    limit = 5,
+    offset = 0,
+  ) => {
     try {
-      return await this.functionaryRepository.getByField(field, limit, offset)
+      return await this.functionaryRepository.getByFilters(
+        filters,
+        limit,
+        offset,
+      )
     } catch (error) {
       return {
         status: 500,

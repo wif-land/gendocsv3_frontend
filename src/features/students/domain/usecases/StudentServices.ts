@@ -2,6 +2,7 @@ import { StudentModel } from '../../data/models/StudentModel'
 import { StudentRepositoryImpl } from '../../data/repositories/StudentRepositoryImpl'
 import { ICreateStudent } from '../entities/ICreateStudent'
 import { IStudent } from '../entities/IStudent'
+import { IStudentFilters } from '../entities/IStudentFilters'
 import { StudentRepository } from '../repositories/StudentRepository'
 
 interface StudentUseCases {
@@ -16,8 +17,8 @@ interface StudentUseCases {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
+    filters: IStudentFilters,
     limit: number,
     offset: number,
   ): Promise<{
@@ -65,8 +66,11 @@ export class StudentUseCasesImpl implements StudentUseCases {
   getAll = async (limit: number, offset: number) =>
     await this.repository.getAll(limit, offset)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    await this.repository.getByField(field, limit, offset)
+  getByFilters = async (
+    filters: IStudentFilters,
+    limit: number,
+    offset: number,
+  ) => await this.repository.getByFilters(filters, limit, offset)
 
   create = async (data: IStudent) => await this.repository.create(data)
 

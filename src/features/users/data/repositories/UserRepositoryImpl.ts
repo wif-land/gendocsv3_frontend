@@ -1,4 +1,5 @@
 import { IUser } from '../../domain/entities/IUser'
+import { IUserFilters } from '../../domain/entities/IUserFilters'
 import { UserRepository } from '../../domain/repositories/UserRepository'
 import {
   UserDataSource,
@@ -24,8 +25,8 @@ export class UserRepositoryImpl implements UserRepository {
   getAll = async (limit: number, offset: number) =>
     await this.datasource.getAll(limit, offset)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    await this.datasource.getByField(field, limit, offset)
+  getByFilters = async (limit: number, offset: number, filters: IUserFilters) =>
+    await this.datasource.getByFilters(limit, offset, filters)
 
   update = async (data: Partial<UserModel>) =>
     await this.datasource.update(data)

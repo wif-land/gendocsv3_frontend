@@ -1,23 +1,30 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ICareer } from '../../domain/entities/ICareer'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { usePathname, useRouter } from 'next/navigation'
-import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
-import { useCareersStore } from '../state/careerStore'
+import { useCareersStore } from '../store/careerStore'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { NewCareerSchema } from '../constants'
+import { FunctionaryUseCasesImpl } from '../../../.../../../features/functionaries/domain/usecases/FunctionaryServices'
 
 interface FormValuesProps extends ICareer {}
 
 export const useCareerForm = (currentCareer?: ICareer) => {
   let coordinator = ''
+  const [inputValue, setInputValue] = useState('' as string)
+  const debouncedValue = useDebounce(inputValue)
+  const [loading, setIsLoading] = useState(false)
+  const isOpen = useBoolean()
 
   if (currentCareer?.coordinator) {
     coordinator = `${(currentCareer?.coordinator as IFunctionary).firstName} ${
@@ -26,22 +33,6 @@ export const useCareerForm = (currentCareer?: ICareer) => {
       (currentCareer?.coordinator as IFunctionary).secondLastName
     } - ${(currentCareer?.coordinator as IFunctionary).dni}`
   }
-
-  const router = useRouter()
-  const pathname = usePathname()
-  const { functionaries, get } = useFunctionaryStore()
-  const { enqueueSnackbar } = useSnackbar()
-  const { addCareer, updateCareer } = useCareersStore()
-
-  const NewCareerSchema = Yup.object().shape({
-    name: Yup.string().required('Campo requerido'),
-    credits: Yup.number().required('Campo requerido').max(140).min(130),
-    coordinator: Yup.string().required('Campo requerido'),
-    menDegree: Yup.string().required('Campo requerido'),
-    womenDegree: Yup.string().required('Campo requerido'),
-    internshipHours: Yup.number().required('Campo requerido').max(250).min(230),
-    vinculationHours: Yup.number().required('Campo requerido').max(95).min(80),
-  })
 
   const defaultValues = useMemo(
     () => ({
@@ -56,6 +47,12 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     }),
     [currentCareer],
   )
+
+  const router = useRouter()
+  const pathname = usePathname()
+  const { functionaries, get, setFunctionaries } = useFunctionaryStore()
+  const { enqueueSnackbar } = useSnackbar()
+  const { addCareer, updateCareer } = useCareersStore()
 
   const methods = useForm<FormValuesProps>({
     // @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'DeepPartial<FormValuesProps> | undefined'.
@@ -148,11 +145,45 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     }
   }, [])
 
+  useEffect(() => {
+    let isMounted = true
+
+    if (isOpen.value === false) return
+
+    setIsLoading(true)
+
+    const filteredFunctionaries = async (field: string) => {
+      await FunctionaryUseCasesImpl.getInstance()
+        .getByFilters({ field })
+        .then((res) => {
+          if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
+            setFunctionaries(res.data.functionaries)
+            return
+          } else {
+            setFunctionaries([])
+            setIsLoading(false)
+            return
+          }
+        })
+    }
+
+    if (debouncedValue.includes('-')) return
+
+    filteredFunctionaries(debouncedValue)
+
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedValue, isOpen.value])
+
   return {
     functionaries,
     isSubmitting,
     methods,
     onSubmit,
     handleSubmit,
+    setInputValue,
+    isOpen,
+    loading,
   }
 }

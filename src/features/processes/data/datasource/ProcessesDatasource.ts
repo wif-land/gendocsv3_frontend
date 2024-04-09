@@ -3,6 +3,7 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IProcess } from '../../domain/entities/IProcess'
+import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 
 export interface ProcessesDataSource {
   getAll(): Promise<{
@@ -22,8 +23,8 @@ export interface ProcessesDataSource {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilter(
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,
@@ -112,18 +113,15 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     return { status, processes: data.content as ProcessModel[] }
   }
 
-  getByField = async (
-    field: string,
+  getByFilter = async (
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,
   ) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.PROCESSES.GET_BY_FIELD(field),
-      {
-        params: { moduleId, limit, offset },
-      },
-    )
+    const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_BY_FILTERS, {
+      params: { moduleId, limit, offset, ...filters },
+    })
 
     const { status, data } = result
 

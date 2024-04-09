@@ -19,6 +19,7 @@ import { useUsersStore } from '../../../users/presentation/state/usersStore'
 import { fUserNamesShort } from '../../../../shared/utils/format-names'
 
 type Props = {
+  rowUserId: number
   row: TemplateModel
   selected: boolean
   onEditRow: VoidFunction

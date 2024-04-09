@@ -3,6 +3,7 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICouncil } from '../../domain/entities/ICouncil'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export interface CouncilsDataSource {
   getAll(): Promise<{
@@ -22,8 +23,8 @@ export interface CouncilsDataSource {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
@@ -104,18 +105,30 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return { status, councils: [] as CouncilModel[] }
   }
 
-  getByField = async (
-    field: string,
+  getByFilters = async (
+    filters: ICouncilFilters,
     moduleId: number,
     limit: number,
     offset: number,
   ) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.COUNCILS.GET_BY_FIELD(field),
-      {
-        params: { moduleId, limit, offset },
-      },
-    )
+    const { startDate, endDate } = filters
+
+    const formattedFilters = {
+      moduleId,
+      limit,
+      offset,
+      ...filters,
+      startDate: startDate
+        ? (startDate as Date).toISOString().split('T')[0]
+        : undefined,
+      endDate: endDate
+        ? (endDate as Date).toISOString().split('T')[0]
+        : undefined,
+    }
+
+    const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_BY_FILTERS, {
+      params: formattedFilters,
+    })
 
     const { status, data } = result
 

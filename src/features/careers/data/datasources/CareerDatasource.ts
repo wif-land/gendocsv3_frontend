@@ -12,6 +12,7 @@ export interface CareerDataSource {
 
   update(career: Partial<ICareer>): Promise<{
     status: number
+    career: CareerModel
   }>
 
   create(career: ICareer): Promise<{
@@ -67,9 +68,9 @@ export class CareersDataSourceImpl implements CareerDataSource {
     const { status, data } = result
 
     if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
+      return { status, career: {} as CareerModel }
     }
 
-    return { status, council: data.content as CareerModel }
+    return { status, career: data.content as CareerModel }
   }
 }

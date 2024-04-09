@@ -7,37 +7,39 @@ import { TableProps } from '../../../../shared/sdk/table'
 import { StudentModel } from '../../data/models/StudentModel'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 
-export type IStudentTableFilterValue = string | string[]
+import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
+import { SelectChangeEvent } from '@mui/material'
+
+export type IStudentTableFilterValue = string | boolean | undefined
 
 export type IStudentTableFilters = {
-  name: string
-  personalEmail: string
-  outlookEmail: string
+  field: string | undefined
+  state: boolean | undefined
 }
 
 type Props = {
   filters: IStudentTableFilters
   onFilters: (name: string, value: IStudentTableFilterValue) => void
-  setSearchTerm: (value: string) => void
   setVisitedPages: (value: number[]) => void
   setIsDataFiltered: (value: boolean) => void
+  isDataFiltered: boolean
   table: TableProps
   setDataTable: (value: StudentModel[]) => void
-  getFilteredFunctionaries: (field: string) => void
+  getFilteredStudents: (filters: IStudentTableFilters) => void
 }
 
 export const StudentTableToolbar = ({
   filters,
   onFilters,
-  setSearchTerm,
   setVisitedPages,
   setIsDataFiltered,
+  isDataFiltered,
   table,
   setDataTable,
-  getFilteredFunctionaries,
+  getFilteredStudents,
 }: Props) => {
-  const [inputValue, setInputValue] = useState('' as string)
-  const debouncedValue = useDebounce(inputValue)
+  const [inputValue, setInputValue] = useState(undefined as string | undefined)
+  const debouncedValue = useDebounce(inputValue || '')
 
   const resetValues = () => {
     setVisitedPages([])
@@ -48,23 +50,40 @@ export const StudentTableToolbar = ({
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setInputValue(event.target.value)
-      onFilters('name', event.target.value)
+      !isDataFiltered && setIsDataFiltered(true)
+      onFilters('field', event.target.value)
     },
     [onFilters],
   )
 
   useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
     table.setPage(0)
     setVisitedPages([])
 
-    if (inputValue) {
-      setIsDataFiltered(true)
-      setSearchTerm(inputValue)
-      getFilteredFunctionaries(debouncedValue)
-    } else {
-      resetValues()
+    areFiltersAdded() === true ? getFilteredStudents(filters) : resetValues()
+
+    return () => {
+      isMounted = false
     }
-  }, [debouncedValue])
+  }, [debouncedValue, filters.state])
+
+  const areFiltersAdded = () =>
+    (inputValue !== undefined && inputValue !== '') ||
+    filters.state !== undefined
+
+  const handleChange = (event: SelectChangeEvent) => {
+    const {
+      target: { value },
+    } = event
+
+    !isDataFiltered && setIsDataFiltered(true)
+
+    onFilters('state', value)
+  }
 
   return (
     <>
@@ -80,16 +99,12 @@ export const StudentTableToolbar = ({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={2}
-          flexGrow={1}
-          sx={{ width: 1 }}
-        >
+        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1}>
+          <StatusFilter filters={filters} onChange={handleChange} />
+
           <TextField
             fullWidth
-            value={filters.name}
+            value={filters.field || ''}
             onChange={handleFilterName}
             placeholder="Busca por nombre"
             InputProps={{

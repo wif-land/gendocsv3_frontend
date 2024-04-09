@@ -73,9 +73,9 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
               label="Tipo"
               InputLabelProps={{ shrink: true }}
             >
-              {COUNCIL_TYPES.map((category) => (
-                <option key={category.value} value={category.value}>
-                  {category.label}
+              {COUNCIL_TYPES.map((council) => (
+                <option key={council.value} value={council.value}>
+                  {council.label}
                 </option>
               ))}
             </RHFSelect>
@@ -336,7 +336,12 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           <RHFSwitch name="isActive" label="Consejo activo" />
         </Box>
 
-        <LoadingButton type="submit" variant="contained" size="large">
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={loading.value}
+        >
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>
       </Grid>

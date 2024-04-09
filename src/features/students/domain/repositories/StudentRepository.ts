@@ -1,6 +1,7 @@
 import { StudentModel } from '../../data/models/StudentModel'
 import { ICreateStudent } from '../entities/ICreateStudent'
 import { IStudent } from '../entities/IStudent'
+import { IStudentFilters } from '../entities/IStudentFilters'
 
 export interface StudentRepository {
   getAll(
@@ -14,8 +15,8 @@ export interface StudentRepository {
     }
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
+    filters: IStudentFilters,
     limit: number,
     offset: number,
   ): Promise<{

@@ -1,6 +1,5 @@
 import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
@@ -23,7 +22,8 @@ type Props = {
 
 export const CareerNewEditForm = ({ currentCareer }: Props) => {
   const mdUp = useResponsive('up', 'md')
-  const { functionaries, methods, onSubmit } = useCareerForm(currentCareer)
+  const { functionaries, methods, onSubmit, setInputValue, isOpen, loading } =
+    useCareerForm(currentCareer)
 
   const {
     handleSubmit,
@@ -58,60 +58,55 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
               required
             />
 
-            {functionaries && (
-              <RHFAutocomplete
-                name="coordinator"
-                label="Coordinador"
-                freeSolo
-                options={functionaries!.map(
+            <RHFAutocomplete
+              name="coordinator"
+              label="Coordinador"
+              open={isOpen.value}
+              onOpen={isOpen.onTrue}
+              onClose={() => {
+                setInputValue('')
+                isOpen.onFalse()
+              }}
+              loading={loading}
+              noOptionsText="No hay resultados"
+              options={functionaries?.map(
+                (functionary) =>
+                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+              )}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue)
+              }}
+              getOptionLabel={(option) => option}
+              renderOption={(props, option) => {
+                const {
+                  dni,
+                  firstName,
+                  firstLastName,
+                  secondName,
+                  secondLastName,
+                } = functionaries.filter(
                   (functionary) =>
+                    option ===
                     `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )}
-                getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const {
-                    dni,
-                    firstName,
-                    firstLastName,
-                    secondName,
-                    secondLastName,
-                  } = functionaries.filter(
-                    (functionary) =>
-                      option ===
-                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                  )[0]
+                )[0]
 
-                  if (!dni) {
-                    return null
-                  }
-
-                  return (
-                    <li key={dni} {...props}>
-                      <Typography variant="body2">
-                        {firstName} {secondName} {firstLastName}{' '}
-                        {secondLastName}
-                      </Typography>
-
-                      <Typography variant="caption" color="text.secondary">
-                        {dni}
-                      </Typography>
-                    </li>
-                  )
-                }}
-                renderTags={(selected, getTagProps) =>
-                  selected.map((option, index) => (
-                    <Chip
-                      {...getTagProps({ index })}
-                      key={index}
-                      label={option}
-                      size="small"
-                      color="info"
-                      variant="soft"
-                    />
-                  ))
+                if (!dni) {
+                  return null
                 }
-              />
-            )}
+
+                return (
+                  <li {...props} key={dni}>
+                    <Typography variant="body2">
+                      {firstName} {secondName} {firstLastName} {secondLastName}
+                    </Typography>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {dni}
+                    </Typography>
+                  </li>
+                )
+              }}
+            />
           </Stack>
         </Card>
       </Grid>

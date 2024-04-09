@@ -7,13 +7,14 @@ import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 interface Props {
   table: TableProps
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  field: string
+  filters: ICouncilFilters
   moduleId: string
 }
 
@@ -22,7 +23,7 @@ export const useCouncilView = ({
   isDataFiltered,
   visitedPages,
   setVisitedPages,
-  field,
+  filters,
   moduleId,
 }: Props) => {
   const [tableData, setTableData] = useState<CouncilModel[]>([])
@@ -68,7 +69,7 @@ export const useCouncilView = ({
     if (newPage > table.page) {
       if (isDataFiltered) {
         fetchDataByField(
-          field,
+          filters,
           moduleIdentifier,
           table.rowsPerPage,
           newPage,
@@ -105,7 +106,7 @@ export const useCouncilView = ({
 
     if (isDataFiltered) {
       fetchDataByField(
-        field,
+        filters,
         moduleIdentifier,
         parseInt(event.target.value, 10),
         0,
@@ -189,9 +190,9 @@ export const useCouncilView = ({
   //   })
   // }
 
-  const handleSearch = (field: string) => {
+  const handleSearch = (filters: ICouncilFilters) => {
     fetchDataByField(
-      field,
+      filters,
       moduleIdentifier,
       table.rowsPerPage,
       table.page,

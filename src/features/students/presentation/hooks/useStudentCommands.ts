@@ -5,6 +5,7 @@ import { StudentModel } from '../../data/models/StudentModel'
 import { useStudentStore } from '../state/studentStore'
 import { IStudent } from '../../domain/entities/IStudent'
 import { enqueueSnackbar } from 'notistack'
+import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 
 export const useStudentCommands = () => {
   const { students } = useStudentStore()
@@ -68,14 +69,14 @@ export const useStudentCommands = () => {
   }
 
   const fetchDataByField = async (
-    searchTerm: string,
+    filters: IStudentFilters,
     rowsPerPage: number,
     currentPage: number,
   ) => {
     addLoaderItem('students')
     try {
-      const response = await StudentUseCasesImpl.getInstance().getByField(
-        searchTerm,
+      const response = await StudentUseCasesImpl.getInstance().getByFilters(
+        filters,
         rowsPerPage,
         currentPage * rowsPerPage,
       )

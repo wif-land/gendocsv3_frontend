@@ -3,6 +3,7 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
+import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 
 export const useFunctionaryMethods = () => {
   const { functionaries, setFunctionaries } = useFunctionaryStore()
@@ -66,14 +67,14 @@ export const useFunctionaryMethods = () => {
   }
 
   const fetchDataByField = async (
-    searchTerm: string,
+    filters: IFunctionaryFilters,
     rowsPerPage: number,
     currentPage: number,
   ) => {
     addLoaderItem('functionaries')
     try {
-      const response = await FunctionaryUseCasesImpl.getInstance().getByField(
-        searchTerm,
+      const response = await FunctionaryUseCasesImpl.getInstance().getByFilters(
+        filters,
         rowsPerPage,
         currentPage * rowsPerPage,
       )

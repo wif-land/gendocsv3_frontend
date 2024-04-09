@@ -8,36 +8,40 @@ import Iconify from '../../../../core/iconify'
 import { TableProps } from '../../../../shared/sdk/table'
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
+import { SelectChangeEvent } from '@mui/material'
+import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 
-export type IProcessTableFilterValue = string | string[]
+export type IProcessTableFilterValue = string | boolean | undefined
 
 export type IProcessTableFilters = {
-  name: string
+  field: string | undefined
+  state: boolean | undefined
 }
 
 type Props = {
   filters: IProcessTableFilters
   onFilters: (name: string, value: IProcessTableFilterValue) => void
-  setSearchTerm: (value: string) => void
   setVisitedPages: (value: number[]) => void
   setIsDataFiltered: (value: boolean) => void
+  isDataFiltered: boolean
   table: TableProps
   setDataTable: (value: ProcessModel[]) => void
-  getFilteredProcesss: (field: string) => void
+  getFilteredProcesss: (filters: IProcessFilters) => void
 }
 
 export const ProcessTableToolbar = ({
   filters,
   onFilters,
-  setSearchTerm,
   setVisitedPages,
   setIsDataFiltered,
+  isDataFiltered,
   table,
   setDataTable,
   getFilteredProcesss,
 }: Props) => {
-  const [inputValue, setInputValue] = useState('' as string)
-  const debouncedValue = useDebounce(inputValue)
+  const [inputValue, setInputValue] = useState(undefined as string | undefined)
+  const debouncedValue = useDebounce(inputValue || '')
 
   const resetValues = () => {
     setVisitedPages([])
@@ -47,21 +51,37 @@ export const ProcessTableToolbar = ({
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
-    onFilters('name', event.target.value)
+    onFilters('field', event.target.value)
   }
 
   useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
     table.setPage(0)
     setVisitedPages([])
 
-    if (inputValue) {
-      setIsDataFiltered(true)
-      setSearchTerm(inputValue)
-      getFilteredProcesss(debouncedValue)
-    } else {
-      resetValues()
+    areFiltersAdded() === true ? getFilteredProcesss(filters) : resetValues()
+
+    return () => {
+      isMounted = false
     }
-  }, [debouncedValue])
+  }, [debouncedValue, filters.state])
+
+  const areFiltersAdded = () =>
+    (inputValue !== undefined && inputValue !== '') ||
+    filters.state !== undefined
+
+  const handleChange = (event: SelectChangeEvent) => {
+    const {
+      target: { value },
+    } = event
+
+    !isDataFiltered && setIsDataFiltered(true)
+
+    onFilters('state', value)
+  }
 
   return (
     <>
@@ -84,9 +104,11 @@ export const ProcessTableToolbar = ({
           flexGrow={1}
           sx={{ width: 1 }}
         >
+          <StatusFilter filters={filters} onChange={handleChange} />
+
           <TextField
             fullWidth
-            value={filters.name}
+            value={filters.field || ''}
             onChange={handleFilterName}
             placeholder="Busca por nombre de proceso"
             InputProps={{

@@ -17,7 +17,12 @@ export const TABLE_HEAD = [
 ]
 
 export const defaultFilters: ICouncilTableFilters = {
-  name: '',
+  name: undefined,
+  state: undefined,
+  startDate: undefined,
+  endDate: undefined,
+  dateType: undefined,
+  type: undefined,
 }
 
 export const NewCouncilSchema = Yup.object().shape({

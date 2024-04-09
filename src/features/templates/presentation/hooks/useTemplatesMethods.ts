@@ -44,7 +44,7 @@ export const useTemplatesMethods = () => {
     } catch (error) {
       return null
     } finally {
-      removeLoaderItem('template')
+      removeLoaderItem('templates')
     }
   }
 

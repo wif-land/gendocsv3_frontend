@@ -4,6 +4,7 @@ import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import { useCouncilStore } from '../store/councilsStore'
 import { enqueueSnackbar } from 'notistack'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export const useCouncilsMethods = () => {
   const { councils, setCouncils } = useCouncilStore()
@@ -64,15 +65,15 @@ export const useCouncilsMethods = () => {
   }
 
   const fetchDataByField = async (
-    searchTerm: string,
+    filters: ICouncilFilters,
     moduleId: number,
     rowsPerPage: number,
     currentPage: number,
   ) => {
     addLoaderItem('councils')
     try {
-      const response = await CouncilsUseCasesImpl.getInstance().getByField(
-        searchTerm,
+      const response = await CouncilsUseCasesImpl.getInstance().getByFilters(
+        filters,
         moduleId,
         rowsPerPage,
         currentPage * rowsPerPage,

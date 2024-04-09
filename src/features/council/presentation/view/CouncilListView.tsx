@@ -39,6 +39,7 @@ import { RouterLink } from '../../../../core/routes/components'
 import { CouncilTableRow } from '../components/CouncilTableRow'
 import { CouncilTableFiltersResult } from '../components/CouncilTableFiltersResult'
 import { TABLE_HEAD, defaultFilters } from '../constants'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
@@ -48,8 +49,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const confirm = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-
   const [filters, setFilters] = useState<ICouncilTableFilters>(defaultFilters)
 
   const handleFilters = useCallback(
@@ -79,7 +78,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
 
   const handleResetFilters = () => {
     setFilters(defaultFilters)
-    setSearchTerm('')
     setVisitedPages([])
     setIsDataFiltered(false)
     setTableData([])
@@ -99,7 +97,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    field: searchTerm,
+    filters: filters as ICouncilFilters,
     moduleId,
   })
 
@@ -135,7 +133,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
           <CouncilTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
             table={table}
