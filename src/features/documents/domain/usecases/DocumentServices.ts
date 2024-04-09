@@ -6,19 +6,11 @@ import { IDocument } from '../entities/IDocument'
 import { DocumentsRepository } from '../repositories/DocumentsRepository'
 
 interface DocumentUseCases {
-  create(process: IDocument): Promise<{
-    status: number
-    document: DocumentModel
-  }>
+  create(process: IDocument): Promise<DocumentModel | boolean>
 
   getAll(): Promise<{
     status: number
     documents: DocumentModel[]
-  }>
-
-  getById(id: number): Promise<{
-    status: number
-    process: DocumentModel
   }>
 
   getAllDocumentsByModuleId(
@@ -27,10 +19,6 @@ interface DocumentUseCases {
   ): Promise<{
     count: number
     documents: DocumentModel[]
-  }>
-
-  deleteById(id: number): Promise<{
-    status: number
   }>
 
   getNumerationByCouncil(councilId: number): Promise<NumerationModel>
@@ -55,10 +43,6 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
 
   getAll = async () => await this.modelRepository.getAll()
 
-  getById = async (id: number) => {
-    throw new Error(`Method not implemented.${id}`)
-  }
-
   getAllDocumentsByModuleId = async (
     moduleId: number,
     params: PaginationParams,
@@ -70,8 +54,6 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
 
     return result.data as { count: number; documents: DocumentModel[] }
   }
-
-  deleteById = async (id: number) => await this.modelRepository.deleteById(id)
 
   getNumerationByCouncil = async (councilId: number) =>
     await this.modelRepository.getNumerationByCouncil(councilId)

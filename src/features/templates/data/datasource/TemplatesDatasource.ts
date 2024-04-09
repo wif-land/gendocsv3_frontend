@@ -3,7 +3,7 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ITemplate } from '../../domain/entities/ITemplate'
-import { DefaultResponse } from '../../../documents/domain/repositories/DocumentsRepository'
+import { DefaultResponse } from '../../../../core/utils/default-response'
 
 export interface TemplatesDataSource {
   update(template: Partial<ITemplate>): Promise<{
@@ -41,13 +41,21 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
       templates: TemplateModel[]
     }>(API_ROUTES.TEMPLATES.GET_BY_PROCESS_ID(processId))
 
-    const { status, data } = result
-
-    if (status !== HTTP_STATUS_CODES.OK) {
-      return { status, data: { count: 0, templates: [] } }
+    if ('error' in result) {
+      return {
+        success: false,
+      }
     }
 
-    return { status, data: data.content }
+    const { data } = result
+
+    return {
+      success: true,
+      data: data.content as {
+        count: number
+        templates: TemplateModel[]
+      },
+    }
   }
 
   async getByProcessAndField(processId: number, field: string) {
@@ -56,25 +64,28 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
       templates: TemplateModel[]
     }>(API_ROUTES.TEMPLATES.GET_BY_PROCESS_AND_FIELD(processId, field))
 
-    const { status, data } = result
-
-    if (status !== HTTP_STATUS_CODES.OK) {
-      return { status, data: { count: 0, templates: [] } }
+    if ('error' in result) {
+      return {
+        success: false,
+      }
     }
 
-    return { status, data: data.content }
+    const { data } = result
+
+    return { success: true, data: data.content }
   }
 
   create = async (template: TemplateModel) => {
     const result = await AxiosClient.post(API_ROUTES.TEMPLATES.CREATE, template)
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        template: {} as TemplateModel,
+      }
+    }
+
     const { status, data } = result
 
-    if (
-      status !== HTTP_STATUS_CODES.OK &&
-      status !== HTTP_STATUS_CODES.CREATED
-    ) {
-      return { status, template: {} as TemplateModel }
-    }
     return { status, template: data.content as TemplateModel }
   }
 
@@ -86,15 +97,15 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
       rest,
     )
 
-    const { status, data } = result
-
-    if (
-      status === HTTP_STATUS_CODES.OK ||
-      status === HTTP_STATUS_CODES.CREATED
-    ) {
-      return { status, template: data.content as TemplateModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        template: {} as TemplateModel,
+      }
     }
 
-    return { status, template: {} as TemplateModel }
+    const { status, data } = result
+
+    return { status, template: data.content as TemplateModel }
   }
 }

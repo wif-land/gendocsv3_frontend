@@ -6,6 +6,7 @@ import {
   DocumentsDataSource,
   DocumentsDataSourceImpl,
 } from '../datasource/DocumentsDatasource'
+import { DocumentModel } from '../models/DocumentsModel'
 
 export class DocumentsRepositoryImpl implements DocumentsRepository {
   static instance: DocumentsRepositoryImpl
@@ -31,21 +32,26 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
 
   create = async (processData: IDocument) => {
     const result = await this.datasource.create(processData)
-    const { status } = result
+    const { success } = result
 
-    return { status, document: result.document }
+    if (!success) {
+      return false
+    }
+
+    return result.data?.document as DocumentModel
   }
 
   deleteById = async (id: number) => {
     try {
       const result = await this.datasource.deleteById(id)
       const { status } = result
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status }
+      if (status !== HTTP_STATUS_CODES.OK) {
+        return false
       }
-      return { status }
+
+      return true
     } catch (error) {
-      return { status: 500 }
+      return false
     }
   }
 

@@ -19,7 +19,7 @@ interface Props {
   filters: IUserFilters
 }
 
-export const useFunctionaryView = ({
+export const useUserView = ({
   tableData,
   setTableData,
   table,
@@ -40,7 +40,7 @@ export const useFunctionaryView = ({
         fetchData(table.rowsPerPage, table.page).then((data) => {
           if (data?.users) {
             setTableData(data.users)
-            setUsers(data.users as IUser[])
+            setUsers(data.users)
           }
           if (data?.count) {
             setCount(data.count)

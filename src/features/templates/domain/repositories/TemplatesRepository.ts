@@ -1,4 +1,4 @@
-import { DefaultResponse } from '../../../documents/domain/repositories/DocumentsRepository'
+import { DefaultResponse } from '../../../../core/utils/default-response'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { ITemplate } from '../entities/ITemplate'
 

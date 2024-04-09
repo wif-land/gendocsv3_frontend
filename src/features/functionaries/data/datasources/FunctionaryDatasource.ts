@@ -61,21 +61,21 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
       params: { limit, offset },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as {
-          count: number
-          functionaries: FunctionaryModel[]
-        },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, functionaries: [] as FunctionaryModel[] },
       }
     }
 
+    const { status, data } = result
+
     return {
       status,
-      data: { count: 0, functionaries: [] as FunctionaryModel[] },
+      data: data.content as {
+        count: number
+        functionaries: FunctionaryModel[]
+      },
     }
   }
 
@@ -91,21 +91,21 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
       },
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as {
-          count: number
-          functionaries: FunctionaryModel[]
-        },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, functionaries: [] as FunctionaryModel[] },
       }
     }
 
+    const { status, data } = result
+
     return {
       status,
-      data: { count: 0, functionaries: [] as FunctionaryModel[] },
+      data: data.content as {
+        count: number
+        functionaries: FunctionaryModel[]
+      },
     }
   }
 
@@ -117,13 +117,16 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
       body,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, functionary: data.content as FunctionaryModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        functionary: {} as FunctionaryModel,
+      }
     }
 
-    return { status, functionary: {} as FunctionaryModel }
+    const { status, data } = result
+
+    return { status, functionary: data.content as FunctionaryModel }
   }
 
   bulkUpdate = async (functionaries: Partial<IFunctionary>[]) => {
@@ -132,13 +135,16 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
       functionaries,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, functionaries: data.content as FunctionaryModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        functionaries: [] as FunctionaryModel[],
+      }
     }
 
-    return { status, functionaries: [] as FunctionaryModel[] }
+    const { status, data } = result
+
+    return { status, functionaries: data.content as FunctionaryModel[] }
   }
 
   create = async (functionary: FunctionaryModel) => {
@@ -147,11 +153,14 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
       functionary,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, functionary: {} as FunctionaryModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        functionary: {} as FunctionaryModel,
+      }
     }
+
+    const { status, data } = result
 
     return { status, functionary: data.content as FunctionaryModel }
   }

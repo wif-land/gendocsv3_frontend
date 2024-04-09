@@ -57,21 +57,21 @@ export class UserDataSourceImpl implements UserDataSource {
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as {
-          count: number
-          users: UserModel[]
-        },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, users: [] as UserModel[] },
       }
     }
 
+    const { status, data } = result
+
     return {
       status,
-      data: { count: 0, users: [] as UserModel[] },
+      data: data.content as {
+        count: number
+        users: UserModel[]
+      },
     }
   }
 
@@ -84,21 +84,21 @@ export class UserDataSourceImpl implements UserDataSource {
       params: { limit, offset, ...filters },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as {
-          count: number
-          users: UserModel[]
-        },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, users: [] as UserModel[] },
       }
     }
 
+    const { status, data } = result
+
     return {
       status,
-      data: { count: 0, users: [] as UserModel[] },
+      data: data.content as {
+        count: number
+        users: UserModel[]
+      },
     }
   }
 
@@ -110,14 +110,14 @@ export class UserDataSourceImpl implements UserDataSource {
       body,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { user: UserModel; accessToken: string },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { user: {} as UserModel, accessToken: '' },
       }
     }
+
+    const { status, data } = result
 
     return {
       status,
@@ -128,11 +128,14 @@ export class UserDataSourceImpl implements UserDataSource {
   create = async (user: UserModel) => {
     const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, user)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, user: {} as UserModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        user: {} as UserModel,
+      }
     }
+
+    const { status, data } = result
 
     return { status, user: data.content as UserModel }
   }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -9,7 +10,7 @@ import Typography from '@mui/material/Typography'
 
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import {
-  RHFMultiSelect,
+  RHFAutocomplete,
   RHFSelect,
   RHFSwitch,
   RHFTextField,
@@ -20,6 +21,7 @@ import { useUsersForm } from '../hooks/useUsersForm'
 import { IUser, UserRole, UserTypeLabels } from '../../domain/entities/IUser'
 import { MenuItem } from '@mui/material'
 import useModulesStore from '../../../../shared/store/modulesStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
 type Props = {
   currentUser?: IUser
@@ -29,6 +31,7 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const { methods, onSubmit } = useUsersForm(currentUser)
   const { modules } = useModulesStore()
+  const { user } = useAccountStore()
 
   const {
     handleSubmit,
@@ -125,45 +128,27 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
                   <MenuItem value={role}>{UserTypeLabels[role]}</MenuItem>
                 ))}
               </RHFSelect>
-              <Divider />
             </Box>
 
-            <Box
-              sx={{
-                columnGap: 2,
-                rowGap: 3,
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: 'repeat(1, 1fr)',
-                  md: 'repeat(2, 1fr)',
-                },
-              }}
-            >
-              <RHFMultiSelect
-                name="accessModules"
-                label="Módulos de acceso"
-                required
-                options={modules!.map((module) => ({
+            <Divider />
+
+            <RHFAutocomplete
+              name="accessModules"
+              label="Módulos de acceso"
+              multiple
+              freeSolo
+              options={modules!
+                .map((module) => ({
+                  id: module.id,
                   label: module.name,
-                  value: module.id.toString(),
-                }))}
-                value={selectedModules.map((id) => id.toString())}
-              />
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Módulos seleccionados:
-                </Typography>
-                {selectedModules
-                  ?.map((moduleId) => {
-                    const module = modules!.find(
-                      (m) => m.id.toString() === moduleId.toString(),
-                    )
-                    return module ? module.name : null
-                  })
-                  .filter(Boolean)
-                  .join(', ')}
-              </Typography>
-            </Box>
+                }))
+                .filter(
+                  (module) =>
+                    selectedModules?.some(
+                      (value: any) => value.id === module.id,
+                    ) === false,
+                )}
+            />
           </Stack>
         </Card>
       </Grid>
@@ -175,7 +160,9 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
       {mdUp && <Grid md={4} />}
       <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Usuario activo" />
+          {currentUser && currentUser.id !== user?.id && (
+            <RHFSwitch name="isActive" label="Usuario activo" />
+          )}
         </Box>
 
         <LoadingButton

@@ -13,7 +13,7 @@ import {
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
-import { useFunctionaryView } from '../hooks/useUsersView'
+import { useUserView } from '../hooks/useUsersView'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
@@ -72,7 +72,7 @@ const UsersListView = () => {
     handleChangeRowsPerPage,
     handleUpdateRow,
     handleSearch,
-  } = useFunctionaryView({
+  } = useUserView({
     tableData,
     setTableData,
     table,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { DegreeCertificateModel } from '../../data/model'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import { useForm } from 'react-hook-form'
 import { NewDegreeCertificateSchema, resolveDefaultValues } from '../constants'

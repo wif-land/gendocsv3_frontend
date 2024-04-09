@@ -36,12 +36,14 @@ export class CareersDataSourceImpl implements CareerDataSource {
   create = async (career: ICareer) => {
     const result = await AxiosClient.post(API_ROUTES.CAREERS.CREATE, career)
 
-    console.log({ result })
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, career: {} as CareerModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        career: {} as CareerModel,
+      }
     }
+
+    const { status, data } = result
 
     return { status, career: data.content as CareerModel }
   }
@@ -49,11 +51,14 @@ export class CareersDataSourceImpl implements CareerDataSource {
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.CAREERS.GET_ALL)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, careers: [] as CareerModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        careers: [] as CareerModel[],
+      }
     }
+
+    const { status, data } = result
 
     return { status, careers: data.content as CareerModel[] }
   }
@@ -65,11 +70,11 @@ export class CareersDataSourceImpl implements CareerDataSource {
       id,
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, career: {} as CareerModel }
+    if ('error' in result) {
+      return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
     }
+
+    const { status, data } = result
 
     return { status, career: data.content as CareerModel }
   }

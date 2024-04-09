@@ -14,9 +14,14 @@ export interface ICreateStudent {
   folio: string
   isActive: boolean
   registration: string
-  approvedCredits: number
   career: ICareer | number
   personalEmail: string
   outlookEmail: string
   phoneNumber: string
+  studyStartDate: string
+  bachelorDegree: string
+  approvedCredits?: number
+  vinculationHours?: number
+  internshipHours?: number
+  studyEndDate?: string
 }

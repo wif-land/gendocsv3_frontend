@@ -40,6 +40,10 @@ export class AuthDataSourceImpl implements AuthDataSource {
       accessToken: string
     }>(API_ROUTES.AUTH.LOGIN, { email, password })
 
+    if ('error' in result) {
+      return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
+    }
+
     const {
       status,
       data: { message, content },

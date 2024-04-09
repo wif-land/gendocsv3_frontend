@@ -67,15 +67,19 @@ export class StudentDataSourceImpl implements StudentDataSource {
       params: { limit, offset },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { count: number; students: StudentModel[] },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, students: [] },
       }
     }
-    return { status, data: { count: 0, students: [] } }
+
+    const { status, data } = result
+
+    return {
+      status,
+      data: data.content as { count: number; students: StudentModel[] },
+    }
   }
 
   getByFilter = async (
@@ -87,11 +91,14 @@ export class StudentDataSourceImpl implements StudentDataSource {
       params: { limit, offset, ...filters },
     })
 
-    const { status, data } = result
-
-    if (status !== HTTP_STATUS_CODES.OK) {
-      return { status, data: { count: 0, students: [] } }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, students: [] },
+      }
     }
+
+    const { status, data } = result
 
     return {
       status,
@@ -107,13 +114,16 @@ export class StudentDataSourceImpl implements StudentDataSource {
       body,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, student: data.content as StudentModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        student: {} as StudentModel,
+      }
     }
 
-    return { status, student: {} as StudentModel }
+    const { status, data } = result
+
+    return { status, student: data.content as StudentModel }
   }
 
   bulkUpdate = async (students: Partial<IStudent>[]) => {
@@ -122,23 +132,29 @@ export class StudentDataSourceImpl implements StudentDataSource {
       students,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, students: data.content as StudentModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        students: [] as StudentModel[],
+      }
     }
 
-    return { status, students: [] as StudentModel[] }
+    const { status, data } = result
+
+    return { status, students: data.content as StudentModel[] }
   }
 
   create = async (student: ICreateStudent) => {
     const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE, student)
 
-    const { status, data } = result
-
-    if (status !== HTTP_STATUS_CODES.CREATED) {
-      return { status, student: {} as StudentModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        student: {} as StudentModel,
+      }
     }
+
+    const { status, data } = result
 
     return { status, student: data.content as StudentModel }
   }
@@ -148,12 +164,15 @@ export class StudentDataSourceImpl implements StudentDataSource {
       students,
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.CREATED) {
-      return { status, students: data.content as StudentModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        students: [] as StudentModel[],
+      }
     }
 
-    return { status, students: [] as StudentModel[] }
+    const { status, data } = result
+
+    return { status, students: data.content as StudentModel[] }
   }
 }

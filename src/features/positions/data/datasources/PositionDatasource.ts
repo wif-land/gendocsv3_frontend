@@ -67,21 +67,21 @@ export class PositionDataSourceImpl implements PositionDataSource {
       params: { limit, offset },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as {
-          count: number
-          positions: PositionModel[]
-        },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, positions: [] as PositionModel[] },
       }
     }
 
+    const { status, data } = result
+
     return {
       status,
-      data: { count: 0, positions: [] as PositionModel[] },
+      data: data.content as {
+        count: number
+        positions: PositionModel[]
+      },
     }
   }
 
@@ -93,21 +93,21 @@ export class PositionDataSourceImpl implements PositionDataSource {
       },
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as {
-          count: number
-          positions: PositionModel[]
-        },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { count: 0, positions: [] as PositionModel[] },
       }
     }
 
+    const { status, data } = result
+
     return {
       status,
-      data: { count: 0, positions: [] as PositionModel[] },
+      data: data.content as {
+        count: number
+        positions: PositionModel[]
+      },
     }
   }
 
@@ -119,23 +119,28 @@ export class PositionDataSourceImpl implements PositionDataSource {
       body,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, position: data.content as PositionModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        position: {} as PositionModel,
+      }
     }
 
-    return { status, position: {} as PositionModel }
+    const { status, data } = result
+
+    return { status, position: data.content as PositionModel }
   }
 
   create = async (position: PositionModel) => {
     const result = await AxiosClient.post(API_ROUTES.POSITIONS.CREATE, position)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, position: {} as PositionModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        position: {} as PositionModel,
+      }
     }
+    const { status, data } = result
 
     return { status, position: data.content as PositionModel }
   }
@@ -145,13 +150,16 @@ export class PositionDataSourceImpl implements PositionDataSource {
       path: API_ROUTES.POSITIONS.DELETE(id),
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, isDeleted: data.content as boolean }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        isDeleted: false,
+      }
     }
 
-    return { status, isDeleted: false }
+    const { status, data } = result
+
+    return { status, isDeleted: data.content as boolean }
   }
 
   deleteMany = async (ids: number[]) => {
@@ -160,12 +168,15 @@ export class PositionDataSourceImpl implements PositionDataSource {
       body: ids,
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, isDeleted: data.content as boolean }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        isDeleted: false,
+      }
     }
 
-    return { status, isDeleted: false }
+    const { status, data } = result
+
+    return { status, isDeleted: data.content as boolean }
   }
 }

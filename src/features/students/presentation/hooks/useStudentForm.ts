@@ -33,7 +33,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
   )
 
   const methods = useForm<IStudent>({
-    // @ts-expect-error - The defaultValues are not being recognized
+    // @ts-expect-error - Fix this
     resolver: yupResolver(NewStudentSchema),
     defaultValues,
   })

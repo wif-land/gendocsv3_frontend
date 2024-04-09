@@ -72,37 +72,49 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
       params: { moduleId, limit, offset },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { councils: CouncilModel[]; count: number },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { councils: [], count: 0 },
       }
     }
-    return { status, data: { councils: [], count: 0 } }
+
+    const { status, data } = result
+
+    return {
+      status,
+      data: data.content as { councils: CouncilModel[]; count: number },
+    }
   }
 
   create = async (council: CouncilModel) => {
     const result = await AxiosClient.post(API_ROUTES.COUNCILS.CREATE, council)
 
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        council: {} as CouncilModel,
+      }
+    }
+
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.CREATED) {
-      return { status, council: data.content as CouncilModel }
-    }
-    return { status, council: {} as CouncilModel }
+    return { status, council: data.content as CouncilModel }
   }
 
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL)
 
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        councils: [] as CouncilModel[],
+      }
+    }
+
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, councils: data.content as CouncilModel[] }
-    }
-    return { status, councils: [] as CouncilModel[] }
+    return { status, councils: data.content as CouncilModel[] }
   }
 
   getByFilters = async (
@@ -130,15 +142,18 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
       params: formattedFilters,
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { councils: CouncilModel[]; count: number },
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        data: { councils: [], count: 0 },
       }
     }
-    return { status, data: { councils: [], count: 0 } }
+    const { status, data } = result
+
+    return {
+      status,
+      data: data.content as { councils: CouncilModel[]; count: number },
+    }
   }
 
   update = async (council: ICouncil) => {
@@ -148,22 +163,33 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
       rest,
     )
 
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        council: {} as CouncilModel,
+      }
+    }
+
     const { status, data } = result
 
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, council: data.content as CouncilModel }
-    }
-    return { status, council: {} as CouncilModel }
+    return { status, council: data.content as CouncilModel }
   }
 
   bulkUpdate = async (councils: ICouncil[]) => {
-    const result = AxiosClient.patch(API_ROUTES.COUNCILS.BULK_UPDATE, councils)
+    const result = await AxiosClient.patch(
+      API_ROUTES.COUNCILS.BULK_UPDATE,
+      councils,
+    )
 
-    return result.then(({ status, data }) => {
-      if (status === HTTP_STATUS_CODES.OK) {
-        return { status, councils: data.content as CouncilModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        councils: [] as CouncilModel[],
       }
-      return { status, councils: [] as CouncilModel[] }
-    })
+    }
+
+    const { status, data } = result
+
+    return { status, councils: data.content as CouncilModel[] }
   }
 }
