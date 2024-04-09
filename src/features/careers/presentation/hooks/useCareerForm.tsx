@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ICareer } from '../../domain/entities/ICareer'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { usePathname, useRouter } from 'next/navigation'
-import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -15,7 +14,7 @@ import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionar
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { NewCareerSchema, handleCreate, handleUpdate } from '../constants'
+import { NewCareerSchema } from '../constants'
 import { FunctionaryUseCasesImpl } from '../../../.../../../features/functionaries/domain/usecases/FunctionaryServices'
 
 interface FormValuesProps extends ICareer {}

@@ -5,7 +5,6 @@ import { ICareerTableFilters } from '../components/CareerTableToolbar'
 import { ICareer } from '../../domain/entities/ICareer'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { enqueueSnackbar } from 'notistack'
-import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import { useCareersStore } from '../store/careerStore'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
@@ -36,7 +35,7 @@ export const NewCareerSchema = Yup.object().shape({
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
-  const { addCareer, updateCareer } = useCareersStore()
+  const { addCareer } = useCareersStore()
   const result = await CareersUseCasesImpl.getInstance().create(values)
 
   if (!result) {
@@ -53,7 +52,7 @@ export const handleUpdate = async (
   id: number,
   editedFields: Partial<ICareer>,
 ) => {
-  const { addCareer, updateCareer } = useCareersStore()
+  const { updateCareer } = useCareersStore()
   const { status } = await CareersUseCasesImpl.getInstance().update(
     id,
     editedFields,

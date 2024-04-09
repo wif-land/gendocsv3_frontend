@@ -62,7 +62,7 @@ export const resolveDefaultValues = (currentUser?: IUser) => ({
   outlookEmail: currentUser?.outlookEmail || '',
   googleEmail: currentUser?.googleEmail || '',
   isActive: currentUser?.isActive || true,
-  password: currentUser?.password || '',
+  password: '',
   role: currentUser?.role || UserRole.ADMIN,
   accessModules: currentUser?.accessModules || [],
 })

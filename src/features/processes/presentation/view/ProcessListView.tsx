@@ -107,7 +107,8 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
 
   const notFound =
     (!loader.length && count === 0) ||
-    (!loader.length && count === 0 && isDataFiltered)
+    (!loader.length && count === 0 && isDataFiltered) ||
+    !tableData
 
   return (
     <div key={moduleId}>
@@ -190,13 +191,15 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                 />
 
                 <TableBody>
-                  {loader.length ? (
-                    [...Array(table.rowsPerPage)].map((i, index) => (
-                      <TableSkeleton key={index} sx={{ height: denseHeight }} />
-                    ))
-                  ) : (
-                    <>
-                      {tableData
+                  {loader.length
+                    ? [...Array(table.rowsPerPage)].map((i, index) => (
+                        <TableSkeleton
+                          key={index}
+                          sx={{ height: denseHeight }}
+                        />
+                      ))
+                    : tableData !== undefined &&
+                      tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -216,8 +219,6 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                             onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}
-                    </>
-                  )}
 
                   <TableEmptyRows
                     height={denseHeight}
@@ -231,7 +232,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={count}
+            count={count || 0}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}
