@@ -34,3 +34,4 @@ And the run the production optimized version with:
 npm run start
 ```
 
+## License
