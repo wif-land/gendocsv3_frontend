@@ -1,4 +1,4 @@
-import { DegreeCertificateModel } from '../../data/model'
+import { DegreeCertificateModel } from '../../data/models/CertificateDegreeModel'
 
 export const useDegreeCertificateMethods = () => {
   const handleCreateDegreeCertificate = async (

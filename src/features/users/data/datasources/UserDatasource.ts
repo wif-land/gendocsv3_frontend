@@ -86,7 +86,9 @@ export class UserDataSourceImpl implements UserDataSource {
 
     if ('error' in result) {
       return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        status:
+          HTTP_STATUS_CODES.NOT_FOUND ||
+          HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
         data: { count: 0, users: [] as UserModel[] },
       }
     }

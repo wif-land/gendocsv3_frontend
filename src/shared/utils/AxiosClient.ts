@@ -234,6 +234,12 @@ const handleApiResponse = <T>(
     })
   }
 
+  if (status === HTTP_STATUS_CODES.NOT_FOUND) {
+    enqueueSnackbar('No se encontraron registros', {
+      variant: 'info',
+    })
+  }
+
   if (method !== 'GET') {
     enqueueSnackbar('Acción realizada con éxito', {
       variant: 'success',

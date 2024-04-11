@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { DegreeCertificateModel } from '../../data/model'
+import { DegreeCertificateModel } from '../../data/models/CertificateDegreeModel'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import { useForm } from 'react-hook-form'
 import { NewDegreeCertificateSchema, resolveDefaultValues } from '../constants'
@@ -9,7 +9,7 @@ import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { DegreeCertificatesCrudServices } from '../../domain/usecases/DegreeCertificatesCrud'
+import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 export const useDegreeCertificateForm = (
@@ -86,7 +86,7 @@ export const useDegreeCertificateForm = (
     let isMounted = true
     loading.onTrue()
 
-    DegreeCertificatesCrudServices.getInstance()
+    DegreeCertificatesUseCasesImpl.getInstance()
       .findDegreeCertificates()
       .then((_) => {
         if (!isMounted) return

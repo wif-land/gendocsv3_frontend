@@ -10,7 +10,7 @@ import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Box } from '@mui/material'
-import { DegreeCertificateModel } from '../../data/model'
+import { DegreeCertificateModel } from '../../data/models/CertificateDegreeModel'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 
 type Props = {
