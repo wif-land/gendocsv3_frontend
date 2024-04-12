@@ -48,7 +48,7 @@ export const useDegreeCertificateForm = (
 
           if (editedFields) {
             await handleUpdateDegreeCertificate(
-              currentDegreeCertificate.id as number,
+              currentDegreeCertificate.number as number,
               editedFields,
             )
           }
@@ -57,7 +57,7 @@ export const useDegreeCertificateForm = (
         router.push(
           currentDegreeCertificate
             ? pathname.replace(
-                new RegExp(`/${currentDegreeCertificate.id}/edit`),
+                new RegExp(`/${currentDegreeCertificate.number}/edit`),
                 '',
               )
             : pathname.replace('/new', ''),
@@ -86,13 +86,13 @@ export const useDegreeCertificateForm = (
     let isMounted = true
     loading.onTrue()
 
-    DegreeCertificatesUseCasesImpl.getInstance()
-      .findDegreeCertificates()
-      .then((_) => {
-        if (!isMounted) return
+    // DegreeCertificatesUseCasesImpl.getInstance()
+    //   .findDegreeCertificates()
+    //   .then((_) => {
+    //     if (!isMounted) return
 
-        loading.onFalse()
-      })
+    //     loading.onFalse()
+    //   })
 
     return () => {
       isMounted = false

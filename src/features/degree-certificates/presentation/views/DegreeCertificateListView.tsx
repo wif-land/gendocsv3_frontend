@@ -128,7 +128,7 @@ export default memo(({ moduleId }: { moduleId: string }) => {
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.id!.toString()),
+                  tableData.map((row) => row.number!.toString()),
                 )
               }
               action={
@@ -153,7 +153,7 @@ export default memo(({ moduleId }: { moduleId: string }) => {
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id!.toString()),
+                      tableData.map((row) => row.number!.toString()),
                     )
                   }
                 />
@@ -172,17 +172,21 @@ export default memo(({ moduleId }: { moduleId: string }) => {
                         )
                         .map((row) => (
                           <CouncilTableRow
-                            key={row.id}
+                            key={row.number}
                             row={row}
                             selected={table.selected.includes(
-                              row.id!.toString(),
+                              row.number!.toString(),
                             )}
                             onSelectRow={() =>
-                              table.onSelectRow(row.id!.toString())
+                              table.onSelectRow(row.number!.toString())
                             }
                             onDeleteRow={() => console.log('deleted')}
-                            onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
+                            onEditRow={() =>
+                              handleEditRow(row.number!.toString())
+                            }
+                            onViewRow={() =>
+                              handleViewRow(row.number!.toString())
+                            }
                           />
                         ))}
                     </>
