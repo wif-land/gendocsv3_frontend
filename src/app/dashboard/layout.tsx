@@ -2,13 +2,16 @@
 
 import React from 'react'
 import DashboardLayout from '../../core/layout/dashboard/layout'
+import { LocationProvider } from '../../core/providers/locations-provider'
 
 interface LayoutProps {
   children: React.ReactNode
 }
 const layout: React.FC<LayoutProps> = ({ children }) => (
   <div>
-    <DashboardLayout>{children}</DashboardLayout>
+    <LocationProvider>
+      <DashboardLayout>{children}</DashboardLayout>
+    </LocationProvider>
     {/*
       <Suspense fallback={<LoadingScreen />}>
         <PrivateRoute>

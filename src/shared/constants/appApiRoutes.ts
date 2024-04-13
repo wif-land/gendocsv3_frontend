@@ -99,4 +99,14 @@ export const API_ROUTES = {
     CREATE: '/degree-certificates',
     CREATE_MANY: '/degree-certificates/bulk',
   },
+  LOCATION_PROVIDER: {
+    GET_ALL_CITIES: '/cities',
+    GET_ALL_PROVINCES: '/cities/provinces',
+  },
+  CERTIFICATE_DEGREES_PROVIDER: {
+    GET_ALL_DEGREE_MODALITIES: '/degree-certificates/degree-modalities',
+    GET_ALL_CERTIFICATE_TYPES: '/degree-certificates/certificate-types',
+    GET_ALL_CERTIFICATE_STATUS: '/degree-certificates/certificate-status',
+    GET_ALL_ROOMS: '/degree-certificates/rooms',
+  },
 }
