@@ -71,7 +71,10 @@ export class CareersDataSourceImpl implements CareerDataSource {
     })
 
     if ('error' in result) {
-      return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        career: {} as CareerModel,
+      }
     }
 
     const { status, data } = result
