@@ -131,6 +131,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
 
         <Card>
           <CouncilTableToolbar
+            isDataFiltered={isDataFiltered}
             filters={filters}
             onFilters={handleFilters}
             setVisitedPages={setVisitedPages}

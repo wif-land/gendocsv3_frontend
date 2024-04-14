@@ -24,7 +24,7 @@ export const useDegreeCertificateView = (moduleId: string) => {
   const [searchTerm, setSearchTerm] = useState('')
 
   const handleResetFilters = () => {
-    setFilters(defaultFilters)
+    setFilters(defaultFilters as IDegreeCertificateTableFilters)
     setSearchTerm('')
     setVisitedPages([])
     isDataFiltered.onFalse()
@@ -34,8 +34,9 @@ export const useDegreeCertificateView = (moduleId: string) => {
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
-  const [filters, setFilters] =
-    useState<IDegreeCertificateTableFilters>(defaultFilters)
+  const [filters, setFilters] = useState<IDegreeCertificateTableFilters>(
+    defaultFilters as IDegreeCertificateTableFilters,
+  )
 
   const handleFilters = useCallback(
     (name: string, value: IDegreeCertificateTableFilterValue) => {
@@ -80,7 +81,9 @@ export const useDegreeCertificateView = (moduleId: string) => {
     if (newPage > table.page) {
       if (isDataFiltered) {
         fetchDataByField(
-          searchTerm,
+          {
+            name: searchTerm,
+          },
           moduleIdentifier,
           table.rowsPerPage,
           newPage,
@@ -111,7 +114,9 @@ export const useDegreeCertificateView = (moduleId: string) => {
 
     if (isDataFiltered) {
       fetchDataByField(
-        searchTerm,
+        {
+          name: searchTerm,
+        },
         moduleIdentifier,
         parseInt(event.target.value, 10),
         0,
@@ -144,7 +149,9 @@ export const useDegreeCertificateView = (moduleId: string) => {
 
   const handleSearch = (field: string) => {
     fetchDataByField(
-      field,
+      {
+        name: field,
+      },
       moduleIdentifier,
       table.rowsPerPage,
       table.page,
