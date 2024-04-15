@@ -33,6 +33,7 @@ const ICONS: {
   carreras: icon('mdi:format-rotate-90'),
   usuarios: icon('mdi:account-check'),
   cargos: icon('mdi:account-child-circle'),
+  representantes: icon('mdi:account-child-circle'),
 }
 
 export const useNavConfig = () => {
@@ -73,8 +74,8 @@ export const useNavConfig = () => {
       const mainPath = `/dashboard/${module.code
         .toLowerCase()
         .replaceAll(' ', '_')}/${submodule.name
-        .toLowerCase()
-        .replaceAll(' ', '_')}`
+          .toLowerCase()
+          .replaceAll(' ', '_')}`
       const listPath = `${mainPath}`
       const createPath = `${mainPath}/new`
 
