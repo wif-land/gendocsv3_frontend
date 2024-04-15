@@ -27,13 +27,13 @@ const ICONS: {
   consejos: icon('solar:accessibility-bold'),
   documentos: icon('solar:document-bold'),
   actasdegrado: icon('solar:diploma-bold'),
-  procesos: icon('mdi:account-arrow-right'),
+  procesos: icon('clarity:process-on-vm-line'),
   estudiantes: icon('solar:user-bold'),
   funcionarios: icon('solar:user-broken'),
   carreras: icon('mdi:format-rotate-90'),
   usuarios: icon('mdi:account-check'),
   cargos: icon('mdi:account-child-circle'),
-  representantes: icon('mdi:account-child-circle'),
+  representantes: icon('mdi:account-multiple'),
 }
 
 export const useNavConfig = () => {
