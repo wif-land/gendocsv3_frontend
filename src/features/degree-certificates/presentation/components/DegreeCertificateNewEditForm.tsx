@@ -30,11 +30,11 @@ export const DegreeCertificateNewEditForm = ({
       {mdUp && (
         <Grid md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Detalles
+            Numeración
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            El nombre del consejo, tipo, fecha y hora de inicio. Y si está
-            activo o no
+            NOTA TEMPORAL: La numeracion no sé cómo funciona pero supongo que es
+            asiganda automaticamente
           </Typography>
         </Grid>
       )}
@@ -43,8 +43,22 @@ export const DegreeCertificateNewEditForm = ({
         <Card>
           {!mdUp && <CardHeader title="Details" />}
 
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="name" label="Nombre" required />
+          <Stack
+            spacing={3}
+            sx={{ p: 3, display: 'flex', flexDirection: 'row' }}
+          >
+            <RHFTextField
+              name="name"
+              label="Numeracion de acta de grado"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+            <RHFTextField
+              name="name"
+              label="Numeracion"
+              required
+              sx={{ flexGrow: 1 }}
+            />
           </Stack>
         </Card>
       </Grid>
@@ -56,13 +70,95 @@ export const DegreeCertificateNewEditForm = ({
       {mdUp && (
         <Grid md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Miembros
+            Estudiante
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Se elijen a los miembros del consejo
+            Información relevante del estudiante
           </Typography>
         </Grid>
       )}
+      <Grid xs={12} md={8}>
+        <Card>
+          {!mdUp && <CardHeader title="Details" />}
+
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFTextField
+              name="name"
+              label="Estudiante"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <RHFTextField
+              name="name"
+              label="Fecha de inicio de estudios"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+            <RHFTextField
+              name="name"
+              label="Fecha de finalización de estudios"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <RHFTextField
+              name="name"
+              label="Créditos aprobados"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+            <RHFTextField
+              name="name"
+              label="Horas de práctica"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <RHFTextField
+              name="name"
+              label="Horas de vinculación/Servicio comunitario"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+            <RHFTextField
+              name="name"
+              label="Titulo de bachiller"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <RHFTextField
+              name="name"
+              label="Cantón de residencia"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+            <RHFTextField
+              name="name"
+              label="Provincia de residencia"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+        </Card>
+      </Grid>
     </>
   )
 
