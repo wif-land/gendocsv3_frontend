@@ -57,13 +57,20 @@ export const useDefaultMembersV2 = () => {
     },
   })
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control: methods.control,
     name: 'members',
   })
 
   const handleAddMember = () => {
-    append({ order: fields.length + 1, positionName: '', member: '' })
+    methods.setValue(
+      'members',
+      methods.getValues().members?.concat({
+        order: fields.length + 1,
+        positionName: '',
+        member: '',
+      }),
+    )
   }
 
   const handleRemoveMember = (index: string) => {
@@ -94,6 +101,7 @@ export const useDefaultMembersV2 = () => {
       const newFields = [...fields]
       newFields[oldIndex] = fields[newIndex]
       newFields[newIndex] = fields[oldIndex]
+      console.log({ newFields }, { oldIndex })
       methods.setValue('members', newFields)
     }
   }
