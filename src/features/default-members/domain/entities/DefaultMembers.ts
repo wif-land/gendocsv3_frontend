@@ -1,7 +1,7 @@
 export interface IDefaultMembers {
   order: number
   positionName: string
-  member: IMember
+  member: IMember | string
 }
 
 export interface IMember {
@@ -11,4 +11,9 @@ export interface IMember {
   firstLastName: string
   secondLastName: string
   isStudent: boolean
+}
+
+// PENSÉ EN CREAR UNA INTERFAZ PARA LOS MIEMBROS POR DEFECTO, PERO NO SE SI SEA NECESARIO
+export interface IDefaultMembersToCreate {
+  members: IDefaultMembers[]
 }

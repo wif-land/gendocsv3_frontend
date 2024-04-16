@@ -1,104 +1,62 @@
-import { Button, Container } from '@mui/material'
-import React, { useState } from 'react'
+import { Box, Button, CardHeader, Container, Stack } from '@mui/material'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { IDefaultMembers, IMember } from '../../domain/entities/DefaultMembers'
 import { DefaultMemberSortableItem } from './DefaultMemberSortableItem'
+import { useDefaultMembersV2 } from '../hooks/useDefaultV2'
+import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 const DefaultMembersView: React.FC = () => {
-  const [items, setItems] = useState<IDefaultMembers[]>([
-    {
-      positionName: 'Developer',
-      order: 1,
-      member: {
-        dni: '12345678A',
-        firstName: 'John',
-        secondLastName: 'Villa',
-        firstLastName: 'Doe',
-        isStudent: true,
-        secondName: 'Martin',
-      },
-    },
-    {
-      positionName: 'Developer',
-      order: 2,
-      member: {
-        dni: '1850046317',
-        firstName: 'Martin',
-        secondLastName: 'Morales',
-        firstLastName: 'Doe',
-        isStudent: true,
-        secondName: 'Martin',
-      },
-    },
-  ])
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event
-    if (active.id !== over.id) {
-      const oldIndex = items.findIndex((item) => item.member.dni === active.id)
-      const newIndex = items.findIndex((item) => item.member.dni === over.id)
-
-      const newItems = [...items]
-      const [removed] = newItems.splice(oldIndex, 1)
-      newItems.splice(newIndex, 0, removed)
-      setItems(newItems)
-    }
-  }
-
-  const handleUpdate = (id: string, updatedUser: IMember) => {
-    const index = items.findIndex((item) => item.member.dni === id)
-    if (index !== -1) {
-      const newItems = [...items]
-      newItems[index] = { ...newItems[index], member: updatedUser }
-      setItems(newItems)
-    }
-  }
-
-  const handleDelete = (id: string) => {
-    setItems(items.filter((item) => item.member.dni !== id))
-  }
-
-  const handleAdd = () => {
-    const newUser = {
-      positionName: '',
-      order: items.length + 1,
-      member: {
-        dni: '',
-        firstName: '',
-        secondLastName: '',
-        firstLastName: '',
-        secondName: '',
-        isStudent: true,
-      },
-    }
-
-    setItems([...items, newUser as IDefaultMembers])
-  }
+  const {
+    handleSubmit,
+    fields,
+    handleAddMember,
+    handleRemoveMember,
+    register,
+    control,
+    methods,
+    onSubmit,
+    handleDragEnd,
+  } = useDefaultMembersV2()
 
   return (
     <Container>
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <h1>Listado</h1>
-        <Button onClick={handleAdd} style={{ marginBottom: 16 }}>
-          Agregar Nuevo
-        </Button>
-
+        <CardHeader title="Detalles" />
         <SortableContext
-          items={items.map((item) => item.member.dni)}
+          items={fields.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
-          <ul>
-            {items.map((item) => (
-              <DefaultMemberSortableItem
-                user={item.member}
-                onDelete={handleDelete}
-                onUpdate={handleUpdate}
-                key={item.member.dni}
-              />
-            ))}
-          </ul>
+          <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={3} sx={{ p: 3 }}>
+              <Box
+                sx={{
+                  columnGap: 2,
+                  rowGap: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {fields.map((item, index) => (
+                  <DefaultMemberSortableItem
+                    defaultMember={item}
+                    onDelete={handleRemoveMember}
+                    key={item.id}
+                    control={control}
+                    index={index}
+                    {...register(`members.${index}.member`)}
+                    {...register(`members.${index}.positionName`)}
+                  />
+                ))}
+
+                <Button onClick={handleAddMember} style={{ marginBottom: 16 }}>
+                  Agregar Nuevo
+                </Button>
+                <Button type="submit" variant="contained">
+                  Guardar
+                </Button>
+              </Box>
+            </Stack>
+          </FormProvider>
         </SortableContext>
       </DndContext>
     </Container>

@@ -21,7 +21,7 @@ import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { Box, Chip, IconButton, Tooltip, alpha } from '@mui/material'
 import Iconify from '../../../../core/iconify'
-import { useCouncilsForm } from '../hooks/useCouncilsForm'
+import { useDefaultMembersForm } from '../hooks/useDefaultMemberForm'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -41,7 +41,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
       president: { isOpenPresident, handleOpenPresident, handleClosePresident },
       subrogant: { isOpenSubrogant, handleOpenSubrogant, handleCloseSubrogant },
     },
-  } = useCouncilsForm(currentCouncil)
+  } = useDefaultMembersForm(currentCouncil)
   const { handleSubmit, control, watch } = methods
 
   const values = watch()
