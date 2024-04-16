@@ -11,8 +11,6 @@ const DefaultMembersView: React.FC = () => {
     fields,
     handleAddMember,
     handleRemoveMember,
-    register,
-    control,
     methods,
     onSubmit,
     handleDragEnd,
@@ -40,11 +38,8 @@ const DefaultMembersView: React.FC = () => {
                   <DefaultMemberSortableItem
                     defaultMember={item}
                     onDelete={handleRemoveMember}
-                    key={item.id}
-                    control={control}
+                    key={index}
                     index={index}
-                    {...register(`members.${index}.member`)}
-                    {...register(`members.${index}.positionName`)}
                   />
                 ))}
 

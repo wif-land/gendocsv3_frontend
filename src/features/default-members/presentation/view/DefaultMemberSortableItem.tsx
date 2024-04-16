@@ -1,20 +1,17 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-import { Button, Grid, Card, Stack, Box } from '@mui/material'
+import { Button, Grid, Card, Stack, Box, Typography } from '@mui/material'
 import { RHFTextField } from '../../../../shared/sdk/hook-form'
-import { Controller, FieldArrayWithId } from 'react-hook-form'
+import { FieldArrayWithId } from 'react-hook-form'
 
 export const DefaultMemberSortableItem = ({
   defaultMember,
   onDelete,
-  control,
   index,
 }: {
   defaultMember: FieldArrayWithId
   onDelete: (id: string) => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: any
   index: number
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -23,17 +20,15 @@ export const DefaultMemberSortableItem = ({
     transform: CSS.Transform.toString(transform),
     transition,
   }
+
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      id={defaultMember.id}
-    >
+    <div ref={setNodeRef} style={style} id={defaultMember.id}>
       <Grid xs={12} md={8}>
         <Card>
           <Stack spacing={3} sx={{ p: 3 }}>
+            <div {...listeners} {...attributes} style={{ cursor: 'grab' }}>
+              <Typography variant="body2">Arrastre aquí</Typography>
+            </div>
             <Box
               sx={{
                 columnGap: 2,
@@ -45,32 +40,20 @@ export const DefaultMemberSortableItem = ({
                 },
               }}
             >
-              <Controller
+              <RHFTextField
+                id={`members.${index}.member`}
+                label="Miembro"
                 name={`members.${index}.member`}
-                control={control}
-                render={({ field }) => (
-                  <RHFTextField
-                    label="Miembro"
-                    name={field.name}
-                    value={field.value}
-                    variant="outlined"
-                    style={{ marginRight: 8 }}
-                  />
-                )}
+                variant="outlined"
+                style={{ marginRight: 8 }}
               />
 
-              <Controller
+              <RHFTextField
+                id={`members.${index}.positionName`}
+                label="Posición"
                 name={`members.${index}.positionName`}
-                control={control}
-                render={({ field }) => (
-                  <RHFTextField
-                    label="Posición"
-                    name={field.name}
-                    value={field.value}
-                    variant="outlined"
-                    style={{ marginRight: 8 }}
-                  />
-                )}
+                variant="outlined"
+                style={{ marginRight: 8 }}
               />
 
               <Button onClick={() => onDelete(defaultMember.id)}>
