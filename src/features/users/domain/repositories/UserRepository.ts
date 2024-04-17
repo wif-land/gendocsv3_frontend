@@ -7,11 +7,8 @@ export interface UserRepository {
     limit: number,
     offset: number,
   ) => Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
   getByFilters: (
@@ -19,23 +16,14 @@ export interface UserRepository {
     offset: number,
     filters: IUserFilters,
   ) => Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
   update: (data: Partial<IUser>) => Promise<{
-    status: number
-    data: {
-      user: UserModel
-      accessToken: string
-    }
+    user: UserModel
+    accessToken: string
   }>
 
-  create: (data: IUser) => Promise<{
-    status: number
-    user: UserModel
-  }>
+  create: (data: IUser) => Promise<UserModel>
 }
