@@ -21,7 +21,7 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
     return FunctionaryRepositoryImpl.instance
   }
 
-  private constructor(private readonly datasource: FunctionaryDataSource) {}
+  private constructor(private readonly datasource: FunctionaryDataSource) { }
 
   getAll = async (limit: number, offset: number) =>
     await this.datasource.getAll(limit, offset)
@@ -39,17 +39,6 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
     await this.datasource.bulkUpdate(data)
 
   create = async (data: IFunctionary) => {
-    try {
-      const result = await this.datasource.create(data)
-      const { status } = result
-
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, functionary: {} as FunctionaryModel }
-      }
-
-      return { status, functionary: result.functionary }
-    } catch (error) {
-      return { status: 500, functionary: {} as FunctionaryModel }
-    }
+    return await this.datasource.create(data)
   }
 }

@@ -91,14 +91,14 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
       await FunctionaryUseCasesImpl.getInstance()
         .getByFilters({ field })
         .then((res) => {
-          if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
-            setFunctionaries(res.data.functionaries)
-            return
-          } else {
-            setFunctionaries([])
-            setIsLoading(false)
+          if (isMounted) {
+            setFunctionaries(res.functionaries)
             return
           }
+
+          setFunctionaries([])
+          setIsLoading(false)
+          return
         })
     }
 

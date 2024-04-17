@@ -7,17 +7,14 @@ import { FunctionaryRepository } from '../repositories/FunctionaryRepository'
 interface FunctionaryUseCases {
   create(
     data: IFunctionary,
-  ): Promise<{ functionary: FunctionaryModel } | boolean>
+  ): Promise<FunctionaryModel>
 
   getAll(
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      functionaries: FunctionaryModel[]
-    }
+    count: number
+    functionaries: FunctionaryModel[]
   }>
 
   getByFilters(
@@ -25,25 +22,16 @@ interface FunctionaryUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      functionaries: FunctionaryModel[]
-    }
+    count: number
+    functionaries: FunctionaryModel[]
   }>
 
   update(
     id: number,
     data: Partial<FunctionaryModel>,
-  ): Promise<{
-    status: number
-    functionary: FunctionaryModel
-  }>
+  ): Promise<FunctionaryModel>
 
-  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<{
-    status: number
-    functionaries: FunctionaryModel[]
-  }>
+  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<FunctionaryModel[]>
 }
 
 export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
@@ -61,11 +49,7 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
     FunctionaryRepositoryImpl.getInstance()
 
   create = async (data: IFunctionary) => {
-    try {
-      return await this.functionaryRepository.create(data)
-    } catch (error) {
-      return false
-    }
+    return await this.functionaryRepository.create(data)
   }
 
   getAll = async (limit: number, offset: number) =>
@@ -76,21 +60,12 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
     limit = 5,
     offset = 0,
   ) => {
-    try {
-      return await this.functionaryRepository.getByFilters(
-        filters,
-        limit,
-        offset,
-      )
-    } catch (error) {
-      return {
-        status: 500,
-        data: {
-          count: 0,
-          functionaries: [],
-        },
-      }
-    }
+    return await this.functionaryRepository.getByFilters(
+      filters,
+      limit,
+      offset,
+    )
+
   }
 
   update = async (id: number, data: Partial<FunctionaryModel>) =>
