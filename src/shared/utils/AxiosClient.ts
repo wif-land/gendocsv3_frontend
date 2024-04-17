@@ -19,11 +19,8 @@ type AxiosErrorResponse = AxiosError<AxiosResponse<Record<string, unknown>>> & {
 }
 
 interface AxiosResponse<T> {
-  status: number
-  data: {
-    message: string
-    content: T
-  }
+  message: string
+  data: T
 }
 
 export class AxiosClient {
@@ -94,8 +91,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-        error: string
-      }
+      error: string
+    }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-post')
@@ -115,8 +112,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-        error: string
-      }
+      error: string
+    }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-get')
@@ -137,8 +134,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-        error: string
-      }
+      error: string
+    }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-put')
@@ -167,8 +164,8 @@ export class AxiosClient {
   }): Promise<
     | AxiosResponse<T>
     | {
-        error: string
-      }
+      error: string
+    }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-delete')
@@ -193,8 +190,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-        error: string
-      }
+      error: string
+    }
   > {
     try {
       const response = await this.getInstance().patch(path, body, {
@@ -211,7 +208,7 @@ export class AxiosClient {
 }
 
 const handleApiResponse = <T>(
-  response: AxiosResponse<T>,
+  response: any,
   method: HTTP_METHODS,
 ) => {
   const { status, data } = response
@@ -246,13 +243,7 @@ const handleApiResponse = <T>(
     })
   }
 
-  return {
-    status,
-    data: {
-      message: 'success',
-      content: response.data as T,
-    },
-  }
+  return response.data
 }
 
 const handleApiError = (
