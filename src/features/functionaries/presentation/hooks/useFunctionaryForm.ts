@@ -40,15 +40,20 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
+      let result;
       if (!currentFunctionary) {
-        await handleCreate(data)
+        result = await handleCreate(data)
       } else {
         const editedFields = getEditedFields<FormValuesProps>(
           defaultValues,
           data,
         )
 
-        await handleUpdate(currentFunctionary.id!, editedFields)
+        result = await handleUpdate(currentFunctionary.id!, editedFields)
+      }
+
+      if (!result) {
+        return
       }
 
       const newPath = currentFunctionary
