@@ -67,10 +67,8 @@ export const useUserView = ({
       if (isDataFiltered) {
         fetchDataByField(table.rowsPerPage, newPage, filters).then(
           (response) => {
-            if (response?.status === HTTP_STATUS_CODES.OK) {
-              setUsers([...users, ...response.data.users])
-              setTableData([...(users as IUser[]), ...response.data.users])
-            }
+            setUsers([...users, ...response.users])
+            setTableData([...(users as IUser[]), ...response.users])
           },
         )
       } else {
@@ -95,13 +93,11 @@ export const useUserView = ({
     if (isDataFiltered) {
       fetchDataByField(table.rowsPerPage, table.page, filters).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setUsers(response.data.users)
-            setTableData(response.data.users)
-            setCount(response.data.count)
-          }
-
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+          if (response?.users.length > 0) {
+            setUsers(response.users)
+            setTableData(response.users)
+            setCount(response.count)
+          } else {
             setUsers([])
             setTableData([])
             setCount(0)
@@ -128,7 +124,6 @@ export const useUserView = ({
         setTableData(
           (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
         )
-        console.log(data)
       }
     })
   }
@@ -136,19 +131,17 @@ export const useUserView = ({
   const handleSearch = (filters: IUserFilters) => {
     fetchDataByField(table.rowsPerPage, table.page, filters).then(
       (response) => {
-        if (response?.status === HTTP_STATUS_CODES.OK) {
-          setUsers(response.data.users)
-          setTableData(response.data.users)
-          setCount(response.data.count)
+        if (response?.users.length > 0) {
+          setUsers(response.users)
+          setTableData(response.users)
+          setCount(response.count)
           return
         }
 
-        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-          setUsers([])
-          setTableData([])
-          setCount(0)
-          return
-        }
+        setUsers([])
+        setTableData([])
+        setCount(0)
+        return
       },
     )
   }

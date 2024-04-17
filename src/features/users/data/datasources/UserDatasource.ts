@@ -1,6 +1,5 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { UserModel } from '../models/UserModel'
 import { IUser } from '../../domain/entities/IUser'
 import { IUserFilters } from '../../domain/entities/IUserFilters'
@@ -10,11 +9,8 @@ export interface UserDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
   getByFilters(
@@ -22,25 +18,16 @@ export interface UserDataSource {
     offset: number,
     filters: IUserFilters,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
   update(user: Partial<IUser>): Promise<{
-    status: number
-    data: {
-      user: UserModel
-      accessToken: string
-    }
+    user: UserModel
+    accessToken: string
   }>
 
-  create(user: IUser): Promise<{
-    status: number
-    user: UserModel
-  }>
+  create(user: IUser): Promise<UserModel>
 }
 
 export class UserDataSourceImpl implements UserDataSource {
@@ -58,21 +45,10 @@ export class UserDataSourceImpl implements UserDataSource {
     const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, users: [] as UserModel[] },
-      }
+      return { count: 0, users: [] as UserModel[] }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as {
-        count: number
-        users: UserModel[]
-      },
-    }
+    return result.data as { count: number; users: UserModel[] }
   }
 
   getByFilters = async (
@@ -93,15 +69,7 @@ export class UserDataSourceImpl implements UserDataSource {
       }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as {
-        count: number
-        users: UserModel[]
-      },
-    }
+    return result.data as { count: number; users: UserModel[] }
   }
 
   update = async (user: Partial<IUser>) => {
@@ -113,32 +81,19 @@ export class UserDataSourceImpl implements UserDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { user: {} as UserModel, accessToken: '' },
-      }
+      return { user: {} as UserModel, accessToken: '' }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as { user: UserModel; accessToken: string },
-    }
+    return result.data as { user: UserModel; accessToken: string }
   }
 
   create = async (user: UserModel) => {
     const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, user)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        user: {} as UserModel,
-      }
+      return {} as UserModel
     }
 
-    const { status, data } = result
-
-    return { status, user: data.content as UserModel }
+    return result.data as UserModel
   }
 }

@@ -5,17 +5,14 @@ import { IUserFilters } from '../entities/IUserFilters'
 import { UserRepository } from '../repositories/UserRepository'
 
 interface UserUseCases {
-  create(data: IUser): Promise<{ user: UserModel }>
+  create(data: IUser): Promise<UserModel>
 
   getAll(
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
   getByFiters(
@@ -23,22 +20,16 @@ interface UserUseCases {
     offset: number,
     filters: IUserFilters,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
   update(
     id: number,
     data: Partial<UserModel>,
   ): Promise<{
-    status: number
-    data: {
-      user: UserModel
-      accessToken: string
-    }
+    user: UserModel
+    accessToken: string
   }>
 }
 
