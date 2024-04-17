@@ -207,13 +207,11 @@ export class AxiosClient {
   }
 }
 
-const handleApiResponse = <T>(
+const handleApiResponse = (
   response: any,
   method: HTTP_METHODS,
 ) => {
   const { status, data } = response
-
-  console.log({ response })
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
     enqueueSnackbar('No estás autorizado para realizar esa acción', {
