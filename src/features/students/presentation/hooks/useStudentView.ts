@@ -44,11 +44,11 @@ export const useStudentView = ({
       if (isDataFiltered) {
         fetchDataByField(filters, table.rowsPerPage, newPage).then(
           (response) => {
-            if (response?.status === HTTP_STATUS_CODES.OK) {
-              setStudents([...(students || []), ...response.data.students])
+            if (response?.students.length > 0) {
+              setStudents([...(students || []), ...response.students])
               setTableData([
                 ...(students as StudentModel[]),
-                ...response.data.students,
+                ...response.students,
               ])
             }
           },
@@ -75,17 +75,16 @@ export const useStudentView = ({
     if (isDataFiltered) {
       fetchDataByField(filters, parseInt(event.target.value, 10), 0).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setStudents(response.data.students)
-            setTableData(response.data.students)
-            setCount(response.data.count)
+          if (response?.students.length > 0) {
+            setStudents(response.students)
+            setTableData(response.students)
+            setCount(response.count)
+            return
           }
 
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-            setStudents([])
-            setTableData([])
-            setCount(0)
-          }
+          setStudents([])
+          setTableData([])
+          setCount(0)
         },
       )
     } else {
@@ -154,19 +153,17 @@ export const useStudentView = ({
   const handleSearch = (filters: IStudentFilters) => {
     fetchDataByField(filters, table.rowsPerPage, table.page).then(
       (response) => {
-        if (response?.status === HTTP_STATUS_CODES.OK) {
-          setStudents(response.data.students)
-          setTableData(response.data.students)
-          setCount(response.data.count)
+        if (response?.students.length > 0) {
+          setStudents(response.students)
+          setTableData(response.students)
+          setCount(response.count)
           return
         }
 
-        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-          setStudents([])
-          setTableData([])
-          setCount(0)
-          return
-        }
+        setStudents([])
+        setTableData([])
+        setCount(0)
+        return
       },
     )
   }

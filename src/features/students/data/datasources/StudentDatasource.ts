@@ -11,11 +11,8 @@ export interface StudentDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      students: StudentModel[]
-    }
+    count: number
+    students: StudentModel[]
   }>
 
   getByFilter(
@@ -23,32 +20,17 @@ export interface StudentDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      students: StudentModel[]
-    }
-  }>
-
-  update(student: Partial<IStudent>): Promise<{
-    status: number
-    student: StudentModel
-  }>
-
-  bulkUpdate(students: Partial<IStudent>[]): Promise<{
-    status: number
+    count: number
     students: StudentModel[]
   }>
 
-  create(student: ICreateStudent): Promise<{
-    status: number
-    student: StudentModel
-  }>
+  update(student: Partial<IStudent>): Promise<StudentModel>
 
-  bulkCreate(students: ICreateStudent[]): Promise<{
-    status: number
-    students: StudentModel[]
-  }>
+  bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
+
+  create(student: ICreateStudent): Promise<StudentModel>
+
+  bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
 }
 
 export class StudentDataSourceImpl implements StudentDataSource {
@@ -68,18 +50,11 @@ export class StudentDataSourceImpl implements StudentDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, students: [] },
-      }
+      return { count: 0, students: [] }
     }
 
-    const { status, data } = result
 
-    return {
-      status,
-      data: data.content as { count: number; students: StudentModel[] },
-    }
+    return result.data as { count: number; students: StudentModel[] }
   }
 
   getByFilter = async (
@@ -92,18 +67,10 @@ export class StudentDataSourceImpl implements StudentDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, students: [] },
-      }
+      return { count: 0, students: [] }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as { count: number; students: StudentModel[] },
-    }
+    return result.data as { count: number; students: StudentModel[] }
   }
 
   update = async (functionary: Partial<IStudent>) => {
@@ -115,15 +82,10 @@ export class StudentDataSourceImpl implements StudentDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        student: {} as StudentModel,
-      }
+      return {} as StudentModel
     }
 
-    const { status, data } = result
-
-    return { status, student: data.content as StudentModel }
+    return result.data as StudentModel
   }
 
   bulkUpdate = async (students: Partial<IStudent>[]) => {
@@ -133,30 +95,20 @@ export class StudentDataSourceImpl implements StudentDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        students: [] as StudentModel[],
-      }
+      return [] as StudentModel[]
     }
 
-    const { status, data } = result
-
-    return { status, students: data.content as StudentModel[] }
+    return result.data as StudentModel[]
   }
 
   create = async (student: ICreateStudent) => {
     const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE, student)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        student: {} as StudentModel,
-      }
+      return {} as StudentModel
     }
 
-    const { status, data } = result
-
-    return { status, student: data.content as StudentModel }
+    return result.data as StudentModel
   }
 
   bulkCreate = async (students: ICreateStudent[]) => {
@@ -165,14 +117,9 @@ export class StudentDataSourceImpl implements StudentDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        students: [] as StudentModel[],
-      }
+      return [] as StudentModel[]
     }
 
-    const { status, data } = result
-
-    return { status, students: data.content as StudentModel[] }
+    return result.data as StudentModel[]
   }
 }
