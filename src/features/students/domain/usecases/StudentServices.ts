@@ -10,11 +10,8 @@ interface StudentUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      students: StudentModel[]
-    }
+    count: number
+    students: StudentModel[]
   }>
 
   getByFilters(
@@ -22,32 +19,20 @@ interface StudentUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      students: StudentModel[]
-    }
+    count: number
+    students: StudentModel[]
   }>
 
-  create(data: IStudent): Promise<{ student: StudentModel }>
+  create(data: IStudent): Promise<StudentModel>
 
   update(
     id: number,
     data: Partial<StudentModel>,
-  ): Promise<{
-    status: number
-    student: StudentModel
-  }>
+  ): Promise<StudentModel>
 
-  bulkUpdate(students: Partial<IStudent>[]): Promise<{
-    status: number
-    students: StudentModel[]
-  }>
+  bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
 
-  bulkCreate(students: ICreateStudent[]): Promise<{
-    status: number
-    students: StudentModel[]
-  }>
+  bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
 }
 
 export class StudentUseCasesImpl implements StudentUseCases {
@@ -78,13 +63,6 @@ export class StudentUseCasesImpl implements StudentUseCases {
     await this.repository.bulkUpdate(students)
 
   bulkCreate = async (students: ICreateStudent[]) => {
-    try {
-      return await this.repository.bulkCreate(students)
-    } catch (error) {
-      return {
-        status: 500,
-        students: [],
-      }
-    }
+    return await this.repository.bulkCreate(students)
   }
 }
