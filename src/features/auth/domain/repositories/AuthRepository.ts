@@ -5,8 +5,6 @@ export interface AuthRepository {
     email: string,
     password: string,
   ) => Promise<{
-    status: number
-    message?: string
     decoded?: IUser
   }>
 

@@ -9,7 +9,7 @@ interface Params {
 }
 
 export class LoginUseCase extends UseCase<
-  { status: number; message?: string; decoded?: IUser },
+  { decoded?: IUser },
   Params
 > {
   private readonly repository: AuthRepository
