@@ -1,6 +1,5 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { FunctionaryModel } from '../models/FunctionatyModel'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
@@ -10,11 +9,8 @@ export interface FunctionaryDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      functionaries: FunctionaryModel[]
-    }
+    count: number
+    functionaries: FunctionaryModel[]
   }>
 
   getByFilters(
@@ -22,20 +18,7 @@ export interface FunctionaryDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      functionaries: FunctionaryModel[]
-    }
-  }>
-
-  update(functionary: Partial<IFunctionary>): Promise<{
-    status: number
-    functionary: FunctionaryModel
-  }>
-
-  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<{
-    status: number
+    count: number
     functionaries: FunctionaryModel[]
   }>
 
@@ -62,10 +45,7 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, functionaries: [] as FunctionaryModel[] },
-      }
+      return { count: 0, functionaries: [] as FunctionaryModel[] }
     }
 
     const { status, data } = result
@@ -92,22 +72,12 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status:
-          HTTP_STATUS_CODES.NOT_FOUND ||
-          HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, functionaries: [] as FunctionaryModel[] },
-      }
+      return { count: 0, functionaries: [] as FunctionaryModel[] }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as {
-        count: number
-        functionaries: FunctionaryModel[]
-      },
+    return result.data as {
+      count: number
+      functionaries: FunctionaryModel[]
     }
   }
 
@@ -120,15 +90,10 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        functionary: {} as FunctionaryModel,
-      }
+      return {} as FunctionaryModel
     }
 
-    const { status, data } = result
-
-    return { status, functionary: data.content as FunctionaryModel }
+    return result.data as FunctionaryModel
   }
 
   bulkUpdate = async (functionaries: Partial<IFunctionary>[]) => {
@@ -138,15 +103,10 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        functionaries: [] as FunctionaryModel[],
-      }
+      return [] as FunctionaryModel[]
     }
 
-    const { status, data } = result
-
-    return { status, functionaries: data.content as FunctionaryModel[] }
+    return result.data as FunctionaryModel[]
   }
 
   create = async (functionary: FunctionaryModel) => {
@@ -156,14 +116,9 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        functionary: {} as FunctionaryModel,
-      }
+      return {} as FunctionaryModel
     }
 
-    const { status, data } = result
-
-    return { status, functionary: data.content as FunctionaryModel }
+    return result.data as FunctionaryModel
   }
 }

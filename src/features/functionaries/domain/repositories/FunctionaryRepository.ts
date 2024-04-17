@@ -7,11 +7,8 @@ export interface FunctionaryRepository {
     limit: number,
     offset: number,
   ) => Promise<{
-    status: number
-    data: {
-      count: number
-      functionaries: FunctionaryModel[]
-    }
+    count: number
+    functionaries: FunctionaryModel[]
   }>
 
   getByFilters: (
@@ -19,25 +16,13 @@ export interface FunctionaryRepository {
     limit: number,
     offset: number,
   ) => Promise<{
-    status: number
-    data: {
-      count: number
-      functionaries: FunctionaryModel[]
-    }
-  }>
-
-  update: (data: Partial<IFunctionary>) => Promise<{
-    status: number
-    functionary: FunctionaryModel
-  }>
-
-  bulkUpdate: (data: Partial<IFunctionary>[]) => Promise<{
-    status: number
+    count: number
     functionaries: FunctionaryModel[]
   }>
 
-  create: (data: IFunctionary) => Promise<{
-    status: number
-    functionary: FunctionaryModel
-  }>
+  update: (data: Partial<IFunctionary>) => Promise<FunctionaryModel>
+
+  bulkUpdate: (data: Partial<IFunctionary>[]) => Promise<FunctionaryModel[]>
+
+  create: (data: IFunctionary) => Promise<FunctionaryModel>
 }
