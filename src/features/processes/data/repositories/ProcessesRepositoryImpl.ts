@@ -21,7 +21,7 @@ export class ProcessesRepositoryImpl implements ProcessesRepository {
     return ProcessesRepositoryImpl.instance
   }
 
-  private constructor(private readonly datasource: ProcessesDataSource) {}
+  private constructor(private readonly datasource: ProcessesDataSource) { }
 
   getAllProcessesByModuleId = async (
     moduleId: number,

@@ -8,11 +8,8 @@ interface PositionUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      positions: PositionModel[]
-    }
+    count: number
+    positions: PositionModel[]
   }>
 
   getByField(
@@ -20,32 +17,18 @@ interface PositionUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      positions: PositionModel[]
-    }
-  }>
+    count: number
+    positions: PositionModel[]
+  }
+  >
 
-  update(position: Partial<IPosition>): Promise<{
-    status: number
-    position: PositionModel
-  }>
+  update(position: Partial<IPosition>): Promise<PositionModel>
 
-  create(position: IPosition): Promise<{
-    status: number
-    position: PositionModel
-  }>
+  create(position: IPosition): Promise<PositionModel>
 
-  delete(id: number): Promise<{
-    status: number
-    isDeleted: boolean
-  }>
+  delete(id: number): Promise<boolean>
 
-  deleteMany(ids: number[]): Promise<{
-    status: number
-    isDeleted: boolean
-  }>
+  deleteMany(ids: number[]): Promise<boolean>
 }
 
 export class PositionUseCasesImpl implements PositionUseCases {
