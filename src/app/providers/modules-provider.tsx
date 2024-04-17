@@ -15,17 +15,15 @@ export const ModulesProvider = ({
     let isMounted = true
 
     const modulesFetching = async () => {
-      try {
-        if (currentModules?.length) return
+      if (currentModules?.length) return
 
-        const modules = await fetchModules()
+      const modules = await fetchModules()
 
-        if (!modules.modules) return
+      if (!modules.length) return
 
-        if (isMounted) {
-          setModules(modules.modules)
-        }
-      } catch (error) {}
+      if (isMounted) {
+        setModules(modules)
+      }
     }
     modulesFetching()
     return () => {

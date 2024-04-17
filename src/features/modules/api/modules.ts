@@ -4,18 +4,12 @@ import { HTTP_STATUS_CODES } from '../../../shared/utils/app-enums'
 import { IModule } from '../types/IModule'
 import { API_ROUTES } from '../../../shared/constants/appApiRoutes'
 
-export const fetchModules = async (): Promise<{
-  status: number
-  message?: string
-  modules?: IModule[]
-}> => {
+export const fetchModules = async (): Promise<IModule[]> => {
   const result = await AxiosClient.get(API_ROUTES.MODULES.GET_ALL)
 
   if ('error' in result) {
-    return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
+    return []
   }
 
-  const { status, data } = result
-
-  return { status, modules: data.content as IModule[] }
+  return result.data as IModule[]
 }

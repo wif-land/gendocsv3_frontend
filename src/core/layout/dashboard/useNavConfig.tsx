@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import useModulesStore from '../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 import Iconify from '../../iconify'
-import { useAuth } from '../../../features/auth/presentation/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { fetchModules } from '../../../features/modules/api/modules'
 import { LogoutnUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
@@ -38,13 +37,12 @@ const ICONS: {
 
 export const useNavConfig = () => {
   const { user, retreiveFromCookie } = useAccountStore()
-  const { accessModules, setAccessModules } = useModulesStore()
-  const { modules, setModules } = useModulesStore()
+  const { accessModules, setAccessModules, modules, setModules } = useModulesStore()
 
   useEffect(() => {
     if (modules.length === 0) {
       fetchModules().then((data) => {
-        setModules(data.modules || [])
+        setModules(data)
       })
 
       return
