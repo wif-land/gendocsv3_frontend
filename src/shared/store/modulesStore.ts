@@ -21,7 +21,6 @@ const useModulesStore = create<StoreState>(
       accessModules: DEFAULT_ACCESS_MODULES,
       setAccessModules: (modulesIds: number[]) => {
         let actualModules = modulesIds
-        console.log('modulesIds', get().modules)
 
         const adminModule = modulesIds.find((id) => {
           const module = get().modules.find((module) => module.id === id)

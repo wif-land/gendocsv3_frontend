@@ -213,6 +213,8 @@ const handleApiResponse = <T>(
 ) => {
   const { status, data } = response
 
+  console.log({ response })
+
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
     enqueueSnackbar('No estás autorizado para realizar esa acción', {
       variant: 'error',
@@ -238,7 +240,7 @@ const handleApiResponse = <T>(
   }
 
   if (method !== 'GET') {
-    enqueueSnackbar('Acción realizada con éxito', {
+    enqueueSnackbar(data.message, {
       variant: 'success',
     })
   }
