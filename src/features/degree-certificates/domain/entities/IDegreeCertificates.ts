@@ -1,9 +1,11 @@
+import { IStudent } from '../../../students/domain/entities/IStudent'
 export interface IDegreeCertificate {
+  id?: number
   number: number
   aux_number: number
   topic: string
   presentationDate: Date
-  studentId: number
+  studentId: IStudent | number | string
   careerId: number
   certificateTypeId: number
   certificateStatusId: number

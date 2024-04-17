@@ -19,7 +19,7 @@ export interface StudentDataSource {
   }>
 
   getByFilter(
-    filter: IStudentFilters,
+    field: IStudentFilters,
     limit: number,
     offset: number,
   ): Promise<{

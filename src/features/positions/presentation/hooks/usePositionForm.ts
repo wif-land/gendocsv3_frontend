@@ -23,7 +23,7 @@ import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { FunctionaryUseCasesImpl } from '../../../../features/functionaries/domain/usecases/FunctionaryServices'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
-export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
+export const useFunctionaryForm = (currentPosition?: IPosition) => {
   const router = useRouter()
   const pathname = usePathname()
   const { positions } = usePositionStore()
@@ -36,8 +36,8 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const debouncedValue = useDebounce(inputValue)
 
   const defaultValues = useMemo(
-    () => resolveDefaultValues(currentFunctionary),
-    [currentFunctionary],
+    () => resolveDefaultValues(currentPosition),
+    [currentPosition],
   )
 
   const methods = useForm<FormValuesProps>({
@@ -50,7 +50,7 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
-      if (!currentFunctionary) {
+      if (!currentPosition) {
         await handleCreate(data)
       } else {
         const editedFields = getEditedFields<FormValuesProps>(
@@ -60,25 +60,25 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
 
         await handleUpdate({
           ...editedFields,
-          id: currentFunctionary.id,
+          id: currentPosition.id,
         })
       }
 
-      const newPath = currentFunctionary
-        ? pathname.replace(new RegExp(`/${currentFunctionary.id}/edit`), '')
+      const newPath = currentPosition
+        ? pathname.replace(new RegExp(`/${currentPosition.id}/edit`), '')
         : pathname.replace('/new', '')
 
       router.push(newPath)
       reset()
     },
-    [currentFunctionary, enqueueSnackbar, reset, router],
+    [currentPosition, enqueueSnackbar, reset, router],
   )
 
   useEffect(() => {
-    if (currentFunctionary) {
+    if (currentPosition) {
       reset(defaultValues)
     }
-  }, [currentFunctionary, defaultValues, reset])
+  }, [currentPosition, defaultValues, reset])
 
   useEffect(() => {
     let isMounted = true

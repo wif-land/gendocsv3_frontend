@@ -66,11 +66,8 @@ export class StudentUseCasesImpl implements StudentUseCases {
   getAll = async (limit: number, offset: number) =>
     await this.repository.getAll(limit, offset)
 
-  getByFilters = async (
-    filters: IStudentFilters,
-    limit: number,
-    offset: number,
-  ) => await this.repository.getByFilters(filters, limit, offset)
+  getByFilters = async (filters: IStudentFilters, limit = 5, offset = 0) =>
+    await this.repository.getByFilters(filters, limit, offset)
 
   create = async (data: IStudent) => await this.repository.create(data)
 

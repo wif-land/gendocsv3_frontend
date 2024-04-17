@@ -5,7 +5,8 @@ import { DegreeModalityModel } from "../../data/models/degreeModalityModel"
 import { ProvinceModel } from "../../data/models/provinceModel"
 import { RoomModel } from "../../data/models/roomModel"
 import { ProvidersRepositoryImpl } from "../../data/repositories/ProvidersRespositoryImpl"
-import { ProvidersRepository } from "../repositories/providersRepository"
+import { ProvidersRepository } from "../repositories/ProvidersRepository"
+
 
 interface ProvidersUseCases {
   getAllCities(): Promise<{

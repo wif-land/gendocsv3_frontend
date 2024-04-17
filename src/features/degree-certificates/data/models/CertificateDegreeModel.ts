@@ -1,11 +1,13 @@
+import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 
 export class DegreeCertificateModel implements IDegreeCertificate {
+  id?: number
   number: number
   aux_number: number
   topic: string
   presentationDate: Date
-  studentId: number
+  studentId: IStudent | number | string
   careerId: number
   certificateTypeId: number
   certificateStatusId: number
@@ -18,6 +20,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   isClosed: boolean
 
   constructor(props: IDegreeCertificate) {
+    this.id = props.id
     this.number = props.number
     this.aux_number = props.aux_number
     this.topic = props.topic
@@ -38,6 +41,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJson(json: Record<string, any>): DegreeCertificateModel {
     return new DegreeCertificateModel({
+      id: json.id,
       number: json.number,
       aux_number: json.aux_number,
       topic: json.topic,
@@ -58,6 +62,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
 
   toJson(): Record<string, unknown> {
     return {
+      id: this.id,
       number: this.number,
       aux_number: this.aux_number,
       topic: this.topic,
