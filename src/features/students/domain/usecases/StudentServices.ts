@@ -25,10 +25,7 @@ interface StudentUseCases {
 
   create(data: IStudent): Promise<StudentModel>
 
-  update(
-    id: number,
-    data: Partial<StudentModel>,
-  ): Promise<StudentModel>
+  update(id: number, data: Partial<StudentModel>): Promise<StudentModel>
 
   bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
 
@@ -62,7 +59,6 @@ export class StudentUseCasesImpl implements StudentUseCases {
   bulkUpdate = async (students: Partial<IStudent>[]) =>
     await this.repository.bulkUpdate(students)
 
-  bulkCreate = async (students: ICreateStudent[]) => {
-    return await this.repository.bulkCreate(students)
-  }
+  bulkCreate = async (students: ICreateStudent[]) =>
+    await this.repository.bulkCreate(students)
 }

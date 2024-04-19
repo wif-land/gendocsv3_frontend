@@ -5,12 +5,16 @@ import { Button, Card, Stack, Box } from '@mui/material'
 import { IDefaultMembers } from '../../domain/entities/DefaultMembers'
 import { Icon } from '@iconify/react/dist/iconify.js'
 
+interface MemberFormat extends IDefaultMembers {
+  isStudent: boolean
+}
+
 export const DefaultMemberSortableItem = ({
   defaultMember,
   onDelete,
   onEdit,
 }: {
-  defaultMember: IDefaultMembers
+  defaultMember: MemberFormat
   onDelete: (id: string) => void
   onEdit: (id: string) => void
   index: number
@@ -54,7 +58,11 @@ export const DefaultMemberSortableItem = ({
               width="1.2rem"
               height="1.2rem"
             />
-            <Icon icon="lets-icons:user-box-duotone" width="48" height="48" />
+            {defaultMember.isStudent === true ? (
+              <Icon icon="ph:student-thin" width="48" height="48" />
+            ) : (
+              <Icon icon="icons8:briefcase" width="48" height="48" />
+            )}
           </Box>
           <Box
             sx={{

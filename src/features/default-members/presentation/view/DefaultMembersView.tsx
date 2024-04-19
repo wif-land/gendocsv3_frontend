@@ -1,10 +1,22 @@
-import { Alert, Box, Button, Card, Container, Stack } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  Container,
+  Stack,
+  Typography,
+} from '@mui/material'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { DefaultMemberSortableItem } from './DefaultMemberSortableItem'
 import { useDefaultMembersV2 } from '../hooks/useDefaultV2'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { RHFTextField } from '../../../../shared/sdk/hook-form'
+import {
+  RHFAutocomplete,
+  RHFCheckbox,
+  RHFTextField,
+} from '../../../../shared/sdk/hook-form'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 
@@ -21,6 +33,11 @@ const DefaultMembersView: React.FC = () => {
     handleDiscardChanges,
     handleEditMember,
     isEditMode,
+    isOpen,
+    loading,
+    setInputValue,
+    members,
+    setMembers,
   } = useDefaultMembersV2()
 
   return (
@@ -61,13 +78,66 @@ const DefaultMembersView: React.FC = () => {
                 rowGap: 3,
                 display: 'flex',
                 flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
-              <RHFTextField
-                id={`member`}
+              <RHFCheckbox
+                id={`isStudent`}
+                name={`isStudent`}
+                label="Estudiante"
+              />
+
+              <RHFAutocomplete
+                sx={{ width: '100%' }}
+                name="member"
                 label="Miembro"
-                name={`member`}
-                variant="outlined"
+                open={isOpen.value}
+                onOpen={isOpen.onTrue}
+                onClose={() => {
+                  setInputValue('')
+                  isOpen.onFalse()
+                  setMembers([])
+                }}
+                loading={loading}
+                noOptionsText="No hay resultados"
+                options={members?.map(
+                  (functionary) =>
+                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                )}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue)
+                }}
+                getOptionLabel={(option) => option}
+                renderOption={(props, option) => {
+                  const {
+                    dni,
+                    firstName,
+                    firstLastName,
+                    secondName,
+                    secondLastName,
+                  } = members.filter(
+                    (functionary) =>
+                      option ===
+                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                  )[0]
+
+                  if (!dni) {
+                    return null
+                  }
+
+                  return (
+                    <li {...props} key={dni}>
+                      <Typography variant="body2">
+                        {firstName} {secondName} {firstLastName}{' '}
+                        {secondLastName}
+                      </Typography>
+
+                      <Typography variant="caption" color="text.secondary">
+                        {dni}
+                      </Typography>
+                    </li>
+                  )
+                }}
               />
 
               <RHFTextField
