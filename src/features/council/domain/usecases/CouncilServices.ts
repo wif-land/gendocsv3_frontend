@@ -5,15 +5,9 @@ import { ICouncilFilters } from '../entities/ICouncilFilters'
 import { CouncilRepository } from '../repositories/CouncilRepository'
 
 interface CouncilUseCases {
-  create(council: ICouncil): Promise<{
-    status: number
-    council: CouncilModel
-  }>
+  create(council: ICouncil): Promise<CouncilModel>
 
-  getAll(): Promise<{
-    status: number
-    councils: CouncilModel[]
-  }>
+  getAll(): Promise<CouncilModel[]>
 
   getByFilters(
     filters: ICouncilFilters,
@@ -21,37 +15,22 @@ interface CouncilUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      councils: CouncilModel[]
-    }
+    count: number
+    councils: CouncilModel[]
   }>
 
-  update(
-    id: number,
-    council: Partial<CouncilModel>,
-  ): Promise<{
-    status: number
-    council: CouncilModel
-  }>
+  update(id: number, council: Partial<CouncilModel>): Promise<CouncilModel>
 
   getAllCouncilsByModuleId(
     moduleId: number,
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      councils: CouncilModel[]
-      count: number
-    }
+    councils: CouncilModel[]
+    count: number
   }>
 
-  toggleCouncilStatus(councils: Partial<ICouncil>[]): Promise<{
-    status: number
-    councils: CouncilModel[]
-  }>
+  toggleCouncilStatus(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 }
 
 export class CouncilsUseCasesImpl implements CouncilUseCases {

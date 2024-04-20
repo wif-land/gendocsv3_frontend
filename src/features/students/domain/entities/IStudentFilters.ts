@@ -1,4 +1,4 @@
 export interface IStudentFilters {
-  filter?: string
+  field?: string
   state?: boolean
 }

@@ -1,0 +1,194 @@
+import { useCouncilStore } from '../store/councilsStore'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { useEffect, useState } from 'react'
+import { TableProps } from '../../../../shared/sdk/table'
+import { useCouncilsMethods } from './useCouncilsMethods'
+import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { ICouncilFilters } from '../../../council/domain/entities/ICouncilFilters'
+import { CouncilModel } from '../../../council/data/models/CouncilModel'
+import { ICouncil } from '../../../council/domain/entities/ICouncil'
+
+interface Props {
+  table: TableProps
+  isDataFiltered: boolean
+  visitedPages: number[]
+  setVisitedPages: (value: number[]) => void
+  filters: ICouncilFilters
+  moduleId: string
+}
+
+export const useCouncilView = ({
+  table,
+  isDataFiltered,
+  visitedPages,
+  setVisitedPages,
+  filters,
+  moduleId,
+}: Props) => {
+  const [tableData, setTableData] = useState<CouncilModel[]>([])
+  const [count, setCount] = useState(0)
+  const { councils, setCouncils } = useCouncilStore()
+  const { loader } = useLoaderStore()
+  const { fetchData, updateRow, fetchDataByField } = useCouncilsMethods()
+  const { modules } = useModulesStore()
+
+  const moduleIdentifier =
+    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
+
+  useEffect(() => {
+    let isMounted = true
+    if (tableData.length !== 0) return
+
+    if (isMounted && !isDataFiltered) {
+      fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
+        (data) => {
+          if (data.count === 0) return
+          setCouncils(data.councils)
+          setTableData(data.councils)
+          setCount(data.count)
+        },
+      )
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [tableData, isDataFiltered])
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    table.onChangePage(event, newPage)
+    table.setPage(newPage)
+
+    if (visitedPages.includes(newPage)) {
+      return
+    } else {
+      visitedPages.push(newPage)
+    }
+
+    if (newPage > table.page) {
+      if (isDataFiltered) {
+        fetchDataByField(
+          filters,
+          moduleIdentifier,
+          table.rowsPerPage,
+          newPage,
+        ).then((response) => {
+          if (response?.status === HTTP_STATUS_CODES.OK) {
+            setCouncils([
+              ...councils,
+              ...(response.data.councils as CouncilModel[]),
+            ])
+            setTableData([
+              ...councils,
+              ...(response.data.councils as CouncilModel[]),
+            ])
+          }
+        })
+      } else {
+        fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
+          if (data?.councils) {
+            setCouncils([...councils, ...data.councils])
+            setTableData([...councils, ...data.councils])
+          }
+        })
+      }
+    }
+  }
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    table.onChangeRowsPerPage(event)
+    table.setPage(0)
+    setTableData([])
+    setVisitedPages([])
+
+    if (isDataFiltered) {
+      fetchDataByField(
+        filters,
+        moduleIdentifier,
+        parseInt(event.target.value, 10),
+        0,
+      ).then((response) => {
+        if (response?.status === HTTP_STATUS_CODES.OK) {
+          setCouncils(response.data.councils as CouncilModel[])
+          setTableData(response.data.councils as CouncilModel[])
+          setCount(response.data.count)
+        }
+
+        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+          setCouncils([])
+          setTableData([])
+          setCount(0)
+        }
+      })
+    } else {
+      fetchData(
+        moduleIdentifier,
+        parseInt(event.target.value, 10),
+        table.page,
+      ).then((data) => {
+        if (data?.councils) {
+          setCouncils(data.councils)
+          setTableData(data.councils)
+        }
+        if (data?.count) {
+          setCount(data.count)
+        }
+      })
+    }
+  }
+
+  const handleUpdateRow = (row: ICouncil) => {
+    updateRow(row).then((data) => {
+      if (data) {
+        setCouncils(
+          councils.map((council) =>
+            council.id === data.id ? (data as CouncilModel) : council,
+          ),
+        )
+        setTableData(
+          councils.map((functionary) =>
+            functionary.id === data.id ? (data as CouncilModel) : functionary,
+          ),
+        )
+      }
+    })
+  }
+
+  const handleSearch = (filters: ICouncilFilters) => {
+    fetchDataByField(
+      filters,
+      moduleIdentifier,
+      table.rowsPerPage,
+      table.page,
+    ).then((response) => {
+      if (response?.status === HTTP_STATUS_CODES.OK) {
+        setCouncils(response.data.councils as CouncilModel[])
+        setTableData(response.data.councils as CouncilModel[])
+        setCount(response.data.count)
+        return
+      }
+
+      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+        setCouncils([])
+        setTableData([])
+        setCount(0)
+        return
+      }
+    })
+  }
+
+  return {
+    count,
+    tableData,
+    loader,
+    councils,
+    setTableData,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+    handleSearch,
+  }
+}

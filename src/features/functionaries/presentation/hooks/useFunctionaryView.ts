@@ -4,7 +4,6 @@ import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useFunctionaryMethods } from './useFunctionaryMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 
 interface Props {
@@ -67,16 +66,11 @@ export const useFunctionaryView = ({
       if (isDataFiltered) {
         fetchDataByField(filters, table.rowsPerPage, newPage).then(
           (response) => {
-            if (response?.status === HTTP_STATUS_CODES.OK) {
-              setFunctionaries([
-                ...functionaries,
-                ...response.data.functionaries,
-              ])
-              setTableData([
-                ...(functionaries as FunctionaryModel[]),
-                ...response.data.functionaries,
-              ])
-            }
+            setFunctionaries([...functionaries, ...response.functionaries])
+            setTableData([
+              ...(functionaries as FunctionaryModel[]),
+              ...response.functionaries,
+            ])
           },
         )
       } else {
@@ -104,17 +98,16 @@ export const useFunctionaryView = ({
     if (isDataFiltered) {
       fetchDataByField(filters, table.rowsPerPage, table.page).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setFunctionaries(response.data.functionaries)
-            setTableData(response.data.functionaries)
-            setCount(response.data.count)
+          if (response?.functionaries.length > 0) {
+            setFunctionaries(response.functionaries)
+            setTableData(response.functionaries)
+            setCount(response.count)
+            return
           }
 
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-            setFunctionaries([])
-            setTableData([])
-            setCount(0)
-          }
+          setFunctionaries([])
+          setTableData([])
+          setCount(0)
         },
       )
     } else {
@@ -183,19 +176,17 @@ export const useFunctionaryView = ({
   const handleSearch = (filters: IFunctionaryFilters) => {
     fetchDataByField(filters, table.rowsPerPage, table.page).then(
       (response) => {
-        if (response?.status === HTTP_STATUS_CODES.OK) {
-          setFunctionaries(response.data.functionaries)
-          setTableData(response.data.functionaries)
-          setCount(response.data.count)
+        if (response?.functionaries.length > 0) {
+          setFunctionaries(response.functionaries)
+          setTableData(response.functionaries)
+          setCount(response.count)
           return
         }
 
-        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-          setFunctionaries([])
-          setTableData([])
-          setCount(0)
-          return
-        }
+        setFunctionaries([])
+        setTableData([])
+        setCount(0)
+        return
       },
     )
   }

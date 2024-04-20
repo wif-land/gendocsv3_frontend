@@ -9,7 +9,6 @@ export interface IFunctionary {
   personalEmail: string
   phoneNumber: string
   regularPhoneNumber: string
-  secondLevelDegree: string
   thirdLevelDegree: string
   fourthLevelDegree: string
   isActive: boolean

@@ -1,21 +1,15 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { PositionModel } from '../models/PositionModel'
 import { IPosition } from '../../domain/entities/IPosition'
-
-// Obtener todos paginado, por campo; crear, actualizar, eliminar
 
 export interface PositionDataSource {
   getAll(
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      positions: PositionModel[]
-    }
+    count: number
+    positions: PositionModel[]
   }>
 
   getByField(
@@ -23,32 +17,17 @@ export interface PositionDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      positions: PositionModel[]
-    }
+    count: number
+    positions: PositionModel[]
   }>
 
-  update(position: Partial<IPosition>): Promise<{
-    status: number
-    position: PositionModel
-  }>
+  update(position: Partial<IPosition>): Promise<PositionModel>
 
-  create(position: IPosition): Promise<{
-    status: number
-    position: PositionModel
-  }>
+  create(position: IPosition): Promise<PositionModel>
 
-  delete(id: number): Promise<{
-    status: number
-    isDeleted: boolean
-  }>
+  delete(id: number): Promise<boolean>
 
-  deleteMany(ids: number[]): Promise<{
-    status: number
-    isDeleted: boolean
-  }>
+  deleteMany(ids: number[]): Promise<boolean>
 }
 
 export class PositionDataSourceImpl implements PositionDataSource {
@@ -69,19 +48,14 @@ export class PositionDataSourceImpl implements PositionDataSource {
 
     if ('error' in result) {
       return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, positions: [] as PositionModel[] },
+        count: 0,
+        positions: [],
       }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as {
-        count: number
-        positions: PositionModel[]
-      },
+    return result.data as {
+      count: number
+      positions: PositionModel[]
     }
   }
 
@@ -94,20 +68,12 @@ export class PositionDataSourceImpl implements PositionDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, positions: [] as PositionModel[] },
-      }
+      return { count: 0, positions: [] as PositionModel[] }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as {
-        count: number
-        positions: PositionModel[]
-      },
+    return result.data as {
+      count: number
+      positions: PositionModel[]
     }
   }
 
@@ -120,29 +86,20 @@ export class PositionDataSourceImpl implements PositionDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        position: {} as PositionModel,
-      }
+      return {} as PositionModel
     }
 
-    const { status, data } = result
-
-    return { status, position: data.content as PositionModel }
+    return result.data as PositionModel
   }
 
   create = async (position: PositionModel) => {
     const result = await AxiosClient.post(API_ROUTES.POSITIONS.CREATE, position)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        position: {} as PositionModel,
-      }
+      return {} as PositionModel
     }
-    const { status, data } = result
 
-    return { status, position: data.content as PositionModel }
+    return result.data as PositionModel
   }
 
   delete = async (id: number) => {
@@ -151,15 +108,10 @@ export class PositionDataSourceImpl implements PositionDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        isDeleted: false,
-      }
+      return false
     }
 
-    const { status, data } = result
-
-    return { status, isDeleted: data.content as boolean }
+    return result.data as boolean
   }
 
   deleteMany = async (ids: number[]) => {
@@ -169,14 +121,9 @@ export class PositionDataSourceImpl implements PositionDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        isDeleted: false,
-      }
+      return false
     }
 
-    const { status, data } = result
-
-    return { status, isDeleted: data.content as boolean }
+    return result.data as boolean
   }
 }

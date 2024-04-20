@@ -54,13 +54,14 @@ const SECONDARY = {
 }
 
 const INFO = {
-  lighter: '#FFE9E9',
-  light: '#FFB2B2',
-  main: '#FF7A7A',
-  dark: '#CC5252',
-  darker: '#992B2B',
-  contrastText: '#FFFFFF',
+  lighter: '#E9F7FF', // Un celeste muy claro, casi blanco
+  light: '#B2E0FF',   // Un celeste claro
+  main: '#7AC9FF',    // Celeste principal, más vibrante
+  dark: '#6B96B8',  // Un celeste oscurecido
+  darker: '#2B7C99',  // Un celeste aún más oscuro, cerca del azul marino suave
+  contrastText: '#FFFFFF' // Texto en blanco para contraste
 }
+
 
 const SUCCESS = {
   lighter: '#D3FCD2',

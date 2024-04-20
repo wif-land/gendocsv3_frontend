@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import { CouncilRepository } from '../../domain/repositories/CouncilRepository'
 import {
@@ -41,20 +40,8 @@ export class CouncilRepositoryImpl implements CouncilRepository {
   update = async (data: Partial<CouncilModel>) =>
     await this.datasource.update(data)
 
-  create = async (councilData: ICouncil) => {
-    try {
-      const result = await this.datasource.create(councilData)
-      const { status } = result
-
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, council: {} as CouncilModel }
-      }
-
-      return { status, council: result.council }
-    } catch (error) {
-      return { status: 500, council: {} as CouncilModel }
-    }
-  }
+  create = async (councilData: ICouncil) =>
+    await this.datasource.create(councilData)
 
   bulkUpdate = async (councils: Partial<ICouncil>[]) =>
     await this.datasource.bulkUpdate(councils)

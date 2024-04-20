@@ -19,11 +19,8 @@ type AxiosErrorResponse = AxiosError<AxiosResponse<Record<string, unknown>>> & {
 }
 
 interface AxiosResponse<T> {
-  status: number
-  data: {
-    message: string
-    content: T
-  }
+  message: string
+  data: T
 }
 
 export class AxiosClient {
@@ -210,10 +207,7 @@ export class AxiosClient {
   }
 }
 
-const handleApiResponse = <T>(
-  response: AxiosResponse<T>,
-  method: HTTP_METHODS,
-) => {
+const handleApiResponse = (response: any, method: HTTP_METHODS) => {
   const { status, data } = response
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
@@ -235,18 +229,12 @@ const handleApiResponse = <T>(
   }
 
   if (method !== 'GET') {
-    enqueueSnackbar('Acción realizada con éxito', {
+    enqueueSnackbar(data.message, {
       variant: 'success',
     })
   }
 
-  return {
-    status,
-    data: {
-      message: 'success',
-      content: response.data as T,
-    },
-  }
+  return response.data
 }
 
 const handleApiError = (

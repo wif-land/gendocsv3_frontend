@@ -4,30 +4,31 @@ import { IModule } from '../../features/modules/types/IModule'
 
 interface StoreState {
   modules: IModule[]
-  accessModules: IModule[] | undefined
+  accessModules: IModule[]
   setModules: (modules: IModule[]) => void
   setAccessModules: (modulesIds: number[]) => void
 }
 
 const DEFAULT_MODULES: IModule[] = []
 const STORE_NAME = 'modules'
+const DEFAULT_ACCESS_MODULES: IModule[] = []
 
 const useModulesStore = create<StoreState>(
   persist(
     (set, get) => ({
       modules: DEFAULT_MODULES,
       setModules: (modules: IModule[]) => set({ modules }),
-      accessModules: undefined,
+      accessModules: DEFAULT_ACCESS_MODULES,
       setAccessModules: (modulesIds: number[]) => {
         let actualModules = modulesIds
 
         const adminModule = modulesIds.find((id) => {
-          const module = get().modules?.find((module) => module.id === id)
+          const module = get().modules.find((module) => module.id === id)
           return module?.code === 'ADMIN'
         })
 
         const commonModule = modulesIds.find((id) => {
-          const module = get().modules?.find((module) => module.id === id)
+          const module = get().modules.find((module) => module.id === id)
           return module?.code === 'COMM'
         })
 

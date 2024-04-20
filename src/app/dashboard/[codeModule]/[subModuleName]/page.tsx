@@ -11,6 +11,7 @@ import { StudentListView } from '../../../../features/students/presentation/view
 import { PositionListView } from '../../../../features/positions/presentation/view'
 import { UsersListView } from '../../../../features/users/presentation/view'
 import { DegreeCertificateListView } from '../../../../features/degree-certificates/presentation/views'
+import { DefaultMembersView } from '../../../../features/default-members/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -27,6 +28,7 @@ const Page = () => {
     documentos: DocumentListView,
     cargos: PositionListView,
     actas_de_grado: DegreeCertificateListView,
+    representantes: DefaultMembersView,
   }
 
   const defaultComponent = () => <div>Not found</div>

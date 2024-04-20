@@ -2,7 +2,6 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useUsersMethods } from './useUsersMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IUser } from '../../domain/entities/IUser'
 import { useUsersStore } from '../state/usersStore'
 import { UserModel } from '../../data/models/UserModel'
@@ -67,10 +66,8 @@ export const useUserView = ({
       if (isDataFiltered) {
         fetchDataByField(table.rowsPerPage, newPage, filters).then(
           (response) => {
-            if (response?.status === HTTP_STATUS_CODES.OK) {
-              setUsers([...users, ...response.data.users])
-              setTableData([...(users as IUser[]), ...response.data.users])
-            }
+            setUsers([...users, ...response.users])
+            setTableData([...(users as IUser[]), ...response.users])
           },
         )
       } else {
@@ -95,13 +92,11 @@ export const useUserView = ({
     if (isDataFiltered) {
       fetchDataByField(table.rowsPerPage, table.page, filters).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setUsers(response.data.users)
-            setTableData(response.data.users)
-            setCount(response.data.count)
-          }
-
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+          if (response?.users.length > 0) {
+            setUsers(response.users)
+            setTableData(response.users)
+            setCount(response.count)
+          } else {
             setUsers([])
             setTableData([])
             setCount(0)
@@ -124,11 +119,14 @@ export const useUserView = ({
   const handleUpdateRow = (row: IUser) => {
     updateRow(row).then((data) => {
       if (data) {
-        setUsers(users?.map((user) => (user.id === data.id ? data : user)))
-        setTableData(
-          (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
+        setUsers(
+          users?.map((user) => (user.id === data.user.id ? data.user : user)),
         )
-        console.log(data)
+        setTableData(
+          (users as IUser[]).map((user) =>
+            user.id === data.user.id ? data.user : user,
+          ),
+        )
       }
     })
   }
@@ -136,19 +134,16 @@ export const useUserView = ({
   const handleSearch = (filters: IUserFilters) => {
     fetchDataByField(table.rowsPerPage, table.page, filters).then(
       (response) => {
-        if (response?.status === HTTP_STATUS_CODES.OK) {
-          setUsers(response.data.users)
-          setTableData(response.data.users)
-          setCount(response.data.count)
+        if (response?.users.length > 0) {
+          setUsers(response.users)
+          setTableData(response.users)
+          setCount(response.count)
           return
         }
 
-        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-          setUsers([])
-          setTableData([])
-          setCount(0)
-          return
-        }
+        setUsers([])
+        setTableData([])
+        setCount(0)
       },
     )
   }

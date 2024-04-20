@@ -9,7 +9,6 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { useCareersStore } from '../store/careerStore'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
@@ -69,23 +68,21 @@ export const useCareerForm = (currentCareer?: ICareer) => {
   const handleCreate = useCallback(async (values: ICareer) => {
     const result = await CareersUseCasesImpl.getInstance().create(values)
 
-    if (result.career) {
-      addCareer(result.career)
-      enqueueSnackbar('Carrera creada exitosamente')
+    if (result) {
+      addCareer(result)
     } else {
       throw new Error('Error al crear el consejo')
     }
   }, [])
 
   const handleUpdate = async (id: number, editedFields: Partial<ICareer>) => {
-    const { status } = await CareersUseCasesImpl.getInstance().update(
+    const result = await CareersUseCasesImpl.getInstance().update(
       id,
       editedFields,
     )
 
-    if (status === HTTP_STATUS_CODES.OK) {
+    if (result) {
       updateCareer(editedFields)
-      enqueueSnackbar('Carrera actualizada exitosamente')
     } else {
       throw new Error('Error al actualizar el consejo')
     }
@@ -156,14 +153,13 @@ export const useCareerForm = (currentCareer?: ICareer) => {
       await FunctionaryUseCasesImpl.getInstance()
         .getByFilters({ field })
         .then((res) => {
-          if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
-            setFunctionaries(res.data.functionaries)
-            return
-          } else {
-            setFunctionaries([])
-            setIsLoading(false)
+          if (isMounted) {
+            setFunctionaries(res.functionaries)
             return
           }
+          setFunctionaries([])
+          setIsLoading(false)
+          return
         })
     }
 
