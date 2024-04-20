@@ -21,7 +21,6 @@ import { IFunctionary } from '../../../../features/functionaries/domain/entities
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { FunctionaryUseCasesImpl } from '../../../../features/functionaries/domain/usecases/FunctionaryServices'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const router = useRouter()

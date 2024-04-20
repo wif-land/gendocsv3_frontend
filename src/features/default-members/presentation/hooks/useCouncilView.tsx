@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useCouncilsMethods } from './useCouncilsMethods'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { ICouncil } from '../../domain/entities/DefaultMembers'
 import useModulesStore from '../../../../shared/store/modulesStore'
-import { CouncilModel } from '../../data/models/DefaultMembersModel'
-import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
+import { ICouncilFilters } from '../../../council/domain/entities/ICouncilFilters'
+import { CouncilModel } from '../../../council/data/models/CouncilModel'
+import { ICouncil } from '../../../council/domain/entities/ICouncil'
 
 interface Props {
   table: TableProps
@@ -157,39 +157,6 @@ export const useCouncilView = ({
     })
   }
 
-  // const handleUpdateRows = () => {
-  //   const rows = tableData.filter((row) =>
-  //     table.selected.includes(row.id!.toString()),
-  //   )
-
-  //   const rowsData = rows.map((row: ICouncil) => ({
-  //     isActive: !row.isActive,
-  //     id: row.id!,
-  //   }))
-
-  //   updateRows(rowsData).then((data) => {
-  //     if (data !== undefined) {
-  //       setCouncils(
-  //         councils.map((functionary) => {
-  //           const updatedFunctionary = data.find(
-  //             (updated) => updated.id === functionary.id,
-  //           )
-  //           return updatedFunctionary ? updatedFunctionary : functionary
-  //         }),
-  //       )
-  //     }
-  //     setTableData(
-  //       (councils as ICouncil[]).map((functionary) => {
-  //         const updatedFunctionary = data?.find(
-  //           (updated) => updated.id === functionary.id,
-  //         )
-  //         return updatedFunctionary ? updatedFunctionary : functionary
-  //       }),
-  //     )
-  //     table.setSelected([])
-  //   })
-  // }
-
   const handleSearch = (filters: ICouncilFilters) => {
     fetchDataByField(
       filters,
@@ -222,7 +189,6 @@ export const useCouncilView = ({
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
-    // handleUpdateRows,
     handleSearch,
   }
 }

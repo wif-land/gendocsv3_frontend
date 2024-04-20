@@ -4,7 +4,6 @@ import { useStudentStore } from '../state/studentStore'
 import { StudentModel } from '../../data/models/StudentModel'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useStudentCommands } from './useStudentCommands'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 
 interface Props {

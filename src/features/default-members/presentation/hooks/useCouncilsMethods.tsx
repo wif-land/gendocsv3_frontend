@@ -1,10 +1,10 @@
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { ICouncil } from '../../../council/domain/entities/ICouncil'
+import { ICouncilFilters } from '../../../council/domain/entities/ICouncilFilters'
 import { DefaultMembersUseCasesImpl } from '../../domain/usecases/DefaultMemberServices'
-import { ICouncil } from '../../domain/entities/DefaultMembers'
 import { useCouncilStore } from '../store/councilsStore'
 import { enqueueSnackbar } from 'notistack'
-import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export const useCouncilsMethods = () => {
   const { councils, setCouncils } = useCouncilStore()

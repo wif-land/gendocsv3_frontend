@@ -13,7 +13,7 @@ import { StudentCreateView } from '../../../../../features/students/presentation
 import { PositionCreateView } from '../../../../../features/positions/presentation/view'
 import { UsersCreateView } from '../../../../../features/users/presentation/view'
 import DegreeCertificateCreateView from '../../../../../features/degree-certificates/presentation/views/DegreeCertificateCreateView'
-import { DefaultMembersView } from '@/features/default-members/presentation/view'
+import { DefaultMembersView } from '../../../../../features/default-members/presentation/view'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()

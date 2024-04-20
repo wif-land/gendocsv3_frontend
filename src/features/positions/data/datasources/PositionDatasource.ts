@@ -1,6 +1,5 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { PositionModel } from '../models/PositionModel'
 import { IPosition } from '../../domain/entities/IPosition'
 
