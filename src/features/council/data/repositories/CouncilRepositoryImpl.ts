@@ -21,7 +21,7 @@ export class CouncilRepositoryImpl implements CouncilRepository {
     return CouncilRepositoryImpl.instance
   }
 
-  private constructor(private readonly datasource: CouncilsDataSource) {}
+  private constructor(private readonly datasource: CouncilsDataSource) { }
 
   getAllCouncilsByModuleId = async (
     moduleId: number,
@@ -42,18 +42,7 @@ export class CouncilRepositoryImpl implements CouncilRepository {
     await this.datasource.update(data)
 
   create = async (councilData: ICouncil) => {
-    try {
-      const result = await this.datasource.create(councilData)
-      const { status } = result
-
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, council: {} as CouncilModel }
-      }
-
-      return { status, council: result.council }
-    } catch (error) {
-      return { status: 500, council: {} as CouncilModel }
-    }
+    return await this.datasource.create(councilData)
   }
 
   bulkUpdate = async (councils: Partial<ICouncil>[]) =>

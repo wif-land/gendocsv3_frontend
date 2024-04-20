@@ -104,18 +104,18 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       },
     ]
 
-    const result = await CouncilsUseCasesImpl.getInstance().create({
+    const council = await CouncilsUseCasesImpl.getInstance().create({
       ...rest,
       moduleId: moduleIdentifier ?? 0,
       userId: user?.id as number,
       attendees: actualAttendees,
     })
 
-    if (!result.council) {
+    if (!council) {
       throw new Error('Error al crear el consejo')
     }
 
-    addCouncil(result.council)
+    addCouncil(council)
   }
 
   const handleUpdateCouncil = async (
@@ -244,7 +244,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .then((result) => {
         if (!isMounted) return
 
-        if (result.status === HTTP_STATUS_CODES.OK) {
+        if (result.functionaries.length > 0) {
           const usedFunctionaries = [
             ...(methods.getValues().attendees as string[]),
             methods.getValues().president,
@@ -254,7 +254,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
             getDni(attendee),
           )
 
-          const filteredFunctionaries = result.data.functionaries.filter(
+          const filteredFunctionaries = result.functionaries.filter(
             (functionary) => !attendees.includes(functionary.dni),
           )
 
