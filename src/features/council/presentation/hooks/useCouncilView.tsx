@@ -74,14 +74,8 @@ export const useCouncilView = ({
           table.rowsPerPage,
           newPage,
         ).then((response) => {
-          setCouncils([
-            ...councils,
-            ...(response.councils as CouncilModel[]),
-          ])
-          setTableData([
-            ...councils,
-            ...(response.councils as CouncilModel[]),
-          ])
+          setCouncils([...councils, ...(response.councils as CouncilModel[])])
+          setTableData([...councils, ...(response.councils as CouncilModel[])])
         })
       } else {
         fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {

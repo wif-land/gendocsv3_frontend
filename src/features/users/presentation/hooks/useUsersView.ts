@@ -2,7 +2,6 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useUsersMethods } from './useUsersMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IUser } from '../../domain/entities/IUser'
 import { useUsersStore } from '../state/usersStore'
 import { UserModel } from '../../data/models/UserModel'
@@ -120,9 +119,13 @@ export const useUserView = ({
   const handleUpdateRow = (row: IUser) => {
     updateRow(row).then((data) => {
       if (data) {
-        setUsers(users?.map((user) => (user.id === data.id ? data : user)))
+        setUsers(
+          users?.map((user) => (user.id === data.user.id ? data.user : user)),
+        )
         setTableData(
-          (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
+          (users as IUser[]).map((user) =>
+            user.id === data.user.id ? data.user : user,
+          ),
         )
       }
     })
@@ -141,7 +144,6 @@ export const useUserView = ({
         setUsers([])
         setTableData([])
         setCount(0)
-        return
       },
     )
   }

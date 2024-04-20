@@ -1,7 +1,6 @@
 import { CouncilModel } from '../models/CouncilModel'
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 

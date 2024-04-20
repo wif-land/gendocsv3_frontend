@@ -19,10 +19,7 @@ interface CouncilUseCases {
     councils: CouncilModel[]
   }>
 
-  update(
-    id: number,
-    council: Partial<CouncilModel>,
-  ): Promise<CouncilModel>
+  update(id: number, council: Partial<CouncilModel>): Promise<CouncilModel>
 
   getAllCouncilsByModuleId(
     moduleId: number,

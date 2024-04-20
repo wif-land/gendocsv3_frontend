@@ -48,7 +48,6 @@ export class UserDataSourceImpl implements UserDataSource {
       return { count: 0, users: [] as UserModel[] }
     }
 
-
     return result.data as { count: number; users: UserModel[] }
   }
 
@@ -79,7 +78,6 @@ export class UserDataSourceImpl implements UserDataSource {
     if ('error' in result) {
       return { user: {} as UserModel, accessToken: '' }
     }
-
 
     return result.data as { user: UserModel; accessToken: string }
   }

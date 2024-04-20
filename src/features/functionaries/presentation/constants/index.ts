@@ -5,7 +5,7 @@ import { enqueueSnackbar } from 'notistack'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 
-export interface FormValuesProps extends IFunctionary { }
+export interface FormValuesProps extends IFunctionary {}
 
 export const TABLE_HEAD = [
   {

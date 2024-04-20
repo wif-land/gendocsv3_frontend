@@ -67,15 +67,12 @@ export const useFunctionaryView = ({
       if (isDataFiltered) {
         fetchDataByField(filters, table.rowsPerPage, newPage).then(
           (response) => {
-            setFunctionaries([
-              ...functionaries,
-              ...response.functionaries,
-            ])
+            setFunctionaries([...functionaries, ...response.functionaries])
             setTableData([
               ...(functionaries as FunctionaryModel[]),
               ...response.functionaries,
             ])
-          }
+          },
         )
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {

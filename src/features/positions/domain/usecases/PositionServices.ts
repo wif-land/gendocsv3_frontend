@@ -19,8 +19,7 @@ interface PositionUseCases {
   ): Promise<{
     count: number
     positions: PositionModel[]
-  }
-  >
+  }>
 
   update(position: Partial<IPosition>): Promise<PositionModel>
 

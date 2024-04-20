@@ -72,12 +72,13 @@ export const useCouncilsMethods = () => {
   ) => {
     addLoaderItem('councils')
     try {
-      const response = await DefaultMembersUseCasesImpl.getInstance().getByFilters(
-        filters,
-        moduleId,
-        rowsPerPage,
-        currentPage * rowsPerPage,
-      )
+      const response =
+        await DefaultMembersUseCasesImpl.getInstance().getByFilters(
+          filters,
+          moduleId,
+          rowsPerPage,
+          currentPage * rowsPerPage,
+        )
       if (
         response.status === HTTP_STATUS_CODES.OK ||
         response.status === HTTP_STATUS_CODES.NOT_FOUND

@@ -8,37 +8,33 @@ export const useFunctionaryMethods = () => {
   const { functionaries, setFunctionaries } = useFunctionaryStore()
   const { loader } = useLoaderStore()
 
-  const fetchData = async (rowsPerPage: number, currentPage: number) => {
-    return await FunctionaryUseCasesImpl.getInstance().getAll(
+  const fetchData = async (rowsPerPage: number, currentPage: number) =>
+    await FunctionaryUseCasesImpl.getInstance().getAll(
       rowsPerPage,
       currentPage * rowsPerPage,
     )
-  }
 
-  const updateRow = async (functionary: Partial<FunctionaryModel>) => {
-    return await FunctionaryUseCasesImpl.getInstance().update(
+  const updateRow = async (functionary: Partial<FunctionaryModel>) =>
+    await FunctionaryUseCasesImpl.getInstance().update(
       functionary.id as number,
       {
         isActive: !functionary.isActive,
       },
     )
-  }
 
-  const updateRows = async (functionaries: Partial<FunctionaryModel>[]) => {
-    return await FunctionaryUseCasesImpl.getInstance().bulkUpdate(functionaries)
-  }
+  const updateRows = async (functionaries: Partial<FunctionaryModel>[]) =>
+    await FunctionaryUseCasesImpl.getInstance().bulkUpdate(functionaries)
 
   const fetchDataByField = async (
     filters: IFunctionaryFilters,
     rowsPerPage: number,
     currentPage: number,
-  ) => {
-    return await FunctionaryUseCasesImpl.getInstance().getByFilters(
+  ) =>
+    await FunctionaryUseCasesImpl.getInstance().getByFilters(
       filters,
       rowsPerPage,
       currentPage * rowsPerPage,
     )
-  }
 
   return {
     loader,

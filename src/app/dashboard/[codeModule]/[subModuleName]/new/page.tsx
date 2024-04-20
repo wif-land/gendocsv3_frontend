@@ -30,7 +30,7 @@ const Page = () => {
     cargos: PositionCreateView,
     usuarios: UsersCreateView,
     actas_de_grado: DegreeCertificateCreateView,
-    representantes: DefaultMembersView
+    representantes: DefaultMembersView,
   }
 
   const defaultComponent = () => <Stack>404</Stack>

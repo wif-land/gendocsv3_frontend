@@ -5,9 +5,7 @@ import { IFunctionaryFilters } from '../entities/IFunctionaryFilters'
 import { FunctionaryRepository } from '../repositories/FunctionaryRepository'
 
 interface FunctionaryUseCases {
-  create(
-    data: IFunctionary,
-  ): Promise<FunctionaryModel>
+  create(data: IFunctionary): Promise<FunctionaryModel>
 
   getAll(
     limit: number,
@@ -26,12 +24,11 @@ interface FunctionaryUseCases {
     functionaries: FunctionaryModel[]
   }>
 
-  update(
-    id: number,
-    data: Partial<FunctionaryModel>,
-  ): Promise<FunctionaryModel>
+  update(id: number, data: Partial<FunctionaryModel>): Promise<FunctionaryModel>
 
-  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<FunctionaryModel[]>
+  bulkUpdate(
+    functionaries: Partial<IFunctionary>[],
+  ): Promise<FunctionaryModel[]>
 }
 
 export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
@@ -48,25 +45,14 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
   private functionaryRepository: FunctionaryRepository =
     FunctionaryRepositoryImpl.getInstance()
 
-  create = async (data: IFunctionary) => {
-    return await this.functionaryRepository.create(data)
-  }
+  create = async (data: IFunctionary) =>
+    await this.functionaryRepository.create(data)
 
   getAll = async (limit: number, offset: number) =>
     await this.functionaryRepository.getAll(limit, offset)
 
-  getByFilters = async (
-    filters: IFunctionaryFilters,
-    limit = 5,
-    offset = 0,
-  ) => {
-    return await this.functionaryRepository.getByFilters(
-      filters,
-      limit,
-      offset,
-    )
-
-  }
+  getByFilters = async (filters: IFunctionaryFilters, limit = 5, offset = 0) =>
+    await this.functionaryRepository.getByFilters(filters, limit, offset)
 
   update = async (id: number, data: Partial<FunctionaryModel>) =>
     await this.functionaryRepository.update({

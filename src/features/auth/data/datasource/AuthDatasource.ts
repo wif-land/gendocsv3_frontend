@@ -34,15 +34,16 @@ export class AuthDataSourceImpl implements AuthDataSource {
   }
 
   login = async (email: string, password: string) => {
-    const result = await AxiosClient.post(API_ROUTES.AUTH.LOGIN, { email, password })
+    const result = await AxiosClient.post(API_ROUTES.AUTH.LOGIN, {
+      email,
+      password,
+    })
 
     if ('error' in result) {
       return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
     }
 
-    const {
-      data
-    } = result
+    const { data } = result
 
     await setCookie(ACCESS_TOKEN_COOKIE_NAME, data)
 

@@ -8,10 +8,7 @@ interface Params {
   password: string
 }
 
-export class LoginUseCase extends UseCase<
-  { decoded?: IUser },
-  Params
-> {
+export class LoginUseCase extends UseCase<{ decoded?: IUser }, Params> {
   private readonly repository: AuthRepository
 
   constructor() {

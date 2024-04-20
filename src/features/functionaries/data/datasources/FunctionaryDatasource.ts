@@ -24,7 +24,9 @@ export interface FunctionaryDataSource {
 
   update(functionary: Partial<IFunctionary>): Promise<FunctionaryModel>
 
-  bulkUpdate(functionaries: Partial<IFunctionary>[]): Promise<FunctionaryModel[]>
+  bulkUpdate(
+    functionaries: Partial<IFunctionary>[],
+  ): Promise<FunctionaryModel[]>
 
   create(functionary: IFunctionary): Promise<FunctionaryModel>
 }
@@ -50,7 +52,7 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     }
 
     return result.data as {
-      count: number,
+      count: number
       functionaries: FunctionaryModel[]
     }
   }
