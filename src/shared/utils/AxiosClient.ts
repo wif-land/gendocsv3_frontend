@@ -91,8 +91,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-      error: string
-    }
+        error: string
+      }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-post')
@@ -112,8 +112,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-      error: string
-    }
+        error: string
+      }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-get')
@@ -134,8 +134,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-      error: string
-    }
+        error: string
+      }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-put')
@@ -164,8 +164,8 @@ export class AxiosClient {
   }): Promise<
     | AxiosResponse<T>
     | {
-      error: string
-    }
+        error: string
+      }
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-delete')
@@ -190,8 +190,8 @@ export class AxiosClient {
   ): Promise<
     | AxiosResponse<T>
     | {
-      error: string
-    }
+        error: string
+      }
   > {
     try {
       const response = await this.getInstance().patch(path, body, {
@@ -207,10 +207,7 @@ export class AxiosClient {
   }
 }
 
-const handleApiResponse = (
-  response: any,
-  method: HTTP_METHODS,
-) => {
+const handleApiResponse = (response: any, method: HTTP_METHODS) => {
   const { status, data } = response
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {

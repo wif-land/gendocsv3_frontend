@@ -1,6 +1,5 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { StudentModel } from '../models/StudentModel'
 import { IStudent } from '../../domain/entities/IStudent'
 import { ICreateStudent } from '../../domain/entities/ICreateStudent'
@@ -52,7 +51,6 @@ export class StudentDataSourceImpl implements StudentDataSource {
     if ('error' in result) {
       return { count: 0, students: [] }
     }
-
 
     return result.data as { count: number; students: StudentModel[] }
   }

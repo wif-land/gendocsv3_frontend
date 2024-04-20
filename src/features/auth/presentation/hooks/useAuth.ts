@@ -1,6 +1,5 @@
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useAccountStore } from '../state/useAccountStore'
 import { enqueueSnackbar } from 'notistack'
 import { LoginUseCase } from '../../domain/usecases/loginUseCase'
@@ -57,7 +56,6 @@ export const useAuth = () => {
         password: data.password,
       })
 
-      console.log({ decoded })
       decoded && setUser(decoded)
 
       enqueueSnackbar(`Bienvenido de vuelta ${decoded!.firstName}!`)

@@ -12,36 +12,30 @@ export const useCouncilsMethods = () => {
     moduleId: number,
     rowsPerPage: number,
     currentPage: number,
-  ) => {
-    return await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
+  ) =>
+    await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
       moduleId,
       rowsPerPage,
       currentPage * rowsPerPage,
     )
-  }
 
-  const updateRow = async (council: Partial<ICouncil>) => {
-    return await CouncilsUseCasesImpl.getInstance().update(
-      council.id as number,
-      {
-        isActive: !council.isActive,
-      },
-    )
-  }
+  const updateRow = async (council: Partial<ICouncil>) =>
+    await CouncilsUseCasesImpl.getInstance().update(council.id as number, {
+      isActive: !council.isActive,
+    })
 
   const fetchDataByField = async (
     filters: ICouncilFilters,
     moduleId: number,
     rowsPerPage: number,
     currentPage: number,
-  ) => {
-    return await CouncilsUseCasesImpl.getInstance().getByFilters(
+  ) =>
+    await CouncilsUseCasesImpl.getInstance().getByFilters(
       filters,
       moduleId,
       rowsPerPage,
       currentPage * rowsPerPage,
     )
-  }
 
   return {
     loader,

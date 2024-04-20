@@ -21,7 +21,7 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
     return FunctionaryRepositoryImpl.instance
   }
 
-  private constructor(private readonly datasource: FunctionaryDataSource) { }
+  private constructor(private readonly datasource: FunctionaryDataSource) {}
 
   getAll = async (limit: number, offset: number) =>
     await this.datasource.getAll(limit, offset)
@@ -38,7 +38,5 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
   bulkUpdate = async (data: Partial<IFunctionary>[]) =>
     await this.datasource.bulkUpdate(data)
 
-  create = async (data: IFunctionary) => {
-    return await this.datasource.create(data)
-  }
+  create = async (data: IFunctionary) => await this.datasource.create(data)
 }

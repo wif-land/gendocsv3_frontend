@@ -50,7 +50,7 @@ export class PositionDataSourceImpl implements PositionDataSource {
     if ('error' in result) {
       return {
         count: 0,
-        positions: []
+        positions: [],
       }
     }
 

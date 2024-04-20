@@ -40,7 +40,7 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
-      let result;
+      let result
       if (!currentFunctionary) {
         result = await handleCreate(data)
       } else {

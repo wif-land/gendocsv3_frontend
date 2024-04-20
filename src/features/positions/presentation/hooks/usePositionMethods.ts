@@ -19,25 +19,22 @@ export const useFunctionaryMethods = () => {
     }
   }
 
-  const deleteRow = async (id: number) => {
-    return await PositionUseCasesImpl.getInstance().delete(id)
-  }
+  const deleteRow = async (id: number) =>
+    await PositionUseCasesImpl.getInstance().delete(id)
 
-  const deleteManyRows = async (ids: number[]) => {
-    return await PositionUseCasesImpl.getInstance().deleteMany(ids)
-  }
+  const deleteManyRows = async (ids: number[]) =>
+    await PositionUseCasesImpl.getInstance().deleteMany(ids)
 
   const fetchDataByField = async (
     searchTerm: string,
     rowsPerPage: number,
     currentPage: number,
-  ) => {
-    return await PositionUseCasesImpl.getInstance().getByField(
+  ) =>
+    await PositionUseCasesImpl.getInstance().getByField(
       searchTerm,
       rowsPerPage,
       currentPage * rowsPerPage,
     )
-  }
 
   return {
     loader,

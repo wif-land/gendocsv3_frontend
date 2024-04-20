@@ -6,7 +6,7 @@ export interface PositionRepository {
     limit: number,
     offset: number,
   ): Promise<{
-    count: number,
+    count: number
     positions: PositionModel[]
   }>
 
