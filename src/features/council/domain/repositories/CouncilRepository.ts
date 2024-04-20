@@ -3,10 +3,7 @@ import { ICouncil } from '../entities/ICouncil'
 import { ICouncilFilters } from '../entities/ICouncilFilters'
 
 export interface CouncilRepository {
-  getAll: () => Promise<{
-    status: number
-    councils: CouncilModel[]
-  }>
+  getAll: () => Promise<CouncilModel[]>
 
   getByFilters: (
     filters: ICouncilFilters,
@@ -14,37 +11,22 @@ export interface CouncilRepository {
     limit: number,
     offset: number,
   ) => Promise<{
-    status: number
-    data: {
-      count: number
-      councils: CouncilModel[]
-    }
+    count: number
+    councils: CouncilModel[]
   }>
 
-  update: (data: Partial<ICouncil>) => Promise<{
-    status: number
-    council: CouncilModel
-  }>
+  update: (data: Partial<ICouncil>) => Promise<CouncilModel>
 
-  create: (councilData: ICouncil) => Promise<{
-    status: number
-    council: CouncilModel
-  }>
+  create: (councilData: ICouncil) => Promise<CouncilModel>
 
   getAllCouncilsByModuleId: (
     moduleId: number,
     limit: number,
     offset: number,
   ) => Promise<{
-    status: number
-    data: {
-      councils: CouncilModel[]
-      count: number
-    }
+    councils: CouncilModel[]
+    count: number
   }>
 
-  bulkUpdate: (councils: Partial<ICouncil>[]) => Promise<{
-    status: number
-    councils: CouncilModel[]
-  }>
+  bulkUpdate: (councils: Partial<ICouncil>[]) => Promise<CouncilModel[]>
 }

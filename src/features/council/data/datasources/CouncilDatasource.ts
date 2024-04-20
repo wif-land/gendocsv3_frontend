@@ -6,21 +6,15 @@ import { ICouncil } from '../../domain/entities/ICouncil'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export interface CouncilsDataSource {
-  getAll(): Promise<{
-    status: number
-    councils: CouncilModel[]
-  }>
+  getAll(): Promise<CouncilModel[]>
 
   getAllCouncilsByModuleId(
     moduleId: number,
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      councils: CouncilModel[]
-      count: number
-    }
+    councils: CouncilModel[]
+    count: number
   }>
 
   getByFilters(
@@ -29,27 +23,15 @@ export interface CouncilsDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      councils: CouncilModel[]
-      count: number
-    }
-  }>
-
-  update(council: Partial<ICouncil>): Promise<{
-    status: number
-    council: CouncilModel
-  }>
-
-  create(council: ICouncil): Promise<{
-    status: number
-    council: CouncilModel
-  }>
-
-  bulkUpdate(councils: Partial<ICouncil>[]): Promise<{
-    status: number
     councils: CouncilModel[]
+    count: number
   }>
+
+  update(council: Partial<ICouncil>): Promise<CouncilModel>
+
+  create(council: ICouncil): Promise<CouncilModel>
+
+  bulkUpdate(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -73,48 +55,30 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { councils: [], count: 0 },
-      }
+      return { councils: [], count: 0 }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as { councils: CouncilModel[]; count: number },
-    }
+    return result.data as { councils: CouncilModel[]; count: number }
   }
 
   create = async (council: CouncilModel) => {
     const result = await AxiosClient.post(API_ROUTES.COUNCILS.CREATE, council)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        council: {} as CouncilModel,
-      }
+      return {} as CouncilModel
     }
 
-    const { status, data } = result
-
-    return { status, council: data.content as CouncilModel }
+    return result.data as CouncilModel
   }
 
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        councils: [] as CouncilModel[],
-      }
+      return [] as CouncilModel[]
     }
 
-    const { status, data } = result
-
-    return { status, councils: data.content as CouncilModel[] }
+    return result.data as CouncilModel[]
   }
 
   getByFilters = async (
@@ -143,17 +107,10 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { councils: [], count: 0 },
-      }
+      return { councils: [], count: 0 }
     }
-    const { status, data } = result
 
-    return {
-      status,
-      data: data.content as { councils: CouncilModel[]; count: number },
-    }
+    return result.data as { councils: CouncilModel[]; count: number }
   }
 
   update = async (council: ICouncil) => {
@@ -164,15 +121,10 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        council: {} as CouncilModel,
-      }
+      return {} as CouncilModel
     }
 
-    const { status, data } = result
-
-    return { status, council: data.content as CouncilModel }
+    return result.data as CouncilModel
   }
 
   bulkUpdate = async (councils: ICouncil[]) => {
@@ -182,14 +134,9 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        councils: [] as CouncilModel[],
-      }
+      return [] as CouncilModel[]
     }
 
-    const { status, data } = result
-
-    return { status, councils: data.content as CouncilModel[] }
+    return result.data as CouncilModel[]
   }
 }
