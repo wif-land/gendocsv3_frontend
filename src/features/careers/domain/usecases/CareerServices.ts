@@ -3,22 +3,11 @@ import { CareerRepositoryImpl } from '../../data/repositories/CareerRepositoryIm
 import { ICareer } from '../entities/ICareer'
 
 interface CareerUseCases {
-  create(Career: ICareer): Promise<{
-    status: number
-    career: CareerModel
-  }>
+  create(Career: ICareer): Promise<CareerModel>
 
-  getAll(): Promise<{
-    status: number
-    careers: CareerModel[]
-  }>
+  getAll(): Promise<CareerModel[]>
 
-  update(
-    id: number,
-    Career: Partial<CareerModel>,
-  ): Promise<{
-    status: number
-  }>
+  update(id: number, Career: Partial<CareerModel>): Promise<CareerModel>
 }
 
 export class CareersUseCasesImpl implements CareerUseCases {

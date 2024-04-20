@@ -1,25 +1,14 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { CareerModel } from '../models/CareerModel'
 import { ICareer } from '../../domain/entities/ICareer'
 
 export interface CareerDataSource {
-  getAll(): Promise<{
-    status: number
-    careers: CareerModel[]
-  }>
+  getAll(): Promise<CareerModel[]>
 
-  update(career: Partial<ICareer>): Promise<{
-    status: number
-    career: CareerModel
-  }>
+  update(career: Partial<ICareer>): Promise<CareerModel>
 
-  create(career: ICareer): Promise<{
-    status: number
-    career: CareerModel
-    message?: string
-  }>
+  create(career: ICareer): Promise<CareerModel>
 }
 
 export class CareersDataSourceImpl implements CareerDataSource {
@@ -37,30 +26,20 @@ export class CareersDataSourceImpl implements CareerDataSource {
     const result = await AxiosClient.post(API_ROUTES.CAREERS.CREATE, career)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        career: {} as CareerModel,
-      }
+      return {} as CareerModel
     }
 
-    const { status, data } = result
-
-    return { status, career: data.content as CareerModel }
+    return result.data as CareerModel
   }
 
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.CAREERS.GET_ALL)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        careers: [] as CareerModel[],
-      }
+      return [] as CareerModel[]
     }
 
-    const { status, data } = result
-
-    return { status, careers: data.content as CareerModel[] }
+    return result.data as CareerModel[]
   }
 
   update = async (career: Partial<ICareer>) => {
@@ -71,14 +50,9 @@ export class CareersDataSourceImpl implements CareerDataSource {
     })
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        career: {} as CareerModel,
-      }
+      return {} as CareerModel
     }
 
-    const { status, data } = result
-
-    return { status, career: data.content as CareerModel }
+    return result.data as CareerModel
   }
 }

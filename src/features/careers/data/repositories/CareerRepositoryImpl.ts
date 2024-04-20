@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICareer } from '../../domain/entities/ICareer'
 import { CareerRepository } from '../../domain/repositories/CareerRepository'
 import {
@@ -27,18 +26,5 @@ export class CareerRepositoryImpl implements CareerRepository {
   update = async (data: Partial<CareerModel>) =>
     await this.datasource.update(data)
 
-  create = async (data: ICareer) => {
-    try {
-      const result = await this.datasource.create(data)
-      const { status } = result
-
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, career: {} as CareerModel }
-      }
-
-      return { status, career: result.career as CareerModel }
-    } catch (error) {
-      return { status: 500, career: {} as CareerModel }
-    }
-  }
+  create = async (data: ICareer) => await this.datasource.create(data)
 }
