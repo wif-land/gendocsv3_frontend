@@ -1,13 +1,13 @@
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
-import { CouncilModel } from '../../data/models/DefaultMembersModel'
 import Label from '../../../../shared/sdk/label'
 import { format } from 'date-fns'
 import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
 import { Box, Button } from '@mui/material'
 import Iconify from '../../../../core/iconify'
 import { useRouter } from 'next/navigation'
+import { CouncilModel } from '../../../council/data/models/CouncilModel'
 
 type Props = {
   council: CouncilModel

@@ -38,7 +38,7 @@ export const useCareersStore = create<StoreState>(
           enqueueSnackbar('Error al obtener las carreras', { variant: 'error' })
           return
         }
-        set({ careers: result.careers })
+        set({ careers: result })
       },
     }),
     {

@@ -16,12 +16,15 @@ import {
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Controller } from 'react-hook-form'
-import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/DefaultMembers'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { Box, Chip, IconButton, Tooltip, alpha } from '@mui/material'
 import Iconify from '../../../../core/iconify'
 import { useDefaultMembersForm } from '../hooks/useDefaultMemberForm'
+import {
+  COUNCIL_TYPES,
+  ICouncil,
+} from '../../../council/domain/entities/ICouncil'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -247,9 +250,9 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
 
             <Divider sx={{ borderStyle: 'dashed' }} />
 
-            {values.attendees &&
+            {values.members &&
               unusedFunctionaries &&
-              values.attendees.map((attendee, index) => (
+              values.members.map((attendee, index) => (
                 <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
                   <RHFAutocomplete
                     sx={{ flexGrow: 1 }}

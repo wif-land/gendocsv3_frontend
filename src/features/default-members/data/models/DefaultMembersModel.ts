@@ -8,7 +8,7 @@ export class DefaultMemberModel implements IDefaultMembers {
   constructor(props: IDefaultMembers) {
     this.order = props.order
     this.positionName = props.positionName
-    this.member = props.member
+    this.member = props.member as IMember
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
