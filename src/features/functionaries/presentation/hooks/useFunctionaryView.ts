@@ -4,7 +4,6 @@ import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useFunctionaryMethods } from './useFunctionaryMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 
 interface Props {

@@ -19,7 +19,6 @@ import { IModule } from '../../../modules/types/IModule'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 interface FormValuesProps extends ICouncil {
   president: string

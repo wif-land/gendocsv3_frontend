@@ -9,7 +9,6 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
-import { CouncilModel } from '../../data/models/DefaultMembersModel'
 import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
 import {
   Divider,
@@ -20,12 +19,13 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import { MobileDatePicker } from '@mui/x-date-pickers'
+import dayjs, { Dayjs } from 'dayjs'
+import { COUNCIL_TYPES } from '../../../council/domain/entities/ICouncil'
 import {
   DATE_TYPES,
   ICouncilFilters,
-} from '../../domain/entities/ICouncilFilters'
-import { COUNCIL_TYPES } from '../../domain/entities/DefaultMembers'
-import dayjs, { Dayjs } from 'dayjs'
+} from '../../../council/domain/entities/ICouncilFilters'
+import { CouncilModel } from '../../../council/data/models/CouncilModel'
 
 export type ICouncilTableFilterValue =
   | string

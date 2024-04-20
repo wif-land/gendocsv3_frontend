@@ -4,7 +4,6 @@ import { PositionModel } from '../../data/models/PositionModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useFunctionaryMethods } from './usePositionMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 interface Props {
   tableData: PositionModel[]

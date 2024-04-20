@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import { CouncilRepository } from '../../domain/repositories/CouncilRepository'
 import {

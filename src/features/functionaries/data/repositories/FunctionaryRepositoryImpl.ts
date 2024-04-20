@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 import { FunctionaryRepository } from '../../domain/repositories/FunctionaryRepository'
