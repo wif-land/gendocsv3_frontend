@@ -6,7 +6,6 @@ import { ICareer } from '../../domain/entities/ICareer'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { enqueueSnackbar } from 'notistack'
 import { useCareersStore } from '../store/careerStore'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export interface FormValuesProps extends ICareer {}
 
@@ -44,7 +43,7 @@ export const handleCreate = async (values: FormValuesProps) => {
     })
     return
   }
-  addCareer(result.career)
+  addCareer(result)
   enqueueSnackbar('Carrera creada exitosamente'), { variant: 'success' }
 }
 
@@ -53,12 +52,12 @@ export const handleUpdate = async (
   editedFields: Partial<ICareer>,
 ) => {
   const { updateCareer } = useCareersStore()
-  const { status } = await CareersUseCasesImpl.getInstance().update(
+  const status = await CareersUseCasesImpl.getInstance().update(
     id,
     editedFields,
   )
 
-  if (status === HTTP_STATUS_CODES.OK) {
+  if (status) {
     updateCareer(editedFields)
     enqueueSnackbar('Carrera actualizada exitosamente')
   } else {
