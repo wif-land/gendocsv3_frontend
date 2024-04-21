@@ -9,8 +9,8 @@ import {
 } from '@mui/material'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { DefaultMemberSortableItem } from './DefaultMemberSortableItem'
-import { useDefaultMembersV2 } from '../hooks/useDefaultV2'
+import { DefaultMemberSortableItem } from '../components/DefaultMemberSortableItem'
+import { useDefaultMembersView } from '../hooks/useDefaultV2'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import {
   RHFAutocomplete,
@@ -38,7 +38,7 @@ const DefaultMembersView: React.FC = () => {
     setInputValue,
     members,
     setMembers,
-  } = useDefaultMembersV2()
+  } = useDefaultMembersView()
 
   return (
     <Container>

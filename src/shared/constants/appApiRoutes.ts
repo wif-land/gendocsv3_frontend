@@ -20,6 +20,10 @@ export const API_ROUTES = {
     UPDATE: '/modules/:id',
     DELETE: '/modules/:id',
   },
+  ATTENDANCE: {
+    DEFAULT_MEMBERS_BY_MODULE_ID: (moduleId: number) =>
+      `/attendance/default/${moduleId}`,
+  },
   CAREERS: {
     CREATE: '/careers',
     GET_ALL: '/careers',

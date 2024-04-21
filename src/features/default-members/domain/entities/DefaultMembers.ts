@@ -1,7 +1,8 @@
 export interface IDefaultMembers {
-  order: number
+  positionOrder: number
   positionName: string
   member: IMember | string
+  isStudent: boolean
 }
 
 export interface IMember {

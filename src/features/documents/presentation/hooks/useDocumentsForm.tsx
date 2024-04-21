@@ -125,8 +125,8 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     CouncilsUseCasesImpl.getInstance()
       .getAllCouncilsByModuleId(moduleId, 10, 0)
       .then((result) => {
-        if (result.data.councils) {
-          setCouncils(result.data.councils)
+        if (result.councils) {
+          setCouncils(result.councils)
         }
       })
 
@@ -141,16 +141,16 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     StudentUseCasesImpl.getInstance()
       .getAll(10, 0)
       .then((result) => {
-        if (result.data.students) {
-          setStudents(result.data.students)
+        if (result.students) {
+          setStudents(result.students)
         }
       })
 
     FunctionaryUseCasesImpl.getInstance()
       .getAll(10, 0)
       .then((result) => {
-        if (result.data.functionaries) {
-          setFunctionaries(result.data.functionaries)
+        if (result.functionaries) {
+          setFunctionaries(result.functionaries)
         }
       })
   }, [])

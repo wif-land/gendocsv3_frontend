@@ -5,10 +5,10 @@ import { DefaultMemberRepository } from '../repositories/DefaultMemberRepository
 interface DefaultMembersUseCases {
   getByModuleId: (moduleId: number) => Promise<DefaultMemberModel[]>
 
-  createByModuleId: (
+  createOrEditByModuleId: (
     moduleId: number,
-    defaultMember: DefaultMemberModel,
-  ) => Promise<DefaultMemberModel>
+    defaultMembers: DefaultMemberModel[],
+  ) => Promise<DefaultMemberModel[]>
 
   updateByModuleId: (
     moduleId: number,
@@ -27,19 +27,24 @@ export class DefaultMembersUseCasesImpl implements DefaultMembersUseCases {
     return DefaultMembersUseCasesImpl.instance
   }
 
-  private councilRepository: DefaultMemberRepository =
+  private defaultMemberRepository: DefaultMemberRepository =
     DefaultMemberRepositoryImpl.getInstance()
 
   getByModuleId = async (moduleId: number) =>
-    await this.councilRepository.getByModuleId(moduleId)
+    await this.defaultMemberRepository.getByModuleId(moduleId)
 
-  createByModuleId = async (
+  createOrEditByModuleId = async (
     moduleId: number,
-    defaultMember: DefaultMemberModel,
-  ) => await this.councilRepository.createByModuleId(moduleId, defaultMember)
+    defaultMembers: DefaultMemberModel[],
+  ) =>
+    await this.defaultMemberRepository.createOrEditByModuleId(
+      moduleId,
+      defaultMembers,
+    )
 
   updateByModuleId = async (
     moduleId: number,
     defaultMember: Partial<DefaultMemberModel>,
-  ) => await this.councilRepository.updateByModuleId(moduleId, defaultMember)
+  ) =>
+    await this.defaultMemberRepository.updateByModuleId(moduleId, defaultMember)
 }

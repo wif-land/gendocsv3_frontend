@@ -1,3 +1,5 @@
+import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
+import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { DefaultMemberModel } from '../models/DefaultMembersModel'
 
 export interface DefaultMembersDataSource {
@@ -5,8 +7,8 @@ export interface DefaultMembersDataSource {
 
   createByModuleId: (
     moduleId: number,
-    defaultMember: DefaultMemberModel,
-  ) => Promise<DefaultMemberModel>
+    defaultMembers: DefaultMemberModel[],
+  ) => Promise<DefaultMemberModel[]>
 
   updateByModuleId: (
     moduleId: number,
@@ -41,19 +43,20 @@ export class DefaultMembersDataSourceImpl implements DefaultMembersDataSource {
 
   createByModuleId = async (
     moduleId: number,
-    defaultMember: DefaultMemberModel,
+    defaultMembers: DefaultMemberModel[],
   ) => {
-    // try {
-    //   const response = await AxiosClient.post(
-    //     `${API_ROUTES.DEFAULT_MEMBERS}/module/${moduleId}`,
-    //     defaultMember,
-    //   )
-    //   return response.data
-    // } catch (error) {
-    //   throw error
-    // }
+    console.log({ defaultMembers })
 
-    throw new Error(`Method not implemented ${moduleId} ${defaultMember}`)
+    const response = await AxiosClient.post(
+      API_ROUTES.ATTENDANCE.DEFAULT_MEMBERS_BY_MODULE_ID(moduleId),
+      defaultMembers,
+    )
+
+    if ('error' in response) {
+      return []
+    }
+
+    return response.data as DefaultMemberModel[]
   }
 
   updateByModuleId = async (
