@@ -6,6 +6,7 @@ export interface IDefaultMembers {
 }
 
 export interface IMember {
+  id?: number
   dni: string
   firstName: string
   secondName: string

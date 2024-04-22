@@ -1,12 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  Container,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Alert, Box, Button, Card, Container, Stack } from '@mui/material'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { DefaultMemberSortableItem } from '../components/DefaultMemberSortableItem'
@@ -34,10 +26,10 @@ const DefaultMembersView: React.FC = () => {
     handleEditMember,
     isEditMode,
     isOpen,
-    loading,
+    // loading,
     setInputValue,
     members,
-    setMembers,
+    // setMembers,
   } = useDefaultMembersView()
 
   return (
@@ -91,61 +83,32 @@ const DefaultMembersView: React.FC = () => {
                 sx={{ width: '100%' }}
                 name="member"
                 label="Miembro"
+                freeSolo
+                placeholder="Buscar miembro por nombre o DNI"
                 open={isOpen.value}
                 onOpen={isOpen.onTrue}
                 onClose={() => {
                   setInputValue('')
                   isOpen.onFalse()
-                  setMembers([])
+                  // setMembers([])
                 }}
-                loading={loading}
+                // loading={loading}
                 noOptionsText="No hay resultados"
-                options={members?.map(
-                  (functionary) =>
-                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )}
                 onInputChange={(event, newInputValue) => {
                   setInputValue(newInputValue)
                 }}
-                getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const {
-                    dni,
-                    firstName,
-                    firstLastName,
-                    secondName,
-                    secondLastName,
-                  } = members.filter(
-                    (functionary) =>
-                      option ===
-                      `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                  )[0]
-
-                  if (!dni) {
-                    return null
-                  }
-
-                  return (
-                    <li {...props} key={dni}>
-                      <Typography variant="body2">
-                        {firstName} {secondName} {firstLastName}{' '}
-                        {secondLastName}
-                      </Typography>
-
-                      <Typography variant="caption" color="text.secondary">
-                        {dni}
-                      </Typography>
-                    </li>
-                  )
-                }}
+                options={members?.map((member) => ({
+                  id: member.id,
+                  label: `${member.firstName} ${member.secondName} ${member.firstLastName} ${member.secondLastName} - ${member.dni}`,
+                }))}
               />
 
               <RHFTextField
-                id={`positionName`}
                 label="Posición"
-                name={`positionName`}
+                name="positionName"
                 variant="outlined"
               />
+
               {isEditMode.value ? (
                 <Button
                   onClick={methods.handleSubmit(onSubmit)}
@@ -166,7 +129,7 @@ const DefaultMembersView: React.FC = () => {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={formattedItems.map((item) => item.member.split('-')[1])}
+              items={formattedItems.map((item) => item.id)}
               strategy={verticalListSortingStrategy}
             >
               <Stack spacing={3} sx={{ py: 3 }}>

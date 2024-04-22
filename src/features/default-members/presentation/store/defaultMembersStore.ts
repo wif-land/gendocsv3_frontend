@@ -3,21 +3,21 @@ import { persist } from 'zustand/middleware'
 import { DefaultMemberModel } from '../../data/models/DefaultMembersModel'
 
 interface StoreState {
-  members: DefaultMemberModel[]
-  setDefaultMembers: (careers: DefaultMemberModel[]) => void
-  addDefaultMembers: (career: DefaultMemberModel) => void
+  defaultMembers: DefaultMemberModel[]
+  setDefaultMembers: (members: DefaultMemberModel[]) => void
+  addDefaultMembers: (member: DefaultMemberModel) => void
 }
 
 const STORE_NAME = 'default-members-store'
 const DEFAULT_MEMBERS: DefaultMemberModel[] = []
 
-export const useDefaultMembers = create<StoreState>(
+export const useDefaultMembersStore = create<StoreState>(
   persist(
     (set) => ({
-      members: DEFAULT_MEMBERS,
-      setDefaultMembers: (members) => set({ members }),
+      defaultMembers: DEFAULT_MEMBERS,
+      setDefaultMembers: (defaultMembers) => set({ defaultMembers }),
       addDefaultMembers: (member) =>
-        set((state) => ({ members: [...state.members, member] })),
+        set((state) => ({ defaultMembers: [...state.defaultMembers, member] })),
     }),
     {
       name: STORE_NAME,

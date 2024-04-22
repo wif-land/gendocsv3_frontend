@@ -22,6 +22,7 @@ import { DefaultMemberModel } from '../../data/models/DefaultMembersModel'
 import { useParams } from 'next/navigation'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
 import useModulesStore from '../../../../shared/store/modulesStore'
+import { useDefaultMembersStore } from '../store/defaultMembersStore'
 
 export const useDefaultMembersView = () => {
   const { codeModule } = useParams()
@@ -29,24 +30,44 @@ export const useDefaultMembersView = () => {
     useModulesStore().modules,
     codeModule as string,
   )
+  const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
 
-  const [fetchedItems] = useState<IDefaultMembers[]>([
-    {
-      positionName: 'Developer',
-      positionOrder: 1,
-      isStudent: true,
-      member: {
-        dni: '12345678A',
-        firstName: 'John',
-        secondLastName: 'Villa',
-        firstLastName: 'Doe',
-        secondName: 'Martin',
-        isStudent: false,
-      },
-    },
-  ])
+  useEffect(() => {
+    DefaultMembersUseCasesImpl.getInstance()
+      .getByModuleId(moduleId)
+      .then((res) => {
+        setDefaultMembers(
+          res.map((member) => DefaultMemberModel.fromJson(member)),
+        )
+        setFormattedItems(
+          res.map((member) => ({
+            ...member,
+            member: {
+              id: member.member.id,
+              label: `${member.member.firstName} ${member.member.firstLastName} ${member.member.secondLastName} - ${member.member.dni}`,
+            },
+          })),
+        )
+      })
+  }, [])
 
-  const defaultValues = fetchedItems.map((item) => ({
+  // const [fetchedItems] = useState<IDefaultMembers[]>([
+  //   // {
+  //   //   positionName: 'Developer',
+  //   //   positionOrder: 1,
+  //   //   isStudent: true,
+  //   //   member: {
+  //   //     dni: '12345678A',
+  //   //     firstName: 'John',
+  //   //     secondLastName: 'Villa',
+  //   //     firstLastName: 'Doe',
+  //   //     secondName: 'Martin',
+  //   //     isStudent: false,
+  //   //   },
+  //   // },
+  // ])
+
+  const defaultValues = ([] as any).map((item: any) => ({
     ...item,
     member: `${(item.member as IMember).firstName} ${
       (item.member as IMember).firstLastName
@@ -64,7 +85,7 @@ export const useDefaultMembersView = () => {
   const [inputValue, setInputValue] = useState<string>('')
   const [members, setMembers] = useState<IMember[]>([])
   const [loading, setIsLoading] = useState(false)
-  const [formattedItems, setFormattedItems] = useState(defaultValues)
+  const [formattedItems, setFormattedItems] = useState<any[]>([])
   const [upserttedMembers, upsertMembers] = useState<IDefaultMembers[]>([])
   const [removedMembers, setRemovedMembers] = useState<IDefaultMembers[]>([])
   const [editedMembers, setEditedMembers] = useState<IDefaultMembers[]>([])
@@ -83,9 +104,9 @@ export const useDefaultMembersView = () => {
   const handleAddMember = () => {
     const newMember: IDefaultMembers = {
       member: methods.getValues('member') as string,
-      positionName: methods.getValues('positionName') as string,
+      positionName: methods.getValues('positionName'),
       positionOrder: formattedItems.length + 1,
-      isStudent: methods.getValues('isStudent') as boolean,
+      isStudent: methods.getValues('isStudent'),
     }
 
     if (
@@ -156,14 +177,13 @@ export const useDefaultMembersView = () => {
     const { active, over } = event
     if (active.id !== over.id) {
       const activeIndex = formattedItems.findIndex(
-        (item) => item.member.split('-')[1] === active.id,
+        (item) => item.id === active.id,
       )
-      const overIndex = formattedItems.findIndex(
-        (item) => item.member.split('-')[1] === over.id,
-      )
+      const overIndex = formattedItems.findIndex((item) => item.id === over.id)
+
       if (
         defaultValues.some(
-          (defaultValue) =>
+          (defaultValue: any) =>
             defaultValue.member === formattedItems[activeIndex].member,
         ) &&
         !editedMembers.some(
@@ -175,7 +195,7 @@ export const useDefaultMembersView = () => {
       }
       if (
         defaultValues.some(
-          (defaultValue) =>
+          (defaultValue: any) =>
             defaultValue.member === formattedItems[overIndex].member,
         ) &&
         !editedMembers.some(
@@ -225,12 +245,12 @@ export const useDefaultMembersView = () => {
       [
         ...upserttedMembers.map((member) => ({
           ...member,
-          member: (member.member as string).split('-')[1].trim(),
+          member: (member.member as IMember).id,
           action: ACTIONS.CREATE,
         })),
         ...editedMembers.map((member) => ({
           ...member,
-          member: (member.member as string).split('-')[1].trim(),
+          member: (member.member as IMember).id,
           action: ACTIONS.UPDATE,
         })),
         ...removedMembers.map((member) => ({
@@ -313,34 +333,31 @@ export const useDefaultMembersView = () => {
 
     setMembers(
       filteredMembers.map((member) => ({
-        dni: member.dni,
-        firstName: member.firstName,
-        firstLastName: member.firstLastName,
-        secondName: member.secondName,
-        secondLastName: member.secondLastName,
+        ...member,
         isStudent,
       })),
     )
   }
 
   return {
+    defaultMembers,
     ...methods,
     methods,
+    formattedItems,
+    areThereChanges,
+    isEditMode,
+    isOpen,
+    inputValue,
+    loading,
+    members,
     handleAddMember,
     handleRemoveMember,
     onSubmit,
     handleDragEnd,
-    formattedItems,
     sendData,
-    areThereChanges,
     handleEditMember,
     handleDiscardChanges,
-    isEditMode,
-    isOpen,
-    inputValue,
     setInputValue,
-    loading,
-    members,
     setMembers,
   }
 }

@@ -2,10 +2,15 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
 import { Button, Card, Stack, Box } from '@mui/material'
-import { IDefaultMembers } from '../../domain/entities/DefaultMembers'
 import { Icon } from '@iconify/react/dist/iconify.js'
 
-interface MemberFormat extends IDefaultMembers {
+interface MemberFormat {
+  id: number
+  member: {
+    id: string
+    label: string
+  }
+  positionName: string
   isStudent: boolean
 }
 
@@ -20,18 +25,14 @@ export const DefaultMemberSortableItem = ({
   index: number
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: (defaultMember.member as string).split('-')[1] })
+    useSortable({ id: defaultMember.id })
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      id={(defaultMember.member as string).split('-')[1]}
-    >
+    <div ref={setNodeRef} style={style} id={defaultMember.member.id}>
       <Card variant="outlined">
         <Stack
           sx={{
@@ -47,7 +48,7 @@ export const DefaultMemberSortableItem = ({
             {...attributes}
             style={{ cursor: 'grab' }}
             ref={setNodeRef}
-            id={(defaultMember.member as string).split('-')[1]}
+            id={defaultMember.member.id}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -71,13 +72,7 @@ export const DefaultMemberSortableItem = ({
             }}
           >
             <Box component="div" color="inherit">
-              {`${(defaultMember.member as string).split('-')[0]} `}
-            </Box>
-            <Box
-              component="div"
-              sx={{ typography: 'subtitle2', color: 'text.disabled' }}
-            >
-              {`  - ${(defaultMember.member as string).split('-')[1]}`}
+              {defaultMember.member.label}
             </Box>
           </Box>
 
@@ -114,16 +109,12 @@ export const DefaultMemberSortableItem = ({
             <Button
               variant="outlined"
               color="info"
-              onClick={() =>
-                onEdit((defaultMember.member as string).split('-')[1])
-              }
+              onClick={() => onEdit(defaultMember.member.id)}
             >
               Editar
             </Button>
             <Button
-              onClick={() =>
-                onDelete((defaultMember.member as string).split('-')[1])
-              }
+              onClick={() => onDelete(defaultMember.member.id)}
               variant="outlined"
               color="error"
               sx={{ px: 5 }}

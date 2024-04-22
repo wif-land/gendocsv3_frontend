@@ -28,27 +28,23 @@ export class DefaultMembersDataSourceImpl implements DefaultMembersDataSource {
   }
 
   getByModuleId = async (moduleId: number) => {
-    // try {
-    //   const response = await AxiosClient.get(
-    //     `${API_ROUTES.DEFAULT_MEMBERS}/module/${moduleId}`,
-    //   )
+    const response = await AxiosClient.get(
+      API_ROUTES.ATTENDANCE.GET_DEFAULT_MEMBERS_BY_MODULE_ID(moduleId),
+    )
 
-    //   return response.data
-    // } catch (error) {
-    //   throw error
-    // }
+    if ('error' in response) {
+      return []
+    }
 
-    throw new Error(`Method not implemented ${moduleId}`)
+    return response.data as DefaultMemberModel[]
   }
 
   createByModuleId = async (
     moduleId: number,
     defaultMembers: DefaultMemberModel[],
   ) => {
-    console.log({ defaultMembers })
-
     const response = await AxiosClient.post(
-      API_ROUTES.ATTENDANCE.DEFAULT_MEMBERS_BY_MODULE_ID(moduleId),
+      API_ROUTES.ATTENDANCE.EDIT_CREATE_DEFAULT_MEMBERS_BY_MODULE_ID(moduleId),
       defaultMembers,
     )
 
