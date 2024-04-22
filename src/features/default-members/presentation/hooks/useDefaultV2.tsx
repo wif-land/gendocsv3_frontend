@@ -215,15 +215,15 @@ export const useDefaultMembersView = () => {
   }
 
   const sendData = async () => {
-    console.log('Agregados')
-    console.log(upserttedMembers)
+    // console.log('Agregados')
+    // console.log(upserttedMembers)
 
-    console.log('Eliminados')
-    console.log(removedMembers)
+    // console.log('Eliminados')
+    // console.log(removedMembers)
 
-    console.log('Editados')
-    console.log(editedMembers)
-    console.log(formattedItems)
+    // console.log('Editados')
+    // console.log(editedMembers)
+    // console.log(formattedItems)
 
     await DefaultMembersUseCasesImpl.getInstance().createOrEditByModuleId(
       moduleId,
