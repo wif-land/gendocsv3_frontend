@@ -130,7 +130,7 @@ export const useDefaultMembersView = () => {
     setPositionOfSelectedMember(
       editedMember ? formattedItems.indexOf(editedMember) : null,
     )
-    handleRemoveMember(id)
+    // handleRemoveMember(id)
     isEditMode.onTrue()
   }
 
@@ -161,7 +161,7 @@ export const useDefaultMembersView = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDragEnd = (event: any) => {
     const { active, over } = event
-    if (active.id !== over.id) {
+    if (active?.id !== over?.id) {
       const activeIndex = formattedItems.findIndex(
         (item) => item.id === active.id,
       )
@@ -309,7 +309,7 @@ export const useDefaultMembersView = () => {
     isStudent: boolean,
   ) => {
     const currentMemberDNIs = new Set(
-      formattedItems.map((item) => item.member.split('-')[1].trim()),
+      formattedItems.map((item) => item.member.dni),
     )
 
     const filteredMembers = membersToFilter.filter(
