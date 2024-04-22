@@ -20,8 +20,8 @@ export const DefaultMemberSortableItem = ({
   onEdit,
 }: {
   defaultMember: MemberFormat
-  onDelete: (id: string) => void
-  onEdit: (id: string) => void
+  onDelete: (id: number) => void
+  onEdit: (id: number) => void
   index: number
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -109,12 +109,12 @@ export const DefaultMemberSortableItem = ({
             <Button
               variant="outlined"
               color="info"
-              onClick={() => onEdit(defaultMember.member.id)}
+              onClick={() => onEdit(defaultMember.id)}
             >
               Editar
             </Button>
             <Button
-              onClick={() => onDelete(defaultMember.member.id)}
+              onClick={() => onDelete(defaultMember.id)}
               variant="outlined"
               color="error"
               sx={{ px: 5 }}

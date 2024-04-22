@@ -163,7 +163,7 @@ const DefaultMembersView: React.FC = () => {
                       <Button
                         onClick={handleDiscardChanges}
                         variant="outlined"
-                        color="error"
+                        color="secondary"
                         sx={{
                           flexGrow: 1,
                         }}
@@ -173,6 +173,7 @@ const DefaultMembersView: React.FC = () => {
                       <Button
                         onClick={sendData}
                         variant="contained"
+                        color="primary"
                         sx={{
                           flexGrow: 1,
                         }}

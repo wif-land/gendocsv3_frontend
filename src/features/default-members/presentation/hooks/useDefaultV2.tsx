@@ -67,16 +67,6 @@ export const useDefaultMembersView = () => {
   //   // },
   // ])
 
-  const defaultValues = ([] as any).map((item: any) => ({
-    ...item,
-    member: `${(item.member as IMember).firstName} ${
-      (item.member as IMember).firstLastName
-    } ${(item.member as IMember).secondLastName} - ${
-      (item.member as IMember).dni
-    }`,
-    isStudent: (item.member as IMember).isStudent,
-  }))
-
   const areThereChanges = useBoolean()
   const isEditMode = useBoolean()
   const isOpen = useBoolean()
@@ -133,10 +123,8 @@ export const useDefaultMembersView = () => {
     setFormattedItems((prev) => [...prev, newMember as any])
   }
 
-  const handleEditMember = (id: string) => {
-    const editedMember = formattedItems.find(
-      (item) => item.member.split('-')[1] === id,
-    )
+  const handleEditMember = (id: number) => {
+    const editedMember = formattedItems.find((item) => item.id === id)
     methods.setValue('member', editedMember?.member as string)
     methods.setValue('positionName', editedMember?.positionName as string)
     setPositionOfSelectedMember(
@@ -146,10 +134,8 @@ export const useDefaultMembersView = () => {
     isEditMode.onTrue()
   }
 
-  const handleRemoveMember = (id: string) => {
-    const memberIndex = formattedItems.findIndex(
-      (item) => item.member.split('-')[1] === id,
-    )
+  const handleRemoveMember = (id: number) => {
+    const memberIndex = formattedItems.findIndex((item) => item.id === id)
     const memberToRemove = formattedItems[memberIndex]
 
     if (upserttedMembers.includes(memberToRemove)) {
@@ -181,26 +167,26 @@ export const useDefaultMembersView = () => {
       )
       const overIndex = formattedItems.findIndex((item) => item.id === over.id)
 
+      const hasMatch = defaultMembers.some(
+        (defaultValue: any) =>
+          defaultValue.id === formattedItems[activeIndex].id,
+      )
+
       if (
-        defaultValues.some(
-          (defaultValue: any) =>
-            defaultValue.member === formattedItems[activeIndex].member,
-        ) &&
+        hasMatch &&
         !editedMembers.some(
           (editedMember) =>
-            editedMember.member === formattedItems[activeIndex].member,
+            editedMember.member === formattedItems[activeIndex].member.id,
         )
       ) {
         setEditedMembers((prev) => [...prev, formattedItems[activeIndex]])
       }
+
       if (
-        defaultValues.some(
-          (defaultValue: any) =>
-            defaultValue.member === formattedItems[overIndex].member,
-        ) &&
+        hasMatch &&
         !editedMembers.some(
           (editedMember) =>
-            editedMember.member === formattedItems[overIndex].member,
+            editedMember.member === formattedItems[overIndex].id,
         )
       ) {
         setEditedMembers((prev) => [...prev, formattedItems[overIndex]])
@@ -210,7 +196,6 @@ export const useDefaultMembersView = () => {
       const activeItem = newItems.splice(activeIndex, 1)[0]
 
       newItems.splice(overIndex, 0, activeItem)
-
       newItems.forEach((item, index) => {
         item.positionOrder = index + 1
       })
@@ -220,7 +205,7 @@ export const useDefaultMembersView = () => {
   }
 
   const handleDiscardChanges = () => {
-    setFormattedItems(defaultValues)
+    setFormattedItems(defaultMembers)
     upsertMembers([])
     setRemovedMembers([])
     setEditedMembers([])
