@@ -3,7 +3,6 @@
 import LoadingButton from '@mui/lab/LoadingButton'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
-import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Unstable_Grid2'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
@@ -19,8 +18,7 @@ import { Controller } from 'react-hook-form'
 import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
-import { Box, Chip, IconButton, Tooltip, alpha } from '@mui/material'
-import Iconify from '../../../../core/iconify'
+import { Box, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
 
 type Props = {
@@ -33,18 +31,13 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
     methods,
     unusedFunctionaries,
     onSubmit,
-    handleAddAttendees,
-    handleRemoveAttendee,
     setSearchField,
     loading,
-    attendees: {
-      president: { isOpenPresident, handleOpenPresident, handleClosePresident },
-      subrogant: { isOpenSubrogant, handleOpenSubrogant, handleCloseSubrogant },
-    },
+    defaultMembers,
   } = useCouncilsForm(currentCouncil)
   const { handleSubmit, control, watch } = methods
 
-  const values = watch()
+  console.log(watch().members)
 
   const renderDetails = (
     <>
@@ -68,15 +61,14 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
             <RHFTextField name="name" label="Nombre" required />
 
             <RHFSelect
-              native
               name="type"
               label="Tipo"
               InputLabelProps={{ shrink: true }}
             >
               {COUNCIL_TYPES.map((council) => (
-                <option key={council.value} value={council.value}>
+                <MenuItem key={council.value} value={council.value}>
                   {council.label}
-                </option>
+                </MenuItem>
               ))}
             </RHFSelect>
 
@@ -101,7 +93,6 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                       required: true,
                     },
                   }}
-                  disablePast
                 />
               )}
             />
@@ -119,7 +110,8 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
             Miembros
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Se elijen a los miembros del consejo
+            Puedes elegir entre los miembros representantes por defecto o en su
+            defecto elegir arbitrariamente a los miembros
           </Typography>
         </Grid>
       )}
@@ -129,7 +121,33 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFAutocomplete
+            {defaultMembers &&
+              defaultMembers.map((member, index) => (
+                <RHFAutocomplete
+                  key={member.id}
+                  name={`members[${index}]`}
+                  label={member.positionName}
+                  placeholder="Escribe el nombre o cédula del miembro deseado"
+                  freeSolo
+                  loading={loading.value}
+                  onClose={() => {
+                    setSearchField('')
+                  }}
+                  noOptionsText="No hay resultados"
+                  onInputChange={(_event, newInputValue) => {
+                    setSearchField(newInputValue)
+                  }}
+                  options={unusedFunctionaries!.map((functionary) => ({
+                    id: functionary.id,
+                    label: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                    positionName: member.positionName,
+                    positionOrder: member.positionOrder,
+                    isStudent: member.isStudent,
+                  }))}
+                />
+              ))}
+
+            {/* <RHFAutocomplete
               name="president"
               label="Presidente"
               placeholder="Escribe el nombre del presidente del consejo"
@@ -243,10 +261,9 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                   />
                 ))
               }
-            />
+            /> */}
 
-            <Divider sx={{ borderStyle: 'dashed' }} />
-
+            {/*
             {values.attendees &&
               unusedFunctionaries &&
               values.attendees.map((attendee, index) => (
@@ -298,26 +315,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                     <Iconify icon="fluent:delete-20-regular" />
                   </IconButton>
                 </Box>
-              ))}
-
-            <Stack
-              direction="row"
-              flexWrap="wrap"
-              alignItems="center"
-              spacing={1}
-            >
-              <Tooltip title="Añadir miembro">
-                <IconButton
-                  onClick={handleAddAttendees}
-                  sx={{
-                    bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
-                    border: (theme) => `dashed 1px ${theme.palette.divider}`,
-                  }}
-                >
-                  <Iconify icon="mingcute:add-line" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
+              ))} */}
           </Stack>
         </Card>
       </Grid>
