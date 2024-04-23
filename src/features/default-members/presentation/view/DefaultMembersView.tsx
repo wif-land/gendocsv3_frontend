@@ -26,10 +26,10 @@ const DefaultMembersView: React.FC = () => {
     handleEditMember,
     isEditMode,
     isOpen,
-    // loading,
+    loading,
     setInputValue,
     members,
-    // setMembers,
+    setMembers,
   } = useDefaultMembersView()
 
   return (
@@ -90,9 +90,9 @@ const DefaultMembersView: React.FC = () => {
                 onClose={() => {
                   setInputValue('')
                   isOpen.onFalse()
-                  // setMembers([])
+                  setMembers([])
                 }}
-                // loading={loading}
+                loading={loading}
                 noOptionsText="No hay resultados"
                 onInputChange={(event, newInputValue) => {
                   setInputValue(newInputValue)

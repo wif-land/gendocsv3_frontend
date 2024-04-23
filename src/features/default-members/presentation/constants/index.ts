@@ -9,7 +9,7 @@ export const NewDefaultMemberSchema = Yup.object().shape({
 
 export const resolveDefaultValues = (member?: IDefaultMembers) => ({
   positionName: member?.positionName || '',
-  member: member?.member || null,
+  member: member?.member || '',
   isStudent: !!member?.isStudent,
 })
 

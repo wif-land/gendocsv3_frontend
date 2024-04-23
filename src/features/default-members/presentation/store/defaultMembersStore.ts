@@ -1,15 +1,15 @@
 import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { DefaultMemberModel } from '../../data/models/DefaultMembersModel'
+import { IDefaultMembers } from '../../domain/entities/DefaultMembers'
 
 interface StoreState {
-  defaultMembers: DefaultMemberModel[]
-  setDefaultMembers: (members: DefaultMemberModel[]) => void
-  addDefaultMembers: (member: DefaultMemberModel) => void
+  defaultMembers: IDefaultMembers[]
+  setDefaultMembers: (members: IDefaultMembers[]) => void
+  addDefaultMembers: (member: IDefaultMembers) => void
 }
 
 const STORE_NAME = 'default-members-store'
-const DEFAULT_MEMBERS: DefaultMemberModel[] = []
+const DEFAULT_MEMBERS: IDefaultMembers[] = []
 
 export const useDefaultMembersStore = create<StoreState>(
   persist(
@@ -17,7 +17,9 @@ export const useDefaultMembersStore = create<StoreState>(
       defaultMembers: DEFAULT_MEMBERS,
       setDefaultMembers: (defaultMembers) => set({ defaultMembers }),
       addDefaultMembers: (member) =>
-        set((state) => ({ defaultMembers: [...state.defaultMembers, member] })),
+        set((state) => ({
+          defaultMembers: [...state.defaultMembers, member],
+        })),
     }),
     {
       name: STORE_NAME,

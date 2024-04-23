@@ -32,25 +32,6 @@ export const useDefaultMembersView = () => {
   )
   const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
 
-  useEffect(() => {
-    DefaultMembersUseCasesImpl.getInstance()
-      .getByModuleId(moduleId)
-      .then((res) => {
-        setDefaultMembers(
-          res.map((member) => DefaultMemberModel.fromJson(member)),
-        )
-        setFormattedItems(
-          res.map((member) => ({
-            ...member,
-            member: {
-              id: member.member.id,
-              label: `${member.member.firstName} ${member.member.firstLastName} ${member.member.secondLastName} - ${member.member.dni}`,
-            },
-          })),
-        )
-      })
-  }, [])
-
   // const [fetchedItems] = useState<IDefaultMembers[]>([
   //   // {
   //   //   positionName: 'Developer',
@@ -70,7 +51,6 @@ export const useDefaultMembersView = () => {
   const areThereChanges = useBoolean()
   const isEditMode = useBoolean()
   const isOpen = useBoolean()
-  const isStudent = useBoolean()
 
   const [inputValue, setInputValue] = useState<string>('')
   const [members, setMembers] = useState<IMember[]>([])
@@ -86,7 +66,6 @@ export const useDefaultMembersView = () => {
   const debouncedValue = useDebounce(inputValue)
 
   const methods = useForm({
-    // @ts-expect-error - This is a known issue with the library
     resolver: yupResolver(NewDefaultMemberSchema),
     defaultValues: resolveDefaultValues({} as IDefaultMembers),
   })
@@ -104,7 +83,9 @@ export const useDefaultMembersView = () => {
         (item) => item.positionName === newMember.positionName,
       )
     ) {
-      enqueueSnackbar('Ya existe un miembro con esa posición')
+      enqueueSnackbar('Ya existe un miembro con esa posición', {
+        variant: 'error',
+      })
       return
     }
 
@@ -130,8 +111,9 @@ export const useDefaultMembersView = () => {
     setPositionOfSelectedMember(
       editedMember ? formattedItems.indexOf(editedMember) : null,
     )
-    // handleRemoveMember(id)
+    handleRemoveMember(id)
     isEditMode.onTrue()
+    console.log(formattedItems.indexOf(editedMember))
   }
 
   const handleRemoveMember = (id: number) => {
@@ -199,7 +181,6 @@ export const useDefaultMembersView = () => {
       newItems.forEach((item, index) => {
         item.positionOrder = index + 1
       })
-
       setFormattedItems(newItems)
     }
   }
@@ -215,16 +196,6 @@ export const useDefaultMembersView = () => {
   }
 
   const sendData = async () => {
-    // console.log('Agregados')
-    // console.log(upserttedMembers)
-
-    // console.log('Eliminados')
-    // console.log(removedMembers)
-
-    // console.log('Editados')
-    // console.log(editedMembers)
-    // console.log(formattedItems)
-
     await DefaultMembersUseCasesImpl.getInstance().createOrEditByModuleId(
       moduleId,
       [
@@ -245,6 +216,7 @@ export const useDefaultMembersView = () => {
         })),
       ].map((member) => DefaultMemberModel.fromJson(member)),
     )
+    handleDiscardChanges()
   }
 
   useEffect(() => {
@@ -275,7 +247,8 @@ export const useDefaultMembersView = () => {
 
     const fetchMembers = async () => {
       // TODO: Implement strategy pattern
-      const UseCasesImpl = isStudent.value
+      const isStudent = methods.getValues('isStudent')
+      const UseCasesImpl = isStudent
         ? StudentUseCasesImpl
         : FunctionaryUseCasesImpl
 
@@ -283,12 +256,12 @@ export const useDefaultMembersView = () => {
         .getByFilters({ field: debouncedValue })
         .then((res) => {
           if (isMounted) {
-            const membersData = isStudent.value
+            const membersData = isStudent
               ? (res as { count: number; students: StudentModel[] }).students
               : (res as { count: number; functionaries: FunctionaryModel[] })
                   .functionaries
 
-            filterAndSetMembers(membersData, isStudent.value)
+            filterAndSetMembers(membersData, isStudent)
           }
 
           setIsLoading(false)
@@ -323,6 +296,32 @@ export const useDefaultMembersView = () => {
       })),
     )
   }
+
+  useEffect(() => {
+    DefaultMembersUseCasesImpl.getInstance()
+      .getByModuleId(moduleId)
+      .then((res) => {
+        1
+        setDefaultMembers(
+          res.map((member) => ({
+            ...member,
+            member: {
+              ...member.member,
+              label: `${member.member.firstName} ${member.member.firstLastName} ${member.member.secondLastName} - ${member.member.dni}`,
+            },
+          })),
+        )
+        setFormattedItems(
+          res.map((member) => ({
+            ...member,
+            member: {
+              id: member.member.id,
+              label: `${member.member.firstName} ${member.member.firstLastName} ${member.member.secondLastName} - ${member.member.dni}`,
+            },
+          })),
+        )
+      })
+  }, [])
 
   return {
     defaultMembers,
