@@ -1,6 +1,6 @@
 import { useCouncilStore } from '../store/councilsStore'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { CouncilAttendanceRole, ICouncil } from '../../domain/entities/ICouncil'
+import { ICouncil } from '../../domain/entities/ICouncil'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,32 +9,16 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
-import {
-  ICouncilAttendee,
-  ICreateCouncilAttendee,
-} from '../../domain/entities/ICouncilAttendee'
 import { NewCouncilSchema, resolveDefaultValues } from '../constants'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
-import { IModule } from '../../../modules/types/IModule'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useDefaultMembersStore } from '../../../default-members/presentation/store/defaultMembersStore'
+import { DefaultMembersUseCasesImpl } from '../../../default-members/domain/usecases/DefaultMemberServices'
+import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
 
-interface FormValuesProps extends ICouncil {
-  president: string
-  subrogant: string
-}
-
-const MAX_ATTENDEES = 10
-const resolveModuleId = (modules: IModule[], codeModule: string) => {
-  const module = modules.find(
-    (module) => module.code === (codeModule as string).toUpperCase(),
-  )
-
-  return module?.id
-}
-const getDni = (attendee?: string): string =>
-  attendee?.split('-')[1]?.trim() ?? ''
+interface FormValuesProps extends ICouncil {}
 
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const router = useRouter()
@@ -42,19 +26,19 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const { codeModule } = useParams()
 
   const { councils, addCouncil, setCouncils } = useCouncilStore()
-  const { user } = useAccountStore()
-  const [searchField, setSearchField] = useState('')
 
+  const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
   const moduleIdentifier = resolveModuleId(
     useModulesStore().modules,
     codeModule as string,
   )
+
+  const { user } = useAccountStore()
+  const [searchField, setSearchField] = useState('')
+
   const [unusedFunctionaries, setUnusedFunctionaries] = useState<
     IFunctionary[]
   >([])
-  const isOpenPresident = useBoolean()
-  const isOpenSubrogant = useBoolean()
-  const isOpenMembers = useBoolean()
   const loading = useBoolean()
 
   const defaultValues: Partial<ICouncil> = useMemo(
@@ -68,51 +52,15 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   })
   const values = methods.watch()
 
-  const handleAddAttendee = () => {
-    const attendees = values.attendees as string[]
-
-    if (attendees.length >= MAX_ATTENDEES) return
-    if (attendees.length > 0 && attendees[attendees.length - 1] === '') return
-
-    attendees.push('')
-    methods.setValue('attendees', attendees)
-  }
-
-  const handleRemoveAttendee = (index: number) => {
-    handleDeleteAttendeesQuantity(index)
-    const attendees = values.attendees as string[]
-    methods.setValue('attendees', attendees)
-  }
-
-  const handleDeleteAttendeesQuantity = (index: number) => {
-    const attendees = values.attendees as string[]
-    attendees.splice(index, 1)
-  }
-
   const handleCreateCouncil = async (values: FormValuesProps) => {
-    const { president, subrogant, ...rest } = values
-
-    const actualAttendees: ICreateCouncilAttendee[] = [
-      {
-        functionaryId: getDni(president),
-        role: CouncilAttendanceRole.PRESIDENT,
-      },
-      {
-        functionaryId: getDni(subrogant),
-        role: CouncilAttendanceRole.SUBROGATE,
-      },
-    ]
-
     const council = await CouncilsUseCasesImpl.getInstance().create({
-      ...rest,
+      ...values,
       moduleId: moduleIdentifier ?? 0,
       userId: user?.id as number,
-      attendees: actualAttendees,
+      members: values.members?.map((member) => ({
+        ...member,
+      })),
     })
-
-    if (!council) {
-      throw new Error('Error al crear el consejo')
-    }
 
     addCouncil(council)
   }
@@ -121,39 +69,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     id: number,
     editedFields: Partial<FormValuesProps>,
   ) => {
-    const { president, subrogant, ...rest } = editedFields
-
-    const attendees = []
-    if (president) {
-      const presidentId = unusedFunctionaries?.find(
-        (functionary) => functionary.dni === getDni(president),
-      )
-
-      if (presidentId) {
-        attendees.push({
-          functionaryId: presidentId,
-          role: CouncilAttendanceRole.PRESIDENT,
-        })
-      }
-    }
-
-    if (subrogant) {
-      const subrogantId = unusedFunctionaries?.find(
-        (functionary) => functionary.dni === getDni(subrogant),
-      )
-
-      if (subrogantId) {
-        attendees.push({
-          functionary: subrogantId,
-          role: CouncilAttendanceRole.SUBROGATE,
-        })
-      }
-    }
-
-    await CouncilsUseCasesImpl.getInstance().update(id, {
-      ...rest,
-      attendees: attendees as ICouncilAttendee[],
-    })
+    await CouncilsUseCasesImpl.getInstance().update(id, editedFields)
   }
 
   const onSubmit = useCallback(
@@ -161,7 +77,13 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       loading.onTrue()
       try {
         if (!currentCouncil) {
-          await handleCreateCouncil(data)
+          await handleCreateCouncil({
+            ...data,
+            members: data.members?.map((member) => ({
+              ...member,
+              member: member.id,
+            })),
+          })
         } else {
           const editedFields = getEditedFields<Partial<FormValuesProps>>(
             defaultValues,
@@ -208,29 +130,21 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   useEffect(() => {
     if (!unusedFunctionaries) return
 
-    const [president, subrogant, attendees] = [
-      unusedFunctionaries.find(
-        (functionary) => functionary.dni === getDni(values.president),
-      ),
-      unusedFunctionaries.find(
-        (functionary) => functionary.dni === getDni(values.subrogant),
-      ),
-      (values.attendees as string[]).map((attendee) =>
+    const [attendees] = [
+      values.members?.map((attendee) =>
         unusedFunctionaries.find(
-          (functionary) => functionary.dni === getDni(attendee),
+          (functionary) => functionary.dni === attendee.member.dni,
         ),
       ),
     ]
 
     const currentUnusedFunctionaries = unusedFunctionaries.filter(
       (functionary) =>
-        functionary.dni !== president?.dni &&
-        functionary.dni !== subrogant?.dni &&
-        !attendees.some((attendee) => attendee?.dni === functionary.dni),
+        !attendees?.some((attendee) => attendee?.dni === functionary.dni),
     )
 
     setUnusedFunctionaries(currentUnusedFunctionaries)
-  }, [values.attendees, values.president, values.subrogant])
+  }, [values.members])
 
   const searchDebounced = useDebounce(searchField)
 
@@ -238,23 +152,20 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     let isMounted = true
     loading.onTrue()
     if (searchDebounced.includes('-')) return
+
     FunctionaryUseCasesImpl.getInstance()
       .getByFilters({ field: searchDebounced })
       .then((result) => {
         if (!isMounted) return
 
         if (result.functionaries.length > 0) {
-          const usedFunctionaries = [
-            ...(methods.getValues().attendees as string[]),
-            methods.getValues().president,
-            methods.getValues().subrogant,
-          ]
-          const attendees = usedFunctionaries.map((attendee) =>
-            getDni(attendee),
-          )
+          const usedFunctionaries = methods.getValues().members
 
           const filteredFunctionaries = result.functionaries.filter(
-            (functionary) => !attendees.includes(functionary.dni),
+            (functionary) =>
+              usedFunctionaries?.every(
+                (attendee) => attendee?.member?.dni !== functionary.dni,
+              ),
           )
 
           setUnusedFunctionaries(filteredFunctionaries)
@@ -267,42 +178,26 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     return () => {
       isMounted = false
     }
-  }, [
-    searchDebounced,
-    isOpenMembers.value,
-    isOpenPresident.value,
-    isOpenSubrogant.value,
-  ])
+  }, [searchDebounced])
+
+  useEffect(() => {
+    DefaultMembersUseCasesImpl.getInstance()
+      .getByModuleId(moduleIdentifier!)
+      .then((result) => {
+        setDefaultMembers(result)
+      })
+  }, [])
 
   return {
     councils,
     methods,
     unusedFunctionaries,
     defaultValues,
-    handleAddAttendees: handleAddAttendee,
-    handleRemoveAttendee,
-    handleDeleteAttendeesQuantity,
     setCouncils,
     handleUpdateCouncil,
     onSubmit,
     setSearchField,
     loading,
-    attendees: {
-      president: {
-        isOpenPresident,
-        handleOpenPresident: isOpenPresident.onTrue,
-        handleClosePresident: isOpenPresident.onFalse,
-      },
-      subrogant: {
-        isOpenSubrogant,
-        handleOpenSubrogant: isOpenSubrogant.onTrue,
-        handleCloseSubrogant: isOpenSubrogant.onFalse,
-      },
-      members: {
-        isOpenMembers,
-        handleOpenMembers: isOpenMembers.onTrue,
-        handleCloseMembers: isOpenMembers.onFalse,
-      },
-    },
+    defaultMembers,
   }
 }
