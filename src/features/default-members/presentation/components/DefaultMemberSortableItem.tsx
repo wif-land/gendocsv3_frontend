@@ -32,7 +32,7 @@ export const DefaultMemberSortableItem = ({
   }
 
   return (
-    <div ref={setNodeRef} style={style} id={defaultMember.member.id}>
+    <div ref={setNodeRef} style={style} id={`${defaultMember.id}`}>
       <Card variant="outlined">
         <Stack
           sx={{

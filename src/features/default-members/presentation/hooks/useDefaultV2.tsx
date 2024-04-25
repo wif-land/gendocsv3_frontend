@@ -74,7 +74,10 @@ export const useDefaultMembersView = () => {
     const newMember: IDefaultMembers = {
       member: methods.getValues('member') as string,
       positionName: methods.getValues('positionName'),
-      positionOrder: formattedItems.length + 1,
+      positionOrder:
+        isEditMode && positionOfSelectedMember !== null
+          ? positionOfSelectedMember + 1
+          : formattedItems.length + 1,
       isStudent: methods.getValues('isStudent'),
     }
 
@@ -108,12 +111,12 @@ export const useDefaultMembersView = () => {
     const editedMember = formattedItems.find((item) => item.id === id)
     methods.setValue('member', editedMember?.member as string)
     methods.setValue('positionName', editedMember?.positionName as string)
+    methods.setValue('isStudent', editedMember?.isStudent as boolean)
     setPositionOfSelectedMember(
       editedMember ? formattedItems.indexOf(editedMember) : null,
     )
     handleRemoveMember(id)
     isEditMode.onTrue()
-    console.log(formattedItems.indexOf(editedMember))
   }
 
   const handleRemoveMember = (id: number) => {
@@ -134,9 +137,9 @@ export const useDefaultMembersView = () => {
   }
 
   const onSubmit = () => {
-    isEditMode.value && isEditMode.onFalse()
     handleAddMember()
     methods.reset()
+    isEditMode.value && isEditMode.onFalse()
     setPositionOfSelectedMember(null)
   }
 
