@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IDefaultMembers, IMember } from '../../domain/entities/DefaultMembers'
+import {
+  IDefaultMembers,
+  IDefaultMembersToUpdate,
+  IMember,
+} from '../../domain/entities/DefaultMembers'
 import { useEffect, useState } from 'react'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -32,22 +36,6 @@ export const useDefaultMembersView = () => {
   )
   const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
 
-  // const [fetchedItems] = useState<IDefaultMembers[]>([
-  //   // {
-  //   //   positionName: 'Developer',
-  //   //   positionOrder: 1,
-  //   //   isStudent: true,
-  //   //   member: {
-  //   //     dni: '12345678A',
-  //   //     firstName: 'John',
-  //   //     secondLastName: 'Villa',
-  //   //     firstLastName: 'Doe',
-  //   //     secondName: 'Martin',
-  //   //     isStudent: false,
-  //   //   },
-  //   // },
-  // ])
-
   const areThereChanges = useBoolean()
   const isEditMode = useBoolean()
   const isOpen = useBoolean()
@@ -62,6 +50,7 @@ export const useDefaultMembersView = () => {
   const [positionOfSelectedMember, setPositionOfSelectedMember] = useState<
     number | null
   >(null)
+  const [updateKey, setUpdateKey] = useState(0)
 
   const debouncedValue = useDebounce(inputValue)
 
@@ -152,31 +141,6 @@ export const useDefaultMembersView = () => {
       )
       const overIndex = formattedItems.findIndex((item) => item.id === over.id)
 
-      const hasMatch = defaultMembers.some(
-        (defaultValue: any) =>
-          defaultValue.id === formattedItems[activeIndex].id,
-      )
-
-      if (
-        hasMatch &&
-        !editedMembers.some(
-          (editedMember) =>
-            editedMember.member === formattedItems[activeIndex].member.id,
-        )
-      ) {
-        setEditedMembers((prev) => [...prev, formattedItems[activeIndex]])
-      }
-
-      if (
-        hasMatch &&
-        !editedMembers.some(
-          (editedMember) =>
-            editedMember.member === formattedItems[overIndex].id,
-        )
-      ) {
-        setEditedMembers((prev) => [...prev, formattedItems[overIndex]])
-      }
-
       const newItems = [...formattedItems]
       const activeItem = newItems.splice(activeIndex, 1)[0]
 
@@ -185,7 +149,53 @@ export const useDefaultMembersView = () => {
         item.positionOrder = index + 1
       })
       setFormattedItems(newItems)
+      comparePositionChange()
     }
+  }
+
+  const comparePositionChange = () => {
+    formattedItems.forEach((item, index) => {
+      const originalItem = defaultMembers.find(
+        (defaultItem) => (defaultItem.member as IMember).id === item.member.id,
+      )
+
+      if (originalItem) {
+        if (editedMembers.length > 0) {
+          const existingIndex = editedMembers.findIndex(
+            (editedMember) =>
+              (editedMember.member as IDefaultMembersToUpdate).id ===
+              item.member.id,
+          )
+
+          if (existingIndex !== -1) {
+            setEditedMembers((prev) => [
+              ...prev.map((prevItem, i) =>
+                i === existingIndex
+                  ? { ...prevItem, positionOrder: item.positionOrder }
+                  : prevItem,
+              ),
+            ])
+            return
+          }
+        } else {
+          setEditedMembers((prev) => [
+            ...prev,
+            {
+              ...item,
+              positionOrder: formattedItems[index].positionOrder,
+            } as any,
+          ])
+        }
+      }
+    })
+
+    // evaluate if uppserted memebers should be updatable
+    upserttedMembers.forEach((member) => {
+      const index = formattedItems.findIndex(
+        (item) => item.member.id === member.member,
+      )
+      member.positionOrder = formattedItems[index].positionOrder
+    })
   }
 
   const handleDiscardChanges = () => {
@@ -220,6 +230,7 @@ export const useDefaultMembersView = () => {
       ].map((member) => DefaultMemberModel.fromJson(member)),
     )
     handleDiscardChanges()
+    setUpdateKey((prevKey) => prevKey + 1)
   }
 
   useEffect(() => {
@@ -324,7 +335,7 @@ export const useDefaultMembersView = () => {
           })),
         )
       })
-  }, [])
+  }, [updateKey])
 
   return {
     defaultMembers,
