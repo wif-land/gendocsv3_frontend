@@ -1,6 +1,4 @@
-import { Alert, Box, Button, Card, Container, Stack } from '@mui/material'
-import { DndContext, closestCenter } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { Alert, Box, Button, Card, Chip, Container, Stack } from '@mui/material'
 import { DefaultMemberSortableItem } from '../components/DefaultMemberSortableItem'
 import { useDefaultMembersView } from '../hooks/useDefaultV2'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
@@ -18,7 +16,6 @@ const DefaultMembersView: React.FC = () => {
     handleRemoveMember,
     methods,
     onSubmit,
-    handleDragEnd,
     formattedItems,
     sendData,
     areThereChanges,
@@ -31,6 +28,17 @@ const DefaultMembersView: React.FC = () => {
     members,
     setMembers,
   } = useDefaultMembersView()
+
+  const showMessage = (index: number) => {
+    switch (index) {
+      case 0:
+        return 'Presidente'
+      case 1:
+        return 'Presidente subrogante'
+      default:
+        return 'Miembro'
+    }
+  }
 
   return (
     <Container>
@@ -63,6 +71,19 @@ const DefaultMembersView: React.FC = () => {
             Añade los miembros por defecto que pertenecerán al módulo. El orden
             de los miembros se puede modificar arrastrando y soltando
           </Alert>
+
+          {formattedItems.length < 2 && (
+            <Alert
+              severity="error"
+              variant="outlined"
+              sx={{
+                mb: 3,
+              }}
+            >
+              Es necesario ingresar un presidente y un presidente subrogante
+            </Alert>
+          )}
+
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Box
               sx={{
@@ -82,7 +103,7 @@ const DefaultMembersView: React.FC = () => {
               <RHFAutocomplete
                 sx={{ width: '100%' }}
                 name="member"
-                label="Miembro"
+                label={`Agregar ${showMessage(formattedItems.length)}`}
                 freeSolo
                 placeholder="Buscar miembro por nombre o DNI"
                 open={isOpen.value}
@@ -119,73 +140,67 @@ const DefaultMembersView: React.FC = () => {
                 </Button>
               ) : (
                 <Button type="submit" variant="contained" sx={{ width: '50%' }}>
-                  Agregar Nuevo
+                  {`Agregar ${showMessage(formattedItems.length)}`}
                 </Button>
               )}
             </Box>
           </FormProvider>
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={formattedItems.map((item) => item.id)}
-              strategy={verticalListSortingStrategy}
+
+          <Stack spacing={3} sx={{ py: 3 }}>
+            <Box
+              sx={{
+                columnGap: 2,
+                rowGap: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                px: 3,
+              }}
             >
-              <Stack spacing={3} sx={{ py: 3 }}>
+              {formattedItems.map((item, index) => (
+                <>
+                  <Chip label={showMessage(index)} variant="outlined" />
+                  <DefaultMemberSortableItem
+                    defaultMember={item}
+                    onDelete={handleRemoveMember}
+                    onEdit={handleEditMember}
+                    key={index}
+                    index={index}
+                  />
+                </>
+              ))}
+              {areThereChanges.value && (
                 <Box
                   sx={{
-                    columnGap: 2,
-                    rowGap: 3,
                     display: 'flex',
-                    flexDirection: 'column',
-                    px: 3,
+                    flexDirection: 'row',
+                    width: '100%',
+                    gap: 2,
                   }}
                 >
-                  {formattedItems.map((item, index) => (
-                    <DefaultMemberSortableItem
-                      defaultMember={item}
-                      onDelete={handleRemoveMember}
-                      onEdit={handleEditMember}
-                      key={index}
-                      index={index}
-                    />
-                  ))}
-                  {areThereChanges.value && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        width: '100%',
-                        gap: 2,
-                      }}
-                    >
-                      <Button
-                        onClick={handleDiscardChanges}
-                        variant="outlined"
-                        color="secondary"
-                        sx={{
-                          flexGrow: 1,
-                        }}
-                      >
-                        Descartar
-                      </Button>
-                      <Button
-                        onClick={sendData}
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                          flexGrow: 1,
-                        }}
-                      >
-                        Guardar
-                      </Button>
-                    </Box>
-                  )}
+                  <Button
+                    onClick={handleDiscardChanges}
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
+                      flexGrow: 1,
+                    }}
+                  >
+                    Descartar
+                  </Button>
+                  <Button
+                    onClick={sendData}
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      flexGrow: 1,
+                    }}
+                  >
+                    Guardar
+                  </Button>
                 </Box>
-              </Stack>
-            </SortableContext>
-          </DndContext>
+              )}
+            </Box>
+          </Stack>
         </Card>
       </Stack>
     </Container>

@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  IDefaultMembers,
-  IDefaultMembersToUpdate,
-  IMember,
-} from '../../domain/entities/DefaultMembers'
+import { IDefaultMembers, IMember } from '../../domain/entities/DefaultMembers'
 import { useEffect, useState } from 'react'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -44,7 +40,7 @@ export const useDefaultMembersView = () => {
   const [members, setMembers] = useState<IMember[]>([])
   const [loading, setIsLoading] = useState(false)
   const [formattedItems, setFormattedItems] = useState<any[]>([])
-  const [upserttedMembers, upsertMembers] = useState<IDefaultMembers[]>([])
+  const [createdMembers, setCreatedMembers] = useState<IDefaultMembers[]>([])
   const [removedMembers, setRemovedMembers] = useState<IDefaultMembers[]>([])
   const [editedMembers, setEditedMembers] = useState<IDefaultMembers[]>([])
   const [positionOfSelectedMember, setPositionOfSelectedMember] = useState<
@@ -81,7 +77,7 @@ export const useDefaultMembersView = () => {
       return
     }
 
-    upsertMembers((prev) => [...prev, newMember])
+    setCreatedMembers((prev) => [...prev, newMember])
 
     if (positionOfSelectedMember !== null && isEditMode.value) {
       const newItems = [...formattedItems]
@@ -112,8 +108,10 @@ export const useDefaultMembersView = () => {
     const memberIndex = formattedItems.findIndex((item) => item.id === id)
     const memberToRemove = formattedItems[memberIndex]
 
-    if (upserttedMembers.includes(memberToRemove)) {
-      upsertMembers((prev) => prev.filter((item) => item !== memberToRemove))
+    if (createdMembers.includes(memberToRemove)) {
+      setCreatedMembers((prev) =>
+        prev.filter((item) => item !== memberToRemove),
+      )
     } else {
       if (editedMembers.includes(memberToRemove)) {
         setEditedMembers((prev) =>
@@ -122,7 +120,34 @@ export const useDefaultMembersView = () => {
       }
       setRemovedMembers((prev) => [...prev, memberToRemove])
     }
-    setFormattedItems((prev) => prev.filter((item) => item !== memberToRemove))
+    const filteredMembers = formattedItems.filter(
+      (item) => item !== memberToRemove,
+    )
+
+    filteredMembers.forEach((member, index) => {
+      member.positionOrder = index + 1
+    })
+
+    setFormattedItems(filteredMembers)
+
+    if (!createdMembers.includes(memberToRemove)) {
+      setEditedMembers(
+        filteredMembers
+          .map((member, index) => ({
+            ...member,
+            postionOrder: index + 1,
+          }))
+          .filter((member) => member.id),
+      )
+      return
+    }
+
+    // setCreatedMembers(
+    //   filteredMembers.map((member, index) => ({
+    //     ...member,
+    //     postionOrder: index + 1,
+    //   })),
+    // )
   }
 
   const onSubmit = () => {
@@ -132,75 +157,9 @@ export const useDefaultMembersView = () => {
     setPositionOfSelectedMember(null)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event
-    if (active?.id !== over?.id) {
-      const activeIndex = formattedItems.findIndex(
-        (item) => item.id === active.id,
-      )
-      const overIndex = formattedItems.findIndex((item) => item.id === over.id)
-
-      const newItems = [...formattedItems]
-      const activeItem = newItems.splice(activeIndex, 1)[0]
-
-      newItems.splice(overIndex, 0, activeItem)
-      newItems.forEach((item, index) => {
-        item.positionOrder = index + 1
-      })
-      setFormattedItems(newItems)
-      comparePositionChange()
-    }
-  }
-
-  const comparePositionChange = () => {
-    formattedItems.forEach((item, index) => {
-      const originalItem = defaultMembers.find(
-        (defaultItem) => (defaultItem.member as IMember).id === item.member.id,
-      )
-
-      if (originalItem) {
-        if (editedMembers.length > 0) {
-          const existingIndex = editedMembers.findIndex(
-            (editedMember) =>
-              (editedMember.member as IDefaultMembersToUpdate).id ===
-              item.member.id,
-          )
-
-          if (existingIndex !== -1) {
-            setEditedMembers((prev) => [
-              ...prev.map((prevItem, i) =>
-                i === existingIndex
-                  ? { ...prevItem, positionOrder: item.positionOrder }
-                  : prevItem,
-              ),
-            ])
-            return
-          }
-        } else {
-          setEditedMembers((prev) => [
-            ...prev,
-            {
-              ...item,
-              positionOrder: formattedItems[index].positionOrder,
-            } as any,
-          ])
-        }
-      }
-    })
-
-    // evaluate if uppserted memebers should be updatable
-    upserttedMembers.forEach((member) => {
-      const index = formattedItems.findIndex(
-        (item) => item.member.id === member.member,
-      )
-      member.positionOrder = formattedItems[index].positionOrder
-    })
-  }
-
   const handleDiscardChanges = () => {
     setFormattedItems(defaultMembers)
-    upsertMembers([])
+    setCreatedMembers([])
     setRemovedMembers([])
     setEditedMembers([])
     isEditMode.onFalse()
@@ -212,7 +171,7 @@ export const useDefaultMembersView = () => {
     await DefaultMembersUseCasesImpl.getInstance().createOrEditByModuleId(
       moduleId,
       [
-        ...upserttedMembers.map((member) => ({
+        ...createdMembers.map((member) => ({
           ...member,
           member: (member.member as IMember).id,
           action: ACTIONS.CREATE,
@@ -236,13 +195,13 @@ export const useDefaultMembersView = () => {
   useEffect(() => {
     if (
       editedMembers.length > 0 ||
-      upserttedMembers.length > 0 ||
+      createdMembers.length > 0 ||
       removedMembers.length > 0 ||
       isEditMode.value === true
     ) {
       areThereChanges.onTrue()
     }
-  }, [upserttedMembers, removedMembers, isEditMode.value, editedMembers])
+  }, [createdMembers, removedMembers, isEditMode.value, editedMembers])
 
   useEffect(() => {
     let isMounted = true
@@ -351,7 +310,6 @@ export const useDefaultMembersView = () => {
     handleAddMember,
     handleRemoveMember,
     onSubmit,
-    handleDragEnd,
     sendData,
     handleEditMember,
     handleDiscardChanges,
