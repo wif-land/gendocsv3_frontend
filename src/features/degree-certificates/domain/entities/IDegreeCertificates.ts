@@ -25,18 +25,18 @@ export interface IDegreeCertificatesAttendee {
   functionary: unknown
 }
 
-// interface certificateType {
-//   code: string
-//   name: string
-// }
+export interface certificateType {
+  code: string
+  name: string
+}
 
-// interface degreeModality {
-//   code: string
-//   name: string
-// }
+export interface degreeModality {
+  code: string
+  name: string
+}
 
-// interface certificateStatus{
-//   code: string
-//   maleName: string
-//   femaleName: string
-// }
+export interface certificateStatus {
+  code: string
+  maleName: string
+  femaleName: string
+}

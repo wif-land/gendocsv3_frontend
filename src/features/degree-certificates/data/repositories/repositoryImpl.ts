@@ -9,7 +9,7 @@ import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertific
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
 {
-  static instance: IDegreeCertificateDatasource
+  static instance: DegreeCertificateRepositoryImpl
 
   static getInstance = (): IDegreeCertificateDatasource => {
     if (!DegreeCertificateRepositoryImpl.instance) {
@@ -26,8 +26,7 @@ export class DegreeCertificateRepositoryImpl
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.datasource.getAll(limit, offset)
+  getAll = async () => await this.datasource.getAll()
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,

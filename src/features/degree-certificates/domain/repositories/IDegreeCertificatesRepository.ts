@@ -1,38 +1,22 @@
-import { DegreeCertificateModel } from '../../data/models/models'
+import { DegreeCertificateModel } from '../../data/models/model'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import { IDegreeCertificate } from '../entities/IDegreeCertificates'
 
 export interface IDegreeCertificatesRepository {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
-    status: number
-    data: {
-      count: number
-      degreeCertificates: DegreeCertificateModel[]
-    }
-  }>
+  getAll: () => Promise<DegreeCertificateModel[]>
 
   getByFilters(
     filters: IDegreeCertificateFilters,
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      degreeCertificates: DegreeCertificateModel[]
-    }
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
   }>
 
-  update(degreeCertificate: Partial<IDegreeCertificate>): Promise<{
-    status: number
-    degreeCertificate: DegreeCertificateModel
-  }>
+  update(
+    degreeCertificate: Partial<IDegreeCertificate>,
+  ): Promise<DegreeCertificateModel>
 
-  create(degreeCertificate: IDegreeCertificate): Promise<{
-    status: number
-    degreeCertificate: DegreeCertificateModel
-  }>
+  create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
 }

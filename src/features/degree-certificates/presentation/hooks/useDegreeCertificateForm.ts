@@ -15,7 +15,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IStudent } from '../../../../features/students/domain/entities/IStudent'
 
 export const useDegreeCertificateForm = (
@@ -47,7 +46,7 @@ export const useDegreeCertificateForm = (
       await DegreeCertificatesUseCasesImpl.getInstance().create(values)
 
     if (result.degreeCertificate) {
-      addDegreeCertificate(result)
+      addDegreeCertificate(result.degreeCertificate)
       enqueueSnackbar('Acta creada correctamente')
     } else {
       throw new Error('Error al crear el acta')
@@ -91,13 +90,9 @@ export const useDegreeCertificateForm = (
       await StudentUseCasesImpl.getInstance()
         .getByFilters({ field })
         .then((res) => {
-          if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
-            setStudents(res.data.students)
-          } else {
-            setStudents([])
-            setIsLoading(false)
-            return
-          }
+          console.log(res)
+
+          setStudents(res.students)
         })
     }
     if (debouncedValue.includes('-')) return

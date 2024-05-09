@@ -97,4 +97,11 @@ export const API_ROUTES = {
     DELETE_MANY: '/positions/delete/bulk',
     CREATE: '/positions',
   },
+  DEGREE_CERTIFICATES: {
+    GET_ALL: '/degree-certificates',
+    GET_BY_FILTERS: `/degree-certificates/filter`,
+    UPDATE: (id: number) => `/degree-certificates/${id}`,
+    DELETE: '/degree-certificates/:id',
+    CREATE: '/degree-certificates',
+  },
 }

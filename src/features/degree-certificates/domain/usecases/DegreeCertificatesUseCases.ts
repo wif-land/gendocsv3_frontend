@@ -1,19 +1,10 @@
 import { DegreeCertificateRepositoryImpl } from '../../data/repositories/repositoryImpl'
 import { IDegreeCertificate } from '../entities/IDegreeCertificates'
-import { DegreeCertificateModel } from '../../data/models/models'
+import { DegreeCertificateModel } from '../../data/models/model'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 
 interface CertificateDegreeUseCases {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
-    status: number
-    data: {
-      count: number
-      degreeCertificates: DegreeCertificateModel[]
-    }
-  }>
+  getAll(): Promise<DegreeCertificateModel[]>
 
   getByFilters(
     filters: IDegreeCertificateFilters,
@@ -56,8 +47,7 @@ export class DegreeCertificatesUseCasesImpl
 
   constructor(private readonly repository: CertificateDegreeUseCases) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.repository.getAll(limit, offset)
+  getAll = async () => await this.repository.getAll()
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,

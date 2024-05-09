@@ -2,42 +2,25 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
-import { DegreeCertificateModel } from '../models/models'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { DegreeCertificateModel } from '../models/model'
 
 export interface IDegreeCertificateDatasource {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
-    status: number
-    data: {
-      count: number
-      degreeCertificates: DegreeCertificateModel[]
-    }
-  }>
+  getAll(): Promise<DegreeCertificateModel[]>
 
   getByFilters(
     filters: IDegreeCertificateFilters,
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      degreeCertificates: DegreeCertificateModel[]
-    }
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
   }>
 
-  update(degreeCertificate: Partial<IDegreeCertificate>): Promise<{
-    status: number
-    degreeCertificate: DegreeCertificateModel
-  }>
+  update(
+    degreeCertificate: Partial<IDegreeCertificate>,
+  ): Promise<DegreeCertificateModel>
 
-  create(degreeCertificate: IDegreeCertificate): Promise<{
-    status: number
-    degreeCertificate: DegreeCertificateModel
-  }>
+  create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -54,30 +37,14 @@ export class DegreeCertificateDatasourceImpl
     return DegreeCertificateDatasourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
-      {
-        params: { limit, offset },
-      },
-    )
+  getAll = async () => {
+    const result = await AxiosClient.get(API_ROUTES.DEGREE_CERTIFICATES.GET_ALL)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, degreeCertificates: [] as DegreeCertificateModel[] },
-      }
+      return [] as DegreeCertificateModel[]
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as {
-        count: number
-        degreeCertificates: DegreeCertificateModel[]
-      },
-    }
+    return result.data as DegreeCertificateModel[]
   }
 
   getByFilters = async (
@@ -86,67 +53,46 @@ export class DegreeCertificateDatasourceImpl
     offset: number,
   ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_BY_FILTERS,
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
       {
-        params: { limit, offset, ...filters },
+        params: { ...filters, limit, offset },
       },
     )
 
     if ('error' in result) {
-      return {
-        status:
-          HTTP_STATUS_CODES.NOT_FOUND ||
-          HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { count: 0, degreeCertificates: [] as DegreeCertificateModel[] },
-      }
+      return { count: 0, degreeCertificates: [] as DegreeCertificateModel[] }
     }
 
-    const { status, data } = result
-
-    return {
-      status,
-      data: data.content as {
-        count: number
-        degreeCertificates: DegreeCertificateModel[]
-      },
+    return result.data as {
+      count: number
+      degreeCertificates: DegreeCertificateModel[]
     }
   }
 
-  update = async (degreeCertificate: Partial<IDegreeCertificate>) => {
-    const { number, ...body } = degreeCertificate
-
-    const result = await AxiosClient.patch(
-      API_ROUTES.FUNCTIONARIES.UPDATE(number as number),
-      body,
+  update = async (degreeCertificate: IDegreeCertificate) => {
+    const { id, ...rest } = degreeCertificate
+    const result = await AxiosClient.put(
+      API_ROUTES.DEGREE_CERTIFICATES.UPDATE(id as number),
+      rest,
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        degreeCertificate: {} as DegreeCertificateModel,
-      }
+      return {} as DegreeCertificateModel
     }
 
-    const { status, data } = result
-
-    return { status, degreeCertificate: data.content as DegreeCertificateModel }
+    return result.data as DegreeCertificateModel
   }
 
-  create = async (degreeCertificate: DegreeCertificateModel) => {
+  create = async (degreeCertificate: IDegreeCertificate) => {
     const result = await AxiosClient.post(
-      API_ROUTES.FUNCTIONARIES.CREATE,
+      API_ROUTES.DEGREE_CERTIFICATES.CREATE,
       degreeCertificate,
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        degreeCertificate: {} as DegreeCertificateModel,
-      }
+      return {} as DegreeCertificateModel
     }
 
-    const { status, data } = result
-
-    return { status, degreeCertificate: data.content as DegreeCertificateModel }
+    return result.data as DegreeCertificateModel
   }
 }
