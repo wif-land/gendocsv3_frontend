@@ -43,6 +43,7 @@ export const DegreeCertificateNewEditForm = ({
   } = methods
 
   const { certificateTypes } = useCertificateData()
+  console.log(certificateTypes)
   const { provinces } = useLocations()
   console.log(provinces)
 
