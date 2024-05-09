@@ -1,4 +1,4 @@
-import { IDegreeCertificatesRepository } from '../domain/IDegreeCertificatesRepository'
+import { IDegreeCertificatesRepository } from '../domain/repositories/IDegreeCertificatesRepository'
 import {
   ICreateUpdateDegreeCertificate,
   IDegreeCertificate,
