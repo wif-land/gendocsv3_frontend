@@ -114,10 +114,10 @@ export const API_ROUTES = {
     GET_ALL: '/degree-certificates/degree-modalities',
   },
   LOCATION_PROVIDER: {
-    GET_ALL_PROVINCES: '/location-provider/provinces',
-    GET_ALL_CITIES: '/location-provider/cities',
+    GET_ALL_PROVINCES: '/cities/provinces',
+    GET_ALL_CITIES: '/cities',
   },
   ROOMS: {
-    GET_ALL: '/rooms',
+    GET_ALL: '/degree-certificates/rooms',
   },
 }

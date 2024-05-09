@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -21,6 +22,8 @@ import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 import { MenuItem } from '@nextui-org/react'
+import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
+import { useLocations } from '../../../../core/providers/locations-provider'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -38,6 +41,10 @@ export const DegreeCertificateNewEditForm = ({
     formState: { isSubmitting },
     control,
   } = methods
+
+  const { certificateTypes } = useCertificateData()
+  const { provinces } = useLocations()
+  console.log(provinces)
 
   const renderDetails = (
     <>

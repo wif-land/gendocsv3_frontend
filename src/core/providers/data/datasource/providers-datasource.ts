@@ -61,7 +61,7 @@ export class ProvidersDataSourceImpl implements ProvidersDataSource {
     if ('error' in result) {
       return [] as CertificateTypeModel[]
     }
-
+    console.log(result.data)
     return result.data as CertificateTypeModel[]
   }
 

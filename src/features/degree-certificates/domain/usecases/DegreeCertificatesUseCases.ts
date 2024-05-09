@@ -11,22 +11,15 @@ interface CertificateDegreeUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      degreeCertificates: DegreeCertificateModel[]
-    }
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
   }>
 
-  update(degreeCertificate: Partial<IDegreeCertificate>): Promise<{
-    status: number
-    degreeCertificate: DegreeCertificateModel
-  }>
+  update(
+    degreeCertificate: Partial<IDegreeCertificate>,
+  ): Promise<DegreeCertificateModel>
 
-  create(degreeCertificate: IDegreeCertificate): Promise<{
-    status: number
-    degreeCertificate: DegreeCertificateModel
-  }>
+  create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
 }
 
 export class DegreeCertificatesUseCasesImpl
