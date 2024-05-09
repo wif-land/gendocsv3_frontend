@@ -16,6 +16,11 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Box } from '@mui/material'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { Controller } from 'react-hook-form'
+import { MobileDatePicker } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
+import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
+import { MenuItem } from '@nextui-org/react'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -31,6 +36,7 @@ export const DegreeCertificateNewEditForm = ({
   const {
     handleSubmit,
     formState: { isSubmitting },
+    control,
   } = methods
 
   const renderDetails = (
@@ -41,8 +47,7 @@ export const DegreeCertificateNewEditForm = ({
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            El nombre del consejo, tipo, fecha y hora de inicio. Y si está
-            activo o no
+            Hola
           </Typography>
         </Grid>
       )}
@@ -56,13 +61,13 @@ export const DegreeCertificateNewEditForm = ({
             sx={{ p: 3, display: 'flex', flexDirection: 'row' }}
           >
             <RHFTextField
-              name="name"
+              name="number"
               label="Numeracion de acta de grado"
               required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
-              name="name"
+              name="aux_number"
               label="Numeracion"
               required
               sx={{ flexGrow: 1 }}
@@ -90,12 +95,6 @@ export const DegreeCertificateNewEditForm = ({
           {!mdUp && <CardHeader title="Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            {/* <RHFTextField
-              name="name"
-              label="Estudiante"
-              required
-              sx={{ flexGrow: 1 }}
-            /> */}
             <RHFAutocomplete
               name="name"
               label="Estudiante"
@@ -202,17 +201,76 @@ export const DegreeCertificateNewEditForm = ({
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
             <RHFTextField
-              name="name"
+              name="canton"
               label="Cantón de residencia"
               required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
-              name="name"
+              name="province"
               label="Provincia de residencia"
               required
               sx={{ flexGrow: 1 }}
             />
+          </Stack>
+        </Card>
+      </Grid>
+      {mdUp && (
+        <Grid md={4}>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Acta de Grado
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Información relevante del acta de grado
+          </Typography>
+        </Grid>
+      )}
+      <Grid xs={12} md={8}>
+        <Card>
+          {!mdUp && <CardHeader title="Details" />}
+
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFTextField
+              name="topic"
+              label="Tema"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+            <Controller
+              name="presentationDate"
+              rules={{ required: true }}
+              control={control}
+              render={({ field }) => (
+                <MobileDatePicker
+                  {...field}
+                  value={dayjs(field.value)}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      field.onChange(newValue)
+                    }
+                  }}
+                  label="Fecha de presentación"
+                  format="dddd/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                    },
+                  }}
+                  closeOnSelect
+                />
+              )}
+            />
+
+            <RHFTextField
+              name="duration"
+              label="Duración"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+
+            <RHFSelect name="certificateType" label="Tipo de Defensa" required>
+              {<MenuItem></MenuItem>}
+            </RHFSelect>
           </Stack>
         </Card>
       </Grid>
@@ -228,7 +286,7 @@ export const DegreeCertificateNewEditForm = ({
         sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
       >
         <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Consejo activo" />
+          <RHFSwitch name="isActive" label="Acta activa" />
         </Box>
 
         <LoadingButton

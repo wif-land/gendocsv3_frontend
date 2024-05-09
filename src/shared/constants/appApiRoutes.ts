@@ -104,4 +104,20 @@ export const API_ROUTES = {
     DELETE: '/degree-certificates/:id',
     CREATE: '/degree-certificates',
   },
+  CERTIFICATES_TYPES: {
+    GET_ALL: '/degree-certificates/certificate-types',
+  },
+  CERTIFICATES_STATUS: {
+    GET_ALL: '/degree-certificates/certificate-status',
+  },
+  DEGREE_MODALITIES: {
+    GET_ALL: '/degree-certificates/degree-modalities',
+  },
+  LOCATION_PROVIDER: {
+    GET_ALL_PROVINCES: '/location-provider/provinces',
+    GET_ALL_CITIES: '/location-provider/cities',
+  },
+  ROOMS: {
+    GET_ALL: '/rooms',
+  },
 }
