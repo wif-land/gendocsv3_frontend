@@ -1,3 +1,5 @@
+import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
+import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { DefaultMemberModel } from '../models/DefaultMembersModel'
 
 export interface DefaultMembersDataSource {
@@ -5,8 +7,8 @@ export interface DefaultMembersDataSource {
 
   createByModuleId: (
     moduleId: number,
-    defaultMember: DefaultMemberModel,
-  ) => Promise<DefaultMemberModel>
+    defaultMembers: DefaultMemberModel[],
+  ) => Promise<DefaultMemberModel[]>
 
   updateByModuleId: (
     moduleId: number,
@@ -26,34 +28,31 @@ export class DefaultMembersDataSourceImpl implements DefaultMembersDataSource {
   }
 
   getByModuleId = async (moduleId: number) => {
-    // try {
-    //   const response = await AxiosClient.get(
-    //     `${API_ROUTES.DEFAULT_MEMBERS}/module/${moduleId}`,
-    //   )
+    const response = await AxiosClient.get(
+      API_ROUTES.ATTENDANCE.GET_DEFAULT_MEMBERS_BY_MODULE_ID(moduleId),
+    )
 
-    //   return response.data
-    // } catch (error) {
-    //   throw error
-    // }
+    if ('error' in response) {
+      return []
+    }
 
-    throw new Error(`Method not implemented ${moduleId}`)
+    return response.data as DefaultMemberModel[]
   }
 
   createByModuleId = async (
     moduleId: number,
-    defaultMember: DefaultMemberModel,
+    defaultMembers: DefaultMemberModel[],
   ) => {
-    // try {
-    //   const response = await AxiosClient.post(
-    //     `${API_ROUTES.DEFAULT_MEMBERS}/module/${moduleId}`,
-    //     defaultMember,
-    //   )
-    //   return response.data
-    // } catch (error) {
-    //   throw error
-    // }
+    const response = await AxiosClient.post(
+      API_ROUTES.ATTENDANCE.EDIT_CREATE_DEFAULT_MEMBERS_BY_MODULE_ID(moduleId),
+      defaultMembers,
+    )
 
-    throw new Error(`Method not implemented ${moduleId} ${defaultMember}`)
+    if ('error' in response) {
+      return []
+    }
+
+    return response.data as DefaultMemberModel[]
   }
 
   updateByModuleId = async (

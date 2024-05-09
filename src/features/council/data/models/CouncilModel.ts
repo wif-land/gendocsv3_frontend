@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
-import {
-  ICouncilAttendee,
-  ICreateCouncilAttendee,
-} from '../../domain/entities/ICouncilAttendee'
+import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
 
 export class CouncilModel implements ICouncil {
   id?: number
@@ -17,7 +14,7 @@ export class CouncilModel implements ICouncil {
   moduleId: number
   userId: number
   createdBy?: string
-  attendees: ICouncilAttendee[] | number[] | string[] | ICreateCouncilAttendee[]
+  members: ICouncilAttendee[]
 
   constructor(props: ICouncil) {
     this.id = props.id || undefined
@@ -30,9 +27,10 @@ export class CouncilModel implements ICouncil {
     this.type = props.type
     this.moduleId = props.moduleId
     this.userId = props.userId
-    this.attendees = props.attendees || []
+    this.members = props.members || []
     this.createdBy = props.createdBy || ''
   }
+
   static fromJson(json: Record<string, any> | string): CouncilModel {
     if (typeof json === 'string') {
       return JSON.parse(json, CouncilModel.reviver)
@@ -48,7 +46,7 @@ export class CouncilModel implements ICouncil {
         type: json.type,
         moduleId: json.moduleId,
         userId: json.userId,
-        attendees: json.attendees,
+        members: json.members,
       })
 
       return career
@@ -71,7 +69,7 @@ export class CouncilModel implements ICouncil {
       type: this.type,
       moduleId: this.moduleId,
       userId: this.userId,
-      attendees: this.attendees,
+      members: this.members,
     }
   }
 }

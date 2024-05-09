@@ -23,10 +23,10 @@ export class DefaultMemberRepositoryImpl implements DefaultMemberRepository {
   getByModuleId = async (moduleId: number) =>
     await this.datasource.getByModuleId(moduleId)
 
-  createByModuleId = async (
+  createOrEditByModuleId = async (
     moduleId: number,
-    defaultMember: DefaultMemberModel,
-  ) => await this.datasource.createByModuleId(moduleId, defaultMember)
+    defaultMembers: DefaultMemberModel[],
+  ) => await this.datasource.createByModuleId(moduleId, defaultMembers)
 
   updateByModuleId = async (
     moduleId: number,

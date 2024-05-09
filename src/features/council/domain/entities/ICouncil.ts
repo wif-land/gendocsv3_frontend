@@ -1,4 +1,4 @@
-import { ICouncilAttendee, ICreateCouncilAttendee } from './ICouncilAttendee'
+import { ICouncilAttendee } from './ICouncilAttendee'
 
 export enum CouncilType {
   EXTRAORDINARY = 'EXTRAORDINARY',
@@ -32,10 +32,6 @@ export interface ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
-  attendees?:
-    | ICouncilAttendee[]
-    | string[]
-    | number[]
-    | ICreateCouncilAttendee[]
+  members: ICouncilAttendee[]
   createdBy?: string
 }

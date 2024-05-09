@@ -1,18 +1,19 @@
-import { FunctionaryModel } from '../../../functionaries/data/models/FunctionatyModel'
-import { CouncilAttendanceRole } from './ICouncil'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface ICouncilAttendee {
+  id?: number
+
   hasAttended: boolean
 
   hasBeenNotified: boolean
 
-  role: CouncilAttendanceRole
+  isStudent: boolean
 
-  functionary: FunctionaryModel
-}
+  member: any
 
-export interface ICreateCouncilAttendee {
-  functionaryId: string
+  positionName: string
 
-  role: CouncilAttendanceRole
+  positionOrder: number
+
+  defaultMemberId: number
 }
