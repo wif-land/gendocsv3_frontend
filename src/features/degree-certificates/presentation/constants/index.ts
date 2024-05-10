@@ -5,10 +5,12 @@ import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 export interface FormValuesProps extends IDegreeCertificate {}
 export const TABLE_HEAD = [
-  { id: 'name', label: 'Acta de Grado' },
-  { id: 'createdAt', label: 'Hora de ejecución', width: 160 },
-  { id: 'date', label: 'Fecha de ejecución', width: 260 },
-  { id: 'isActive', label: 'Estado', width: 140 },
+  { id: 'topic', label: 'Tema' },
+  { id: 'student', label: 'Estudiante' },
+  { id: 'presentationDate', label: 'Fecha de presentación' },
+  { id: 'degreeModality', label: 'Modalidad', width: 140 },
+  { id: 'room', label: 'Aula', width: 140 },
+  { id: 'certificateStatus', label: 'Estado de acta', width: 110 },
   { id: 'actions', label: 'Acciones', width: 110 },
 ]
 
@@ -19,14 +21,14 @@ export const resolveDefaultValues = (
   aux_number: currentDegreeCertificate?.aux_number || 0,
   topic: currentDegreeCertificate?.topic || '',
   presentationDate: currentDegreeCertificate?.presentationDate || new Date(),
-  studentId: currentDegreeCertificate?.studentId
-    ? getSelectedStudent(currentDegreeCertificate?.studentId as IStudent)
+  studentId: currentDegreeCertificate?.student
+    ? getSelectedStudent(currentDegreeCertificate?.student as IStudent)
     : '',
-  careerId: currentDegreeCertificate?.careerId || 0,
-  certificateTypeId: currentDegreeCertificate?.certificateTypeId || 0,
-  certificateStatusId: currentDegreeCertificate?.certificateStatusId || 0,
-  degreeModalityId: currentDegreeCertificate?.degreeModalityId || 0,
-  roomId: currentDegreeCertificate?.roomId || 0,
+  careerId: currentDegreeCertificate?.career || 0,
+  certificateTypeId: currentDegreeCertificate?.certificateType || 0,
+  certificateStatusId: currentDegreeCertificate?.certificateStatus || 0,
+  degreeModalityId: currentDegreeCertificate?.degreeModality || 0,
+  roomId: currentDegreeCertificate?.room || 0,
   duration: currentDegreeCertificate?.duration || 0,
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',

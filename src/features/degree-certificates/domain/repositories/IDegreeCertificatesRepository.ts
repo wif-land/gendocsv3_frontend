@@ -1,4 +1,4 @@
-import { DegreeCertificateModel } from '../../data/models/model'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import { IDegreeCertificate } from '../entities/IDegreeCertificates'
 

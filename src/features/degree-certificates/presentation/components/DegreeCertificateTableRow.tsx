@@ -13,7 +13,12 @@ import Iconify from '../../../../core/iconify'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
-import { DegreeCertificateModel } from '../../data/model'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { IStudent } from '../../../../features/students/domain/entities/IStudent'
+import {
+  IDegreeModality,
+  IRoom,
+} from '../../../../core/providers/domain/entities/ICertificateProvider'
 
 type Props = {
   row: DegreeCertificateModel
@@ -26,7 +31,7 @@ type Props = {
   isOnTable?: boolean
 }
 
-export const CouncilTableRow = ({
+export const DegreeCertificateTableRow = ({
   row,
   selected,
   onSelectRow,
@@ -36,13 +41,23 @@ export const CouncilTableRow = ({
   isOnTable = true,
   activeState,
 }: Props) => {
-  const { isActive, date } = row
+  const { isClosed, presentationDate } = row
+
+  const studentName = `${(row.student as IStudent).firstName} ${
+    (row.student as IStudent).secondName
+  } ${(row.student as IStudent).firstLastName} ${
+    (row.student as IStudent).secondLastName
+  }`
+
+  console.log(studentName)
+
+  console.log(row)
 
   const confirm = useBoolean()
 
   const popover = usePopover()
 
-  const finalActiveState = activeState !== undefined ? activeState : isActive
+  const finalActiveState = activeState !== undefined ? activeState : isClosed
 
   return (
     <>
@@ -54,15 +69,41 @@ export const CouncilTableRow = ({
         )}
 
         <TableCell>
+          {/* <ListItemText
+            primary={format(new Date(presentationDate), 'p')}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          /> */}
           <ListItemText
-            primary={format(new Date(date), 'p')}
+            primary={row.topic}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(date), 'dd MMM yyyy')}
+            primary={studentName}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondary={(row.student as IStudent).dni}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={format(new Date(presentationDate), 'dd MMM yyyy')}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={(row.degreeModality as IDegreeModality).name}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={(row.room as IRoom).name}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
@@ -77,7 +118,7 @@ export const CouncilTableRow = ({
               variant="soft"
               color={(finalActiveState === true && 'success') || 'primary'}
             >
-              {finalActiveState === true ? 'Activo' : 'Inactivo'}
+              {finalActiveState === true ? 'Abierto' : 'Cerrado'}
             </Label>
           )}
         </TableCell>
@@ -123,9 +164,9 @@ export const CouncilTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={row.isActive ? { color: 'error.main' } : { color: 'green' }}
+          sx={row.isClosed ? { color: 'error.main' } : { color: 'green' }}
         >
-          {row.isActive ? (
+          {row.isClosed ? (
             <>
               <Iconify icon="radix-icons:lock-closed" />
               Desactivar
@@ -142,22 +183,22 @@ export const CouncilTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isActive ? 'Desactivar consejo' : 'Activar consejo'}
+        title={row.isClosed ? 'Desactivar consejo' : 'Activar consejo'}
         content={
-          row.isActive
+          row.isClosed
             ? '¿Está seguro de desactivar este consejo?'
             : '¿Está seguro de activar este consejo?'
         }
         action={
           <Button
             variant="contained"
-            color={isActive ? 'error' : 'success'}
+            color={isClosed ? 'error' : 'success'}
             onClick={() => {
               onDeleteRow()
               confirm.onFalse()
             }}
           >
-            {isActive ? 'Desactivar' : 'Activar'}
+            {isClosed ? 'Desactivar' : 'Activar'}
           </Button>
         }
       />

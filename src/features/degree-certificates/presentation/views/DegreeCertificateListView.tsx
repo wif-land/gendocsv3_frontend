@@ -36,6 +36,7 @@ import {
   DegreeCertificatesTableToolbar,
   IDegreeCertificateTableFilters,
 } from '../components/DegreeCertificateTableToolbar'
+import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
@@ -87,7 +88,6 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
-    handleSearch,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
@@ -106,20 +106,31 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     <div key={moduleId}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Consejos"
+          heading="Actas de grado"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Consejos' },
+            { name: 'Actas de grado' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={`${pathname}/new`}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Nuevo consejo
-            </Button>
+            <>
+              <Button
+                component={RouterLink}
+                href={`${pathname}/new`}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:document-3-line" />}
+                sx={{ mr: 1.5 }}
+              >
+                Plantillas
+              </Button>
+              <Button
+                component={RouterLink}
+                href={`${pathname}/new`}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                Actas de grado
+              </Button>
+            </>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -133,7 +144,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            getFilteredCouncils={handleSearch}
+            // getFilteredCouncils={handleSearch}
           />
 
           {/* {isDataFiltered && (
@@ -195,7 +206,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <CouncilTableRow
+                          <DegreeCertificateTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
@@ -204,7 +215,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() => handleUpdateRow(row)}
+                            // onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onViewRow={() => handleViewRow(row.id!.toString())}
                           />

@@ -2,7 +2,7 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
-import { DegreeCertificateModel } from '../models/model'
+import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
 
 export interface IDegreeCertificateDatasource {
   getAll(

@@ -1,6 +1,6 @@
 import { DegreeCertificateRepositoryImpl } from '../../data/repositories/repositoryImpl'
 import { IDegreeCertificate } from '../entities/IDegreeCertificates'
-import { DegreeCertificateModel } from '../../data/models/model'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 
 interface CertificateDegreeUseCases {

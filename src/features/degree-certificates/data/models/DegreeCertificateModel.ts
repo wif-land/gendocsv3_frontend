@@ -1,3 +1,7 @@
+import {
+  IDegreeModality,
+  IRoom,
+} from '../../../../core/providers/domain/entities/ICertificateProvider'
 import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 
@@ -7,12 +11,12 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   aux_number: number
   topic: string
   presentationDate: Date
-  studentId: IStudent | number | string
-  careerId: number
-  certificateTypeId: number
-  certificateStatusId: number
-  degreeModalityId: number
-  roomId: number
+  student: IStudent | number | string
+  career: number
+  certificateType: number
+  certificateStatus: number
+  degreeModality: IDegreeModality | number
+  room: IRoom | number
   duration: number
   link: string
   gradesSheetDriveId: string
@@ -25,12 +29,12 @@ export class DegreeCertificateModel implements IDegreeCertificate {
     this.aux_number = props.aux_number
     this.topic = props.topic
     this.presentationDate = props.presentationDate
-    this.studentId = props.studentId
-    this.careerId = props.careerId
-    this.certificateTypeId = props.certificateTypeId
-    this.certificateStatusId = props.certificateStatusId
-    this.degreeModalityId = props.degreeModalityId
-    this.roomId = props.roomId
+    this.student = props.student
+    this.career = props.career
+    this.certificateType = props.certificateType
+    this.certificateStatus = props.certificateStatus
+    this.degreeModality = props.degreeModality
+    this.room = props.room
     this.duration = props.duration
     this.link = props.link
     this.gradesSheetDriveId = props.gradesSheetDriveId
@@ -46,12 +50,12 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       aux_number: json.aux_number,
       topic: json.topic,
       presentationDate: json.presentationDate,
-      studentId: json.studentId,
-      careerId: json.careerId,
-      certificateTypeId: json.certificateTypeId,
-      certificateStatusId: json.certificateStatusId,
-      degreeModalityId: json.degreeModalityId,
-      roomId: json.roomId,
+      student: json.studentId,
+      career: json.careerId,
+      certificateType: json.certificateTypeId,
+      certificateStatus: json.certificateStatusId,
+      degreeModality: json.degreeModalityId,
+      room: json.roomId,
       duration: json.duration,
       link: json.link,
       gradesSheetDriveId: json.gradesSheetDriveId,
@@ -67,12 +71,12 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       aux_number: this.aux_number,
       topic: this.topic,
       presentationDate: this.presentationDate,
-      studentId: this.studentId,
-      careerId: this.careerId,
-      certificateTypeId: this.certificateTypeId,
-      certificateStatusId: this.certificateStatusId,
-      degreeModalityId: this.degreeModalityId,
-      roomId: this.roomId,
+      studentId: this.student,
+      careerId: this.career,
+      certificateTypeId: this.certificateType,
+      certificateStatusId: this.certificateStatus,
+      degreeModalityId: this.degreeModality,
+      roomId: this.room,
       duration: this.duration,
       link: this.link,
       gradesSheetDriveId: this.gradesSheetDriveId,

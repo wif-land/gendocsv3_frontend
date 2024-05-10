@@ -2,52 +2,45 @@ import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
-import { useDegreeCertificateMethods } from './use'
-import { ICouncil } from '../../domain/entities/ICouncil'
-import useModulesStore from '../../../../shared/store/modulesStore'
-import { CouncilModel } from '../../data/models/CouncilModel'
-import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
+import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
+// import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+// import useModulesStore from '../../../../shared/store/modulesStore'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 
 interface Props {
   table: TableProps
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  filters: ICouncilFilters
-  moduleId: string
+  filters: IDegreeCertificateFilters
 }
 
-export const useCouncilView = ({
+export const useDegreeCertificateView = ({
   table,
   isDataFiltered,
   visitedPages,
   setVisitedPages,
-  filters,
-  moduleId,
 }: Props) => {
-  const [tableData, setTableData] = useState<CouncilModel[]>([])
+  const [tableData, setTableData] = useState<DegreeCertificateModel[]>([])
   const [count, setCount] = useState(0)
-  const { councils, setCouncils } = useDegreeCertificatesStore()
+  const { degreeCertificates, setDegreeCertificates } =
+    useDegreeCertificatesStore()
   const { loader } = useLoaderStore()
-  const { fetchData, updateRow, fetchDataByField } = useDegreeCertificateMethods()
-  const { modules } = useModulesStore()
-
-  const moduleIdentifier =
-    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
+  const { fetchData } = useDegreeCertificateMethods()
 
   useEffect(() => {
     let isMounted = true
     if (tableData.length !== 0) return
 
     if (isMounted && !isDataFiltered) {
-      fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
-        (data) => {
-          if (data.count === 0) return
-          setCouncils(data.councils)
-          setTableData(data.councils)
-          setCount(data.count)
-        },
-      )
+      fetchData(table.rowsPerPage, table.page).then((data) => {
+        if (data.count === 0) return
+        setDegreeCertificates(data.degreeCertificates)
+        setTableData(data.degreeCertificates)
+        setCount(data.count)
+        console.log(data)
+      })
     }
 
     return () => {
@@ -66,24 +59,33 @@ export const useCouncilView = ({
     }
 
     if (newPage > table.page) {
-      if (isDataFiltered) {
-        fetchDataByField(
-          filters,
-          moduleIdentifier,
-          table.rowsPerPage,
-          newPage,
-        ).then((response) => {
-          setCouncils([...councils, ...(response.councils as CouncilModel[])])
-          setTableData([...councils, ...(response.councils as CouncilModel[])])
-        })
-      } else {
-        fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
-          if (data?.councils) {
-            setCouncils([...councils, ...data.councils])
-            setTableData([...councils, ...data.councils])
-          }
-        })
-      }
+      // if (isDataFiltered) {
+      //   fetchDataByField(
+      //     filters,
+      //     moduleIdentifier,
+      //     table.rowsPerPage,
+      //     newPage,
+      //   ).then((response) => {
+      //     setDegreeCertificates([
+      //       ...degreeCertificates,
+      //       ...(response.councils as DegreeCertificateModel[]),
+      //     ])
+      //     setTableData([
+      //       ...degreeCertificates,
+      //       ...(response.councils as DegreeCertificateModel[]),
+      //     ])
+      //   })
+      // } else {
+      fetchData(table.rowsPerPage, newPage).then((data) => {
+        if (data?.degreeCertificates) {
+          setDegreeCertificates([
+            ...degreeCertificates,
+            ...data.degreeCertificates,
+          ])
+          setTableData([...degreeCertificates, ...data.degreeCertificates])
+        }
+      })
+      // }
     }
   }
 
@@ -95,88 +97,86 @@ export const useCouncilView = ({
     setTableData([])
     setVisitedPages([])
 
-    if (isDataFiltered) {
-      fetchDataByField(
-        filters,
-        moduleIdentifier,
-        parseInt(event.target.value, 10),
-        0,
-      ).then((response) => {
-        if (response.councils.length > 0) {
-          setCouncils(response.councils as CouncilModel[])
-          setTableData(response.councils as CouncilModel[])
-          setCount(response.count)
-          return
-        }
+    // if (isDataFiltered) {
+    //   fetchDataByField(
+    //     filters,
+    //     moduleIdentifier,
+    //     parseInt(event.target.value, 10),
+    //     0,
+    //   ).then((response) => {
+    //     if (response.councils.length > 0) {
+    //       setDegreeCertificates(response.councils as DegreeCertificateModel[])
+    //       setTableData(response.councils as DegreeCertificateModel[])
+    //       setCount(response.count)
+    //       return
+    //     }
 
-        setCouncils([])
-        setTableData([])
-        setCount(0)
-      })
-    } else {
-      fetchData(
-        moduleIdentifier,
-        parseInt(event.target.value, 10),
-        table.page,
-      ).then((data) => {
-        if (data?.councils) {
-          setCouncils(data.councils)
-          setTableData(data.councils)
-        }
-        if (data?.count) {
-          setCount(data.count)
-        }
-      })
-    }
-  }
-
-  const handleUpdateRow = (row: ICouncil) => {
-    updateRow(row).then((data) => {
-      if (data) {
-        setCouncils(
-          councils.map((council) =>
-            council.id === data.id ? (data as CouncilModel) : council,
-          ),
-        )
-        setTableData(
-          councils.map((functionary) =>
-            functionary.id === data.id ? (data as CouncilModel) : functionary,
-          ),
-        )
+    //     setDegreeCertificates([])
+    //     setTableData([])
+    //     setCount(0)
+    //   })
+    // } else {
+    fetchData(parseInt(event.target.value, 10), table.page).then((data) => {
+      if (data?.degreeCertificates) {
+        setDegreeCertificates(data.degreeCertificates)
+        setTableData(data.degreeCertificates)
+      }
+      if (data?.count) {
+        setCount(data.count)
       }
     })
+    // }
   }
 
-  const handleSearch = (filters: ICouncilFilters) => {
-    fetchDataByField(
-      filters,
-      moduleIdentifier,
-      table.rowsPerPage,
-      table.page,
-    ).then((response) => {
-      if (response.councils.length > 0) {
-        setCouncils(response.councils as CouncilModel[])
-        setTableData(response.councils as CouncilModel[])
-        setCount(response.count)
-        return
-      }
+  // const handleUpdateRow = (row: IDegreeCertificate) => {
+  //   updateRow(row).then((data) => {
+  //     if (data) {
+  //       setDegreeCertificates(
+  //         degreeCertificates.map((council) =>
+  //           council.id === data.id ? (data as DegreeCertificateModel) : council,
+  //         ),
+  //       )
+  //       setTableData(
+  //         degreeCertificates.map((functionary) =>
+  //           functionary.id === data.id
+  //             ? (data as DegreeCertificateModel)
+  //             : functionary,
+  //         ),
+  //       )
+  //     }
+  //   })
+  // }
 
-      setCouncils([])
-      setTableData([])
-      setCount(0)
-      return
-    })
-  }
+  // const handleSearch = (filters: IDegreeCertificateFilters) => {
+  //   fetchDataByField(
+  //     filters,
+  //     moduleIdentifier,
+  //     table.rowsPerPage,
+  //     table.page,
+  //   ).then((response) => {
+  //     if (response.councils.length > 0) {
+  //       setDegreeCertificates(response.councils as DegreeCertificateModel[])
+  //       setTableData(response.councils as DegreeCertificateModel[])
+  //       setCount(response.count)
+  //       return
+  //     }
+
+  //     setDegreeCertificates([])
+  //     setTableData([])
+  //     setCount(0)
+  //     return
+  //   })
+  // }
 
   return {
     count,
     tableData,
     loader,
-    councils,
+    councils: degreeCertificates,
     setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
-    handleUpdateRow,
-    handleSearch,
+    // handleUpdateRow,
+    // handleSearch,
   }
 }
