@@ -20,7 +20,6 @@ import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { Box, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
-import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -101,8 +100,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
       </Grid>
     </>
   )
-
-  console.log(methods.watch('members'))
+  console.log({ d: methods.watch('members') })
 
   const renderProperties = (
     <>
@@ -124,13 +122,17 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
 
           <Stack spacing={3} sx={{ p: 3 }}>
             {defaultMembers.length > 0 ? (
-              Object.entries(methods.watch('members')).map(
-                ([positionName, member]) => {
+              Object.entries(methods.watch('members'))
+                .sort(
+                  ([, a], [, b]) =>
+                    (a?.positionOrder as number) - (b?.positionOrder as number),
+                )
+                .map(([positionName, member]) => {
                   console.log({ positionName, member })
                   return (
                     <>
                       <RHFAutocomplete
-                        key={(member.member.id as number) + positionName}
+                        key={(member?.member?.id as number) + positionName}
                         name={`members[${positionName}]`}
                         label={positionName}
                         placeholder="Escribe el nombre o cédula del miembro deseado"
@@ -140,21 +142,19 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                         getOptionLabel={(option) =>
                           (option as { label: string; id: number }).label
                         }
-                        // sssswl
                         onInputChange={(_event, newInputValue) => {
                           setSearchField(newInputValue)
                         }}
                         getOptionKey={(option) => (option as { id: number }).id}
                         options={unusedFunctionaries!.map((functionary) => ({
                           id: functionary.id,
-                          positionOrder: member.positionOrder,
+                          positionOrder: member?.positionOrder,
                           label: `${functionary.firstName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
                         }))}
                       />
                     </>
                   )
-                },
-              )
+                })
             ) : (
               <>
                 <Typography variant="body2" color="text.secondary">

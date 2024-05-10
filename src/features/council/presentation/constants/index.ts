@@ -39,7 +39,13 @@ export const resolveDefaultValues = (currentCouncil?: ICouncil) => ({
     currentCouncil?.members?.reduce((acc, member) => {
       acc[member.positionName] = {
         ...member,
-        member: { ...member.functionary },
+        member: {
+          ...member.functionary,
+          label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
+          id: member.functionary.id,
+        },
+        label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
+        id: member.functionary.id,
       }
 
       return acc

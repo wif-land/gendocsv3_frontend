@@ -88,7 +88,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
             members: Object.entries(data.members).map(
               ([positionName, member]) => ({
                 positionName,
-                memberId: member.id,
+                member: member.id,
                 positionOrder: member.positionOrder,
               }),
             ),
@@ -96,7 +96,16 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         } else {
           const editedFields = getEditedFields<Partial<FormValuesProps>>(
             defaultValues,
-            data,
+            {
+              ...data,
+              members: Object.entries(data.members).map(
+                ([positionName, member]) => ({
+                  positionName,
+                  member: member.id,
+                  positionOrder: member.positionOrder,
+                }),
+              ),
+            },
           )
 
           if (editedFields) {
@@ -213,6 +222,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       defaultMembers.reduce((acc, member) => {
         acc[member.positionName] = {
           ...(member.member as object),
+          label: `${member.member?.firstName} ${member.member?.firstLastName} ${member.member?.secondLastName} - ${member.member?.dni}`,
+          id: member.member?.id,
           positionOrder: member.positionOrder,
         }
 
