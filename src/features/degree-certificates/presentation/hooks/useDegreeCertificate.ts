@@ -1,64 +1,59 @@
-import { useCallback, useEffect, useState } from 'react'
-import useLoaderStore from '../../../../shared/store/useLoaderStore'
-
-import { useCouncilsMethods } from '../../../council/presentation/hooks/useCouncilsMethods'
-import { TableProps, useTable } from '../../../../shared/sdk/table'
-import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import {
-  IDegreeCertificateTableFilterValue,
-  IDegreeCertificateTableFilters,
-} from '../components/DegreeCertificateTableToolbar'
-import { DegreeCertificateModel } from '../../data/models/model'
-import { defaultFilters } from '../constants'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
-import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { useEffect, useState } from 'react'
+import { TableProps } from '../../../../shared/sdk/table'
+import { useDegreeCertificateMethods } from './use'
+import { ICouncil } from '../../domain/entities/ICouncil'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { CouncilModel } from '../../data/models/CouncilModel'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 interface Props {
-  tableData: IDegreeCertificate[]
-  setTableData: (data: IDegreeCertificate[]) => void
   table: TableProps
-  setCount: (count: number) => void
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  filters: IDegreeCertificateTableFilters
+  filters: ICouncilFilters
+  moduleId: string
 }
 
-export const useDegreeCertificateView = ({
-  tableData,
-  setTableData,
+export const useCouncilView = ({
   table,
-  setCount,
   isDataFiltered,
   visitedPages,
   setVisitedPages,
   filters,
+  moduleId,
 }: Props) => {
+  const [tableData, setTableData] = useState<CouncilModel[]>([])
+  const [count, setCount] = useState(0)
+  const { councils, setCouncils } = useDegreeCertificatesStore()
   const { loader } = useLoaderStore()
-  const { degreeCertificate, setDegreeCertificates } =
-    useDegreeCertificatesStore()
-  const { fetchData, updateRow, fetchDataByField } =
-    useDegreeCertificateMethods()
+  const { fetchData, updateRow, fetchDataByField } = useDegreeCertificateMethods()
+  const { modules } = useModulesStore()
 
-  const [searchTerm, setSearchTerm] = useState('')
+  const moduleIdentifier =
+    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
+
   useEffect(() => {
-    const isMounted = true
-    if (tableData.length === 0) {
-      if (isMounted && !isDataFiltered) {
-        fetchData(table.rowsPerPage, table.page).then((data) => {
-          if (data?.councils) {
-            setTableData(data.councils)
-            setDegreeCertificates(data.councils)
-          }
-          if (data?.count) {
-            setCount(data.count)
-          }
-        })
-      }
+    let isMounted = true
+    if (tableData.length !== 0) return
+
+    if (isMounted && !isDataFiltered) {
+      fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
+        (data) => {
+          if (data.count === 0) return
+          setCouncils(data.councils)
+          setTableData(data.councils)
+          setCount(data.count)
+        },
+      )
     }
-  })
+
+    return () => {
+      isMounted = false
+    }
+  }, [tableData, isDataFiltered])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -73,23 +68,19 @@ export const useDegreeCertificateView = ({
     if (newPage > table.page) {
       if (isDataFiltered) {
         fetchDataByField(
-          {
-            name: searchTerm,
-          },
+          filters,
           moduleIdentifier,
           table.rowsPerPage,
           newPage,
         ).then((response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setTableData([
-              ...(response.data.councils as DegreeCertificateModel[]),
-            ])
-          }
+          setCouncils([...councils, ...(response.councils as CouncilModel[])])
+          setTableData([...councils, ...(response.councils as CouncilModel[])])
         })
       } else {
         fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
           if (data?.councils) {
-            setTableData([])
+            setCouncils([...councils, ...data.councils])
+            setTableData([...councils, ...data.councils])
           }
         })
       }
@@ -106,22 +97,21 @@ export const useDegreeCertificateView = ({
 
     if (isDataFiltered) {
       fetchDataByField(
-        {
-          name: searchTerm,
-        },
+        filters,
         moduleIdentifier,
         parseInt(event.target.value, 10),
         0,
       ).then((response) => {
-        if (response?.status === HTTP_STATUS_CODES.OK) {
-          setTableData(response.data.councils as DegreeCertificateModel[])
-          setCount(response.data.count)
+        if (response.councils.length > 0) {
+          setCouncils(response.councils as CouncilModel[])
+          setTableData(response.councils as CouncilModel[])
+          setCount(response.count)
+          return
         }
 
-        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-          setTableData([])
-          setCount(0)
-        }
+        setCouncils([])
+        setTableData([])
+        setCount(0)
       })
     } else {
       fetchData(
@@ -130,7 +120,8 @@ export const useDegreeCertificateView = ({
         table.page,
       ).then((data) => {
         if (data?.councils) {
-          setTableData([])
+          setCouncils(data.councils)
+          setTableData(data.councils)
         }
         if (data?.count) {
           setCount(data.count)
@@ -139,44 +130,53 @@ export const useDegreeCertificateView = ({
     }
   }
 
-  const handleSearch = (field: string) => {
+  const handleUpdateRow = (row: ICouncil) => {
+    updateRow(row).then((data) => {
+      if (data) {
+        setCouncils(
+          councils.map((council) =>
+            council.id === data.id ? (data as CouncilModel) : council,
+          ),
+        )
+        setTableData(
+          councils.map((functionary) =>
+            functionary.id === data.id ? (data as CouncilModel) : functionary,
+          ),
+        )
+      }
+    })
+  }
+
+  const handleSearch = (filters: ICouncilFilters) => {
     fetchDataByField(
-      {
-        name: field,
-      },
+      filters,
       moduleIdentifier,
       table.rowsPerPage,
       table.page,
     ).then((response) => {
-      if (response?.status === HTTP_STATUS_CODES.OK) {
-        setTableData(response.data.councils as DegreeCertificateModel[])
-        setCount(response.data.count)
+      if (response.councils.length > 0) {
+        setCouncils(response.councils as CouncilModel[])
+        setTableData(response.councils as CouncilModel[])
+        setCount(response.count)
         return
       }
 
-      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-        setTableData([])
-        setCount(0)
-        return
-      }
+      setCouncils([])
+      setTableData([])
+      setCount(0)
+      return
     })
   }
 
   return {
     count,
-    table,
-    isDataFiltered,
-    searchTerm,
-    setSearchTerm,
     tableData,
     loader,
+    councils,
     setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
+    handleUpdateRow,
     handleSearch,
-    setVisitedPages,
-    handleResetFilters,
-    handleFilters,
-    filters,
   }
 }

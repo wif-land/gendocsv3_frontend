@@ -26,7 +26,8 @@ export class DegreeCertificateRepositoryImpl
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
 
-  getAll = async () => await this.datasource.getAll()
+  getAll = async (limit: number, offset: number) =>
+    await this.datasource.getAll(limit, offset)
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,

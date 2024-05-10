@@ -3,7 +3,13 @@ import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters
 import { IDegreeCertificate } from '../entities/IDegreeCertificates'
 
 export interface IDegreeCertificatesRepository {
-  getAll: () => Promise<DegreeCertificateModel[]>
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
+  }>
 
   getByFilters(
     filters: IDegreeCertificateFilters,

@@ -5,7 +5,13 @@ import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/model'
 
 export interface IDegreeCertificateDatasource {
-  getAll(): Promise<DegreeCertificateModel[]>
+  getAll(
+    limit: number,
+    offset: number,
+  ): Promise<{
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
+  }>
 
   getByFilters(
     filters: IDegreeCertificateFilters,
@@ -37,14 +43,25 @@ export class DegreeCertificateDatasourceImpl
     return DegreeCertificateDatasourceImpl.instance
   }
 
-  getAll = async () => {
-    const result = await AxiosClient.get(API_ROUTES.DEGREE_CERTIFICATES.GET_ALL)
+  getAll = async (limit: number, offset: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
+      {
+        params: { limit, offset },
+      },
+    )
 
     if ('error' in result) {
-      return [] as DegreeCertificateModel[]
+      return {
+        count: 0,
+        degreeCertificates: [] as DegreeCertificateModel[],
+      }
     }
 
-    return result.data as DegreeCertificateModel[]
+    return result.data as {
+      count: number
+      degreeCertificates: DegreeCertificateModel[]
+    }
   }
 
   getByFilters = async (
