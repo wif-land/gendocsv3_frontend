@@ -57,6 +57,7 @@ export class ProvidersDataSourceImpl implements ProvidersDataSource {
 
   getAllCertificateTypes = async () => {
     const result = await AxiosClient.get(API_ROUTES.CERTIFICATES_TYPES.GET_ALL)
+    console.log(result)
 
     if ('error' in result) {
       return [] as CertificateTypeModel[]

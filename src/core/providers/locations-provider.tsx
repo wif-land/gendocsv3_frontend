@@ -1,3 +1,4 @@
+"use client"
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { ProvidersUseCasesImpl } from './domain/usecases/ProvidersService'
 import { CityModel } from './data/models/cityModel'

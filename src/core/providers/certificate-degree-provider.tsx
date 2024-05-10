@@ -1,3 +1,4 @@
+"use client"
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { CertificateTypeModel } from './data/models/certificateTypeModel'
 import { CertificateStatusModel } from './data/models/certificateStatusModel'

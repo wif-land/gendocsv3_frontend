@@ -45,8 +45,8 @@ export const useDegreeCertificateForm = (
     const result =
       await DegreeCertificatesUseCasesImpl.getInstance().create(values)
 
-    if (result.degreeCertificate) {
-      addDegreeCertificate(result.degreeCertificate)
+    if (result) {
+      addDegreeCertificate(result)
       enqueueSnackbar('Acta creada correctamente')
     } else {
       throw new Error('Error al crear el acta')

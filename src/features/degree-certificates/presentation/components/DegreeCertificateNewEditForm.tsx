@@ -16,7 +16,11 @@ import {
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Box } from '@mui/material'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import {
+  IDegreeCertificate,
+  certificateType,
+  degreeModality,
+} from '../../domain/entities/IDegreeCertificates'
 import { Controller } from 'react-hook-form'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
@@ -40,12 +44,14 @@ export const DegreeCertificateNewEditForm = ({
     handleSubmit,
     formState: { isSubmitting },
     control,
+    watch,
   } = methods
 
-  const { certificateTypes } = useCertificateData()
-  console.log(certificateTypes)
-  const { provinces } = useLocations()
-  console.log(provinces)
+  const selectedCertificateType = watch('certificateTypeId')
+
+  const { cities, provinces } = useLocations()
+  const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
+    useCertificateData()
 
   const renderDetails = (
     <>
@@ -129,6 +135,7 @@ export const DegreeCertificateNewEditForm = ({
                   firstLastName,
                   secondName,
                   secondLastName,
+                  id,
                 } = students.filter(
                   (student) =>
                     option ===
@@ -160,13 +167,13 @@ export const DegreeCertificateNewEditForm = ({
             <RHFTextField
               name="startStudiesDate"
               label="Fecha de inicio de estudios"
-              required
+              // required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
               name="endStudiesDate"
               label="Fecha de finalización de estudios"
-              required
+              // required
               sx={{ flexGrow: 1 }}
             />
           </Stack>
@@ -177,13 +184,13 @@ export const DegreeCertificateNewEditForm = ({
             <RHFTextField
               name="approvedCredits"
               label="Créditos aprobados"
-              required
+              // required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
               name="intershipHours"
               label="Horas de práctica"
-              required
+              // required
               sx={{ flexGrow: 1 }}
             />
           </Stack>
@@ -194,13 +201,13 @@ export const DegreeCertificateNewEditForm = ({
             <RHFTextField
               name="vinculationHours"
               label="Horas de vinculación/Servicio comunitario"
-              required
+              // required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
               name="bachelorDegree"
               label="Titulo de bachiller"
-              required
+              // required
               sx={{ flexGrow: 1 }}
             />
           </Stack>
@@ -209,15 +216,9 @@ export const DegreeCertificateNewEditForm = ({
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
             <RHFTextField
-              name="canton"
-              label="Cantón de residencia"
-              required
-              sx={{ flexGrow: 1 }}
-            />
-            <RHFTextField
               name="province"
               label="Provincia de residencia"
-              required
+              // required
               sx={{ flexGrow: 1 }}
             />
           </Stack>
@@ -269,16 +270,46 @@ export const DegreeCertificateNewEditForm = ({
               )}
             />
 
+            <RHFAutocomplete
+              name="certificateType"
+              label="Tipo de acta"
+              freeSolo
+              options={certificateTypes.map(
+                (certificateType) => certificateType.name,
+              )}
+            ></RHFAutocomplete>
+
+            <RHFAutocomplete
+              name="certificateStatus"
+              label="Estado de acta"
+              freeSolo
+              options={certificateStatuses.map(
+                (certificateStatus) => certificateStatus.maleName,
+              )}
+            ></RHFAutocomplete>
+
+            <RHFAutocomplete
+              name="degreeModalities"
+              label="Modalidad de grado"
+              freeSolo
+              options={degreeModalities.map(
+                (degreeModality) => degreeModality.name,
+              )}
+            ></RHFAutocomplete>
+
+            <RHFAutocomplete
+              name="room"
+              label="Aula"
+              freeSolo
+              options={rooms.map((room) => room.name)}
+            ></RHFAutocomplete>
+
             <RHFTextField
               name="duration"
               label="Duración"
               required
               sx={{ flexGrow: 1 }}
             />
-
-            <RHFSelect name="certificateType" label="Tipo de Defensa" required>
-              {<MenuItem></MenuItem>}
-            </RHFSelect>
           </Stack>
         </Card>
       </Grid>
