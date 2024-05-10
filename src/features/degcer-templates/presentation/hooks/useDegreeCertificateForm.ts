@@ -16,7 +16,6 @@ import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
 import { IStudent } from '../../../../features/students/domain/entities/IStudent'
-import { useCertificateData } from '@/core/providers/certificate-degree-provider'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -26,8 +25,6 @@ export const useDegreeCertificateForm = (
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
   const [students, setStudents] = useState<IStudent[]>([])
-  const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
-    useCertificateData()
 
   const defaultValues = useMemo(
     () => resolveDefaultValues(currentDegreeCertificate),
@@ -42,7 +39,7 @@ export const useDegreeCertificateForm = (
   const router = useRouter()
   const pathname = usePathname()
   const { addDegreeCertificate } = useDegreeCertificatesStore()
-  const { reset, handleSubmit, getValues } = methods
+  const { reset, handleSubmit } = methods
 
   const handleCreate = useCallback(async (values: IDegreeCertificate) => {
     const result =
@@ -58,29 +55,21 @@ export const useDegreeCertificateForm = (
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
-      const formattedData = {
-        ...data,
-        degreeModality: degreeModalities.find(
-          (modality) => modality.id === data.degreeModality,
-        )?.id,
+      if (!currentDegreeCertificate) {
+        await handleCreate(data)
+      } else {
+        // const editFields = getEditedFields<FormValuesProps>(defaultValues, data)
       }
-      console.log(data)
-      console.log({ formattedData })
-      // if (!currentDegreeCertificate) {
-      //   await handleCreate(data)
-      // } else {
-      //   // const editFields = getEditedFields<FormValuesProps>(defaultValues, data)
-      // }
 
-      // const newPath = currentDegreeCertificate
-      //   ? pathname.replace(
-      //       new RegExp(`/${currentDegreeCertificate.id}/edit`),
-      //       '',
-      //     )
-      //   : pathname.replace('/new', '')
+      const newPath = currentDegreeCertificate
+        ? pathname.replace(
+            new RegExp(`/${currentDegreeCertificate.id}/edit`),
+            '',
+          )
+        : pathname.replace('/new', '')
 
-      // router.push(newPath)
-      // reset()
+      router.push(newPath)
+      reset()
     },
     [currentDegreeCertificate, enqueueSnackbar, reset, router],
   )
@@ -113,10 +102,6 @@ export const useDegreeCertificateForm = (
       isMounted = false
     }
   }, [debouncedValue, isOpen.value])
-
-  useEffect(() => {
-    console.log(methods.getValues())
-  }, [getValues('studentId')])
 
   return {
     methods,

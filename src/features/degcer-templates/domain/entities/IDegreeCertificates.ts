@@ -29,17 +29,17 @@ export interface IDegreeCertificatesAttendee {
   functionary: unknown
 }
 
-export interface ICertificateType {
+export interface certificateType {
   code: string
   name: string
 }
 
-export interface IDegreeModality {
+export interface degreeModality {
   code: string
   name: string
 }
 
-export interface ICertificateStatus {
+export interface certificateStatus {
   code: string
   maleName: string
   femaleName: string

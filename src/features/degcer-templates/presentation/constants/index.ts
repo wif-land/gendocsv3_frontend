@@ -27,7 +27,7 @@ export const resolveDefaultValues = (
   careerId: currentDegreeCertificate?.career || 0,
   certificateTypeId: currentDegreeCertificate?.certificateType || 0,
   certificateStatusId: currentDegreeCertificate?.certificateStatus || 0,
-  degreeModality: currentDegreeCertificate?.degreeModality || '',
+  degreeModalityId: currentDegreeCertificate?.degreeModality || 0,
   roomId: currentDegreeCertificate?.room || 0,
   duration: currentDegreeCertificate?.duration || 0,
   link: currentDegreeCertificate?.link || '',

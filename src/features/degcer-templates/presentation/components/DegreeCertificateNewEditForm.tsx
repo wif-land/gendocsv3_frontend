@@ -14,23 +14,20 @@ import {
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Box, MenuItem } from '@mui/material'
+import { Box } from '@mui/material'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 import {
   IDegreeCertificate,
-  ICertificateType,
-  IDegreeModality,
+  certificateType,
+  degreeModality,
 } from '../../domain/entities/IDegreeCertificates'
 import { Controller } from 'react-hook-form'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
-
+import { MenuItem } from '@nextui-org/react'
 import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
 import { useLocations } from '../../../../core/providers/locations-provider'
-import { label } from 'yet-another-react-lightbox'
-import { useEffect, useState } from 'react'
-import { IStudent } from '@/features/students/domain/entities/IStudent'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -43,15 +40,14 @@ export const DegreeCertificateNewEditForm = ({
   const { methods, onSubmit, students, setInputValue, isOpen, loading } =
     useDegreeCertificateForm(currentDegreeCertificate)
 
-  const [selectedStudent, setSelectedStudent] = useState<IStudent | null>(null)
-
   const {
     handleSubmit,
     formState: { isSubmitting },
     control,
     watch,
-    getValues,
   } = methods
+
+  const selectedCertificateType = watch('certificateTypeId')
 
   const { cities, provinces } = useLocations()
   const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
@@ -114,7 +110,7 @@ export const DegreeCertificateNewEditForm = ({
 
           <Stack spacing={3} sx={{ p: 3 }}>
             <RHFAutocomplete
-              name="studentId"
+              name="name"
               label="Estudiante"
               open={isOpen.value}
               onOpen={isOpen.onTrue}
@@ -274,55 +270,39 @@ export const DegreeCertificateNewEditForm = ({
               )}
             />
 
-            <RHFSelect
-              id="certificateStatus"
-              label="Estado de acta"
-              name="certificateStatus"
-            >
-              {certificateStatuses.map((certificateStatus) => (
-                <MenuItem
-                  key={certificateStatus.code}
-                  value={certificateStatus.code}
-                >
-                  {certificateStatus.maleName}
-                </MenuItem>
-              ))}
-            </RHFSelect>
-
-            <RHFSelect
-              id="degreeModality"
-              label="Modalidad"
-              name="degreeModality"
-            >
-              {degreeModalities.map((modality) => (
-                <MenuItem key={modality.id} value={modality.id}>
-                  {modality.name}
-                </MenuItem>
-              ))}
-            </RHFSelect>
-
-            <RHFSelect
-              id="certificateType"
-              label="Tipo de grado"
+            <RHFAutocomplete
               name="certificateType"
-            >
-              {certificateTypes.map((certificateType) => (
-                <MenuItem
-                  key={certificateType.code}
-                  value={certificateType.code}
-                >
-                  {certificateType.name}
-                </MenuItem>
-              ))}
-            </RHFSelect>
+              label="Tipo de acta"
+              freeSolo
+              options={certificateTypes.map(
+                (certificateType) => certificateType.name,
+              )}
+            ></RHFAutocomplete>
 
-            <RHFSelect id="room" label="Aula" name="room">
-              {rooms.map((room) => (
-                <MenuItem key={room.id} value={room.id}>
-                  {room.name}
-                </MenuItem>
-              ))}
-            </RHFSelect>
+            <RHFAutocomplete
+              name="certificateStatus"
+              label="Estado de acta"
+              freeSolo
+              options={certificateStatuses.map(
+                (certificateStatus) => certificateStatus.maleName,
+              )}
+            ></RHFAutocomplete>
+
+            <RHFAutocomplete
+              name="degreeModalities"
+              label="Modalidad de grado"
+              freeSolo
+              options={degreeModalities.map(
+                (degreeModality) => degreeModality.name,
+              )}
+            ></RHFAutocomplete>
+
+            <RHFAutocomplete
+              name="room"
+              label="Aula"
+              freeSolo
+              options={rooms.map((room) => room.name)}
+            ></RHFAutocomplete>
 
             <RHFTextField
               name="duration"
