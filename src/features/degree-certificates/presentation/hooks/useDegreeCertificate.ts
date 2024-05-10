@@ -1,72 +1,64 @@
 import { useCallback, useEffect, useState } from 'react'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import useModulesStore from '../../../../shared/store/modulesStore'
+
 import { useCouncilsMethods } from '../../../council/presentation/hooks/useCouncilsMethods'
-import { useTable } from '../../../../shared/sdk/table'
+import { TableProps, useTable } from '../../../../shared/sdk/table'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import {
   IDegreeCertificateTableFilterValue,
   IDegreeCertificateTableFilters,
 } from '../components/DegreeCertificateTableToolbar'
-import { DegreeCertificateModel } from '../../data/model'
+import { DegreeCertificateModel } from '../../data/models/model'
 import { defaultFilters } from '../constants'
+import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
+import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 
-export const useDegreeCertificateView = (moduleId: string) => {
-  const table = useTable()
-  const [tableData, setTableData] = useState<DegreeCertificateModel[]>([])
-  const isDataFiltered = useBoolean()
-  const [count, setCount] = useState(0)
-  const [visitedPages, setVisitedPages] = useState<number[]>([0])
+interface Props {
+  tableData: IDegreeCertificate[]
+  setTableData: (data: IDegreeCertificate[]) => void
+  table: TableProps
+  setCount: (count: number) => void
+  isDataFiltered: boolean
+  visitedPages: number[]
+  setVisitedPages: (value: number[]) => void
+  filters: IDegreeCertificateTableFilters
+}
+
+export const useDegreeCertificateView = ({
+  tableData,
+  setTableData,
+  table,
+  setCount,
+  isDataFiltered,
+  visitedPages,
+  setVisitedPages,
+  filters,
+}: Props) => {
   const { loader } = useLoaderStore()
-  const { fetchData, fetchDataByField } = useCouncilsMethods()
-  const { modules } = useModulesStore()
+  const { degreeCertificate, setDegreeCertificates } =
+    useDegreeCertificatesStore()
+  const { fetchData, updateRow, fetchDataByField } =
+    useDegreeCertificateMethods()
+
   const [searchTerm, setSearchTerm] = useState('')
-
-  const handleResetFilters = () => {
-    setFilters(defaultFilters as IDegreeCertificateTableFilters)
-    setSearchTerm('')
-    setVisitedPages([])
-    isDataFiltered.onFalse()
-    setTableData([])
-  }
-
-  const moduleIdentifier =
-    modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
-
-  const [filters, setFilters] = useState<IDegreeCertificateTableFilters>(
-    defaultFilters as IDegreeCertificateTableFilters,
-  )
-
-  const handleFilters = useCallback(
-    (name: string, value: IDegreeCertificateTableFilterValue) => {
-      table.onResetPage()
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }))
-    },
-    [table],
-  )
-
   useEffect(() => {
-    let isMounted = true
-    if (tableData.length !== 0) return
-
-    if (isMounted && !isDataFiltered) {
-      fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
-        (data) => {
-          if (data.count === 0) return
-          setTableData([])
-          setCount(data.count)
-        },
-      )
+    const isMounted = true
+    if (tableData.length === 0) {
+      if (isMounted && !isDataFiltered) {
+        fetchData(table.rowsPerPage, table.page).then((data) => {
+          if (data?.councils) {
+            setTableData(data.councils)
+            setDegreeCertificates(data.councils)
+          }
+          if (data?.count) {
+            setCount(data.count)
+          }
+        })
+      }
     }
-
-    return () => {
-      isMounted = false
-    }
-  }, [tableData, isDataFiltered])
+  })
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)

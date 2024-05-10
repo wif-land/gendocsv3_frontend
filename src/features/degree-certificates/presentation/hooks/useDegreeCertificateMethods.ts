@@ -1,21 +1,19 @@
-import { DegreeCertificateModel } from '../../data/model'
+import { DegreeCertificateModel } from '../../data/models/model'
+import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
+import { getAllItems } from '../../../../core/layout/_common/searchbar/utils'
+import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 
 export const useDegreeCertificateMethods = () => {
-  const handleCreateDegreeCertificate = async (
-    data: DegreeCertificateModel,
-  ) => {
-    console.log(data)
-  }
+  const { degreeCertificates, setDegreeCertificates } =
+    useDegreeCertificatesStore()
+  const { loader } = useLoaderStore()
 
-  const handleUpdateDegreeCertificate = async (
-    id: number,
-    editedFields: Partial<DegreeCertificateModel>,
-  ) => {
-    console.log(id, editedFields)
-  }
+  const fetchData = async (rowsPerPage: number, currentPage: number) =>
+    await DegreeCertificatesUseCasesImpl.getInstance().getAll()
 
-  return {
-    handleCreateDegreeCertificate,
-    handleUpdateDegreeCertificate,
-  }
+  const updateRow = async (degreeCertificate: Partial<IDegreeCertificate>) =>
+    await DegreeCertificatesUseCasesImpl.getInstance().update(
+      degreeCertificate.id as number,
+      { isActive: !degreeCertificate.isActive },
+    )
 }
