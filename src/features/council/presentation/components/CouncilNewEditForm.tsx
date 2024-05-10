@@ -18,8 +18,9 @@ import { Controller } from 'react-hook-form'
 import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
-import { Box, MenuItem } from '@mui/material'
+import { Box, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
+import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -34,10 +35,9 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
     setSearchField,
     loading,
     defaultMembers,
+    pathname,
   } = useCouncilsForm(currentCouncil)
-  const { handleSubmit, control, watch } = methods
-
-  console.log(watch().members)
+  const { handleSubmit, control } = methods
 
   const renderDetails = (
     <>
@@ -121,201 +121,54 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            {defaultMembers &&
+            {defaultMembers.length > 0 ? (
               defaultMembers.map((member, index) => (
-                <RHFAutocomplete
-                  key={member.id}
-                  name={`members[${index}]`}
-                  label={member.positionName}
-                  placeholder="Escribe el nombre o cédula del miembro deseado"
-                  freeSolo
-                  loading={loading.value}
-                  onClose={() => {
-                    setSearchField('')
-                  }}
-                  noOptionsText="No hay resultados"
-                  onInputChange={(_event, newInputValue) => {
-                    setSearchField(newInputValue)
-                  }}
-                  options={unusedFunctionaries!.map((functionary) => ({
-                    id: functionary.id,
-                    label: `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                    positionName: member.positionName,
-                    positionOrder: member.positionOrder,
-                    isStudent: member.isStudent,
-                  }))}
-                />
-              ))}
-
-            {/* <RHFAutocomplete
-              name="president"
-              label="Presidente"
-              placeholder="Escribe el nombre del presidente del consejo"
-              freeSolo
-              open={isOpenPresident.value}
-              loading={loading.value}
-              onOpen={handleOpenPresident}
-              onClose={() => {
-                handleClosePresident()
-                setSearchField('')
-              }}
-              noOptionsText="No hay resultados"
-              onInputChange={(_event, newInputValue) => {
-                setSearchField(newInputValue)
-              }}
-              options={unusedFunctionaries?.map(
-                (functionary) =>
-                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-              )}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const {
-                  dni,
-                  firstName,
-                  firstLastName,
-                  secondName,
-                  secondLastName,
-                } = unusedFunctionaries.filter(
-                  (functionary) =>
-                    option ===
-                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )[0]
-
-                if (!dni) {
-                  return null
-                }
-
-                return (
-                  <li {...props} key={dni}>
-                    <Typography variant="body2">
-                      {firstName} {secondName} {firstLastName} {secondLastName}
-                    </Typography>
-
-                    <Typography variant="caption" color="text.secondary">
-                      {dni}
-                    </Typography>
-                  </li>
-                )
-              }}
-            />
-
-            <RHFAutocomplete
-              name="subrogant"
-              label="Subrogante"
-              placeholder="Escribe el nombre del subrogante"
-              freeSolo
-              noOptionsText="No hay resultados"
-              open={isOpenSubrogant.value}
-              loading={loading.value}
-              onOpen={handleOpenSubrogant}
-              onClose={() => {
-                handleCloseSubrogant()
-                setSearchField('')
-              }}
-              options={unusedFunctionaries!.map(
-                (functionary) =>
-                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-              )}
-              onInputChange={(event, newInputValue) => {
-                setSearchField(newInputValue)
-              }}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const {
-                  dni,
-                  firstName,
-                  firstLastName,
-                  secondName,
-                  secondLastName,
-                } = unusedFunctionaries.filter(
-                  (functionary) =>
-                    option ===
-                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )[0]
-
-                if (!dni) {
-                  return null
-                }
-
-                return (
-                  <li key={dni} {...props}>
-                    <Typography variant="body2">
-                      {firstName} {secondName} {firstLastName} {secondLastName}
-                    </Typography>
-
-                    <Typography variant="caption" color="text.secondary">
-                      {dni}
-                    </Typography>
-                  </li>
-                )
-              }}
-              renderTags={(selected, getTagProps) =>
-                selected.map((option, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    key={option}
-                    label={option}
-                    size="small"
-                    color="info"
-                    variant="soft"
-                  />
-                ))
-              }
-            /> */}
-
-            {/*
-            {values.attendees &&
-              unusedFunctionaries &&
-              values.attendees.map((attendee, index) => (
-                <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+                <>
                   <RHFAutocomplete
-                    sx={{ flexGrow: 1 }}
-                    name={`attendees[${index}]`}
-                    label={`Miembro ${index + 1}`}
-                    placeholder="Escribe el nombre del miembro"
+                    key={(member.member as IMember).id}
+                    name={`members[${index}]`}
+                    label={member.positionName}
+                    placeholder="Escribe el nombre o cédula del miembro deseado"
                     freeSolo
+                    loading={loading.value}
+                    onClose={() => {
+                      setSearchField('')
+                    }}
+                    value={
+                      member.member
+                        ? `${(member.member as IMember).firstName} ${
+                            (member.member as IMember).secondName
+                          } ${(member.member as IMember).firstLastName} ${
+                            (member.member as IMember).secondLastName
+                          } - ${(member.member as IMember).dni}`
+                        : ''
+                    }
+                    noOptionsText="No hay resultados"
+                    onInputChange={(_event, newInputValue) => {
+                      setSearchField(newInputValue)
+                    }}
                     options={unusedFunctionaries!.map(
                       (functionary) =>
                         `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
                     )}
-                    getOptionLabel={(option) => option}
-                    renderOption={(props, option) => {
-                      const {
-                        dni,
-                        firstName,
-                        firstLastName,
-                        secondName,
-                        secondLastName,
-                      } = unusedFunctionaries!.filter(
-                        (functionary) =>
-                          option ===
-                          `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                      )[0]
-
-                      if (!dni) {
-                        return null
-                      }
-
-                      return (
-                        <li key={dni} {...props}>
-                          <Typography variant="body2">
-                            {firstName} {secondName} {firstLastName}{' '}
-                            {secondLastName}
-                          </Typography>
-
-                          <Typography variant="caption" color="text.secondary">
-                            {dni}
-                          </Typography>
-                        </li>
-                      )
-                    }}
                   />
-
-                  <IconButton onClick={() => handleRemoveAttendee(index)}>
-                    <Iconify icon="fluent:delete-20-regular" />
-                  </IconButton>
-                </Box>
-              ))} */}
+                </>
+              ))
+            ) : (
+              <>
+                <Typography variant="body2" color="text.secondary">
+                  No hay miembros por defecto
+                </Typography>
+                <Link
+                  href={`${pathname
+                    .split('/')
+                    .slice(0, -2)
+                    .join('/')}/representantes`}
+                >
+                  Crear miembros por defecto
+                </Link>
+              </>
+            )}
           </Stack>
         </Card>
       </Grid>
@@ -338,7 +191,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           type="submit"
           variant="contained"
           size="large"
-          disabled={loading.value}
+          // disabled={loading.value}
         >
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>

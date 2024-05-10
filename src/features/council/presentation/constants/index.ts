@@ -1,6 +1,7 @@
 import * as Yup from 'yup'
 import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
 import { ICouncilTableFilters } from '../components/CouncilTableToolbar'
+import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -34,8 +35,11 @@ export const resolveDefaultValues = (currentCouncil?: ICouncil) => ({
   isActive: !!currentCouncil?.isActive || true,
   isArchived: !!currentCouncil?.isArchived,
   members:
-    currentCouncil?.members?.map((member) => ({
-      ...member,
-      label: `${member.member.firstName} ${member.member.secondName} ${member.member.firstLastName} ${member.member.secondLastName} - ${member.member.dni}`,
-    })) || [],
+    currentCouncil?.members?.map(
+      (member) =>
+        `${(member.member as IMember)?.firstName} ${(member.member as IMember)
+          ?.secondName} ${(member.member as IMember)?.firstLastName} ${(
+          member.member as IMember
+        )?.secondLastName} - ${(member.member as IMember)?.dni}`,
+    ) || [],
 })

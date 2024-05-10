@@ -17,6 +17,8 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDefaultMembersStore } from '../../../default-members/presentation/store/defaultMembersStore'
 import { DefaultMembersUseCasesImpl } from '../../../default-members/domain/usecases/DefaultMemberServices'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
+import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
+import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
 
 interface FormValuesProps extends ICouncil {}
 
@@ -75,13 +77,16 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       loading.onTrue()
+      console.log(data)
       try {
         if (!currentCouncil) {
           await handleCreateCouncil({
             ...data,
             members: data.members?.map((member) => ({
               ...member,
-              member: member.id,
+              member:
+                (member.member as IMember).dni ??
+                (member.member as string).split('-')[1],
             })),
           })
         } else {
@@ -107,6 +112,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
           { variant: 'success' },
         )
       } catch (error) {
+        console.log(error)
         enqueueSnackbar(
           !currentCouncil
             ? 'Error al crear el consejo'
@@ -133,7 +139,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     const [attendees] = [
       values.members?.map((attendee) =>
         unusedFunctionaries.find(
-          (functionary) => functionary.dni === attendee.member.dni,
+          (functionary) =>
+            functionary.dni === (attendee?.member as IMember)?.dni,
         ),
       ),
     ]
@@ -152,6 +159,13 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     let isMounted = true
     loading.onTrue()
     if (searchDebounced.includes('-')) return
+    if (
+      !searchDebounced ||
+      searchDebounced === '' ||
+      searchDebounced.length < 1
+    ) {
+      return
+    }
 
     FunctionaryUseCasesImpl.getInstance()
       .getByFilters({ field: searchDebounced })
@@ -164,7 +178,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
           const filteredFunctionaries = result.functionaries.filter(
             (functionary) =>
               usedFunctionaries?.every(
-                (attendee) => attendee?.member?.dni !== functionary.dni,
+                (attendee) =>
+                  (attendee?.member as IMember)?.dni !== functionary.dni,
               ),
           )
 
@@ -186,6 +201,19 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .then((result) => {
         setDefaultMembers(result)
       })
+    if (currentCouncil?.members.length) return
+    methods.setValue(
+      'members',
+      defaultMembers.map(
+        (member) =>
+          ({
+            ...member,
+            hasAttended: false,
+            hasBeenNotified: false,
+            defaultMemberId: (member.member as IMember).id,
+          }) as ICouncilAttendee,
+      ),
+    )
   }, [])
 
   return {
@@ -199,5 +227,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     setSearchField,
     loading,
     defaultMembers,
+    pathname,
   }
 }

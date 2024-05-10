@@ -32,6 +32,6 @@ export interface ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
-  members: ICouncilAttendee[]
+  members: ICouncilAttendee[] | string[]
   createdBy?: string
 }
