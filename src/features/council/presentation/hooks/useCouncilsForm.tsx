@@ -206,11 +206,15 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .then((result) => {
         setDefaultMembers(result)
       })
+    console.log({ currentCouncil })
     if (currentCouncil?.members.length) return
     methods.setValue(
       'members',
       defaultMembers.reduce((acc, member) => {
-        acc[member.positionName] = member.member
+        acc[member.positionName] = {
+          ...(member.member as object),
+          positionOrder: member.positionOrder,
+        }
 
         return acc
       }, {}),

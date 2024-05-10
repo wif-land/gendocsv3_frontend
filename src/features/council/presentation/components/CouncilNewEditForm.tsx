@@ -102,6 +102,8 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
     </>
   )
 
+  console.log(methods.watch('members'))
+
   const renderProperties = (
     <>
       {mdUp && (
@@ -122,40 +124,37 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
 
           <Stack spacing={3} sx={{ p: 3 }}>
             {defaultMembers.length > 0 ? (
-              defaultMembers.map((member) => (
-                <>
-                  <RHFAutocomplete
-                    key={(member.member as IMember).id}
-                    name={`members[${member.positionName}]`}
-                    label={member.positionName}
-                    placeholder="Escribe el nombre o cédula del miembro deseado"
-                    noOptionsText="No hay resultados"
-                    freeSolo
-                    loading={loading.value}
-                    getOptionLabel={(option) =>
-                      (option as { label: string; id: number }).label
-                    }
-                    defaultValue={{
-                      label: `${(member.member as IMember).firstName} ${
-                        (member.member as IMember).secondName
-                      } ${(member.member as IMember).firstLastName} ${
-                        (member.member as IMember).secondLastName
-                      } - ${(member.member as IMember).dni}`,
-                      id: (member.member as IMember).id,
-                      positionOrder: member.positionOrder,
-                    }}
-                    onInputChange={(_event, newInputValue) => {
-                      setSearchField(newInputValue)
-                    }}
-                    getOptionKey={(option) => (option as { id: number }).id}
-                    options={unusedFunctionaries!.map((functionary) => ({
-                      id: functionary.id,
-                      positionOrder: member.positionOrder,
-                      label: `${functionary.firstName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                    }))}
-                  />
-                </>
-              ))
+              Object.entries(methods.watch('members')).map(
+                ([positionName, member]) => {
+                  console.log({ positionName, member })
+                  return (
+                    <>
+                      <RHFAutocomplete
+                        key={(member.member.id as number) + positionName}
+                        name={`members[${positionName}]`}
+                        label={positionName}
+                        placeholder="Escribe el nombre o cédula del miembro deseado"
+                        noOptionsText="No hay resultados"
+                        freeSolo
+                        loading={loading.value}
+                        getOptionLabel={(option) =>
+                          (option as { label: string; id: number }).label
+                        }
+                        // sssswl
+                        onInputChange={(_event, newInputValue) => {
+                          setSearchField(newInputValue)
+                        }}
+                        getOptionKey={(option) => (option as { id: number }).id}
+                        options={unusedFunctionaries!.map((functionary) => ({
+                          id: functionary.id,
+                          positionOrder: member.positionOrder,
+                          label: `${functionary.firstName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                        }))}
+                      />
+                    </>
+                  )
+                },
+              )
             ) : (
               <>
                 <Typography variant="body2" color="text.secondary">

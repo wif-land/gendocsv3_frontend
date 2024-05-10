@@ -37,7 +37,10 @@ export const resolveDefaultValues = (currentCouncil?: ICouncil) => ({
   isArchived: !!currentCouncil?.isArchived,
   members:
     currentCouncil?.members?.reduce((acc, member) => {
-      acc[member.positionName] = member
+      acc[member.positionName] = {
+        ...member,
+        member: { ...member.functionary },
+      }
 
       return acc
     }, {}) || {},
