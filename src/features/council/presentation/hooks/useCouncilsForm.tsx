@@ -17,8 +17,6 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDefaultMembersStore } from '../../../default-members/presentation/store/defaultMembersStore'
 import { DefaultMembersUseCasesImpl } from '../../../default-members/domain/usecases/DefaultMemberServices'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
-import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
-import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
 
 interface FormValuesProps extends ICouncil {}
 
@@ -59,9 +57,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       ...values,
       moduleId: moduleIdentifier ?? 0,
       userId: user?.id as number,
-      members: values.members?.map((member) => ({
-        ...member,
-      })),
+      members: values.members,
     })
 
     addCouncil(council)
@@ -82,12 +78,14 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         if (!currentCouncil) {
           await handleCreateCouncil({
             ...data,
-            members: data.members?.map((member) => ({
-              ...member,
-              member:
-                (member.member as IMember).dni ??
-                (member.member as string).split('-')[1],
-            })),
+            /**
+             * {
+             *  'Position': {
+             *  id: 1, label: 'position', positionOrder: 1,
+             *   }
+             * }
+             */
+            members: data.members,
           })
         } else {
           const editedFields = getEditedFields<Partial<FormValuesProps>>(
@@ -136,21 +134,18 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   useEffect(() => {
     if (!unusedFunctionaries) return
 
-    const [attendees] = [
-      values.members?.map((attendee) =>
-        unusedFunctionaries.find(
-          (functionary) =>
-            functionary.dni === (attendee?.member as IMember)?.dni,
-        ),
-      ),
-    ]
+    // const attendees = values.members?.map((attendee) =>
+    //   unusedFunctionaries.find(
+    //     (functionary) => functionary.dni === (attendee?.member as IMember)?.dni,
+    //   ),
+    // )
 
-    const currentUnusedFunctionaries = unusedFunctionaries.filter(
-      (functionary) =>
-        !attendees?.some((attendee) => attendee?.dni === functionary.dni),
-    )
+    // const currentUnusedFunctionaries = unusedFunctionaries.filter(
+    //   (functionary) =>
+    //     !attendees?.some((attendee) => attendee?.dni === functionary.dni),
+    // )
 
-    setUnusedFunctionaries(currentUnusedFunctionaries)
+    setUnusedFunctionaries([])
   }, [values.members])
 
   const searchDebounced = useDebounce(searchField)
@@ -175,15 +170,19 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         if (result.functionaries.length > 0) {
           const usedFunctionaries = methods.getValues().members
 
-          const filteredFunctionaries = result.functionaries.filter(
-            (functionary) =>
-              usedFunctionaries?.every(
-                (attendee) =>
-                  (attendee?.member as IMember)?.dni !== functionary.dni,
-              ),
-          )
+          console.log({ usedFunctionaries })
 
-          setUnusedFunctionaries(filteredFunctionaries)
+          // const filteredFunctionaries = result.functionaries.filter(
+          //   (functionary) =>
+          //     usedFunctionaries?.every(
+          //       (attendee) =>
+          //         attendee?.member?.label?.split('-')[1] !== functionary.dni,
+          //     ),
+          // )
+
+          // console.log({ filteredFunctionaries })
+
+          setUnusedFunctionaries(result.functionaries)
         } else {
           setUnusedFunctionaries([])
         }
@@ -204,15 +203,11 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     if (currentCouncil?.members.length) return
     methods.setValue(
       'members',
-      defaultMembers.map(
-        (member) =>
-          ({
-            ...member,
-            hasAttended: false,
-            hasBeenNotified: false,
-            defaultMemberId: (member.member as IMember).id,
-          }) as ICouncilAttendee,
-      ),
+      defaultMembers.reduce((acc, member) => {
+        acc[member.positionName] = member.member
+
+        return acc
+      }, {}),
     )
   }, [])
 

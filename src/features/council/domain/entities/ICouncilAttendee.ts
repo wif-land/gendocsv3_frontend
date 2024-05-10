@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
-
 export interface ICouncilAttendee {
   id?: number
 
@@ -11,7 +9,7 @@ export interface ICouncilAttendee {
 
   isStudent: boolean
 
-  member: IMember | string
+  member: any
 
   positionName: string
 

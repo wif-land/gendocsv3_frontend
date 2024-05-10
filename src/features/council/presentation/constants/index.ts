@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Yup from 'yup'
 import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
 import { ICouncilTableFilters } from '../components/CouncilTableToolbar'
@@ -35,11 +36,9 @@ export const resolveDefaultValues = (currentCouncil?: ICouncil) => ({
   isActive: !!currentCouncil?.isActive || true,
   isArchived: !!currentCouncil?.isArchived,
   members:
-    currentCouncil?.members?.map(
-      (member) =>
-        `${(member.member as IMember)?.firstName} ${(member.member as IMember)
-          ?.secondName} ${(member.member as IMember)?.firstLastName} ${(
-          member.member as IMember
-        )?.secondLastName} - ${(member.member as IMember)?.dni}`,
-    ) || [],
+    currentCouncil?.members?.reduce((acc, member) => {
+      acc[member.positionName] = member
+
+      return acc
+    }, {}) || {},
 })

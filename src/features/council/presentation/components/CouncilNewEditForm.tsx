@@ -122,35 +122,37 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
 
           <Stack spacing={3} sx={{ p: 3 }}>
             {defaultMembers.length > 0 ? (
-              defaultMembers.map((member, index) => (
+              defaultMembers.map((member) => (
                 <>
                   <RHFAutocomplete
                     key={(member.member as IMember).id}
-                    name={`members[${index}]`}
+                    name={`members[${member.positionName}]`}
                     label={member.positionName}
                     placeholder="Escribe el nombre o cédula del miembro deseado"
+                    noOptionsText="No hay resultados"
                     freeSolo
                     loading={loading.value}
-                    onClose={() => {
-                      setSearchField('')
-                    }}
-                    value={
-                      member.member
-                        ? `${(member.member as IMember).firstName} ${
-                            (member.member as IMember).secondName
-                          } ${(member.member as IMember).firstLastName} ${
-                            (member.member as IMember).secondLastName
-                          } - ${(member.member as IMember).dni}`
-                        : ''
+                    getOptionLabel={(option) =>
+                      (option as { label: string; id: number }).label
                     }
-                    noOptionsText="No hay resultados"
+                    defaultValue={{
+                      label: `${(member.member as IMember).firstName} ${
+                        (member.member as IMember).secondName
+                      } ${(member.member as IMember).firstLastName} ${
+                        (member.member as IMember).secondLastName
+                      } - ${(member.member as IMember).dni}`,
+                      id: (member.member as IMember).id,
+                      positionOrder: member.positionOrder,
+                    }}
                     onInputChange={(_event, newInputValue) => {
                       setSearchField(newInputValue)
                     }}
-                    options={unusedFunctionaries!.map(
-                      (functionary) =>
-                        `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                    )}
+                    getOptionKey={(option) => (option as { id: number }).id}
+                    options={unusedFunctionaries!.map((functionary) => ({
+                      id: functionary.id,
+                      positionOrder: member.positionOrder,
+                      label: `${functionary.firstName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                    }))}
                   />
                 </>
               ))
