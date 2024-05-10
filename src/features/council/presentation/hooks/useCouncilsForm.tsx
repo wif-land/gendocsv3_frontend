@@ -85,7 +85,13 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
              *   }
              * }
              */
-            members: data.members,
+            members: Object.entries(data.members).map(
+              ([positionName, member]) => ({
+                positionName,
+                memberId: member.id,
+                positionOrder: member.positionOrder,
+              }),
+            ),
           })
         } else {
           const editedFields = getEditedFields<Partial<FormValuesProps>>(
