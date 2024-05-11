@@ -18,7 +18,7 @@ export interface ICreateStudent {
   personalEmail: string
   outlookEmail: string
   phoneNumber: string
-  studyStartDate: string
+  startStudiesDate: string
   bachelorDegree: string
   approvedCredits?: number
   vinculationHours?: number

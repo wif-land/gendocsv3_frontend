@@ -24,11 +24,12 @@ export class StudentModel implements IStudent {
   outlookEmail: string
   phoneNumber: string
   createdAt: string
-  studyStartDate: string
   bachelorDegree: string
   vinculationHours?: number | undefined
   internshipHours?: number | undefined
   studyEndDate?: string | undefined
+  label?: string | undefined
+  startStudiesDate: string
 
   constructor(props: IStudent) {
     this.id = props.id
@@ -52,7 +53,7 @@ export class StudentModel implements IStudent {
     this.outlookEmail = props.outlookEmail
     this.phoneNumber = props.phoneNumber
     this.createdAt = props.createdAt
-    this.studyStartDate = props.studyStartDate
+    this.startStudiesDate = props.startStudiesDate
     this.bachelorDegree = props.bachelorDegree
     this.vinculationHours = props.vinculationHours
     this.internshipHours = props.internshipHours
@@ -82,7 +83,7 @@ export class StudentModel implements IStudent {
       updatedAt: json.updatedAt,
       cellphone: json.cellphone,
       regularPhoneNumber: json.regularPhoneNumber,
-      studyStartDate: json.studyStartDate,
+      startStudiesDate: json.startStudiesDate,
       bachelorDegree: json.bachelorDegree,
       vinculationHours: json.vinculationHours,
       internshipHours: json.internshipHours,

@@ -1,19 +1,17 @@
-import {
-  IDegreeModality,
-  IRoom,
-} from '../../../../core/providers/domain/entities/ICertificateProvider'
+import { IRoom } from '../../../../core/providers/domain/entities/ICertificateProvider'
 import { IStudent } from '../../../students/domain/entities/IStudent'
+
 export interface IDegreeCertificate {
   id?: number
   number: number
   aux_number: number
   topic: string
   presentationDate: Date
-  student: IStudent | number | string
+  student: IStudent
   career: number
   certificateType: number
   certificateStatus: number
-  degreeModality: IDegreeModality | number
+  degreeModality: IDegreeModality
   room: IRoom | number
   duration: number
   link: string

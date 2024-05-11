@@ -30,7 +30,7 @@ import { useCertificateData } from '../../../../core/providers/certificate-degre
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { label } from 'yet-another-react-lightbox'
 import { useEffect, useState } from 'react'
-import { IStudent } from '@/features/students/domain/entities/IStudent'
+import { IStudent } from '../../../students/domain/entities/IStudent'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -114,7 +114,7 @@ export const DegreeCertificateNewEditForm = ({
 
           <Stack spacing={3} sx={{ p: 3 }}>
             <RHFAutocomplete
-              name="studentId"
+              name="selectedValue"
               label="Estudiante"
               open={isOpen.value}
               onOpen={isOpen.onTrue}
@@ -124,44 +124,14 @@ export const DegreeCertificateNewEditForm = ({
               }}
               loading={loading}
               noOptionsText="No hay resultados"
-              options={students?.map(
-                (student) =>
-                  `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
-              )}
+              options={students?.map((student) => ({
+                label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
+                id: student.id,
+              }))}
               onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue)
               }}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const {
-                  dni,
-                  firstName,
-                  firstLastName,
-                  secondName,
-                  secondLastName,
-                  id,
-                } = students.filter(
-                  (student) =>
-                    option ===
-                    `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
-                )[0]
-
-                if (!dni) {
-                  return null
-                }
-
-                return (
-                  <li {...props} key={dni}>
-                    <Typography variant="body2">
-                      {firstName} {secondName} {firstLastName} {secondLastName}
-                    </Typography>
-
-                    <Typography variant="caption" color="text.secondary">
-                      {dni}
-                    </Typography>
-                  </li>
-                )
-              }}
+              getOptionLabel={(option) => (option as { label: string }).label}
             />
           </Stack>
           <Stack
@@ -169,13 +139,13 @@ export const DegreeCertificateNewEditForm = ({
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
             <RHFTextField
-              name="startStudiesDate"
+              name="student.startStudiesDate"
               label="Fecha de inicio de estudios"
               // required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
-              name="endStudiesDate"
+              name="student.endStudiesDate"
               label="Fecha de finalización de estudios"
               // required
               sx={{ flexGrow: 1 }}
@@ -186,13 +156,14 @@ export const DegreeCertificateNewEditForm = ({
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
             <RHFTextField
-              name="approvedCredits"
+              name="student.approvedCredits"
               label="Créditos aprobados"
               // required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
-              name="intershipHours"
+              // TODO: note this. I'm using dot notation to access the nested object and it's working
+              name="student.intershipHours"
               label="Horas de práctica"
               // required
               sx={{ flexGrow: 1 }}
@@ -203,13 +174,13 @@ export const DegreeCertificateNewEditForm = ({
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
             <RHFTextField
-              name="vinculationHours"
+              name="student.vinculationHours"
               label="Horas de vinculación/Servicio comunitario"
               // required
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
-              name="bachelorDegree"
+              name="student.bachelorDegree"
               label="Titulo de bachiller"
               // required
               sx={{ flexGrow: 1 }}

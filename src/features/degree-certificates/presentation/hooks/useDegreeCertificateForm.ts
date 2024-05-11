@@ -7,16 +7,17 @@ import {
   resolveDefaultValues,
 } from '../constants'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
-import { IStudent } from '../../../../features/students/domain/entities/IStudent'
-import { useCertificateData } from '@/core/providers/certificate-degree-provider'
+import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
+import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
+import { useStudentStore } from '../../../students/presentation/state/studentStore'
+import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -25,7 +26,7 @@ export const useDegreeCertificateForm = (
   const debouncedValue = useDebounce(inputValue)
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
-  const [students, setStudents] = useState<IStudent[]>([])
+  const { students, setStudents } = useStudentStore()
   const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
     useCertificateData()
 
@@ -34,30 +35,21 @@ export const useDegreeCertificateForm = (
     [currentDegreeCertificate],
   )
   const methods = useForm<FormValuesProps>({
-    // @ts-expect-error - The resolver is not being recognized
     resolver: yupResolver(NewDegreeCertificateSchema),
     defaultValues,
   })
 
   const router = useRouter()
-  const pathname = usePathname()
   const { addDegreeCertificate } = useDegreeCertificatesStore()
+  const { resolveStudentById } = useDegreeCertificateMethods()
   const { reset, handleSubmit, getValues } = methods
 
   const handleCreate = useCallback(async (values: IDegreeCertificate) => {
-    const result =
-      await DegreeCertificatesUseCasesImpl.getInstance().create(values)
-
-    if (result) {
-      addDegreeCertificate(result)
-      enqueueSnackbar('Acta creada correctamente')
-    } else {
-      throw new Error('Error al crear el acta')
-    }
+    await DegreeCertificatesUseCasesImpl.getInstance().create(values)
   }, [])
 
   const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
+    async (data: IDegreeCertificate) => {
       const formattedData = {
         ...data,
         degreeModality: degreeModalities.find(
@@ -69,7 +61,7 @@ export const useDegreeCertificateForm = (
       // if (!currentDegreeCertificate) {
       //   await handleCreate(data)
       // } else {
-      //   // const editFields = getEditedFields<FormValuesProps>(defaultValues, data)
+      //   // const editFields = getEditedFields<IDegreeCertificate>(defaultValues, data)
       // }
 
       // const newPath = currentDegreeCertificate
@@ -92,7 +84,6 @@ export const useDegreeCertificateForm = (
   }, [currentDegreeCertificate, defaultValues, reset])
 
   useEffect(() => {
-    let isMounted = true
     if (isOpen.value === false) return
 
     setIsLoading(true)
@@ -101,22 +92,31 @@ export const useDegreeCertificateForm = (
       await StudentUseCasesImpl.getInstance()
         .getByFilters({ field })
         .then((res) => {
-          console.log(res)
-
           setStudents(res.students)
         })
     }
     if (debouncedValue.includes('-')) return
 
     filteredStudents(debouncedValue)
-    return () => {
-      isMounted = false
-    }
   }, [debouncedValue, isOpen.value])
 
   useEffect(() => {
-    console.log(methods.getValues())
-  }, [getValues('studentId')])
+    const studentId = methods.watch('selectedValue')?.id
+
+    if (!studentId || studentId === 0) return
+
+    // TODO: The selectedValue is from the select component to get the student, if the student is not found, it should be fetched from the API
+    resolveStudentById(studentId).then((student) => {
+      console.log({ student })
+
+      // TODO: The student should be set in the form with the data fetched from the store or from the API
+      methods.setValue('student', student)
+    })
+
+    return () => {
+      reset()
+    }
+  }, [methods.watch('selectedValue')])
 
   return {
     methods,

@@ -3,7 +3,12 @@ import * as Yup from 'yup'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
-export interface FormValuesProps extends IDegreeCertificate {}
+import { StudentModel } from '../../../students/data/models/StudentModel'
+
+export interface FormValuesProps extends IDegreeCertificate {
+  selectedValue: { id: number; label: string }
+}
+
 export const TABLE_HEAD = [
   { id: 'topic', label: 'Tema' },
   { id: 'student', label: 'Estudiante' },
@@ -16,28 +21,36 @@ export const TABLE_HEAD = [
 
 export const resolveDefaultValues = (
   currentDegreeCertificate?: IDegreeCertificate,
-) => ({
+): FormValuesProps => ({
   number: currentDegreeCertificate?.number || 0,
   aux_number: currentDegreeCertificate?.aux_number || 0,
   topic: currentDegreeCertificate?.topic || '',
   presentationDate: currentDegreeCertificate?.presentationDate || new Date(),
-  studentId: currentDegreeCertificate?.student
-    ? getSelectedStudent(currentDegreeCertificate?.student as IStudent)
-    : '',
-  careerId: currentDegreeCertificate?.career || 0,
-  certificateTypeId: currentDegreeCertificate?.certificateType || 0,
-  certificateStatusId: currentDegreeCertificate?.certificateStatus || 0,
-  degreeModality: currentDegreeCertificate?.degreeModality || '',
-  roomId: currentDegreeCertificate?.room || 0,
+  student: getSelectedStudent(currentDegreeCertificate?.student as IStudent),
+  career: currentDegreeCertificate?.career || 0,
+  certificateType: currentDegreeCertificate?.certificateType || 0,
+  certificateStatus: currentDegreeCertificate?.certificateStatus || 0,
+  degreeModality: currentDegreeCertificate?.degreeModality || ({} as any),
+  room: currentDegreeCertificate?.room || 0,
   duration: currentDegreeCertificate?.duration || 0,
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',
   documentDriveId: currentDegreeCertificate?.documentDriveId || '',
   isClosed: currentDegreeCertificate?.isClosed || false,
+  selectedValue: {
+    id: currentDegreeCertificate?.student?.id || 0,
+    label: `${currentDegreeCertificate?.student?.firstName} ${currentDegreeCertificate?.student?.firstLastName}`,
+  },
 })
 
-export const getSelectedStudent = (currentStudent?: IStudent) =>
-  `${currentStudent?.firstName} ${currentStudent?.secondName} ${currentStudent?.firstLastName} ${currentStudent?.secondLastName} - ${currentStudent?.dni}`
+export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
+  currentStudent
+    ? {
+        ...currentStudent,
+        id: currentStudent.id || 0,
+        label: `${currentStudent.firstName} ${currentStudent.firstLastName}`,
+      }
+    : StudentModel.fromJson({})
 
 export const defaultFilters: IDegreeCertificateFilters = {
   name: '',

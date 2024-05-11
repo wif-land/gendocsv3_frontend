@@ -11,11 +11,11 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   aux_number: number
   topic: string
   presentationDate: Date
-  student: IStudent | number | string
+  student: IStudent
   career: number
   certificateType: number
   certificateStatus: number
-  degreeModality: IDegreeModality | number
+  degreeModality: IDegreeModality
   room: IRoom | number
   duration: number
   link: string

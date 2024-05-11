@@ -1,6 +1,10 @@
+import { IStudent } from '../../../students/domain/entities/IStudent'
+import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 
 export const useDegreeCertificateMethods = () => {
+  const { students } = useStudentStore()
+
   const fetchData = async (rowsPerPage: number, currentPage: number) =>
     await DegreeCertificatesUseCasesImpl.getInstance().getAll(
       rowsPerPage,
@@ -13,8 +17,11 @@ export const useDegreeCertificateMethods = () => {
   //     { isActive: !degreeCertificate.isActive },
   //   )
 
+  const resolveStudentById = async (id: number): Promise<IStudent> =>
+    students.find((student) => student.id === id) as IStudent
+
   return {
     fetchData,
-    // updateRow,
+    resolveStudentById,
   }
 }
