@@ -39,7 +39,6 @@ export const useDegreeCertificateView = ({
         setDegreeCertificates(data.degreeCertificates)
         setTableData(data.degreeCertificates)
         setCount(data.count)
-        console.log(data)
       })
     }
 

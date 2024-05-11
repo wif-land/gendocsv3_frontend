@@ -3,7 +3,6 @@ import * as Yup from 'yup'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
-import { StudentModel } from '../../../students/data/models/StudentModel'
 
 export interface FormValuesProps extends IDegreeCertificate {
   selectedValue: { id: number; label: string }
@@ -22,8 +21,8 @@ export const TABLE_HEAD = [
 export const resolveDefaultValues = (
   currentDegreeCertificate?: IDegreeCertificate,
 ): FormValuesProps => ({
-  number: currentDegreeCertificate?.number || 0,
-  aux_number: currentDegreeCertificate?.aux_number || 0,
+  number: currentDegreeCertificate?.number || (null as any),
+  aux_number: currentDegreeCertificate?.aux_number || (null as any),
   topic: currentDegreeCertificate?.topic || '',
   presentationDate: currentDegreeCertificate?.presentationDate || new Date(),
   student: getSelectedStudent(currentDegreeCertificate?.student as IStudent),
@@ -32,15 +31,15 @@ export const resolveDefaultValues = (
   certificateStatus: currentDegreeCertificate?.certificateStatus || 0,
   degreeModality: currentDegreeCertificate?.degreeModality || ({} as any),
   room: currentDegreeCertificate?.room || 0,
-  duration: currentDegreeCertificate?.duration || 0,
+  duration: currentDegreeCertificate?.duration || (null as any),
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',
   documentDriveId: currentDegreeCertificate?.documentDriveId || '',
   isClosed: currentDegreeCertificate?.isClosed || false,
   selectedValue: {
     id: currentDegreeCertificate?.student?.id || 0,
-    label: `${currentDegreeCertificate?.student?.firstName} ${currentDegreeCertificate?.student?.firstLastName}`,
-  },
+    label: currentDegreeCertificate?.student?.label || '',
+  } as any,
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
@@ -48,14 +47,33 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
     ? {
         ...currentStudent,
         id: currentStudent.id || 0,
-        label: `${currentStudent.firstName} ${currentStudent.firstLastName}`,
+        label:
+          `${currentStudent.firstName} ${currentStudent.firstLastName}` || '',
       }
-    : StudentModel.fromJson({})
+    : ({
+        id: 0,
+        label: '',
+      } as IStudent)
 
 export const defaultFilters: IDegreeCertificateFilters = {
   name: '',
 }
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
-  isActive: Yup.boolean().required('El estado es requerido'),
+  // topic: Yup.string().required('El tema es requerido'),
+  // student: Yup.object().shape({
+  //   id: Yup.number().min(1).required('El estudiante es requerido'),
+  //   label: Yup.string().required('El estudiante es requerido'),
+  // }),
+  // career: Yup.number().required('La carrera es requerida'),
+  // certificateType: Yup.number().required('El tipo de acta es requerido'),
+  // certificateStatus: Yup.number().required('El estado de acta es requerido'),
+  // degreeModality: Yup.number().required('La modalidad es requerida'),
+  // room: Yup.number().required('El aula es requerida'),
+  // duration: Yup.number().required('La duración es requerida'),
+  // link: Yup.string().required('El enlace es requerido'),
+  // gradesSheetDriveId: Yup.string().required(
+  //   'El id de la hoja de calificaciones es requerido',
+  // ),
+  // documentDriveId: Yup.string().required('El id del documento es requerido'),
 })

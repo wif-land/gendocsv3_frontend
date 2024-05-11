@@ -7,7 +7,7 @@ import {
   resolveDefaultValues,
 } from '../constants'
 
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -18,17 +18,18 @@ import { useCertificateData } from '../../../../core/providers/certificate-degre
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { useAccountStore } from '@/features/auth/presentation/state/useAccountStore'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
 ) => {
+  const pathname = usePathname()
   const [inputValue, setInputValue] = useState('' as string)
   const debouncedValue = useDebounce(inputValue)
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
   const { students, setStudents } = useStudentStore()
-  const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
-    useCertificateData()
+  const { user } = useAccountStore()
 
   const defaultValues = useMemo(
     () => resolveDefaultValues(currentDegreeCertificate),
@@ -51,28 +52,32 @@ export const useDegreeCertificateForm = (
   const onSubmit = useCallback(
     async (data: IDegreeCertificate) => {
       const formattedData = {
-        ...data,
-        degreeModality: degreeModalities.find(
-          (modality) => modality.id === data.degreeModality,
-        )?.id,
+        topic: data.topic,
+        presentationDate: data.presentationDate,
+        studentId: data.student.id,
+        certificateTypeId: data.certificateType,
+        certificateStatusId: data.certificateStatus,
+        degreeModalityId: data.degreeModality,
+        roomId: data.room,
+        duration: Number(data.duration),
+        isClosed: data.isClosed,
+        userId: user?.id,
       }
-      console.log(data)
-      console.log({ formattedData })
-      // if (!currentDegreeCertificate) {
-      //   await handleCreate(data)
-      // } else {
-      //   // const editFields = getEditedFields<IDegreeCertificate>(defaultValues, data)
-      // }
+      if (!currentDegreeCertificate) {
+        await handleCreate(formattedData as unknown as IDegreeCertificate)
+      } else {
+        // const editFields = getEditedFields<IDegreeCertificate>(defaultValues, data)
+      }
 
-      // const newPath = currentDegreeCertificate
-      //   ? pathname.replace(
-      //       new RegExp(`/${currentDegreeCertificate.id}/edit`),
-      //       '',
-      //     )
-      //   : pathname.replace('/new', '')
+      const newPath = currentDegreeCertificate
+        ? pathname.replace(
+            new RegExp(`/${currentDegreeCertificate.id}/edit`),
+            '',
+          )
+        : pathname.replace('/new', '')
 
-      // router.push(newPath)
-      // reset()
+      router.push(newPath)
+      reset()
     },
     [currentDegreeCertificate, enqueueSnackbar, reset, router],
   )
@@ -107,9 +112,6 @@ export const useDegreeCertificateForm = (
 
     // TODO: The selectedValue is from the select component to get the student, if the student is not found, it should be fetched from the API
     resolveStudentById(studentId).then((student) => {
-      console.log({ student })
-
-      // TODO: The student should be set in the form with the data fetched from the store or from the API
       methods.setValue('student', student)
     })
 

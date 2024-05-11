@@ -14,7 +14,14 @@ import {
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Box, MenuItem } from '@mui/material'
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 import {
   IDegreeCertificate,
@@ -31,6 +38,7 @@ import { useLocations } from '../../../../core/providers/locations-provider'
 import { label } from 'yet-another-react-lightbox'
 import { useEffect, useState } from 'react'
 import { IStudent } from '../../../students/domain/entities/IStudent'
+import { IProvince } from '../../../../core/providers/domain/entities/ILocationProvider'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -138,15 +146,16 @@ export const DegreeCertificateNewEditForm = ({
             spacing={3}
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
-            <RHFTextField
-              name="student.startStudiesDate"
+            <TextField
               label="Fecha de inicio de estudios"
-              // required
+              value={getValues('student').startStudiesDate || ''}
+              disabled
               sx={{ flexGrow: 1 }}
             />
-            <RHFTextField
+            <TextField
               name="student.endStudiesDate"
               label="Fecha de finalización de estudios"
+              value={getValues('student').studyEndDate || ''}
               // required
               sx={{ flexGrow: 1 }}
             />
@@ -155,17 +164,16 @@ export const DegreeCertificateNewEditForm = ({
             spacing={3}
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
-            <RHFTextField
-              name="student.approvedCredits"
+            <TextField
               label="Créditos aprobados"
-              // required
+              value={getValues('student').approvedCredits || ''}
+              disabled
               sx={{ flexGrow: 1 }}
             />
-            <RHFTextField
-              // TODO: note this. I'm using dot notation to access the nested object and it's working
-              name="student.intershipHours"
+            <TextField
               label="Horas de práctica"
-              // required
+              value={getValues('student').internshipHours || ''}
+              disabled
               sx={{ flexGrow: 1 }}
             />
           </Stack>
@@ -173,29 +181,59 @@ export const DegreeCertificateNewEditForm = ({
             spacing={3}
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
           >
-            <RHFTextField
-              name="student.vinculationHours"
+            <TextField
               label="Horas de vinculación/Servicio comunitario"
-              // required
+              value={getValues('student').vinculationHours || ''}
+              disabled
               sx={{ flexGrow: 1 }}
             />
-            <RHFTextField
-              name="student.bachelorDegree"
+            <TextField
               label="Titulo de bachiller"
-              // required
+              value={getValues('student').bachelorDegree || ''}
+              disabled
               sx={{ flexGrow: 1 }}
             />
           </Stack>
           <Stack
             spacing={3}
-            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+            sx={{
+              p: 3,
+              pt: 0,
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+            }}
           >
-            <RHFTextField
-              name="province"
-              label="Provincia de residencia"
-              // required
-              sx={{ flexGrow: 1 }}
-            />
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel id="provincia">Provincia de residencia</InputLabel>
+              <Select
+                labelId="provincia"
+                label="Provincia de residencia"
+                value={(getValues('student').canton as IProvince)?.id || 0}
+                disabled
+              >
+                {provinces.map((province) => (
+                  <MenuItem key={province.id} value={province.id}>
+                    {province.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel id="ciudad">Ciudad de residencia</InputLabel>
+              <Select
+                labelId="ciudad"
+                label="Ciudad de residencia"
+                value={(getValues('student').canton as IProvince)?.id || 0}
+                disabled
+              >
+                {cities.map((city) => (
+                  <MenuItem key={city.id} value={city.id}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Stack>
         </Card>
       </Grid>
@@ -252,8 +290,8 @@ export const DegreeCertificateNewEditForm = ({
             >
               {certificateStatuses.map((certificateStatus) => (
                 <MenuItem
-                  key={certificateStatus.code}
-                  value={certificateStatus.code}
+                  key={certificateStatus.id}
+                  value={certificateStatus.id}
                 >
                   {certificateStatus.maleName}
                 </MenuItem>
@@ -278,10 +316,7 @@ export const DegreeCertificateNewEditForm = ({
               name="certificateType"
             >
               {certificateTypes.map((certificateType) => (
-                <MenuItem
-                  key={certificateType.code}
-                  value={certificateType.code}
-                >
+                <MenuItem key={certificateType.id} value={certificateType.id}>
                   {certificateType.name}
                 </MenuItem>
               ))}
@@ -316,7 +351,7 @@ export const DegreeCertificateNewEditForm = ({
         sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
       >
         <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Acta activa" />
+          <RHFSwitch name="isClosed" label="Acta activa" />
         </Box>
 
         <LoadingButton

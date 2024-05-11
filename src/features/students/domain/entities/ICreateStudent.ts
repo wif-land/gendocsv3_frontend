@@ -1,3 +1,4 @@
+import { IProvince } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 
 export interface ICreateStudent {
@@ -8,7 +9,7 @@ export interface ICreateStudent {
   secondLastName: string
   gender: string
   birthdate: string
-  canton: string
+  canton: number | IProvince
   regularPhoneNumber?: string
   cellphone?: string
   folio: string
