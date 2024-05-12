@@ -14,11 +14,10 @@ import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
-import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
-import { useAccountStore } from '@/features/auth/presentation/state/useAccountStore'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -43,10 +42,12 @@ export const useDegreeCertificateForm = (
   const router = useRouter()
   const { addDegreeCertificate } = useDegreeCertificatesStore()
   const { resolveStudentById } = useDegreeCertificateMethods()
-  const { reset, handleSubmit, getValues } = methods
+  const { reset, handleSubmit } = methods
 
   const handleCreate = useCallback(async (values: IDegreeCertificate) => {
-    await DegreeCertificatesUseCasesImpl.getInstance().create(values)
+    const degree =
+      await DegreeCertificatesUseCasesImpl.getInstance().create(values)
+    addDegreeCertificate(degree)
   }, [])
 
   const onSubmit = useCallback(
@@ -64,7 +65,7 @@ export const useDegreeCertificateForm = (
         userId: user?.id,
       }
       if (!currentDegreeCertificate) {
-        await handleCreate(formattedData as unknown as IDegreeCertificate)
+        handleCreate(formattedData as unknown as IDegreeCertificate)
       } else {
         // const editFields = getEditedFields<IDegreeCertificate>(defaultValues, data)
       }
@@ -106,6 +107,7 @@ export const useDegreeCertificateForm = (
   }, [debouncedValue, isOpen.value])
 
   useEffect(() => {
+    if (currentDegreeCertificate) return
     const studentId = methods.watch('selectedValue')?.id
 
     if (!studentId || studentId === 0) return

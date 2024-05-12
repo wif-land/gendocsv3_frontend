@@ -18,7 +18,7 @@ export const resolveDefaultValues = (
   currentDegreeCertificate?: IDegreeCertificate,
 ) => ({
   number: currentDegreeCertificate?.number || 0,
-  aux_number: currentDegreeCertificate?.aux_number || 0,
+  auxNumber: currentDegreeCertificate?.auxNumber || 0,
   topic: currentDegreeCertificate?.topic || '',
   presentationDate: currentDegreeCertificate?.presentationDate || new Date(),
   studentId: currentDegreeCertificate?.student

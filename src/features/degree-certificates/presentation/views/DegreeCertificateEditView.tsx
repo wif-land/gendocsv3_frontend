@@ -1,42 +1,49 @@
-// 'use client'
+'use client'
 
-// import Container from '@mui/material/Container'
-// import { useSettingsContext } from '../../../../shared/sdk/settings'
-// import { useParams, usePathname } from 'next/navigation'
-// import { useCouncilStore } from '../store/councilsStore'
-// import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
-// import { paths } from '../../../../core/routes/paths'
-// import { CouncilNewEditForm } from '../components/DegreeCertificateNewEditForm'
-// import { memo } from 'react'
+import Container from '@mui/material/Container'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
+import { useParams, usePathname } from 'next/navigation'
+import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
+import { paths } from '../../../../core/routes/paths'
+import { DegreeCertificateNewEditForm } from '../components/DegreeCertificateNewEditForm'
+import { memo } from 'react'
+import { CertificateProvider } from '../../../../core/providers/certificate-degree-provider'
 
-// const CouncilEditView = () => {
-//   const settings = useSettingsContext()
-//   const { id } = useParams()
-//   const pathname = usePathname()
-//   const { councils } = useCouncilStore()
+const CouncilEditView = () => {
+  const settings = useSettingsContext()
+  const { id } = useParams()
+  const pathname = usePathname()
+  const { degreeCertificates } = useDegreeCertificatesStore()
 
-//   const currentCouncil = councils.find((council) => council.id! === +id)
+  const currentDegreeCertificate = degreeCertificates.find(
+    (degree) => degree.id! === +id,
+  )
 
-//   return (
-//     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-//       <CustomBreadcrumbs
-//         heading="Editar"
-//         links={[
-//           { name: 'Dashboard', href: paths.dashboard.root },
-//           {
-//             name: 'Consejos',
-//             href: pathname.replace('/new', ''),
-//           },
-//           { name: currentCouncil?.name },
-//         ]}
-//         sx={{
-//           mb: { xs: 3, md: 5 },
-//         }}
-//       />
+  return (
+    <CertificateProvider>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+        <CustomBreadcrumbs
+          heading="Editar"
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            {
+              name: 'Consejos',
+              href: pathname.replace('/new', ''),
+            },
+            { name: currentDegreeCertificate?.topic || 'Editar' },
+          ]}
+          sx={{
+            mb: { xs: 3, md: 5 },
+          }}
+        />
 
-//       <CouncilNewEditForm currentCouncil={currentCouncil} />
-//     </Container>
-//   )
-// }
+        <DegreeCertificateNewEditForm
+          currentDegreeCertificate={currentDegreeCertificate}
+        />
+      </Container>
+    </CertificateProvider>
+  )
+}
 
-// export default memo(CouncilEditView)
+export default memo(CouncilEditView)

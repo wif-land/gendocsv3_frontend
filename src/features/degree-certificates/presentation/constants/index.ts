@@ -3,6 +3,12 @@ import * as Yup from 'yup'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
+import {
+  ICertificateStatus,
+  ICertificateType,
+  IDegreeModality,
+  IRoom,
+} from '../../../../core/providers/domain/entities/ICertificateProvider'
 
 export interface FormValuesProps extends IDegreeCertificate {
   selectedValue: { id: number; label: string }
@@ -22,15 +28,19 @@ export const resolveDefaultValues = (
   currentDegreeCertificate?: IDegreeCertificate,
 ): FormValuesProps => ({
   number: currentDegreeCertificate?.number || (null as any),
-  aux_number: currentDegreeCertificate?.aux_number || (null as any),
+  auxNumber: currentDegreeCertificate?.auxNumber || (null as any),
   topic: currentDegreeCertificate?.topic || '',
   presentationDate: currentDegreeCertificate?.presentationDate || new Date(),
   student: getSelectedStudent(currentDegreeCertificate?.student as IStudent),
   career: currentDegreeCertificate?.career || 0,
-  certificateType: currentDegreeCertificate?.certificateType || 0,
-  certificateStatus: currentDegreeCertificate?.certificateStatus || 0,
-  degreeModality: currentDegreeCertificate?.degreeModality || ({} as any),
-  room: currentDegreeCertificate?.room || 0,
+  certificateType:
+    (currentDegreeCertificate?.certificateType as ICertificateType)?.id || 0,
+  certificateStatus:
+    (currentDegreeCertificate?.certificateStatus as ICertificateStatus).id || 0,
+  degreeModality:
+    (currentDegreeCertificate?.degreeModality as IDegreeModality).id ||
+    ({} as any),
+  room: (currentDegreeCertificate?.room as IRoom)?.id || 0,
   duration: currentDegreeCertificate?.duration || (null as any),
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',
@@ -38,7 +48,9 @@ export const resolveDefaultValues = (
   isClosed: currentDegreeCertificate?.isClosed || false,
   selectedValue: {
     id: currentDegreeCertificate?.student?.id || 0,
-    label: currentDegreeCertificate?.student?.label || '',
+    label:
+      getSelectedStudent(currentDegreeCertificate?.student as IStudent).label ||
+      '',
   } as any,
 })
 
@@ -48,7 +60,8 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         ...currentStudent,
         id: currentStudent.id || 0,
         label:
-          `${currentStudent.firstName} ${currentStudent.firstLastName}` || '',
+          `${currentStudent.firstName} ${currentStudent.secondName} ${currentStudent.firstLastName} ${currentStudent.secondLastName} - ${currentStudent.dni}` ||
+          '',
       }
     : ({
         id: 0,
@@ -60,7 +73,7 @@ export const defaultFilters: IDegreeCertificateFilters = {
 }
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
-  // topic: Yup.string().required('El tema es requerido'),
+  topic: Yup.string().required('El tema es requerido'),
   // student: Yup.object().shape({
   //   id: Yup.number().min(1).required('El estudiante es requerido'),
   //   label: Yup.string().required('El estudiante es requerido'),

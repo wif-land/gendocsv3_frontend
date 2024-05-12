@@ -6,7 +6,7 @@ import { IStudent } from '../../../students/domain/entities/IStudent'
 export interface IDegreeCertificate {
   id?: number
   number: number
-  aux_number: number
+  auxNumber: number
   topic: string
   presentationDate: Date
   student: IStudent | number | string

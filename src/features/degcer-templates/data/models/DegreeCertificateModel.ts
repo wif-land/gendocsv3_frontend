@@ -8,7 +8,7 @@ import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 export class DegreeCertificateModel implements IDegreeCertificate {
   id?: number
   number: number
-  aux_number: number
+  auxNumber: number
   topic: string
   presentationDate: Date
   student: IStudent | number | string
@@ -26,7 +26,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   constructor(props: IDegreeCertificate) {
     this.id = props.id
     this.number = props.number
-    this.aux_number = props.aux_number
+    this.auxNumber = props.auxNumber
     this.topic = props.topic
     this.presentationDate = props.presentationDate
     this.student = props.student
@@ -47,7 +47,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
     return new DegreeCertificateModel({
       id: json.id,
       number: json.number,
-      aux_number: json.aux_number,
+      auxNumber: json.auxNumber,
       topic: json.topic,
       presentationDate: json.presentationDate,
       student: json.studentId,
@@ -68,7 +68,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
     return {
       id: this.id,
       number: this.number,
-      aux_number: this.aux_number,
+      auxNumber: this.auxNumber,
       topic: this.topic,
       presentationDate: this.presentationDate,
       studentId: this.student,

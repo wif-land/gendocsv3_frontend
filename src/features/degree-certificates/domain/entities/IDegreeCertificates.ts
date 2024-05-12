@@ -1,16 +1,21 @@
-import { IRoom } from '../../../../core/providers/domain/entities/ICertificateProvider'
+import {
+  ICertificateStatus,
+  ICertificateType,
+  IDegreeModality,
+  IRoom,
+} from '../../../../core/providers/domain/entities/ICertificateProvider'
 import { IStudent } from '../../../students/domain/entities/IStudent'
 
 export interface IDegreeCertificate {
   id?: number
   number: number
-  aux_number: number
+  auxNumber: number
   topic: string
   presentationDate: Date
   student: IStudent
   career: number
-  certificateType: number
-  certificateStatus: number
+  certificateType: number | ICertificateType
+  certificateStatus: number | ICertificateStatus
   degreeModality: IDegreeModality
   room: IRoom | number
   duration: number
@@ -25,20 +30,4 @@ export interface IDegreeCertificatesAttendee {
   hasBeenNotified: boolean
   role: 'PRESIDENT' | 'SUBROGATE' | 'MEMBER'
   functionary: unknown
-}
-
-export interface ICertificateType {
-  code: string
-  name: string
-}
-
-export interface IDegreeModality {
-  code: string
-  name: string
-}
-
-export interface ICertificateStatus {
-  code: string
-  maleName: string
-  femaleName: string
 }

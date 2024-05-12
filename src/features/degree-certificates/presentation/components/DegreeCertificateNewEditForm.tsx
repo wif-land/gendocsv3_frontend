@@ -23,22 +23,16 @@ import {
   TextField,
 } from '@mui/material'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
-import {
-  IDegreeCertificate,
-  ICertificateType,
-  IDegreeModality,
-} from '../../domain/entities/IDegreeCertificates'
+import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { Controller } from 'react-hook-form'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
 import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
-import { useLocations } from '../../../../core/providers/locations-provider'
 import { label } from 'yet-another-react-lightbox'
-import { useEffect, useState } from 'react'
-import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IProvince } from '../../../../core/providers/domain/entities/ILocationProvider'
+import { useLocations } from '../../../../core/providers/locations-provider'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -51,8 +45,6 @@ export const DegreeCertificateNewEditForm = ({
   const { methods, onSubmit, students, setInputValue, isOpen, loading } =
     useDegreeCertificateForm(currentDegreeCertificate)
 
-  const [selectedStudent, setSelectedStudent] = useState<IStudent | null>(null)
-
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -64,6 +56,8 @@ export const DegreeCertificateNewEditForm = ({
   const { cities, provinces } = useLocations()
   const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
     useCertificateData()
+
+  console.log('currentDegreeCertificate', currentDegreeCertificate)
 
   const renderDetails = (
     <>
@@ -93,7 +87,7 @@ export const DegreeCertificateNewEditForm = ({
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
-              name="aux_number"
+              name="auxNumber"
               label="Numeracion"
               required
               sx={{ flexGrow: 1 }}
