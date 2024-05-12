@@ -20,7 +20,7 @@ export const TABLE_HEAD = [
   { id: 'presentationDate', label: 'Fecha de presentación' },
   { id: 'degreeModality', label: 'Modalidad', width: 140 },
   { id: 'room', label: 'Aula', width: 140 },
-  { id: 'certificateStatus', label: 'Estado de acta', width: 110 },
+  { id: 'certificateStatus', label: 'Estado', width: 110 },
   { id: 'actions', label: 'Acciones', width: 110 },
 ]
 
