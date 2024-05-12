@@ -36,9 +36,10 @@ export const resolveDefaultValues = (
   certificateType:
     (currentDegreeCertificate?.certificateType as ICertificateType)?.id || 0,
   certificateStatus:
-    (currentDegreeCertificate?.certificateStatus as ICertificateStatus).id || 0,
+    (currentDegreeCertificate?.certificateStatus as ICertificateStatus)?.id ||
+    0,
   degreeModality:
-    (currentDegreeCertificate?.degreeModality as IDegreeModality).id ||
+    (currentDegreeCertificate?.degreeModality as IDegreeModality)?.id ||
     ({} as any),
   room: (currentDegreeCertificate?.room as IRoom)?.id || 0,
   duration: currentDegreeCertificate?.duration || (null as any),
