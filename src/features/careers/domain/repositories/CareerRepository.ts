@@ -1,10 +1,10 @@
 import { CareerModel } from '../../data/models/CareerModel'
-import { ICareer } from '../entities/ICareer'
+import { ICreateCareer, IUpdateCareer } from '../entities/ICareer'
 
 export interface CareerRepository {
   getAll: () => Promise<CareerModel[]>
 
-  update: (data: Partial<ICareer>) => Promise<CareerModel>
+  update: (data: IUpdateCareer) => Promise<CareerModel>
 
-  create: (data: ICareer) => Promise<CareerModel>
+  create: (data: ICreateCareer) => Promise<CareerModel>
 }

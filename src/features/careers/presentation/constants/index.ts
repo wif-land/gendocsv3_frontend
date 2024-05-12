@@ -2,10 +2,9 @@
 
 import * as Yup from 'yup'
 import { ICareerTableFilters } from '../components/CareerTableToolbar'
-import { ICareer } from '../../domain/entities/ICareer'
-import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
-import { enqueueSnackbar } from 'notistack'
-import { useCareersStore } from '../store/careerStore'
+import { ICareer, ICareerFormValues } from '../../domain/entities/ICareer'
+import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+import { resolveFormSelectOptions } from '../../../../shared/utils/FormUtil'
 
 export interface FormValuesProps extends ICareer {}
 
@@ -19,48 +18,40 @@ export const TABLE_HEAD = [
 ]
 
 export const defaultFilters: ICareerTableFilters = {
-  name: undefined,
-  state: undefined,
+  name: '',
+  state: true,
 }
 
 export const NewCareerSchema = Yup.object().shape({
   name: Yup.string().required('Campo requerido'),
   credits: Yup.number().required('Campo requerido').max(140).min(130),
-  coordinator: Yup.string().required('Campo requerido'),
+  coordinator: Yup.object()
+    .shape({
+      id: Yup.number().required('Campo requerido'),
+      label: Yup.string().required('Campo requerido'),
+    })
+    .required('Campo requerido'),
   menDegree: Yup.string().required('Campo requerido'),
   womenDegree: Yup.string().required('Campo requerido'),
   internshipHours: Yup.number().required('Campo requerido').max(250).min(230),
   vinculationHours: Yup.number().required('Campo requerido').max(95).min(80),
 })
 
-export const handleCreate = async (values: FormValuesProps) => {
-  const { addCareer } = useCareersStore()
-  const result = await CareersUseCasesImpl.getInstance().create(values)
-
-  if (!result) {
-    enqueueSnackbar('Error al crear la carrera', {
-      variant: 'error',
-    })
-    return
-  }
-  addCareer(result)
-  enqueueSnackbar('Carrera creada exitosamente'), { variant: 'success' }
-}
-
-export const handleUpdate = async (
-  id: number,
-  editedFields: Partial<ICareer>,
-) => {
-  const { updateCareer } = useCareersStore()
-  const status = await CareersUseCasesImpl.getInstance().update(
-    id,
-    editedFields,
-  )
-
-  if (status) {
-    updateCareer(editedFields)
-    enqueueSnackbar('Carrera actualizada exitosamente')
-  } else {
-    throw new Error('Error al actualizar el consejo')
-  }
-}
+export const resolveDefaultValues = (
+  currentCareer?: ICareer,
+): ICareerFormValues => ({
+  id: currentCareer ? currentCareer.id : 0,
+  name: currentCareer?.name || '',
+  credits: currentCareer ? currentCareer.credits : 0,
+  menDegree: currentCareer?.menDegree || '',
+  womenDegree: currentCareer?.womenDegree || '',
+  coordinator: currentCareer?.coordinator
+    ? {
+        ...currentCareer?.coordinator,
+        ...resolveFormSelectOptions(currentCareer?.coordinator),
+      }
+    : ({ label: '', id: 0 } as IFunctionary & { label: string; id: number }),
+  internshipHours: currentCareer ? currentCareer.internshipHours : 0,
+  vinculationHours: currentCareer ? currentCareer.vinculationHours : 0,
+  isActive: currentCareer ? currentCareer.isActive : true,
+})

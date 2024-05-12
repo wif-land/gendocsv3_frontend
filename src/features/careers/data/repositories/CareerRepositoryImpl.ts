@@ -1,10 +1,9 @@
-import { ICareer } from '../../domain/entities/ICareer'
+import { ICreateCareer, IUpdateCareer } from '../../domain/entities/ICareer'
 import { CareerRepository } from '../../domain/repositories/CareerRepository'
 import {
   CareerDataSource,
   CareersDataSourceImpl,
 } from '../datasources/CareerDatasource'
-import { CareerModel } from '../models/CareerModel'
 
 export class CareerRepositoryImpl implements CareerRepository {
   static instance: CareerRepositoryImpl
@@ -23,8 +22,7 @@ export class CareerRepositoryImpl implements CareerRepository {
 
   getAll = async () => await this.datasource.getAll()
 
-  update = async (data: Partial<CareerModel>) =>
-    await this.datasource.update(data)
+  update = async (data: IUpdateCareer) => await this.datasource.update(data)
 
-  create = async (data: ICareer) => await this.datasource.create(data)
+  create = async (data: ICreateCareer) => await this.datasource.create(data)
 }

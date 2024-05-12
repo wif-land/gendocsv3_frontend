@@ -3,20 +3,20 @@ import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionar
 import { ICareer } from '../../domain/entities/ICareer'
 
 export class CareerModel implements ICareer {
-  id?: number
   credits: number
   menDegree: string
   womenDegree: string
   internshipHours: number
   vinculationHours: number
-  coordinator: IFunctionary | number | string
-  createdAt?: Date
-  updatedAt?: Date
   name: string
   isActive: boolean
+  id: number
+  createdAt: Date
+  updatedAt: Date
+  coordinator: IFunctionary
 
   constructor(props: ICareer) {
-    this.id = props.id || undefined
+    this.id = props.id
     this.createdAt = props.createdAt
     this.updatedAt = props.createdAt
     this.name = props.name

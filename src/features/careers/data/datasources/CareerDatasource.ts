@@ -1,14 +1,14 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { CareerModel } from '../models/CareerModel'
-import { ICareer } from '../../domain/entities/ICareer'
+import { ICreateCareer, IUpdateCareer } from '../../domain/entities/ICareer'
 
 export interface CareerDataSource {
   getAll(): Promise<CareerModel[]>
 
-  update(career: Partial<ICareer>): Promise<CareerModel>
+  update(career: IUpdateCareer): Promise<CareerModel>
 
-  create(career: ICareer): Promise<CareerModel>
+  create(career: ICreateCareer): Promise<CareerModel>
 }
 
 export class CareersDataSourceImpl implements CareerDataSource {
@@ -22,7 +22,7 @@ export class CareersDataSourceImpl implements CareerDataSource {
     return CareersDataSourceImpl.instance
   }
 
-  create = async (career: ICareer) => {
+  create = async (career: ICreateCareer) => {
     const result = await AxiosClient.post(API_ROUTES.CAREERS.CREATE, career)
 
     if ('error' in result) {
@@ -42,7 +42,7 @@ export class CareersDataSourceImpl implements CareerDataSource {
     return result.data as CareerModel[]
   }
 
-  update = async (career: Partial<ICareer>) => {
+  update = async (career: IUpdateCareer) => {
     const { id, ...rest } = career
 
     const result = await AxiosClient.put(API_ROUTES.CAREERS.UPDATE, rest, {
