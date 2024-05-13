@@ -88,7 +88,7 @@ export class DegreeCertificateDatasourceImpl
 
   update = async (degreeCertificate: IDegreeCertificate) => {
     const { id, ...rest } = degreeCertificate
-    const result = await AxiosClient.put(
+    const result = await AxiosClient.patch(
       API_ROUTES.DEGREE_CERTIFICATES.UPDATE(id as number),
       rest,
     )

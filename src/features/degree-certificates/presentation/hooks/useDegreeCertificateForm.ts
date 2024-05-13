@@ -18,7 +18,6 @@ import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -60,12 +59,26 @@ export const useDegreeCertificateForm = (
     [],
   )
 
-  const onSubmit = useCallback(
-    async (data: IDegreeCertificate) => {
-      const formattedData = {
+  const removeUndefinedFields = <T>(obj: T): Partial<T> => {
+    const newObj: Partial<T> = {}
+    for (const key in obj) {
+      if (
+        obj[key as keyof T] !== undefined &&
+        obj[key as keyof T] !== null &&
+        obj[key as keyof T] !== ''
+      ) {
+        newObj[key as keyof T] = obj[key as keyof T]
+      }
+    }
+    return newObj
+  }
+
+  const formatData = useCallback(
+    (data: Partial<IDegreeCertificate>) => {
+      const formattedData: Partial<IDegreeCertificate> = removeUndefinedFields({
         topic: data.topic,
         presentationDate: data.presentationDate,
-        studentId: data.student.id,
+        studentId: data.student?.id,
         certificateTypeId: data.certificateType,
         certificateStatusId: data.certificateStatus,
         degreeModalityId: data.degreeModality,
@@ -73,16 +86,24 @@ export const useDegreeCertificateForm = (
         duration: Number(data.duration),
         isClosed: data.isClosed,
         userId: user?.id,
-        link: data.link.length > 1 ? data.link : null,
-      }
+        link: data.link,
+      })
+
+      return formattedData
+    },
+    [user, currentDegreeCertificate],
+  )
+
+  const onSubmit = useCallback(
+    async (data: IDegreeCertificate) => {
+      const formattedData = formatData(data)
       if (!currentDegreeCertificate) {
         handleCreate(formattedData as unknown as IDegreeCertificate)
       } else {
-        const editFields = getEditedFields<IDegreeCertificate>(
-          defaultValues,
-          data,
-        )
-        handleEdit({ ...editFields, id: currentDegreeCertificate.id })
+        handleEdit({
+          ...formattedData,
+          id: currentDegreeCertificate.id,
+        })
       }
 
       const newPath = currentDegreeCertificate
