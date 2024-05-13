@@ -1,21 +1,27 @@
-import { DegreeCertificateModel } from '../../data/model'
+import { IStudent } from '../../../students/domain/entities/IStudent'
+import { useStudentStore } from '../../../students/presentation/state/studentStore'
+import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 
 export const useDegreeCertificateMethods = () => {
-  const handleCreateDegreeCertificate = async (
-    data: DegreeCertificateModel,
-  ) => {
-    console.log(data)
-  }
+  const { students } = useStudentStore()
 
-  const handleUpdateDegreeCertificate = async (
-    id: number,
-    editedFields: Partial<DegreeCertificateModel>,
-  ) => {
-    console.log(id, editedFields)
-  }
+  const fetchData = async (rowsPerPage: number, currentPage: number) =>
+    await DegreeCertificatesUseCasesImpl.getInstance().getAll(
+      rowsPerPage,
+      currentPage,
+    )
+
+  // const updateRow = async (degreeCertificate: Partial<IDegreeCertificate>) =>
+  //   await DegreeCertificatesUseCasesImpl.getInstance().update(
+  //     degreeCertificate.id as number,
+  //     { isActive: !degreeCertificate.isActive },
+  //   )
+
+  const resolveStudentById = async (id: number): Promise<IStudent> =>
+    students.find((student) => student.id === id) as IStudent
 
   return {
-    handleCreateDegreeCertificate,
-    handleUpdateDegreeCertificate,
+    fetchData,
+    resolveStudentById,
   }
 }

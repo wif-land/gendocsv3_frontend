@@ -75,6 +75,17 @@ export class AxiosClient {
       (error) => Promise.reject(error),
     )
 
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+          new LogoutnUseCase().call()
+        }
+
+        return Promise.reject(error)
+      },
+    )
+
     return this.client
   }
 

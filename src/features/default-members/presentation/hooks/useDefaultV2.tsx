@@ -168,6 +168,15 @@ export const useDefaultMembersView = () => {
   }
 
   const sendData = async () => {
+    if (formattedItems.length < 2) {
+      enqueueSnackbar(
+        'Debe registrarse por lo menos un Representante y un Representante subrogante para crear un consejo',
+        {
+          variant: 'error',
+        },
+      )
+      return
+    }
     await DefaultMembersUseCasesImpl.getInstance().createOrEditByModuleId(
       moduleId,
       [

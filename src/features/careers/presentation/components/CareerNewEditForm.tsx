@@ -15,6 +15,7 @@ import {
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { useCareerForm } from '../hooks/useCareerForm'
+import { resolveFormSelectOptions } from '../../../../shared/utils/FormUtil'
 
 type Props = {
   currentCareer?: ICareer
@@ -69,43 +70,13 @@ export const CareerNewEditForm = ({ currentCareer }: Props) => {
               }}
               loading={loading}
               noOptionsText="No hay resultados"
-              options={functionaries?.map(
-                (functionary) =>
-                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-              )}
-              onInputChange={(event, newInputValue) => {
+              options={functionaries?.map((functionary) => ({
+                ...resolveFormSelectOptions(functionary),
+              }))}
+              onInputChange={(_, newInputValue) => {
                 setInputValue(newInputValue)
               }}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const {
-                  dni,
-                  firstName,
-                  firstLastName,
-                  secondName,
-                  secondLastName,
-                } = functionaries.filter(
-                  (functionary) =>
-                    option ===
-                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )[0]
-
-                if (!dni) {
-                  return null
-                }
-
-                return (
-                  <li {...props} key={dni}>
-                    <Typography variant="body2">
-                      {firstName} {secondName} {firstLastName} {secondLastName}
-                    </Typography>
-
-                    <Typography variant="caption" color="text.secondary">
-                      {dni}
-                    </Typography>
-                  </li>
-                )
-              }}
+              getOptionLabel={(option) => (option as { label: string }).label}
             />
           </Stack>
         </Card>

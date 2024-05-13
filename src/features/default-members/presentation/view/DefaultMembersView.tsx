@@ -61,17 +61,6 @@ const DefaultMembersView: React.FC = () => {
             p: 3,
           }}
         >
-          <Alert
-            severity="info"
-            variant="outlined"
-            sx={{
-              mb: 3,
-            }}
-          >
-            Añade los miembros por defecto que pertenecerán al módulo. El orden
-            de los miembros se puede modificar arrastrando y soltando
-          </Alert>
-
           {formattedItems.length < 2 && (
             <Alert
               severity="error"
