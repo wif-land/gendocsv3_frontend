@@ -97,4 +97,27 @@ export const API_ROUTES = {
     DELETE_MANY: '/positions/delete/bulk',
     CREATE: '/positions',
   },
+  DEGREE_CERTIFICATES: {
+    GET_ALL: '/degree-certificates',
+    GET_BY_FILTERS: `/degree-certificates/filter`,
+    UPDATE: (id: number) => `/degree-certificates/${id}`,
+    DELETE: '/degree-certificates/:id',
+    CREATE: '/degree-certificates',
+  },
+  CERTIFICATES_TYPES: {
+    GET_ALL: '/degree-certificates/certificate-types',
+  },
+  CERTIFICATES_STATUS: {
+    GET_ALL: '/degree-certificates/certificate-status',
+  },
+  DEGREE_MODALITIES: {
+    GET_ALL: '/degree-certificates/degree-modalities',
+  },
+  LOCATION_PROVIDER: {
+    GET_ALL_PROVINCES: '/cities/provinces',
+    GET_ALL_CITIES: '/cities',
+  },
+  ROOMS: {
+    GET_ALL: '/degree-certificates/rooms',
+  },
 }

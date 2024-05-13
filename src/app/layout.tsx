@@ -13,6 +13,7 @@ import { SnackbarProvider } from '../shared/sdk/snackbar'
 import ProgressBar from '../shared/sdk/progress-bar/progress-bar'
 import { ModulesProvider } from './providers/modules-provider'
 import { primaryFont } from '../core/theme/typography'
+import { LocationProvider } from '../core/providers/locations-provider'
 
 export const metadata = {
   title: 'Gendocs V3 - Gestión Documental',
@@ -63,16 +64,18 @@ export default ({ children }: Props) => (
         }}
       >
         <ThemeProvider>
-          <MotionLazy>
-            <ModulesProvider>
-              <SnackbarProvider>
-                <SettingsDrawer />
-                <ProgressBar />
+          <LocationProvider>
+            <MotionLazy>
+              <ModulesProvider>
+                <SnackbarProvider>
+                  <SettingsDrawer />
+                  <ProgressBar />
 
-                {children}
-              </SnackbarProvider>
-            </ModulesProvider>
-          </MotionLazy>
+                  {children}
+                </SnackbarProvider>
+              </ModulesProvider>
+            </MotionLazy>
+          </LocationProvider>
         </ThemeProvider>
       </SettingsProvider>
     </body>

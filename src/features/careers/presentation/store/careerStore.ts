@@ -1,6 +1,6 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { ICareer } from '../../domain/entities/ICareer'
+import { ICareer, IUpdateCareer } from '../../domain/entities/ICareer'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { enqueueSnackbar } from 'notistack'
 
@@ -8,7 +8,7 @@ interface StoreState {
   careers: ICareer[]
   setCareers: (careers?: ICareer[]) => void
   addCareer: (career: ICareer) => void
-  updateCareer: (career: Partial<ICareer>) => void
+  updateCareer: (career: IUpdateCareer) => void
   get: () => void
 }
 
@@ -17,7 +17,7 @@ const DEFAULT_CAREERS: ICareer[] = []
 
 export const useCareersStore = create<StoreState>(
   persist(
-    (set) => ({
+    (set, getState) => ({
       careers: DEFAULT_CAREERS,
       setCareers: (careers) => set({ careers }),
       addCareer: (career) =>
@@ -28,7 +28,13 @@ export const useCareersStore = create<StoreState>(
         set((state) => ({
           careers: state.careers.map((currentCareer) =>
             currentCareer.id === career.id
-              ? { ...currentCareer, ...career }
+              ? {
+                  ...currentCareer,
+                  ...career,
+                  coordinator: getState().careers.find(
+                    (c) => c.id === career.id,
+                  )!.coordinator,
+                }
               : currentCareer,
           ),
         })),

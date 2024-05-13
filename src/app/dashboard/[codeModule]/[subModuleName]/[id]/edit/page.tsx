@@ -8,6 +8,7 @@ import { FunctionaryEditView } from '../../../../../../features/functionaries/pr
 import { StudentEditView } from '../../../../../../features/students/presentation/view'
 import { PositionEditView } from '../../../../../../features/positions/presentation/view'
 import { UsersEditView } from '../../../../../../features/users/presentation/view'
+import { DegreeCertificateEditView } from '../../../../../../features/degree-certificates/presentation/views'
 
 const Page = () => {
   const { subModuleName } = useParams()
@@ -20,6 +21,7 @@ const Page = () => {
     procesos: ProcessEditView,
     cargos: PositionEditView,
     usuarios: UsersEditView,
+    actas_de_grado: DegreeCertificateEditView,
   }
 
   const defaultComponent = () => <div>DEFAULT</div>

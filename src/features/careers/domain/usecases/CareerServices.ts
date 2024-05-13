@@ -1,13 +1,13 @@
 import { CareerModel } from '../../data/models/CareerModel'
 import { CareerRepositoryImpl } from '../../data/repositories/CareerRepositoryImpl'
-import { ICareer } from '../entities/ICareer'
+import { ICreateCareer, IUpdateCareer } from '../entities/ICareer'
 
 interface CareerUseCases {
-  create(Career: ICareer): Promise<CareerModel>
+  create(Career: ICreateCareer): Promise<CareerModel>
 
   getAll(): Promise<CareerModel[]>
 
-  update(id: number, Career: Partial<CareerModel>): Promise<CareerModel>
+  update(id: number, career: IUpdateCareer): Promise<CareerModel>
 }
 
 export class CareersUseCasesImpl implements CareerUseCases {
@@ -24,13 +24,23 @@ export class CareersUseCasesImpl implements CareerUseCases {
   private careerRepository: CareerRepositoryImpl =
     CareerRepositoryImpl.getInstance()
 
-  create = async (career: ICareer) => await this.careerRepository.create(career)
+  create = async (career: ICreateCareer) => {
+    const data = {
+      ...career,
+      coordinator: career.coordinator || 0,
+    }
 
-  getAll = async () => await this.careerRepository.getAll()
+    delete data.id
 
-  update = async (id: number, career: Partial<CareerModel>) =>
+    return await this.careerRepository.create(data)
+  }
+
+  update = async (id: number, career: IUpdateCareer) =>
     await this.careerRepository.update({
       ...career,
+      coordinator: career.coordinator || 0,
       id,
     })
+
+  getAll = async () => await this.careerRepository.getAll()
 }
