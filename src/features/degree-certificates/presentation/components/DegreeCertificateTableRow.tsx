@@ -49,10 +49,6 @@ export const DegreeCertificateTableRow = ({
     (row.student as IStudent).secondLastName
   }`
 
-  console.log(studentName)
-
-  console.log(row)
-
   const confirm = useBoolean()
 
   const popover = usePopover()
@@ -69,10 +65,6 @@ export const DegreeCertificateTableRow = ({
         )}
 
         <TableCell>
-          {/* <ListItemText
-            primary={format(new Date(presentationDate), 'p')}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          /> */}
           <ListItemText
             primary={row.topic}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
@@ -116,9 +108,9 @@ export const DegreeCertificateTableRow = ({
           ) : (
             <Label
               variant="soft"
-              color={(finalActiveState === true && 'success') || 'primary'}
+              color={(finalActiveState === true && 'error') || 'success'}
             >
-              {finalActiveState === true ? 'Abierto' : 'Cerrado'}
+              {finalActiveState === true ? 'Cerrado' : 'Abierto'}
             </Label>
           )}
         </TableCell>
@@ -164,7 +156,7 @@ export const DegreeCertificateTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={row.isClosed ? { color: 'error.main' } : { color: 'green' }}
+          sx={row.isClosed ? { color: 'green' } : { color: 'error.main' }}
         >
           {row.isClosed ? (
             <>

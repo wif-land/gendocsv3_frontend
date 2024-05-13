@@ -57,7 +57,7 @@ export const DegreeCertificateNewEditForm = ({
   const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
     useCertificateData()
 
-  console.log('currentDegreeCertificate', currentDegreeCertificate)
+  console.log(methods.watch('degreeModality'))
 
   const renderDetails = (
     <>
@@ -75,7 +75,6 @@ export const DegreeCertificateNewEditForm = ({
       <Grid xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Details" />}
-
           <Stack
             spacing={3}
             sx={{ p: 3, display: 'flex', flexDirection: 'row' }}
@@ -83,13 +82,13 @@ export const DegreeCertificateNewEditForm = ({
             <RHFTextField
               name="number"
               label="Numeracion de acta de grado"
-              required
+              disabled
               sx={{ flexGrow: 1 }}
             />
             <RHFTextField
               name="auxNumber"
               label="Numeracion"
-              required
+              disabled
               sx={{ flexGrow: 1 }}
             />
           </Stack>
@@ -292,17 +291,22 @@ export const DegreeCertificateNewEditForm = ({
               ))}
             </RHFSelect>
 
-            <RHFSelect
-              id="degreeModality"
-              label="Modalidad"
-              name="degreeModality"
-            >
-              {degreeModalities.map((modality) => (
-                <MenuItem key={modality.id} value={modality.id}>
-                  {modality.name}
-                </MenuItem>
-              ))}
-            </RHFSelect>
+            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
+              <RHFSelect
+                id="degreeModality"
+                label="Modalidad"
+                name="degreeModality"
+              >
+                {degreeModalities.map((modality) => (
+                  <MenuItem key={modality.id} value={modality.id}>
+                    {modality.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              {Number(methods.watch('degreeModality')) === 1 && (
+                <RHFTextField name="link" label="Link" sx={{ flexGrow: 1 }} />
+              )}
+            </Stack>
 
             <RHFSelect
               id="certificateType"

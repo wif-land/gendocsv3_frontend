@@ -18,6 +18,7 @@ import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
+import { getEditedFields } from '../../../../shared/utils/FormUtil'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -50,6 +51,15 @@ export const useDegreeCertificateForm = (
     addDegreeCertificate(degree)
   }, [])
 
+  const handleEdit = useCallback(
+    async (values: Partial<IDegreeCertificate>) => {
+      const degree =
+        await DegreeCertificatesUseCasesImpl.getInstance().update(values)
+      addDegreeCertificate(degree)
+    },
+    [],
+  )
+
   const onSubmit = useCallback(
     async (data: IDegreeCertificate) => {
       const formattedData = {
@@ -63,11 +73,16 @@ export const useDegreeCertificateForm = (
         duration: Number(data.duration),
         isClosed: data.isClosed,
         userId: user?.id,
+        link: data.link.length > 1 ? data.link : null,
       }
       if (!currentDegreeCertificate) {
         handleCreate(formattedData as unknown as IDegreeCertificate)
       } else {
-        // const editFields = getEditedFields<IDegreeCertificate>(defaultValues, data)
+        const editFields = getEditedFields<IDegreeCertificate>(
+          defaultValues,
+          data,
+        )
+        handleEdit({ ...editFields, id: currentDegreeCertificate.id })
       }
 
       const newPath = currentDegreeCertificate
