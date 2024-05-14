@@ -16,11 +16,8 @@ export interface ProcessesDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      processes: ProcessModel[]
-      count: number
-    }
+    processes: ProcessModel[]
+    count: number
   }>
 
   getByFilter(
@@ -29,11 +26,8 @@ export interface ProcessesDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      processes: ProcessModel[]
-      count: number
-    }
+    processes: ProcessModel[]
+    count: number
   }>
 
   update(process: Partial<IProcess>): Promise<{
@@ -68,23 +62,20 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     limit: number,
     offset: number,
   ) => {
-    const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_ALL, {
+    const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_BY_MODULE, {
       params: { moduleId, limit, offset },
     })
 
     if ('error' in result) {
       return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { processes: [], count: 0 },
+        processes: [],
+        count: 0,
       }
     }
 
-    const { status, data } = result
+    const { data } = result
 
-    return {
-      status,
-      data: data.content as { processes: ProcessModel[]; count: number },
-    }
+    return data as { processes: ProcessModel[]; count: number }
   }
 
   create = async (process: ProcessModel) => {
@@ -122,22 +113,19 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     offset: number,
   ) => {
     const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_BY_FILTERS, {
-      params: { moduleId, limit, offset, ...filters },
+      params: { ...filters, moduleId, limit, offset },
     })
 
     if ('error' in result) {
       return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        data: { processes: [], count: 0 },
+        processes: [] as ProcessModel[],
+        count: 0,
       }
     }
 
-    const { status, data } = result
+    const { data } = result
 
-    return {
-      status,
-      data: data.content as { processes: ProcessModel[]; count: number },
-    }
+    return data as { processes: ProcessModel[]; count: number }
   }
 
   update = async (process: Partial<IProcess>) => {

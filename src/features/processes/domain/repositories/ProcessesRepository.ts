@@ -31,16 +31,13 @@ export interface ProcessesRepository {
     process: ProcessModel
   }>
 
-  getAllProcessesByModuleId: (
+  getAllProcessesByModuleId(
     moduleId: number,
     limit: number,
     offset: number,
-  ) => Promise<{
-    status: number
-    data: {
-      processes: ProcessModel[]
-      count: number
-    }
+  ): Promise<{
+    processes: ProcessModel[]
+    count: number
   }>
 
   bulkUpdate: (processes: Partial<IProcess>[]) => Promise<{

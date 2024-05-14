@@ -58,7 +58,7 @@ export const API_ROUTES = {
     UPDATE: '/processes/:id',
     DELETE: '/processes/:id',
     CREATE: '/processes',
-    GET_BY_MODULE: '/processes/get-by-module?module-code=:moduleCode',
+    GET_BY_MODULE: '/processes',
   },
   COUNCILS: {
     GET_ALL: '/councils',

@@ -40,15 +40,17 @@ export const useProcessView = ({
 
   useEffect(() => {
     let isMounted = true
-    if (!tableData || tableData.length !== 0) return
+    if (tableData.length !== 0) return
 
     if (isMounted && !isDataFiltered) {
       fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
         (data) => {
+          console.log('data', data)
           if (data.count === 0) return
           setProcesses(data.processes)
           setTableData(data.processes)
           setCount(data.count)
+          console.log('data', data)
         },
       )
     }

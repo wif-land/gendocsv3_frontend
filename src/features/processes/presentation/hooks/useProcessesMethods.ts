@@ -24,14 +24,7 @@ export const useProcessesMethods = () => {
           currentPage * rowsPerPage,
         )
 
-      if (response.status !== HTTP_STATUS_CODES.OK) {
-        return {
-          processes: [],
-          count: 0,
-        }
-      }
-
-      return response.data
+      return response
     } catch (error) {
       enqueueSnackbar('No encontramos consejos', {
         variant: 'info',
