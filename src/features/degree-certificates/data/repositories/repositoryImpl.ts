@@ -40,4 +40,10 @@ export class DegreeCertificateRepositoryImpl
 
   create = async (degreeCertificate: IDegreeCertificate) =>
     await this.datasource.create(degreeCertificate)
+
+  generateNumeration = async (careerId: number) =>
+    await this.datasource.generateNumeration(careerId)
+
+  getLastNumberToRegister = async (careerId: number) =>
+    await this.datasource.getLastNumberToRegister(careerId)
 }

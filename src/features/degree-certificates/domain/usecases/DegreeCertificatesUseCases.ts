@@ -27,6 +27,13 @@ interface CertificateDegreeUseCases {
   ): Promise<DegreeCertificateModel>
 
   create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
+
+  generateNumeration(careerId: number): Promise<{
+    firstGenerated: number
+    lastGenerated: number
+  }>
+
+  getLastNumberToRegister(careerId: number): Promise<number>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -69,4 +76,10 @@ export class DegreeCertificatesUseCasesImpl
 
     return DegreeCertificateModel.fromJson({})
   }
+
+  generateNumeration = async (careerId: number) =>
+    await this.repository.generateNumeration(careerId)
+
+  getLastNumberToRegister = async (careerId: number) =>
+    await this.repository.getLastNumberToRegister(careerId)
 }

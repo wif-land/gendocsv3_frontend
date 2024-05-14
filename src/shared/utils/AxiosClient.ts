@@ -196,7 +196,7 @@ export class AxiosClient {
 
   static async patch<T>(
     path: string,
-    body: unknown,
+    body?: unknown,
     params?: Record<string, unknown>,
   ): Promise<
     | AxiosResponse<T>

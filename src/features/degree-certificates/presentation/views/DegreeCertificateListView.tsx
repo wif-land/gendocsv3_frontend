@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   Container,
+  MenuItem,
   Table,
   TableBody,
   TableContainer,
@@ -37,6 +38,10 @@ import {
   IDegreeCertificateTableFilters,
 } from '../components/DegreeCertificateTableToolbar'
 import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
+import CustomPopover, {
+  usePopover,
+} from '../../../../shared/sdk/custom-popover'
+import { DegreeCertificateTableFiltersResult } from '../components/DegreeCertificateTableFiltersResult'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
@@ -44,10 +49,28 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const pathname = usePathname()
   const settings = useSettingsContext()
   const confirm = useBoolean()
+  const popover = usePopover()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [filters, setFilters] =
     useState<IDegreeCertificateTableFilters>(defaultFilters)
+
+  const reportOptions = [
+    {
+      value: 'start',
+      label: 'Reporte inicial',
+      action: () => {
+        router.push(`${pathname}/report`)
+      },
+    },
+    {
+      value: 'final',
+      label: 'Reporte final',
+      action: () => {
+        router.push(`${pathname}/report`)
+      },
+    },
+  ]
 
   const handleFilters = useCallback(
     (name: string, value: IDegreeCertificateTableFilters) => {
@@ -67,13 +90,6 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}`)
-    },
-    [router],
-  )
-
   const handleResetFilters = () => {
     setFilters(defaultFilters)
     setVisitedPages([])
@@ -88,6 +104,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
+    handleUpdateRow,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
@@ -113,6 +130,23 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           ]}
           action={
             <>
+              <Button
+                onClick={popover.onOpen}
+                variant="contained"
+                startIcon={<Iconify icon="carbon:result" />}
+                sx={{ mr: 1.5 }}
+              >
+                Reportes
+              </Button>
+              <Button
+                component={RouterLink}
+                href={`${pathname}/new`}
+                variant="contained"
+                startIcon={<Iconify icon="ph:list-numbers" />}
+                sx={{ mr: 1.5 }}
+              >
+                Generar numerción
+              </Button>
               <Button
                 component={RouterLink}
                 href={`${pathname}/new`}
@@ -147,13 +181,13 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             // getFilteredCouncils={handleSearch}
           />
 
-          {/* {isDataFiltered && (
-            <DegreeCertificate
+          {isDataFiltered && (
+            <DegreeCertificateTableFiltersResult
               onResetFilters={handleResetFilters}
               results={count}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )} */}
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -215,9 +249,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            // onDeleteRow={() => handleUpdateRow(row)}
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}
                     </>
@@ -245,6 +278,31 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           />
         </Card>
       </Container>
+
+      <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="top-right"
+        sx={{ width: 140 }}
+      >
+        {reportOptions.map((option) => (
+          <MenuItem
+            key={option.value}
+            onClick={() => {
+              popover.onClose()
+              option.action()
+            }}
+          >
+            {option.value === 'multiple' && (
+              <Iconify icon="eva:cloud-upload-fill" />
+            )}
+            {option.value === 'single' && (
+              <Iconify icon="solar:file-text-bold" />
+            )}
+            {option.label}
+          </MenuItem>
+        ))}
+      </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}

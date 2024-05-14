@@ -25,4 +25,11 @@ export interface IDegreeCertificatesRepository {
   ): Promise<DegreeCertificateModel>
 
   create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
+
+  generateNumeration(careerId: number): Promise<{
+    firstGenerated: number
+    lastGenerated: number
+  }>
+
+  getLastNumberToRegister(careerId: number): Promise<number>
 }

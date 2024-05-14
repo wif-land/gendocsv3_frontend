@@ -24,7 +24,6 @@ type Props = {
   row: DegreeCertificateModel
   selected: boolean
   onEditRow: VoidFunction
-  onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
   activeState?: boolean | null
@@ -37,7 +36,6 @@ export const DegreeCertificateTableRow = ({
   onSelectRow,
   onDeleteRow,
   onEditRow,
-  onViewRow,
   isOnTable = true,
   activeState,
 }: Props) => {
@@ -133,16 +131,6 @@ export const DegreeCertificateTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          Detalles
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
@@ -160,13 +148,13 @@ export const DegreeCertificateTableRow = ({
         >
           {row.isClosed ? (
             <>
-              <Iconify icon="radix-icons:lock-closed" />
-              Desactivar
+              <Iconify icon="ei:check" />
+              Abrir
             </>
           ) : (
             <>
-              <Iconify icon="radix-icons:lock-open-2" />
-              Activar
+              <Iconify icon="simple-line-icons:close" width="48" height="48" />
+              Cerrar
             </>
           )}
         </MenuItem>
@@ -175,22 +163,26 @@ export const DegreeCertificateTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isClosed ? 'Desactivar consejo' : 'Activar consejo'}
+        title={
+          row.isClosed
+            ? 'Marcar acta de grado como abierta'
+            : 'Marcar acta de grado como cerrada'
+        }
         content={
           row.isClosed
-            ? '¿Está seguro de desactivar este consejo?'
-            : '¿Está seguro de activar este consejo?'
+            ? '¿Está seguro de marcar esta acta de grado como abierta?'
+            : '¿Está seguro de marcar esta acta de grado como cerrada?'
         }
         action={
           <Button
             variant="contained"
-            color={isClosed ? 'error' : 'success'}
+            color={isClosed ? 'success' : 'error'}
             onClick={() => {
               onDeleteRow()
               confirm.onFalse()
             }}
           >
-            {isClosed ? 'Desactivar' : 'Activar'}
+            {isClosed ? 'Abrir' : 'Cerrar'}
           </Button>
         }
       />

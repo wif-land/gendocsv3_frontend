@@ -103,6 +103,10 @@ export const API_ROUTES = {
     UPDATE: (id: number) => `/degree-certificates/${id}`,
     DELETE: '/degree-certificates/:id',
     CREATE: '/degree-certificates',
+    GENERATE_NUMERATION: (careerId: number) =>
+      `/degree-certificates/numeration/generate/${careerId}`,
+    GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>
+      `/degree-certificates/numeration/last-number-to-register/${careerId}`,
   },
   CERTIFICATES_TYPES: {
     GET_ALL: '/degree-certificates/certificate-types',

@@ -7,6 +7,7 @@ import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 // import useModulesStore from '../../../../shared/store/modulesStore'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
+import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 
 interface Props {
   table: TableProps
@@ -27,7 +28,7 @@ export const useDegreeCertificateView = ({
   const { degreeCertificates, setDegreeCertificates } =
     useDegreeCertificatesStore()
   const { loader } = useLoaderStore()
-  const { fetchData } = useDegreeCertificateMethods()
+  const { fetchData, updateRow } = useDegreeCertificateMethods()
 
   useEffect(() => {
     let isMounted = true
@@ -127,24 +128,22 @@ export const useDegreeCertificateView = ({
     // }
   }
 
-  // const handleUpdateRow = (row: IDegreeCertificate) => {
-  //   updateRow(row).then((data) => {
-  //     if (data) {
-  //       setDegreeCertificates(
-  //         degreeCertificates.map((council) =>
-  //           council.id === data.id ? (data as DegreeCertificateModel) : council,
-  //         ),
-  //       )
-  //       setTableData(
-  //         degreeCertificates.map((functionary) =>
-  //           functionary.id === data.id
-  //             ? (data as DegreeCertificateModel)
-  //             : functionary,
-  //         ),
-  //       )
-  //     }
-  //   })
-  // }
+  const handleUpdateRow = (row: IDegreeCertificate) => {
+    updateRow(row).then((data) => {
+      if (data) {
+        setDegreeCertificates(
+          degreeCertificates.map((degree) =>
+            degree.id === data.id ? (data as DegreeCertificateModel) : degree,
+          ),
+        )
+        setTableData(
+          degreeCertificates.map((degree) =>
+            degree.id === data.id ? (data as DegreeCertificateModel) : degree,
+          ),
+        )
+      }
+    })
+  }
 
   // const handleSearch = (filters: IDegreeCertificateFilters) => {
   //   fetchDataByField(
@@ -175,7 +174,7 @@ export const useDegreeCertificateView = ({
     setTableData,
     handleChangePage,
     handleChangeRowsPerPage,
-    // handleUpdateRow,
+    handleUpdateRow,
     // handleSearch,
   }
 }
