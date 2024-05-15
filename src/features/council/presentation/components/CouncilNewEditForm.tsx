@@ -37,8 +37,6 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
   } = useCouncilsForm(currentCouncil)
   const { handleSubmit, control, watch } = methods
 
-  console.log(watch().members)
-
   const renderDetails = (
     <>
       {mdUp && (

@@ -1,50 +1,34 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
+import { DegCerTemplateModel } from '../models/DegCerTemplateModel'
 
 export interface IDegCerTemplatesDatasource {
-  getAllByCareerId(
-    careerId: number,
-    limit: number,
-    offset: number,
-  ): Promise<{
-    count: number
-    degreeCertificates: DegreeCertificateModel[]
-  }>
+  getAll(): Promise<DegCerTemplateModel[]>
 }
 
-export class DegreeCertificateDatasourceImpl
+export class DegCerTemplatesDatasourceImpl
   implements IDegCerTemplatesDatasource
 {
-  static instance: DegreeCertificateDatasourceImpl
+  static instance: DegCerTemplatesDatasourceImpl
 
-  static getInstance = (): DegreeCertificateDatasourceImpl => {
-    if (!DegreeCertificateDatasourceImpl.instance) {
-      DegreeCertificateDatasourceImpl.instance =
-        new DegreeCertificateDatasourceImpl()
+  static getInstance = (): DegCerTemplatesDatasourceImpl => {
+    if (!DegCerTemplatesDatasourceImpl.instance) {
+      DegCerTemplatesDatasourceImpl.instance =
+        new DegCerTemplatesDatasourceImpl()
     }
 
-    return DegreeCertificateDatasourceImpl.instance
+    return DegCerTemplatesDatasourceImpl.instance
   }
 
-  getAllByCareerId = async (limit: number, offset: number) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
-      {
-        params: { limit, offset },
-      },
+  getAll = async (): Promise<DegCerTemplateModel[]> => {
+    const response = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATE_TEMPLATES.GET_ALL,
     )
 
-    if ('error' in result) {
-      return {
-        count: 0,
-        degreeCertificates: [] as DegreeCertificateModel[],
-      }
+    if ('error' in response) {
+      return [] as DegCerTemplateModel[]
     }
 
-    return result.data as {
-      count: number
-      degreeCertificates: DegreeCertificateModel[]
-    }
+    return response.data as DegCerTemplateModel[]
   }
 }

@@ -57,8 +57,6 @@ export const DegreeCertificateNewEditForm = ({
   const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
     useCertificateData()
 
-  console.log(methods.watch('degreeModality'))
-
   const renderDetails = (
     <>
       {mdUp && (

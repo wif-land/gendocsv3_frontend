@@ -149,7 +149,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
               </Button>
               <Button
                 component={RouterLink}
-                href={`${pathname}/new`}
+                href={`${pathname}/templates`}
                 variant="contained"
                 startIcon={<Iconify icon="mingcute:document-3-line" />}
                 sx={{ mr: 1.5 }}

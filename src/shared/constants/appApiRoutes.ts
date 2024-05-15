@@ -108,6 +108,9 @@ export const API_ROUTES = {
     GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>
       `/degree-certificates/numeration/last-number-to-register/${careerId}`,
   },
+  DEGREE_CERTIFICATE_TEMPLATES: {
+    GET_ALL: 'degree-certificates/certificate-type-status-career',
+  },
   CERTIFICATES_TYPES: {
     GET_ALL: '/degree-certificates/certificate-types',
   },

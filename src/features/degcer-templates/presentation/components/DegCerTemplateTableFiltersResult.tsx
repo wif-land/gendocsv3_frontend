@@ -8,7 +8,7 @@ type Props = StackProps & {
   results: number
 }
 
-export const CouncilTableFiltersResult = ({
+export const DegCerTableFilterResult = ({
   onResetFilters,
   results,
   ...other

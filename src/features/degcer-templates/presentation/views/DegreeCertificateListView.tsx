@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback } from 'react'
 import {
   Button,
   Card,
   Container,
+  Stack,
   Table,
   TableBody,
   TableContainer,
+  Typography,
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs'
-import Iconify from '../../../../core/iconify'
 import {
   DENSE,
   NO_DENSE,
@@ -19,53 +19,26 @@ import {
   TableHeadCustom,
   TableNoData,
   TablePaginationCustom,
-  TableSelectedAction,
   TableSkeleton,
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
-import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
-import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
-import { RouterLink } from '../../../../core/routes/components'
-import { TABLE_HEAD, defaultFilters } from '../constants'
-import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
-import {
-  DegreeCertificatesTableToolbar,
-  IDegreeCertificateTableFilters,
-} from '../components/DegreeCertificateTableToolbar'
-import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
+import { TABLE_HEAD } from '../constants'
+import { useDegCerTemplatesView } from '../hooks/useDegCerTemplate'
 
-const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
+import { DegCerTableRow } from '../components/DegCerTemplateTableRow'
+import Iconify from '../../../../shared/sdk/iconify'
+import Link from 'next/link'
+
+const DegreeCertificateListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
   const settings = useSettingsContext()
-  const confirm = useBoolean()
-  const [visitedPages, setVisitedPages] = useState<number[]>([0])
-  const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [filters, setFilters] =
-    useState<IDegreeCertificateTableFilters>(defaultFilters)
-
-  const handleFilters = useCallback(
-    (name: string, value: IDegreeCertificateTableFilters) => {
-      table.onResetPage()
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }))
-    },
-    [table],
-  )
-
-  const handleEditRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}/edit`)
-    },
-    [router],
-  )
+  const returnLink = usePathname().substring(0, usePathname().lastIndexOf('/'))
 
   const handleViewRow = useCallback(
     (id: string) => {
@@ -74,105 +47,42 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const handleResetFilters = () => {
-    setFilters(defaultFilters)
-    setVisitedPages([])
-    setIsDataFiltered(false)
-    setTableData([])
-  }
-
-  const {
-    loader,
-    tableData,
-    count,
-    setTableData,
-    handleChangePage,
-    handleChangeRowsPerPage,
-  } = useDegreeCertificateView({
+  const { loader, tableData, degCerTemplates } = useDegCerTemplatesView({
     table,
-    isDataFiltered,
-    visitedPages,
-    setVisitedPages,
-    filters,
   })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
   const notFound =
-    (!loader.length && count === 0) ||
-    (!loader.length && count === 0 && isDataFiltered)
+    (!loader.length && degCerTemplates.length === 0) ||
+    (!loader.length && degCerTemplates.length === 0)
 
   return (
-    <div key={moduleId}>
+    <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Actas de grado"
+          heading="Plantillas de actas de grado"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
             { name: 'Actas de grado' },
           ]}
-          action={
-            <>
-              <Button
-                component={RouterLink}
-                href={`${pathname}/new`}
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:document-3-line" />}
-                sx={{ mr: 1.5 }}
-              >
-                Plantillas
-              </Button>
-              <Button
-                component={RouterLink}
-                href={`${pathname}/new`}
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-              >
-                Actas de grado
-              </Button>
-            </>
-          }
-          sx={{ mb: { xs: 3, md: 5 } }}
         />
 
+        <Link
+          href={returnLink}
+          passHref
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <Button variant="outlined" sx={{ my: 2 }}>
+            <Stack direction="row" spacing={1}>
+              <Iconify icon="solar:arrow-left-bold-duotone" />
+              <Typography variant="body1">Regresar</Typography>
+            </Stack>
+          </Button>
+        </Link>
+
         <Card>
-          <DegreeCertificatesTableToolbar
-            isDataFiltered={isDataFiltered}
-            filters={filters}
-            onFilters={handleFilters}
-            setVisitedPages={setVisitedPages}
-            setIsDataFiltered={setIsDataFiltered}
-            table={table}
-            setDataTable={setTableData}
-            // getFilteredCouncils={handleSearch}
-          />
-
-          {/* {isDataFiltered && (
-            <DegreeCertificate
-              onResetFilters={handleResetFilters}
-              results={count}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )} */}
-
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={count}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id!.toString()),
-                )
-              }
-              action={
-                <Button color="primary" onClick={confirm.onTrue}>
-                  Cambiar estado
-                </Button>
-              }
-            />
-
             <Scrollbar>
               <Table
                 size={table.dense ? 'small' : 'medium'}
@@ -182,15 +92,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={count}
+                  rowCount={degCerTemplates.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id!.toString()),
-                    )
-                  }
                 />
 
                 <TableBody>
@@ -206,18 +110,13 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <DegreeCertificateTableRow
+                          <DegCerTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
                               row.id!.toString(),
                             )}
-                            onSelectRow={() =>
-                              table.onSelectRow(row.id!.toString())
-                            }
-                            // onDeleteRow={() => handleUpdateRow(row)}
-                            onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
+                            onViewRow={handleViewRow}
                           />
                         ))}
                     </>
@@ -225,7 +124,11 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, count)}
+                    emptyRows={emptyRows(
+                      table.page,
+                      table.rowsPerPage,
+                      tableData.length,
+                    )}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -235,40 +138,16 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={count}
+            count={degCerTemplates.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
+            onPageChange={table.onChangePage}
+            onRowsPerPageChange={table.onChangeRowsPerPage}
           />
         </Card>
       </Container>
-
-      <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Cambiar estado de consejos"
-        content={
-          <>
-            Estás seguro de que quieres cambiar el estado de
-            <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              // handleDeleteRows()
-              confirm.onFalse()
-            }}
-          >
-            Cambiar
-          </Button>
-        }
-      />
     </div>
   )
 }
