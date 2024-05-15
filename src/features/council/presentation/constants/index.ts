@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Yup from 'yup'
 import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
 import { ICouncilTableFilters } from '../components/CouncilTableToolbar'
+import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -34,8 +36,18 @@ export const resolveDefaultValues = (currentCouncil?: ICouncil) => ({
   isActive: !!currentCouncil?.isActive || true,
   isArchived: !!currentCouncil?.isArchived,
   members:
-    currentCouncil?.members?.map((member) => ({
-      ...member,
-      label: `${member.member.firstName} ${member.member.secondName} ${member.member.firstLastName} ${member.member.secondLastName} - ${member.member.dni}`,
-    })) || [],
+    currentCouncil?.members?.reduce((acc, member) => {
+      acc[member.positionName] = {
+        ...member,
+        member: {
+          ...member.functionary,
+          label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
+          id: member.functionary.id,
+        },
+        label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
+        id: member.functionary.id,
+      }
+
+      return acc
+    }, {}) || {},
 })

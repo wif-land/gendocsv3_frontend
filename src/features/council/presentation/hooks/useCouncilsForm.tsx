@@ -57,9 +57,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       ...values,
       moduleId: moduleIdentifier ?? 0,
       userId: user?.id as number,
-      members: values.members?.map((member) => ({
-        ...member,
-      })),
+      members: values.members,
     })
 
     addCouncil(council)
@@ -75,19 +73,39 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       loading.onTrue()
+      console.log(data)
       try {
         if (!currentCouncil) {
           await handleCreateCouncil({
             ...data,
-            members: data.members?.map((member) => ({
-              ...member,
-              member: member.id,
-            })),
+            /**
+             * {
+             *  'Position': {
+             *  id: 1, label: 'position', positionOrder: 1,
+             *   }
+             * }
+             */
+            members: Object.entries(data.members).map(
+              ([positionName, member]) => ({
+                positionName,
+                member: member.id,
+                positionOrder: member.positionOrder,
+              }),
+            ),
           })
         } else {
           const editedFields = getEditedFields<Partial<FormValuesProps>>(
             defaultValues,
-            data,
+            {
+              ...data,
+              members: Object.entries(data.members).map(
+                ([positionName, member]) => ({
+                  positionName,
+                  member: member.id,
+                  positionOrder: member.positionOrder,
+                }),
+              ),
+            },
           )
 
           if (editedFields) {
@@ -107,6 +125,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
           { variant: 'success' },
         )
       } catch (error) {
+        console.log(error)
         enqueueSnackbar(
           !currentCouncil
             ? 'Error al crear el consejo'
@@ -130,20 +149,18 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   useEffect(() => {
     if (!unusedFunctionaries) return
 
-    const [attendees] = [
-      values.members?.map((attendee) =>
-        unusedFunctionaries.find(
-          (functionary) => functionary.dni === attendee.member.dni,
-        ),
-      ),
-    ]
+    // const attendees = values.members?.map((attendee) =>
+    //   unusedFunctionaries.find(
+    //     (functionary) => functionary.dni === (attendee?.member as IMember)?.dni,
+    //   ),
+    // )
 
-    const currentUnusedFunctionaries = unusedFunctionaries.filter(
-      (functionary) =>
-        !attendees?.some((attendee) => attendee?.dni === functionary.dni),
-    )
+    // const currentUnusedFunctionaries = unusedFunctionaries.filter(
+    //   (functionary) =>
+    //     !attendees?.some((attendee) => attendee?.dni === functionary.dni),
+    // )
 
-    setUnusedFunctionaries(currentUnusedFunctionaries)
+    setUnusedFunctionaries([])
   }, [values.members])
 
   const searchDebounced = useDebounce(searchField)
@@ -152,6 +169,13 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     let isMounted = true
     loading.onTrue()
     if (searchDebounced.includes('-')) return
+    if (
+      !searchDebounced ||
+      searchDebounced === '' ||
+      searchDebounced.length < 1
+    ) {
+      return
+    }
 
     FunctionaryUseCasesImpl.getInstance()
       .getByFilters({ field: searchDebounced })
@@ -161,14 +185,19 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         if (result.functionaries.length > 0) {
           const usedFunctionaries = methods.getValues().members
 
-          const filteredFunctionaries = result.functionaries.filter(
-            (functionary) =>
-              usedFunctionaries?.every(
-                (attendee) => attendee?.member?.dni !== functionary.dni,
-              ),
-          )
+          console.log({ usedFunctionaries })
 
-          setUnusedFunctionaries(filteredFunctionaries)
+          // const filteredFunctionaries = result.functionaries.filter(
+          //   (functionary) =>
+          //     usedFunctionaries?.every(
+          //       (attendee) =>
+          //         attendee?.member?.label?.split('-')[1] !== functionary.dni,
+          //     ),
+          // )
+
+          // console.log({ filteredFunctionaries })
+
+          setUnusedFunctionaries(result.functionaries)
         } else {
           setUnusedFunctionaries([])
         }
@@ -186,6 +215,21 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .then((result) => {
         setDefaultMembers(result)
       })
+    console.log({ currentCouncil })
+    if (currentCouncil?.members.length) return
+    methods.setValue(
+      'members',
+      defaultMembers.reduce((acc, member) => {
+        acc[member.positionName] = {
+          ...(member.member as object),
+          label: `${member.member?.firstName} ${member.member?.firstLastName} ${member.member?.secondLastName} - ${member.member?.dni}`,
+          id: member.member?.id,
+          positionOrder: member.positionOrder,
+        }
+
+        return acc
+      }, {}),
+    )
   }, [])
 
   return {
@@ -199,5 +243,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     setSearchField,
     loading,
     defaultMembers,
+    pathname,
   }
 }
