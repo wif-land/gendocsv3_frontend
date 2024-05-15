@@ -10,11 +10,15 @@ import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { useCareersStore } from '../../../../features/careers/presentation/store/careerStore'
+import { CareerFilter } from '../../../../shared/sdk/filters/career-filter'
+import { SelectChangeEvent } from '@mui/material'
 
 export type IDegreeCertificateTableFilterValue = string | string[]
 
 export type IDegreeCertificateTableFilters = {
   name: string
+  career: number
 }
 
 type Props = {
@@ -41,6 +45,7 @@ export const DegreeCertificatesTableToolbar = ({
   const popover = usePopover()
   const [inputValue, setInputValue] = useState(undefined as string | undefined)
   const debouncedValue = useDebounce(inputValue ? inputValue : '')
+  const { careers } = useCareersStore()
 
   const resetValues = () => {
     setVisitedPages([])
@@ -71,19 +76,19 @@ export const DegreeCertificatesTableToolbar = ({
   //   }
   // }, [debouncedValue, filters.name])
 
-  const areFiltersAdded = () =>
-    (inputValue !== undefined && inputValue !== '') ||
-    filters.name !== undefined
+  // const areFiltersAdded = () =>
+  //   (inputValue !== undefined && inputValue !== '') ||
+  //   filters.name !== undefined
 
-  // const handleChange = (event: SelectChangeEvent) => {
-  //   const {
-  //     target: { value },
-  //   } = event
+  const handleChange = (event: SelectChangeEvent) => {
+    const {
+      target: { value },
+    } = event
 
-  //   !isDataFiltered && setIsDataFiltered(true)
+    !isDataFiltered && setIsDataFiltered(true)
 
-  //   onFilters('name', value)
-  // }
+    onFilters('career', value)
+  }
 
   return (
     <>
@@ -104,8 +109,13 @@ export const DegreeCertificatesTableToolbar = ({
           alignItems="center"
           spacing={2}
           flexGrow={1}
-          sx={{ width: 1 }}
+          sx={{ width: 1, display: 'flex', flexDirection: 'row' }}
         >
+          <CareerFilter
+            filters={filters}
+            onChange={handleChange}
+            sx={{ width: 700 }}
+          />
           <TextField
             fullWidth
             value={filters.name}
@@ -121,6 +131,7 @@ export const DegreeCertificatesTableToolbar = ({
                 </InputAdornment>
               ),
             }}
+            sx={{ flexGrow: 1 }}
           />
         </Stack>
       </Stack>

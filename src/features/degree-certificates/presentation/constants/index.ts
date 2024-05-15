@@ -71,23 +71,19 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
 
 export const defaultFilters: IDegreeCertificateFilters = {
   name: '',
+  career: 1,
 }
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
   topic: Yup.string().required('El tema es requerido'),
-  // student: Yup.object().shape({
+  // selectedValue: Yup.object().shape({
   //   id: Yup.number().min(1).required('El estudiante es requerido'),
   //   label: Yup.string().required('El estudiante es requerido'),
   // }),
   // career: Yup.number().required('La carrera es requerida'),
-  // certificateType: Yup.number().required('El tipo de acta es requerido'),
-  // certificateStatus: Yup.number().required('El estado de acta es requerido'),
-  // degreeModality: Yup.number().required('La modalidad es requerida'),
-  // room: Yup.number().required('El aula es requerida'),
+  // certificateType: Yup.mixed().required('El tipo de acta es requerido'),
+  // certificateStatus: Yup.mixed().required('El estado de acta es requerido'),
+  // degreeModality: Yup.mixed().required('La modalidad es requerida'),
+  // room: Yup.mixed().required('El aula es requerida'),
   // duration: Yup.number().required('La duración es requerida'),
-  // link: Yup.string().required('El enlace es requerido'),
-  // gradesSheetDriveId: Yup.string().required(
-  //   'El id de la hoja de calificaciones es requerido',
-  // ),
-  // documentDriveId: Yup.string().required('El id del documento es requerido'),
 })

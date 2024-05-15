@@ -36,6 +36,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
     defaultMembers,
     pathname,
   } = useCouncilsForm(currentCouncil)
+
   const { handleSubmit, control } = methods
 
   const renderDetails = (

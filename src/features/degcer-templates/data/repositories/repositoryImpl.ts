@@ -1,43 +1,25 @@
-import { IDegreeCertificatesRepository } from '../../domain/repositories/IDegreeCertificatesRepository'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { IDegCerTemplateRepository } from '../../domain/repositories/IDegCerTemplatesRepository'
 import {
-  DegreeCertificateDatasourceImpl,
+  DegCerTemplatesDatasourceImpl,
   IDegCerTemplatesDatasource,
 } from '../datasources/datasource'
-import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 
-export class DegreeCertificateRepositoryImpl
-  implements IDegreeCertificatesRepository
-{
-  static instance: DegreeCertificateRepositoryImpl
+export class DegCerTemplateRepositoryImpl implements IDegCerTemplateRepository {
+  static instance: DegCerTemplateRepositoryImpl
 
   static getInstance = (): IDegCerTemplatesDatasource => {
-    if (!DegreeCertificateRepositoryImpl.instance) {
-      DegreeCertificateRepositoryImpl.instance =
-        new DegreeCertificateRepositoryImpl(
-          DegreeCertificateDatasourceImpl.getInstance(),
-        )
+    if (!DegCerTemplateRepositoryImpl.instance) {
+      DegCerTemplateRepositoryImpl.instance = new DegCerTemplateRepositoryImpl(
+        DegCerTemplatesDatasourceImpl.getInstance(),
+      )
     }
 
-    return DegreeCertificateRepositoryImpl.instance
+    return DegCerTemplateRepositoryImpl.instance
   }
 
   private constructor(
     private readonly datasource: IDegCerTemplatesDatasource,
   ) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.datasource.getAllByCareerId(limit, offset)
-
-  getByFilters = async (
-    filters: IDegreeCertificateFilters,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getByFilters(filters, limit, offset)
-
-  update = async (degreeCertificate: Partial<IDegreeCertificate>) =>
-    await this.datasource.update(degreeCertificate)
-
-  create = async (degreeCertificate: IDegreeCertificate) =>
-    await this.datasource.create(degreeCertificate)
+  getAll = async () => this.datasource.getAll()
 }

@@ -8,7 +8,6 @@ import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-
 import { paths } from '../../../../core/routes/paths'
 import { DegreeCertificateNewEditForm } from '../components/DegreeCertificateNewEditForm'
 import { memo } from 'react'
-import { CertificateProvider } from '../../../../core/providers/certificate-degree-provider'
 
 const CouncilEditView = () => {
   const settings = useSettingsContext()
@@ -21,28 +20,26 @@ const CouncilEditView = () => {
   )
 
   return (
-    <CertificateProvider>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading="Editar"
-          links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            {
-              name: 'Consejos',
-              href: pathname.replace('/new', ''),
-            },
-            { name: currentDegreeCertificate?.topic || 'Editar' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <CustomBreadcrumbs
+        heading="Editar"
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          {
+            name: 'Consejos',
+            href: pathname.replace('/new', ''),
+          },
+          { name: currentDegreeCertificate?.topic || 'Editar' },
+        ]}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
 
-        <DegreeCertificateNewEditForm
-          currentDegreeCertificate={currentDegreeCertificate}
-        />
-      </Container>
-    </CertificateProvider>
+      <DegreeCertificateNewEditForm
+        currentDegreeCertificate={currentDegreeCertificate}
+      />
+    </Container>
   )
 }
 

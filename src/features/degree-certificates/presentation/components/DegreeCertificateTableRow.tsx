@@ -24,7 +24,6 @@ type Props = {
   row: DegreeCertificateModel
   selected: boolean
   onEditRow: VoidFunction
-  onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
   activeState?: boolean | null
@@ -37,7 +36,6 @@ export const DegreeCertificateTableRow = ({
   onSelectRow,
   onDeleteRow,
   onEditRow,
-  onViewRow,
   isOnTable = true,
   activeState,
 }: Props) => {
@@ -48,10 +46,6 @@ export const DegreeCertificateTableRow = ({
   } ${(row.student as IStudent).firstLastName} ${
     (row.student as IStudent).secondLastName
   }`
-
-  console.log(studentName)
-
-  console.log(row)
 
   const confirm = useBoolean()
 
@@ -69,10 +63,6 @@ export const DegreeCertificateTableRow = ({
         )}
 
         <TableCell>
-          {/* <ListItemText
-            primary={format(new Date(presentationDate), 'p')}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          /> */}
           <ListItemText
             primary={row.topic}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
@@ -116,9 +106,9 @@ export const DegreeCertificateTableRow = ({
           ) : (
             <Label
               variant="soft"
-              color={(finalActiveState === true && 'success') || 'primary'}
+              color={(finalActiveState === true && 'error') || 'success'}
             >
-              {finalActiveState === true ? 'Abierto' : 'Cerrado'}
+              {finalActiveState === true ? 'Cerrado' : 'Abierto'}
             </Label>
           )}
         </TableCell>
@@ -141,16 +131,6 @@ export const DegreeCertificateTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          Detalles
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
@@ -164,17 +144,17 @@ export const DegreeCertificateTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={row.isClosed ? { color: 'error.main' } : { color: 'green' }}
+          sx={row.isClosed ? { color: 'green' } : { color: 'error.main' }}
         >
           {row.isClosed ? (
             <>
-              <Iconify icon="radix-icons:lock-closed" />
-              Desactivar
+              <Iconify icon="ei:check" />
+              Abrir
             </>
           ) : (
             <>
-              <Iconify icon="radix-icons:lock-open-2" />
-              Activar
+              <Iconify icon="simple-line-icons:close" width="48" height="48" />
+              Cerrar
             </>
           )}
         </MenuItem>
@@ -183,22 +163,26 @@ export const DegreeCertificateTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isClosed ? 'Desactivar consejo' : 'Activar consejo'}
+        title={
+          row.isClosed
+            ? 'Marcar acta de grado como abierta'
+            : 'Marcar acta de grado como cerrada'
+        }
         content={
           row.isClosed
-            ? '¿Está seguro de desactivar este consejo?'
-            : '¿Está seguro de activar este consejo?'
+            ? '¿Está seguro de marcar esta acta de grado como abierta?'
+            : '¿Está seguro de marcar esta acta de grado como cerrada?'
         }
         action={
           <Button
             variant="contained"
-            color={isClosed ? 'error' : 'success'}
+            color={isClosed ? 'success' : 'error'}
             onClick={() => {
               onDeleteRow()
               confirm.onFalse()
             }}
           >
-            {isClosed ? 'Desactivar' : 'Activar'}
+            {isClosed ? 'Abrir' : 'Cerrar'}
           </Button>
         }
       />

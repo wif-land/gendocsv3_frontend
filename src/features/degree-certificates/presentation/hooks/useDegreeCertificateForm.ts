@@ -50,12 +50,35 @@ export const useDegreeCertificateForm = (
     addDegreeCertificate(degree)
   }, [])
 
-  const onSubmit = useCallback(
-    async (data: IDegreeCertificate) => {
-      const formattedData = {
+  const handleEdit = useCallback(
+    async (values: Partial<IDegreeCertificate>) => {
+      const degree =
+        await DegreeCertificatesUseCasesImpl.getInstance().update(values)
+      addDegreeCertificate(degree)
+    },
+    [],
+  )
+
+  const removeUndefinedFields = <T>(obj: T): Partial<T> => {
+    const newObj: Partial<T> = {}
+    for (const key in obj) {
+      if (
+        obj[key as keyof T] !== undefined &&
+        obj[key as keyof T] !== null &&
+        obj[key as keyof T] !== ''
+      ) {
+        newObj[key as keyof T] = obj[key as keyof T]
+      }
+    }
+    return newObj
+  }
+
+  const formatData = useCallback(
+    (data: Partial<IDegreeCertificate>) => {
+      const formattedData: Partial<IDegreeCertificate> = removeUndefinedFields({
         topic: data.topic,
         presentationDate: data.presentationDate,
-        studentId: data.student.id,
+        studentId: data.student?.id,
         certificateTypeId: data.certificateType,
         certificateStatusId: data.certificateStatus,
         degreeModalityId: data.degreeModality,
@@ -63,11 +86,24 @@ export const useDegreeCertificateForm = (
         duration: Number(data.duration),
         isClosed: data.isClosed,
         userId: user?.id,
-      }
+        link: data.link,
+      })
+
+      return formattedData
+    },
+    [user, currentDegreeCertificate],
+  )
+
+  const onSubmit = useCallback(
+    async (data: IDegreeCertificate) => {
+      const formattedData = formatData(data)
       if (!currentDegreeCertificate) {
         handleCreate(formattedData as unknown as IDegreeCertificate)
       } else {
-        // const editFields = getEditedFields<IDegreeCertificate>(defaultValues, data)
+        handleEdit({
+          ...formattedData,
+          id: currentDegreeCertificate.id,
+        })
       }
 
       const newPath = currentDegreeCertificate

@@ -52,8 +52,6 @@ export const CertificateProvider = ({
       setRooms(data)
     })
 
-    console.log('CertificateProvider')
-
   }, [])
 
   return (

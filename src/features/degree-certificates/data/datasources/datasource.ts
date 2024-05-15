@@ -27,6 +27,13 @@ export interface IDegreeCertificateDatasource {
   ): Promise<DegreeCertificateModel>
 
   create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
+
+  generateNumeration(careerId: number): Promise<{
+    firstGenerated: number
+    lastGenerated: number
+  }>
+
+  getLastNumberToRegister(careerId: number): Promise<number>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -88,7 +95,7 @@ export class DegreeCertificateDatasourceImpl
 
   update = async (degreeCertificate: IDegreeCertificate) => {
     const { id, ...rest } = degreeCertificate
-    const result = await AxiosClient.put(
+    const result = await AxiosClient.patch(
       API_ROUTES.DEGREE_CERTIFICATES.UPDATE(id as number),
       rest,
     )
@@ -111,5 +118,29 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as DegreeCertificateModel
+  }
+
+  generateNumeration = async (careerId: number) => {
+    const result = await AxiosClient.patch(
+      API_ROUTES.DEGREE_CERTIFICATES.GENERATE_NUMERATION(careerId),
+    )
+
+    if ('error' in result) {
+      return { firstGenerated: 0, lastGenerated: 0 }
+    }
+
+    return result.data as { firstGenerated: number; lastGenerated: number }
+  }
+
+  getLastNumberToRegister = async (careerId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.GET_LAST_NUMBER_TO_REGISTER(careerId),
+    )
+
+    if ('error' in result) {
+      return 0
+    }
+
+    return result.data as number
   }
 }
