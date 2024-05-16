@@ -4,6 +4,7 @@ import { useParams, usePathname } from 'next/navigation'
 
 const Page = () => {
   const { driveId } = useParams()
+
   const returnLink = usePathname().substring(0, usePathname().lastIndexOf('/'))
 
   return (

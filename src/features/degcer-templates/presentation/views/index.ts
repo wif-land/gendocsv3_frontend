@@ -1,1 +1,1 @@
-export { default as DegCerTemplatesListView } from './DegreeCertificateListView'
+export { default as DegCerTemplatesListView } from './DegCerTemplatesListView'

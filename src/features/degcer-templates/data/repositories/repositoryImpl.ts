@@ -3,6 +3,7 @@ import {
   DegCerTemplatesDatasourceImpl,
   IDegCerTemplatesDatasource,
 } from '../datasources/datasource'
+import { DegCerGradesModel } from '../models/DegCerGradesModel'
 
 export class DegCerTemplateRepositoryImpl implements IDegCerTemplateRepository {
   static instance: DegCerTemplateRepositoryImpl
@@ -22,4 +23,15 @@ export class DegCerTemplateRepositoryImpl implements IDegCerTemplateRepository {
   ) {}
 
   getAll = async () => this.datasource.getAll()
+
+  getCellGrades = async (certificateTypeId: number) =>
+    this.datasource.getCellGrades(certificateTypeId)
+
+  createCellGrade = async (
+    certificateTypeId: number,
+    grade: Partial<DegCerGradesModel>,
+  ) => this.datasource.createCellGrade(certificateTypeId, grade)
+
+  deleteCellGrade = async (gradeId: number) =>
+    this.datasource.deleteCellGrade(gradeId)
 }
