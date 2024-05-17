@@ -5,7 +5,6 @@ import {
   UserDataSource,
   UserDataSourceImpl,
 } from '../datasources/UserDatasource'
-import { UserModel } from '../models/UserModel'
 
 export class UserRepositoryImpl implements UserRepository {
   static instance: UserRepositoryImpl
@@ -28,8 +27,7 @@ export class UserRepositoryImpl implements UserRepository {
   getByFilters = async (limit: number, offset: number, filters: IUserFilters) =>
     await this.datasource.getByFilters(limit, offset, filters)
 
-  update = async (data: Partial<UserModel>) =>
-    await this.datasource.update(data)
+  update = async (data: Partial<IUser>) => await this.datasource.update(data)
 
   create = async (data: IUser) => await this.datasource.create(data)
 }

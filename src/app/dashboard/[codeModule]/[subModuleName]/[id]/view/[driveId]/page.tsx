@@ -4,7 +4,7 @@ import { useParams, usePathname } from 'next/navigation'
 
 const Page = () => {
   const { driveId } = useParams()
-  const returnLink = usePathname().split('/').slice(0, -2).join('/')
+  const returnLink = usePathname().split('/').slice(0, -3).join('/')
 
   return (
     <DocumentVisualizer driveId={driveId as string} returnLink={returnLink} />

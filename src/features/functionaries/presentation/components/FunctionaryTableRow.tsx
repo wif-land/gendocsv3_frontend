@@ -148,7 +148,10 @@ export const FunctionaryTableRow = ({
           <Button
             variant="contained"
             color={row.isActive ? 'error' : 'success'}
-            onClick={onDeleteRow}
+            onClick={() => {
+              onDeleteRow()
+              confirm.onFalse()
+            }}
           >
             {row.isActive ? 'Desactivar' : 'Activar'}
           </Button>

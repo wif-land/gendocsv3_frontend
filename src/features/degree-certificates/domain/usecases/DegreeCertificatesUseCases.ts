@@ -8,6 +8,7 @@ interface CertificateDegreeUseCases {
   getAll(
     limit: number,
     offset: number,
+    carrerId: number,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -34,6 +35,8 @@ interface CertificateDegreeUseCases {
   }>
 
   getLastNumberToRegister(careerId: number): Promise<number>
+
+  generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -54,8 +57,8 @@ export class DegreeCertificatesUseCasesImpl
 
   constructor(private readonly repository: CertificateDegreeUseCases) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.repository.getAll(limit, offset)
+  getAll = async (limit: number, offset: number, carrerId: number) =>
+    await this.repository.getAll(limit, offset, carrerId)
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,
@@ -82,4 +85,7 @@ export class DegreeCertificatesUseCasesImpl
 
   getLastNumberToRegister = async (careerId: number) =>
     await this.repository.getLastNumberToRegister(careerId)
+
+  generateDocument = async (degreeCertificateId: number) =>
+    await this.repository.generateDocument(degreeCertificateId)
 }

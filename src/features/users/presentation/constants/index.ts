@@ -63,28 +63,19 @@ export const resolveDefaultValues = (currentUser?: IUser) => ({
   accessModules: currentUser?.accessModules || [],
 })
 
-export const handleCreate = async (values: FormValuesProps) => {
-  const result = await UserUseCasesImpl.getInstance().create({
+export const handleCreate = async (values: FormValuesProps) =>
+  await UserUseCasesImpl.getInstance().create({
     ...values,
     accessModules: values.accessModules.map((module) => module.id),
   })
 
-  return result.status !== 500
-}
-
-export const handleUpdate = async (
-  id: number,
-  values: Partial<IUser> | null,
-) => {
+export const handleUpdate = async (values: Partial<IUser> | null) => {
   if (!values) {
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
     })
 
-    return false
+    return {}
   }
-
-  const result = await UserUseCasesImpl.getInstance().update(id, values)
-
-  return result.status !== 500
+  return await UserUseCasesImpl.getInstance().update(values)
 }

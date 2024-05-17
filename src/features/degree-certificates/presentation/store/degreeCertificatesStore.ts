@@ -26,7 +26,7 @@ const DEFAULT_DEGREE_CERTIFICATE: DegreeCertificateModel = {
   duration: 0,
   link: '',
   gradesSheetDriveId: '',
-  documentDriveId: '',
+  certificateDriveId: '',
   isClosed: false,
 } as DegreeCertificateModel
 

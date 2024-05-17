@@ -14,7 +14,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   useEffect(() => {
     let isMounted = true
 
-    console.log('PrivateRoute')
 
     const handleGetCookies = () => {
       if (

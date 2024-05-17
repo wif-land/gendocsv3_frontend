@@ -24,10 +24,7 @@ interface UserUseCases {
     users: UserModel[]
   }>
 
-  update(
-    id: number,
-    data: Partial<UserModel>,
-  ): Promise<{
+  update(data: Partial<IUser>): Promise<{
     user: UserModel
     accessToken: string
   }>
@@ -54,9 +51,6 @@ export class UserUseCasesImpl implements UserUseCases {
   getByFiters = async (limit: number, offset: number, filters: IUserFilters) =>
     await this.userRepository.getByFilters(limit, offset, filters)
 
-  update = async (id: number, data: Partial<UserModel>) =>
-    await this.userRepository.update({
-      ...data,
-      id,
-    })
+  update = async (data: Partial<IUser>) =>
+    await this.userRepository.update(data)
 }
