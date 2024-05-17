@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ITemplate } from '../../domain/entities/ITemplate'
 import { TemplatesRepository } from '../../domain/repositories/TemplatesRepository'
 import {
@@ -22,30 +21,15 @@ export class TemplatesRepositoryImpl implements TemplatesRepository {
 
   private constructor(private readonly datasource: TemplatesDataSource) {}
 
-  getByProcessId = (processId: number) =>
-    this.datasource.getByProcessId(processId)
+  getByProcessId = async (processId: number) =>
+    await this.datasource.getByProcessId(processId)
 
-  getByProcessAndField = (processId: number, field: string) =>
-    this.datasource.getByProcessAndField(processId, field)
+  getByProcessAndField = async (processId: number, field: string) =>
+    await this.datasource.getByProcessAndField(processId, field)
 
   update = async (data: Partial<TemplateModel>) =>
     await this.datasource.update(data)
 
-  create = async (templateData: ITemplate) => {
-    try {
-      const result = await this.datasource.create(templateData)
-      const { status } = result
-
-      if (
-        status === HTTP_STATUS_CODES.OK ||
-        status === HTTP_STATUS_CODES.CREATED
-      ) {
-        return { status, template: result.template }
-      }
-
-      return { status, template: {} as TemplateModel }
-    } catch (error) {
-      return { status: 500, template: {} as TemplateModel }
-    }
-  }
+  create = async (templateData: ITemplate) =>
+    await this.datasource.create(templateData)
 }
