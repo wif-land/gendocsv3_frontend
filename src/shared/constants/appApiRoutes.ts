@@ -110,6 +110,11 @@ export const API_ROUTES = {
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL: 'degree-certificates/certificate-type-status-career',
+    GET_CELL_GRADES: (certificateTypeId: number) =>
+      `/degree-certificates/grade-cells/by-certificate-type/${certificateTypeId}`,
+    CREATE_CELL_GRADE: '/degree-certificates/grade-cells',
+    DELETE_CELL_GRADE: (gradeId: number) =>
+      `/degree-certificates/grade-cells/${gradeId}`,
   },
   CERTIFICATES_TYPES: {
     GET_ALL: '/degree-certificates/certificate-types',

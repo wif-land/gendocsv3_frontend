@@ -13,7 +13,9 @@ const DocumentVisualizer = ({
   driveId: string
   returnLink: string
 }) => {
-  const documentURL = `https://docs.google.com/document/d/${driveId}/edit?usp=sharing`
+  const isSpreadsheet = driveId.includes('**spreadsheet**')
+
+  const documentURL = !isSpreadsheet ? `https://docs.google.com/document/d/${driveId}` : `https://docs.google.com/spreadsheets/d/${driveId.replace('**spreadsheet**', '')}`
 
   return (
     <div>
