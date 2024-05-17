@@ -68,11 +68,11 @@ export class UserDataSourceImpl implements UserDataSource {
   }
 
   update = async (user: Partial<IUser>) => {
-    const { id, ...body } = user
+    const { id, ...rest } = user
 
     const result = await AxiosClient.patch(
       API_ROUTES.USERS.UPDATE(id as number),
-      body,
+      rest,
     )
 
     if ('error' in result) {

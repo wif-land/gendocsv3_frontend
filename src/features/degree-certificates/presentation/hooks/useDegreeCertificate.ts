@@ -132,7 +132,7 @@ export const useDegreeCertificateView = ({
     updateRow(row).then((data) => {
       if (data) {
         setDegreeCertificates(
-          degreeCertificates.map((degree) =>
+          degreeCertificates?.map((degree) =>
             degree.id === data.id ? (data as DegreeCertificateModel) : degree,
           ),
         )

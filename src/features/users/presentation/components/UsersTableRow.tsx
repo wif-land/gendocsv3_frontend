@@ -21,6 +21,7 @@ type Props = {
   selected: boolean
   onEditRow: VoidFunction
   onDeleteRow: VoidFunction
+  activeState?: boolean | null
 }
 
 export const UsersTableRow = ({
@@ -145,7 +146,10 @@ export const UsersTableRow = ({
           <Button
             variant="contained"
             color={row.isActive ? 'error' : 'success'}
-            onClick={onDeleteRow}
+            onClick={() => {
+              onDeleteRow()
+              confirm.onFalse()
+            }}
           >
             {row.isActive ? 'Desactivar' : 'Activar'}
           </Button>
