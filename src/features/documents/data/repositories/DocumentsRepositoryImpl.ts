@@ -6,7 +6,6 @@ import {
   DocumentsDataSource,
   DocumentsDataSourceImpl,
 } from '../datasource/DocumentsDatasource'
-import { DocumentModel } from '../models/DocumentsModel'
 
 export class DocumentsRepositoryImpl implements DocumentsRepository {
   static instance: DocumentsRepositoryImpl
@@ -30,16 +29,8 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
 
   getAll = async () => await this.datasource.getAll()
 
-  create = async (processData: IDocument) => {
-    const result = await this.datasource.create(processData)
-    const { success } = result
-
-    if (!success) {
-      return false
-    }
-
-    return result.data?.document as DocumentModel
-  }
+  create = async (processData: IDocument) =>
+    await this.datasource.create(processData)
 
   deleteById = async (id: number) => {
     try {
@@ -55,9 +46,6 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
     }
   }
 
-  getNumerationByCouncil = async (councilId: number) => {
-    const result = await this.datasource.getNumerationByCouncil(councilId)
-
-    return result.data
-  }
+  getNumerationByCouncil = async (councilId: number) =>
+    await this.datasource.getNumerationByCouncil(councilId)
 }

@@ -49,7 +49,9 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const [selectedProcess, setSelectedProcess] = useState<ProcessModel>(
     {} as ProcessModel,
   )
-  const [numbers, setNumbers] = useState<NumerationModel>()
+  const [numbers, setNumbers] = useState<NumerationModel>(
+    NumerationModel.fromJson({}),
+  )
 
   const [moduleId, setModuleId] = useState<number>(
     resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
@@ -133,8 +135,8 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     ProcessesUseCasesImpl.getInstance()
       .getAllProcessesByModuleId(moduleId, 10, 0)
       .then((result) => {
-        if (result.data.processes) {
-          setProcesses(result.data.processes)
+        if (result.processes) {
+          setProcesses(result.processes)
         }
       })
 
