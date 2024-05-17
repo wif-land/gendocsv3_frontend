@@ -125,6 +125,9 @@ export const API_ROUTES = {
   DEGREE_MODALITIES: {
     GET_ALL: '/degree-certificates/degree-modalities',
   },
+  DEGREES: {
+    GET_ALL: '/degrees',
+  },
   LOCATION_PROVIDER: {
     GET_ALL_PROVINCES: '/cities/provinces',
     GET_ALL_CITIES: '/cities',
