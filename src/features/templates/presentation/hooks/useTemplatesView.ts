@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 
@@ -16,20 +16,22 @@ export const useTemplateView = ({ processId }: Props) => {
   const { loader } = useLoaderStore()
   const { updateRow } = useTemplatesMethods()
   const { processes, updateTemplate } = useProcessStore()
+  const { fetchData } = useTemplatesMethods()
 
   const currentProcess = processes?.find(
     (process) => process.id! === +processId,
   )
 
-  let templates = currentProcess?.templateProcesses
+  const [templates, setTemplates] = useState<ITemplate[]>([])
 
   useEffect(() => {
-    if (templates?.length !== 0) return
-  }, [templates])
-
-  useEffect(() => {
-    if (templates?.length !== 0) return
-    templates = currentProcess?.templateProcesses
+    if (!templates.length) {
+      fetchData(processId).then((data) => {
+        if (data.count) {
+          setTemplates(data.templates)
+        }
+      })
+    }
   }, [templates, processes, currentProcess, processId])
 
   const handleUpdateRow = (row: ITemplate) => {

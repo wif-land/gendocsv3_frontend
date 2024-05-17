@@ -20,7 +20,7 @@ import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 import Iconify from '../../../../core/iconify'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { DocumentSeeNumerationDialog } from './DocumentSeeNumerationDialog'
-import { NumerationModel } from '../../data/models/NumerationModel'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -28,6 +28,7 @@ type Props = {
 
 export const DocumentNewEditForm = ({ currentDocument }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const { loader } = useLoaderStore()
   const {
     methods,
     councils,
@@ -222,7 +223,12 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
         md={8}
         sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
       >
-        <LoadingButton type="submit" variant="contained" size="large">
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          size="large"
+          loading={loader.length > 0}
+        >
           {!currentDocument ? 'Crear' : 'Guardar'}
         </LoadingButton>
       </Grid>
@@ -241,7 +247,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
         <DocumentSeeNumerationDialog
           open={seeNumeration.value}
           onClose={seeNumeration.onFalse}
-          numeration={numbers || ({} as NumerationModel)}
+          numeration={numbers}
           setNumeration={(number) => {
             methods.setValue('number', number)
             seeNumeration.onFalse()

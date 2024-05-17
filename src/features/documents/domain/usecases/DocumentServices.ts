@@ -9,7 +9,6 @@ interface DocumentUseCases {
   create(process: IDocument): Promise<DocumentModel | boolean>
 
   getAll(): Promise<{
-    status: number
     documents: DocumentModel[]
   }>
 
@@ -46,14 +45,7 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
   getAllDocumentsByModuleId = async (
     moduleId: number,
     params: PaginationParams,
-  ) => {
-    const result = await this.modelRepository.getAllDocumentsByModuleId(
-      moduleId,
-      params,
-    )
-
-    return result.data as { count: number; documents: DocumentModel[] }
-  }
+  ) => await this.modelRepository.getAllDocumentsByModuleId(moduleId, params)
 
   getNumerationByCouncil = async (councilId: number) =>
     await this.modelRepository.getNumerationByCouncil(councilId)
