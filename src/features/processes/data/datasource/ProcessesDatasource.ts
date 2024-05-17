@@ -7,7 +7,6 @@ import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 
 export interface ProcessesDataSource {
   getAll(): Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
@@ -31,17 +30,14 @@ export interface ProcessesDataSource {
   }>
 
   update(process: Partial<IProcess>): Promise<{
-    status: number
     process: ProcessModel
   }>
 
   bulkUpdate(processes: Partial<IProcess>[]): Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
   create(process: IProcess): Promise<{
-    status: number
     process: ProcessModel
   }>
 }
@@ -87,9 +83,8 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
         process: {} as ProcessModel,
       }
     }
-    const { status, data } = result
 
-    return { status, process: data.content as ProcessModel }
+    return result.data as { process: ProcessModel }
   }
 
   getAll = async () => {
@@ -101,9 +96,8 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
         processes: [] as ProcessModel[],
       }
     }
-    const { status, data } = result
 
-    return { status, processes: data.content as ProcessModel[] }
+    return result.data as { processes: ProcessModel[] }
   }
 
   getByFilter = async (
@@ -143,9 +137,7 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
       }
     }
 
-    const { status, data } = result
-
-    return { status, process: data.content as ProcessModel }
+    return result.data as { process: ProcessModel }
   }
 
   bulkUpdate = async (processes: IProcess[]) => {
@@ -161,8 +153,6 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
       }
     }
 
-    const { status, data } = result
-
-    return { status, processes: data.content as ProcessModel[] }
+    return result.data as { processes: ProcessModel[] }
   }
 }

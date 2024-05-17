@@ -31,6 +31,8 @@ export interface CouncilsDataSource {
   create(council: ICouncil): Promise<CouncilModel>
 
   bulkUpdate(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
+
+  notifyMembers(payload: { members: number[]; id: number }): Promise<void>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -42,6 +44,16 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     }
 
     return CouncilsDataSourceImpl.instance
+  }
+
+  async notifyMembers(payload: {
+    members: number[]
+    id: number
+  }): Promise<void> {
+    await AxiosClient.post(
+      API_ROUTES.COUNCILS.NOTIFY_MEMBERS(payload.id),
+      payload.members,
+    )
   }
 
   getAllCouncilsByModuleId = async (

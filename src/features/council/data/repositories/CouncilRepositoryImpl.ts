@@ -45,4 +45,7 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   bulkUpdate = async (councils: Partial<ICouncil>[]) =>
     await this.datasource.bulkUpdate(councils)
+
+  notifyMembers = async (payload: { members: number[]; id: number }) =>
+    await this.datasource.notifyMembers(payload)
 }

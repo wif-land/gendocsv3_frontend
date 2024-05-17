@@ -117,19 +117,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
             ? pathname.replace(new RegExp(`/${currentCouncil.id}/edit`), '')
             : pathname.replace('/new', ''),
         )
-        enqueueSnackbar(
-          !currentCouncil
-            ? 'Consejo creado correctamente'
-            : 'Consejo actualizado correctamente',
-          { variant: 'success' },
-        )
       } catch (error) {
-        enqueueSnackbar(
-          !currentCouncil
-            ? 'Error al crear el consejo'
-            : 'Error al actualizar el consejo',
-          { variant: 'error' },
-        )
       } finally {
         methods.reset()
       }

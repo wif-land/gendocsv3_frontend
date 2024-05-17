@@ -82,7 +82,9 @@ const CouncilDetailsView = () => {
         />
       )}
 
-      {currentTab === 'attendees' && <CouncilDetailAttendance />}
+      {currentTab === 'attendees' && (
+        <CouncilDetailAttendance members={council?.members || []} />
+      )}
     </Container>
   )
 }
