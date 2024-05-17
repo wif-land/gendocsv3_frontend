@@ -118,7 +118,6 @@ const StudentListView = () => {
     setFilters(defaultFilters)
     setVisitedPages([])
     setTableData([])
-    console.log('reset filters')
   }
 
   const notFound =

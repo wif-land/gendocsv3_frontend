@@ -73,7 +73,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       loading.onTrue()
-      console.log(data)
       try {
         if (!currentCouncil) {
           await handleCreateCouncil({
@@ -125,7 +124,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
           { variant: 'success' },
         )
       } catch (error) {
-        console.log(error)
         enqueueSnackbar(
           !currentCouncil
             ? 'Error al crear el consejo'
@@ -185,8 +183,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         if (result.functionaries.length > 0) {
           const usedFunctionaries = methods.getValues().members
 
-          console.log({ usedFunctionaries })
-
           // const filteredFunctionaries = result.functionaries.filter(
           //   (functionary) =>
           //     usedFunctionaries?.every(
@@ -194,8 +190,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
           //         attendee?.member?.label?.split('-')[1] !== functionary.dni,
           //     ),
           // )
-
-          // console.log({ filteredFunctionaries })
 
           setUnusedFunctionaries(result.functionaries)
         } else {
@@ -215,7 +209,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .then((result) => {
         setDefaultMembers(result)
       })
-    console.log({ currentCouncil })
     if (currentCouncil?.members.length) return
     methods.setValue(
       'members',

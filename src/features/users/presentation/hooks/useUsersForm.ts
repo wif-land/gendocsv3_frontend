@@ -50,7 +50,6 @@ export const useUsersForm = (currentUser?: IUser) => {
           data,
         )
 
-        console.log(editedFields)
         result = await handleUpdate({ ...editedFields, id: currentUser.id })
       }
 

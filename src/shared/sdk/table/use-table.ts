@@ -34,7 +34,6 @@ export default function useTable(props?: UseTableProps): ReturnType {
     (id: string) => {
       const isAsc = orderBy === id && order === 'asc'
       if (id !== '') {
-        console.log('id', id)
         setOrder(isAsc ? 'desc' : 'asc')
         setOrderBy(id)
       }

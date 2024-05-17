@@ -72,7 +72,6 @@ export const useFunctionaryView = ({
         })
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {
-          console.log(data)
           if (data?.positions) {
             setPositions([...positions, ...data.positions])
             setTableData([...(positions as PositionModel[]), ...data.positions])

@@ -84,8 +84,6 @@ export const useProcessStore = create<StoreState>(
           return
         }
 
-        console.log('templateData', updatedTemplateData)
-
         const updatedTemplate: ITemplate = { ...templates[templateIndex] }
         Object.keys(updatedTemplateData).forEach((key) => {
           const keyOfTemplate = key as keyof ITemplate
@@ -95,8 +93,6 @@ export const useProcessStore = create<StoreState>(
             ;(updatedTemplate as any)[keyOfTemplate] = value
           }
         })
-
-        console.log('updatedTemplate', updatedTemplate)
 
         const updatedTemplates = templates.map((template, index) =>
           index === templateIndex ? updatedTemplate : template,

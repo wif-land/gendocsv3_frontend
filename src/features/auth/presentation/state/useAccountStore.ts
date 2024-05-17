@@ -33,7 +33,6 @@ export const useAccountStore = create<StoreState>(
         set({ user })
       },
       retreiveFromCookie: async () => {
-        console.log('retreiveFromCookie')
         const userToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
 
         if (!userToken) return false
