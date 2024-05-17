@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+
 export interface ICouncilAttendee {
   id?: number
 
@@ -16,4 +18,6 @@ export interface ICouncilAttendee {
   positionOrder: number
 
   defaultMemberId: number
+
+  functionary?: IFunctionary
 }

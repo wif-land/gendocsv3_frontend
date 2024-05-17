@@ -1,151 +1,103 @@
-import { useSnackbar } from 'notistack'
-import React, { useCallback } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import {
-  FormControlLabel,
-  ListItemText,
-  Switch,
-  Card,
-  Stack,
-} from '@mui/material'
+import { ListItemText, Card, Stack, Checkbox } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import LoadingButton from '@mui/lab/LoadingButton'
-import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
+import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useState } from 'react'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { useParams } from 'next/navigation'
+import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
+import useModulesStore from '../../../../shared/store/modulesStore'
 
-type FormValuesProps = {
-  selected: string[]
-}
+export const CouncilDetailAttendance = (props: {
+  members: ICouncilAttendee[]
+}) => {
+  const { codeModule } = useParams()
 
-const NOTIFICATIONS = [
-  {
-    subheader: 'Leonardo DiCaprio',
-    caption: 'Presidente',
-    items: [
-      {
-        id: 'activity_comments',
-        label: 'Marcar como presente',
-      },
-      {
-        id: 'activity_answers',
-        label: 'Notificar por correo',
-      },
-    ],
-  },
-  {
-    subheader: 'Mathias Rios',
-    caption: 'Subrogante',
-    items: [
-      {
-        id: 'activity_comments',
-        label: 'Marcar como presente',
-      },
-      {
-        id: 'activity_answers',
-        label: 'Notificar por correo',
-      },
-    ],
-  },
-]
-
-export const CouncilDetailAttendance = () => {
-  const { enqueueSnackbar } = useSnackbar()
-
-  const methods = useForm<FormValuesProps>({
-    defaultValues: {
-      selected: ['activity_comments', 'application_product'],
-    },
-  })
-
-  const {
-    watch,
-    control,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods
-
-  const values = watch()
-
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500))
-        enqueueSnackbar('Update success!')
-        console.info('DATA', data)
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    [enqueueSnackbar],
+  const moduleIdentifier = resolveModuleId(
+    useModulesStore().modules,
+    codeModule as string,
   )
 
-  const getSelected = (selectedItems: string[], item: string) =>
-    selectedItems.includes(item)
-      ? selectedItems.filter((value) => value !== item)
-      : [...selectedItems, item]
+  const alreadyNotified = useBoolean(
+    props.members.some((member) => member.hasBeenNotified),
+  )
+  const [membersToNotify, setMembersToNotify] = useState<number[]>([])
+  const isSubmitting = useBoolean(false)
+
+  const handleCheckOrUncheck = (member: ICouncilAttendee) => {
+    setMembersToNotify((prev) => {
+      if (!membersToNotify.includes(member.id!)) {
+        return [...prev, member.id]
+      }
+
+      return prev.filter((id) => id !== member.id) || []
+    })
+  }
+
+  const handleNotify = async () => {
+    isSubmitting.onTrue()
+    CouncilsUseCasesImpl.getInstance()
+      .notifyMembers({
+        members: membersToNotify,
+        id: moduleIdentifier,
+      })
+      .then(() => {
+        isSubmitting.onFalse()
+      })
+      .catch(() => {
+        isSubmitting.onFalse()
+      })
+  }
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Stack component={Card} spacing={3} sx={{ p: 3 }}>
-        {NOTIFICATIONS.map((notification) => (
-          <Grid key={notification.subheader} container spacing={3}>
-            <Grid xs={12} md={4}>
-              <ListItemText
-                primary={notification.subheader}
-                secondary={notification.caption}
-                primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
-                secondaryTypographyProps={{ component: 'span' }}
-              />
-            </Grid>
+    <Stack component={Card} spacing={3} sx={{ p: 3 }}>
+      {props.members.map((member) => (
+        <Grid key={member.positionName} container spacing={3}>
+          {!alreadyNotified.value && (
+            <Checkbox
+              checked={membersToNotify.includes(member.id!)}
+              onChange={() => handleCheckOrUncheck(member)}
+            />
+          )}
+          <Grid xs={12} md={4}>
+            <ListItemText
+              primary={
+                `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
+                'No asignado'
+              }
+              secondary={member.positionName}
+              primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
+              secondaryTypographyProps={{ component: 'span' }}
+            />
+          </Grid>
 
+          {alreadyNotified.value && (
             <Grid xs={12} md={8}>
-              <Stack
-                spacing={1}
-                sx={{ p: 3, borderRadius: 2, bgcolor: 'background.neutral' }}
-              >
-                <Controller
-                  name="selected"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      {notification.items.map((item) => (
-                        <FormControlLabel
-                          key={item.id}
-                          label={item.label}
-                          labelPlacement="start"
-                          control={
-                            <Switch
-                              checked={field.value.includes(item.id)}
-                              onChange={() =>
-                                field.onChange(
-                                  getSelected(values.selected, item.id),
-                                )
-                              }
-                            />
-                          }
-                          sx={{
-                            m: 0,
-                            width: 1,
-                            justifyContent: 'space-between',
-                          }}
-                        />
-                      ))}
-                    </>
-                  )}
-                />
+              <Stack spacing={1} alignItems={'end'}>
+                <LoadingButton
+                  type="button"
+                  variant="contained"
+                  disabled={member.hasAttended}
+                >
+                  {member.hasAttended ? 'Asistió' : 'Marcar asistencia'}
+                </LoadingButton>
               </Stack>
             </Grid>
-          </Grid>
-        ))}
+          )}
+        </Grid>
+      ))}
 
+      {!alreadyNotified.value && (
         <LoadingButton
-          type="submit"
           variant="contained"
-          loading={isSubmitting}
-          sx={{ ml: 'auto' }}
+          loading={isSubmitting.value}
+          disabled={membersToNotify.length === 0}
+          onClick={handleNotify}
         >
-          Save Changes
+          Notificar
         </LoadingButton>
-      </Stack>
-    </FormProvider>
+      )}
+    </Stack>
   )
 }

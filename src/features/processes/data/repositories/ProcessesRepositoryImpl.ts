@@ -1,4 +1,3 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IProcess } from '../../domain/entities/IProcess'
 import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 import { ProcessesRepository } from '../../domain/repositories/ProcessesRepository'
@@ -41,20 +40,8 @@ export class ProcessesRepositoryImpl implements ProcessesRepository {
   update = async (data: Partial<ProcessModel>) =>
     await this.datasource.update(data)
 
-  create = async (processData: IProcess) => {
-    try {
-      const result = await this.datasource.create(processData)
-      const { status } = result
-
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, process: {} as ProcessModel }
-      }
-
-      return { status, process: result.process }
-    } catch (error) {
-      return { status: 500, process: {} as ProcessModel }
-    }
-  }
+  create = async (processData: IProcess) =>
+    await this.datasource.create(processData)
 
   bulkUpdate = async (processes: Partial<IProcess>[]) =>
     await this.datasource.bulkUpdate(processes)

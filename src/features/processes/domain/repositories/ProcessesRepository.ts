@@ -4,7 +4,6 @@ import { IProcessFilters } from '../entities/IProcessFilters'
 
 export interface ProcessesRepository {
   getAll: () => Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
@@ -14,20 +13,15 @@ export interface ProcessesRepository {
     limit: number,
     offset: number,
   ) => Promise<{
-    status: number
-    data: {
-      count: number
-      processes: ProcessModel[]
-    }
+    count: number
+    processes: ProcessModel[]
   }>
 
   update: (data: Partial<IProcess>) => Promise<{
-    status: number
     process: ProcessModel
   }>
 
   create: (processData: IProcess) => Promise<{
-    status: number
     process: ProcessModel
   }>
 
@@ -41,7 +35,6 @@ export interface ProcessesRepository {
   }>
 
   bulkUpdate: (processes: Partial<IProcess>[]) => Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 }

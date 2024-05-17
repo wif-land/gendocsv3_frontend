@@ -7,7 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { enqueueSnackbar } from 'notistack'
 
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { IProcess } from '../../domain/entities/IProcess'
 import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
@@ -62,33 +61,13 @@ export const useProcessForm = (currentProcess?: IProcess) => {
   } = methods
 
   const handleCreate = useCallback(async (values: IProcess) => {
-    try {
-      const result = await ProcessesUseCasesImpl.getInstance().create(values)
-
-      if (result.status === HTTP_STATUS_CODES.CREATED) {
-        setProcesses([...processes, result.process])
-        enqueueSnackbar('Proceso creado exitosamente')
-        reset()
-      } else {
-        enqueueSnackbar('Error al crear el proceso', {
-          variant: 'error',
-        })
-      }
-    } catch (error) {
-      enqueueSnackbar('Ocurrió un error al crear el proceso', {
-        variant: 'error',
-      })
-    }
+    await ProcessesUseCasesImpl.getInstance().create(values)
   }, [])
 
   const handleUpdate = async (id: number, editedFields: Partial<IProcess>) => {
-    try {
-      const { status } = await ProcessesUseCasesImpl.getInstance().update(
-        id,
-        editedFields,
-      )
-
-      if (status === HTTP_STATUS_CODES.OK) {
+    await ProcessesUseCasesImpl.getInstance()
+      .update(id, editedFields)
+      .then((_) => {
         setProcesses(
           processes!.map((process) =>
             process.id === id
@@ -99,18 +78,7 @@ export const useProcessForm = (currentProcess?: IProcess) => {
               : process,
           ),
         )
-        enqueueSnackbar('Proceso actualizado exitosamente')
-        reset()
-      } else {
-        enqueueSnackbar('Error al actualizar el proceso', {
-          variant: 'error',
-        })
-      }
-    } catch (error) {
-      enqueueSnackbar('Ocurrió un error al actualizar el proceso', {
-        variant: 'error',
       })
-    }
   }
 
   const onSubmit = useCallback(

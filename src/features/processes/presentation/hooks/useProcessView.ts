@@ -9,7 +9,6 @@ import { useProcessStore } from '../state/useProcessStore'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
 import { TableProps } from '../../../../shared/sdk/table/types'
 import { useProcessesMethods } from './useProcessesMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IProcess } from '../../domain/entities/IProcess'
 import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 
@@ -76,16 +75,14 @@ export const useProcessView = ({
           table.rowsPerPage,
           newPage,
         ).then((response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setProcesses([
-              ...processes,
-              ...(response.data.processes as ProcessModel[]),
-            ])
-            setTableData([
-              ...processes,
-              ...(response.data.processes as ProcessModel[]),
-            ])
-          }
+          setProcesses([
+            ...processes,
+            ...(response.processes as ProcessModel[]),
+          ])
+          setTableData([
+            ...processes,
+            ...(response.processes as ProcessModel[]),
+          ])
         })
       } else {
         fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
@@ -113,17 +110,9 @@ export const useProcessView = ({
         parseInt(event.target.value, 10),
         0,
       ).then((response) => {
-        if (response?.status === HTTP_STATUS_CODES.OK) {
-          setProcesses(response.data.processes as ProcessModel[])
-          setTableData(response.data.processes as ProcessModel[])
-          setCount(response.data.count)
-        }
-
-        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-          setProcesses([])
-          setTableData([])
-          setCount(0)
-        }
+        setProcesses(response.processes as ProcessModel[])
+        setTableData(response.processes as ProcessModel[])
+        setCount(response.count)
       })
     } else {
       fetchData(
@@ -143,15 +132,7 @@ export const useProcessView = ({
   }
 
   const handleUpdateRow = (row: IProcess) => {
-    updateRow(row).then((data) => {
-      if (data) {
-        const updatedProcesses = processes.map((process) =>
-          process.id === data.id ? (data as ProcessModel) : process,
-        )
-        setProcesses(updatedProcesses)
-        setTableData(updatedProcesses)
-      }
-    })
+    updateRow(row)
   }
 
   const handleSearch = (filters: IProcessFilters) => {
@@ -161,19 +142,10 @@ export const useProcessView = ({
       table.rowsPerPage,
       table.page,
     ).then((response) => {
-      if (response?.status === HTTP_STATUS_CODES.OK) {
-        setProcesses(response.data.processes as ProcessModel[])
-        setTableData(response.data.processes as ProcessModel[])
-        setCount(response.data.count)
-        return
-      }
-
-      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-        setProcesses([])
-        setTableData([])
-        setCount(0)
-        return
-      }
+      setProcesses(response.processes as ProcessModel[])
+      setTableData(response.processes as ProcessModel[])
+      setCount(response.count)
+      return
     })
   }
 

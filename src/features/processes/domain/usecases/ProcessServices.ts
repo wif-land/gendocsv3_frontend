@@ -6,17 +6,14 @@ import { ProcessesRepository } from '../repositories/ProcessesRepository'
 
 interface ProcessUseCases {
   create(process: IProcess): Promise<{
-    status: number
     process: ProcessModel
   }>
 
   getAll(): Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
   getById(id: number): Promise<{
-    status: number
     process: ProcessModel
   }>
 
@@ -26,22 +23,13 @@ interface ProcessUseCases {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      processes: ProcessModel[]
-    }
+    count: number
+    processes: ProcessModel[]
   }>
 
-  update(
-    id: number,
-    process: Partial<ProcessModel>,
-  ): Promise<{
-    status: number
-  }>
+  update(id: number, process: Partial<ProcessModel>): Promise<void>
 
   toggleProcessStatus(processes: Partial<IProcess>[]): Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
@@ -86,11 +74,12 @@ export class ProcessesUseCasesImpl implements ProcessUseCases {
   ) =>
     await this.processRepository.getByFilters(filters, moduleId, limit, offset)
 
-  update = async (id: number, process: Partial<ProcessModel>) =>
+  update = async (id: number, process: Partial<ProcessModel>) => {
     await this.processRepository.update({
       ...process,
       id,
     })
+  }
 
   getAllProcessesByModuleId = async (
     moduleId: number,
