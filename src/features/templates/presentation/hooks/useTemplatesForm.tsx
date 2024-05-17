@@ -56,7 +56,6 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
     const result = await TemplatesUseCasesImpl.getInstance().create(values)
 
     addTemplateToProcess(result.template, values.processId as number)
-    enqueueSnackbar('Plantilla creada exitosamente')
     reset()
   }, [])
 
@@ -99,6 +98,8 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
               '',
             ),
           )
+        } else {
+          router.push(pathname.replace(new RegExp(`template/new`), ''))
         }
 
         reset()
