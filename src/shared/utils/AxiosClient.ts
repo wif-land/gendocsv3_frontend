@@ -26,6 +26,7 @@ interface AxiosResponse<T> {
 export class AxiosClient {
   private static client: AxiosInstance
   private static baseUrl? = process.env.NEXT_PUBLIC_API_URL
+  private static accessToken: string | null = null
 
   static getInstance() {
     if (!this.client) {
@@ -38,14 +39,16 @@ export class AxiosClient {
 
       this.client.interceptors.request.use(
         async (config) => {
-          const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+          if (!this.accessToken) {
+            this.accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+          }
 
-          if (!accessToken) {
+          if (!this.accessToken) {
             await new LogoutnUseCase().call()
           }
 
-          if (accessToken && config.headers) {
-            config.headers.Authorization = `Bearer ${accessToken.replaceAll(
+          if (this.accessToken && config.headers) {
+            config.headers.Authorization = `Bearer ${this.accessToken.replaceAll(
               '"',
               '',
             )}`
@@ -55,36 +58,18 @@ export class AxiosClient {
         },
         (error) => Promise.reject(error),
       )
-    }
 
-    this.client.interceptors.request.use(
-      async (config) => {
-        const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
-
-        if (accessToken) {
-          if (config.headers) {
-            config.headers.Authorization = `Bearer ${accessToken.replaceAll(
-              '"',
-              '',
-            )}`
+      this.client.interceptors.response.use(
+        (response) => response,
+        (error) => {
+          if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+            new LogoutnUseCase().call()
           }
-        }
 
-        return config
-      },
-      (error) => Promise.reject(error),
-    )
-
-    this.client.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-          new LogoutnUseCase().call()
-        }
-
-        return Promise.reject(error)
-      },
-    )
+          return Promise.reject(error)
+        },
+      )
+    }
 
     return this.client
   }

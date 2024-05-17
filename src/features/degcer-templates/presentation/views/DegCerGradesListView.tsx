@@ -32,16 +32,13 @@ const DegCerGradesListView = ({
 }) => {
   const table = useTable()
 
-  const { loader, tableData, degCerGrades, handleDelete } = useDegCerGrades({
-    table,
+  const { tableData, degCerGrades, handleDelete } = useDegCerGrades({
     certificateStatusId,
   })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
-  const notFound =
-    (!loader.length && degCerGrades.length === 0) ||
-    (!loader.length && degCerGrades.length === 0)
+  const notFound = degCerGrades.length === 0 || degCerGrades.length === 0
 
   return (
     <div>
@@ -60,13 +57,13 @@ const DegCerGradesListView = ({
                 />
 
                 <TableBody>
-                  {loader.length ? (
+                  {!tableData.length ? (
                     [...Array(table.rowsPerPage)].map((i, index) => (
                       <TableSkeleton key={index} sx={{ height: denseHeight }} />
                     ))
                   ) : (
                     <>
-                      {tableData
+                      {degCerGrades
                         .slice(table.page * 5, table.page * 5 + 5)
                         .map((row) => (
                           <DegCerGradeTableRow
@@ -83,7 +80,7 @@ const DegCerGradesListView = ({
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(table.page, 5, tableData.length)}
+                    emptyRows={emptyRows(table.page, 5, degCerGrades.length)}
                   />
 
                   <TableNoData notFound={notFound} />

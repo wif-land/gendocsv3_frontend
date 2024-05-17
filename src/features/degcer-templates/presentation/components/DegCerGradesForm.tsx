@@ -10,7 +10,7 @@ export const DegCerGradesForm = ({
 }: {
   certificateStatusId: number
 }) => {
-  const { methods, onSubmit } = useDegCerGradesForm()
+  const { methods, onSubmit } = useDegCerGradesForm({ certificateStatusId })
 
   return (
     <Stack>

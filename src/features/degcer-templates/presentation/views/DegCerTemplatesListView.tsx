@@ -98,7 +98,7 @@ const DegCerTemplatesListView = () => {
                 />
 
                 <TableBody>
-                  {loader.length ? (
+                  {!tableData ? (
                     [...Array(table.rowsPerPage)].map((i, index) => (
                       <TableSkeleton key={index} sx={{ height: denseHeight }} />
                     ))

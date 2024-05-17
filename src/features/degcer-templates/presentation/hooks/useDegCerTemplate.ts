@@ -35,7 +35,7 @@ export const useDegCerTemplatesView = ({ table }: Props) => {
     return () => {
       isMounted = false
     }
-  }, [tableData])
+  }, [])
 
   return {
     tableData,
