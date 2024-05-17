@@ -1,4 +1,4 @@
-import { IProvince } from '../../../../core/providers/domain/entities/ILocationProvider'
+import { ICity } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 
 export interface ICreateStudent {
@@ -9,7 +9,7 @@ export interface ICreateStudent {
   secondLastName: string
   gender: string
   birthdate: string
-  canton: number | IProvince
+  canton: number | ICity
   regularPhoneNumber?: string
   cellphone?: string
   folio: string
@@ -20,9 +20,9 @@ export interface ICreateStudent {
   outlookEmail: string
   phoneNumber: string
   startStudiesDate: string
+  endStudiesDate?: string | undefined
   bachelorDegree: string
   approvedCredits?: number
   vinculationHours?: number
   internshipHours?: number
-  studyEndDate?: string
 }

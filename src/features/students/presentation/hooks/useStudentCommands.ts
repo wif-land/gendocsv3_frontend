@@ -35,7 +35,7 @@ export const useStudentCommands = () => {
     )
 
   const bulkCreate = async (students: IStudent[]) =>
-    await StudentUseCasesImpl.getInstance().bulkCreate(students)
+    await StudentUseCasesImpl.getInstance().bulkUpdate(students)
 
   return {
     loader,

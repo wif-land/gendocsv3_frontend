@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ICity } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 import { IStudent } from '../../domain/entities/IStudent'
 
@@ -11,7 +12,7 @@ export class StudentModel implements IStudent {
   secondLastName: string
   gender: string
   birthdate: string
-  canton: string
+  canton: number | ICity
   regularPhoneNumber?: string | undefined
   cellphone?: string | undefined
   folio: string
@@ -26,8 +27,8 @@ export class StudentModel implements IStudent {
   createdAt: string
   bachelorDegree: string
   vinculationHours?: number | undefined
-  internshipHours?: number | undefined
-  studyEndDate?: string | undefined
+  internshipHours?: number
+  endStudiesDate?: string | undefined
   label?: string | undefined
   startStudiesDate: string
 
@@ -57,7 +58,7 @@ export class StudentModel implements IStudent {
     this.bachelorDegree = props.bachelorDegree
     this.vinculationHours = props.vinculationHours
     this.internshipHours = props.internshipHours
-    this.studyEndDate = props.studyEndDate
+    this.endStudiesDate = props.endStudiesDate
   }
 
   static fromJson(json: Record<string, any>): StudentModel {
@@ -87,7 +88,7 @@ export class StudentModel implements IStudent {
       bachelorDegree: json.bachelorDegree,
       vinculationHours: json.vinculationHours,
       internshipHours: json.internshipHours,
-      studyEndDate: json.studyEndDate,
+      endStudiesDate: json.endStudiesDate,
     })
   }
 
