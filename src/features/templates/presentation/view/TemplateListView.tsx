@@ -191,7 +191,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
                             row={row}
                             rowUserId={row.userId}
                             selected={table.selected.includes(
-                              row.id?.toString(),
+                              row.id?.toString() as string,
                             )}
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
