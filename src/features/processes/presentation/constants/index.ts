@@ -1,7 +1,7 @@
 import * as Yup from 'yup'
 
 import { IProcess } from '../../domain/entities/IProcess'
-import { IProcessTableFilters } from '../components/ProcessTableTooldar'
+import { IProcessTableFilters } from '../components/ProcessTableToolbar'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Proceso' },
@@ -10,7 +10,8 @@ export const TABLE_HEAD = [
 ]
 
 export const defaultFilters: IProcessTableFilters = {
-  name: '',
+  field: undefined,
+  state: undefined,
 }
 
 export const NewProcessSchema = Yup.object().shape({

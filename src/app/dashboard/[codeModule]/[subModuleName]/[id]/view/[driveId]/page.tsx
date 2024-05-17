@@ -1,15 +1,13 @@
 'use client'
-import { useParams } from 'next/navigation'
-import React from 'react'
+import DocumentVisualizer from '../../../../../../../shared/sdk/document-visualizer/document-visualizer'
+import { useParams, usePathname } from 'next/navigation'
 
 const Page = () => {
   const { driveId } = useParams()
-  const documentURL = `https://docs.google.com/document/d/${driveId}/edit?usp=sharing`
+  const returnLink = usePathname().split('/').slice(0, -2).join('/')
 
   return (
-    <div>
-      <iframe src={documentURL} width="100%" height="1000px" />
-    </div>
+    <DocumentVisualizer driveId={driveId as string} returnLink={returnLink} />
   )
 }
 

@@ -9,20 +9,24 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { useCareersStore } from '../../../../features/careers/presentation/store/careerStore'
+import { CareerFilter } from '../../../../shared/sdk/filters/career-filter'
+import { SelectChangeEvent } from '@mui/material'
 
 export type IDegreeCertificateTableFilterValue = string | string[]
 
 export type IDegreeCertificateTableFilters = {
   name: string
+  career: number
 }
 
 type Props = {
   filters: IDegreeCertificateTableFilters
   onFilters: (name: string, value: IDegreeCertificateTableFilterValue) => void
-  setSearchTerm: (value: string) => void
   setVisitedPages: (value: number[]) => void
   setIsDataFiltered: (value: boolean) => void
+  isDataFiltered: boolean
   table: TableProps
   setDataTable: (value: DegreeCertificateModel[]) => void
   getFilteredCouncils: (field: string) => void
@@ -31,16 +35,17 @@ type Props = {
 export const DegreeCertificatesTableToolbar = ({
   filters,
   onFilters,
-  setSearchTerm,
   setVisitedPages,
+  isDataFiltered,
   setIsDataFiltered,
   table,
   setDataTable,
   getFilteredCouncils,
 }: Props) => {
   const popover = usePopover()
-  const [inputValue, setInputValue] = useState('' as string)
-  const debouncedValue = useDebounce(inputValue)
+  const [inputValue, setInputValue] = useState(undefined as string | undefined)
+  const debouncedValue = useDebounce(inputValue ? inputValue : '')
+  const { careers } = useCareersStore()
 
   const resetValues = () => {
     setVisitedPages([])
@@ -50,21 +55,40 @@ export const DegreeCertificatesTableToolbar = ({
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
+    !isDataFiltered && setIsDataFiltered(true)
     onFilters('name', event.target.value)
   }
 
-  useEffect(() => {
-    table.setPage(0)
-    setVisitedPages([])
+  // useEffect(() => {
+  //   let isMounted = true
 
-    if (inputValue) {
-      setIsDataFiltered(true)
-      setSearchTerm(inputValue)
-      getFilteredCouncils(debouncedValue)
-    } else {
-      resetValues()
-    }
-  }, [debouncedValue])
+  //   if (!isMounted) return
+
+  //   table.setPage(0)
+  //   setVisitedPages([])
+
+  //   areFiltersAdded() === true
+  //     ? getFilteredCouncils(filters.name)
+  //     : resetValues()
+
+  //   return () => {
+  //     isMounted = false
+  //   }
+  // }, [debouncedValue, filters.name])
+
+  // const areFiltersAdded = () =>
+  //   (inputValue !== undefined && inputValue !== '') ||
+  //   filters.name !== undefined
+
+  const handleChange = (event: SelectChangeEvent) => {
+    const {
+      target: { value },
+    } = event
+
+    !isDataFiltered && setIsDataFiltered(true)
+
+    onFilters('career', value)
+  }
 
   return (
     <>
@@ -77,7 +101,7 @@ export const DegreeCertificatesTableToolbar = ({
         }}
         sx={{
           p: 2.5,
-          pr: { xs: 2.5, md: 1 },
+          pr: { xs: 2.5, md: 2.5 },
         }}
       >
         <Stack
@@ -85,8 +109,13 @@ export const DegreeCertificatesTableToolbar = ({
           alignItems="center"
           spacing={2}
           flexGrow={1}
-          sx={{ width: 1 }}
+          sx={{ width: 1, display: 'flex', flexDirection: 'row' }}
         >
+          <CareerFilter
+            filters={filters}
+            onChange={handleChange}
+            sx={{ width: 700 }}
+          />
           <TextField
             fullWidth
             value={filters.name}
@@ -102,47 +131,10 @@ export const DegreeCertificatesTableToolbar = ({
                 </InputAdornment>
               ),
             }}
+            sx={{ flexGrow: 1 }}
           />
-
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
         </Stack>
       </Stack>
-
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
-      >
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:import-bold" />
-          Import
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:export-bold" />
-          Export
-        </MenuItem>
-      </CustomPopover>
     </>
   )
 }

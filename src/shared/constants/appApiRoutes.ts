@@ -9,7 +9,7 @@ export const API_ROUTES = {
   },
   USERS: {
     GET_ALL: '/users',
-    GET_BY_FIELD: (field: string) => `/users/${field}`,
+    GET_BY_FILTERS: `/users/filter`,
     UPDATE: (id: number) => `/users/${id}`,
     DELETE: '/users/:id',
     CREATE: '/users',
@@ -19,6 +19,12 @@ export const API_ROUTES = {
     GET_ONE: '/modules/:id',
     UPDATE: '/modules/:id',
     DELETE: '/modules/:id',
+  },
+  ATTENDANCE: {
+    EDIT_CREATE_DEFAULT_MEMBERS_BY_MODULE_ID: (moduleId: number) =>
+      `/attendance/default/${moduleId}`,
+    GET_DEFAULT_MEMBERS_BY_MODULE_ID: (moduleId: number) =>
+      `/attendance/default/${moduleId}`,
   },
   CAREERS: {
     CREATE: '/careers',
@@ -30,7 +36,7 @@ export const API_ROUTES = {
   STUDENTS: {
     GET_ALL: '/students',
     GET_ONE: '/students/:id',
-    GET_BY_FIELD: (field: string) => `/students/search/${field}`,
+    GET_BY_FILTERS: `/students/filter`,
     UPDATE: (id: number) => `/students/${id}`,
     BULK_UPDATE: '/students/bulk',
     DELETE: (id: number) => `/students/${id}`,
@@ -39,7 +45,7 @@ export const API_ROUTES = {
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
-    GET_BY_FIELD: (field: string) => `/functionaries/${field}`,
+    GET_BY_FILTERS: `/functionaries/filter`,
     UPDATE: (id: number) => `/functionaries/${id}`,
     BULK_UPDATE: '/functionaries/bulk',
     DELETE: '/functionaries/:id',
@@ -48,20 +54,21 @@ export const API_ROUTES = {
   PROCESSES: {
     GET_ALL: '/processes',
     GET_ONE: '/processes/:id',
-    GET_BY_FIELD: (field: string) => `/processes/${field}`,
+    GET_BY_FILTERS: `/processes/filter`,
     UPDATE: '/processes/:id',
     DELETE: '/processes/:id',
     CREATE: '/processes',
-    GET_BY_MODULE: '/processes/get-by-module?module-code=:moduleCode',
+    GET_BY_MODULE: '/processes',
   },
   COUNCILS: {
     GET_ALL: '/councils',
-    GET_BY_FIELD: (field: string) => `/councils/${field}`,
+    GET_BY_FILTERS: `/councils/filter`,
     GET_COUNT: '/councils/count',
     UPDATE: (id: number) => `/councils/${id}`,
     DELETE: '/councils/:id',
     CREATE: '/councils',
     BULK_UPDATE: '/councils/bulk',
+    NOTIFY_MEMBERS: (id: number) => `/councils/${id}/notify-members`,
   },
   TEMPLATES: {
     GET_ALL: '/templates',
@@ -85,10 +92,48 @@ export const API_ROUTES = {
   },
   POSITIONS: {
     GET_ALL: '/positions',
-    GET_BY_FIELD: (field: string) => `/positions/${field}`,
+    GET_BY_FIELD: (field: string) => `/positions/filter/${field}`,
     UPDATE: (id: number) => `/positions/${id}`,
     DELETE: (id: number) => `/positions/${id}`,
     DELETE_MANY: '/positions/delete/bulk',
     CREATE: '/positions',
+  },
+  DEGREE_CERTIFICATES: {
+    GET_ALL: '/degree-certificates',
+    GET_BY_FILTERS: `/degree-certificates/filter`,
+    UPDATE: (id: number) => `/degree-certificates/${id}`,
+    DELETE: '/degree-certificates/:id',
+    CREATE: '/degree-certificates',
+    GENERATE_NUMERATION: (careerId: number) =>
+      `/degree-certificates/numeration/generate/${careerId}`,
+    GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>
+      `/degree-certificates/numeration/last-number-to-register/${careerId}`,
+  },
+  DEGREE_CERTIFICATE_TEMPLATES: {
+    GET_ALL: 'degree-certificates/certificate-type-status-career',
+    GET_CELL_GRADES: (certificateTypeId: number) =>
+      `/degree-certificates/grade-cells/by-certificate-type/${certificateTypeId}`,
+    CREATE_CELL_GRADE: '/degree-certificates/grade-cells',
+    DELETE_CELL_GRADE: (gradeId: number) =>
+      `/degree-certificates/grade-cells/${gradeId}`,
+  },
+  CERTIFICATES_TYPES: {
+    GET_ALL: '/degree-certificates/certificate-types',
+  },
+  CERTIFICATES_STATUS: {
+    GET_ALL: '/degree-certificates/certificate-status',
+  },
+  DEGREE_MODALITIES: {
+    GET_ALL: '/degree-certificates/degree-modalities',
+  },
+  DEGREES: {
+    GET_ALL: '/degrees',
+  },
+  LOCATION_PROVIDER: {
+    GET_ALL_PROVINCES: '/cities/provinces',
+    GET_ALL_CITIES: '/cities',
+  },
+  ROOMS: {
+    GET_ALL: '/degree-certificates/rooms',
   },
 }

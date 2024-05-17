@@ -1,12 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Yup from 'yup'
-import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
-import {
-  CouncilAttendanceRole,
-  CouncilType,
-  ICouncil,
-} from '../../domain/entities/ICouncil'
-import { FunctionaryModel } from '../../../functionaries/data/models/FunctionatyModel'
+import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
 import { ICouncilTableFilters } from '../components/CouncilTableToolbar'
+import { IMember } from '../../../../features/default-members/domain/entities/DefaultMembers'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -17,7 +13,12 @@ export const TABLE_HEAD = [
 ]
 
 export const defaultFilters: ICouncilTableFilters = {
-  name: '',
+  name: undefined,
+  state: undefined,
+  startDate: undefined,
+  endDate: undefined,
+  dateType: undefined,
+  type: undefined,
 }
 
 export const NewCouncilSchema = Yup.object().shape({
@@ -26,74 +27,27 @@ export const NewCouncilSchema = Yup.object().shape({
   type: Yup.string().required('El tipo es requerido'),
   isActive: Yup.boolean().required('El estado es requerido'),
   isArchived: Yup.boolean().required('El estado es requerido'),
-  president: Yup.string().required('El presidente es requerido'),
-  attendees: Yup.array()
-    .of(Yup.string())
-    .required('Los asistentes son requeridos'),
 })
 
-const findPresident = (
-  attendees: ICouncilAttendee[],
-): FunctionaryModel | undefined => {
-  const presidentAttendee = attendees.find(
-    (attendee: ICouncilAttendee) =>
-      attendee.role === CouncilAttendanceRole.PRESIDENT,
-  )
+export const resolveDefaultValues = (currentCouncil?: ICouncil) => ({
+  name: currentCouncil?.name || '',
+  date: currentCouncil?.date || new Date(Date.now()),
+  type: currentCouncil?.type || CouncilType.ORDINARY,
+  isActive: !!currentCouncil?.isActive || true,
+  isArchived: !!currentCouncil?.isArchived,
+  members:
+    currentCouncil?.members?.reduce((acc, member) => {
+      acc[member.positionName] = {
+        ...member,
+        member: {
+          ...member.functionary,
+          label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
+          id: member.functionary.id,
+        },
+        label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
+        id: member.functionary.id,
+      }
 
-  if (!presidentAttendee) {
-    return undefined
-  }
-
-  return presidentAttendee.functionary
-}
-
-const findSubrogate = (attendees: ICouncilAttendee[]) => {
-  const subrogateAttendee = attendees.find(
-    (attendee: ICouncilAttendee) =>
-      attendee.role === CouncilAttendanceRole.SUBROGATE,
-  )
-
-  if (!subrogateAttendee) {
-    return undefined
-  }
-
-  return subrogateAttendee.functionary
-}
-
-const filterMembers = (attendees: ICouncilAttendee[]) =>
-  attendees.filter(
-    (attendee: ICouncilAttendee) =>
-      attendee.role === CouncilAttendanceRole.MEMBER,
-  )
-
-export const resolveDefaultValues = (currentCouncil?: ICouncil) => {
-  const president = findPresident(
-    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
-  )
-
-  const subrogate = findSubrogate(
-    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
-  )
-
-  const members = filterMembers(
-    (currentCouncil?.attendees as ICouncilAttendee[]) || [],
-  )
-
-  return {
-    name: currentCouncil?.name || '',
-    date: currentCouncil?.date || new Date(Date.now()),
-    type: currentCouncil?.type || CouncilType.ORDINARY,
-    isActive: currentCouncil?.isActive || true,
-    isArchived: currentCouncil?.isArchived || false,
-    president: president
-      ? `${president.firstName} ${president.secondName} ${president.firstLastName} ${president.secondLastName} - ${president.dni}`
-      : '',
-    subrogant: subrogate
-      ? `${subrogate.firstName} ${subrogate.secondName} ${subrogate.firstLastName} ${subrogate.secondLastName} - ${subrogate.dni}`
-      : '',
-    attendees: members?.map(
-      (member) =>
-        `${member.functionary.firstName} ${member.functionary.secondName} ${member.functionary.firstLastName} ${member.functionary.secondLastName} - ${member.functionary.dni}`,
-    ),
-  }
-}
+      return acc
+    }, {}) || {},
+})

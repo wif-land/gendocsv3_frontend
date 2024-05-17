@@ -21,7 +21,6 @@ import { IFunctionary } from '../../../../features/functionaries/domain/entities
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { FunctionaryUseCasesImpl } from '../../../../features/functionaries/domain/usecases/FunctionaryServices'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const router = useRouter()
@@ -89,16 +88,16 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
 
     const filteredFunctionaries = async (field: string) => {
       await FunctionaryUseCasesImpl.getInstance()
-        .getByField(field)
+        .getByFilters({ field })
         .then((res) => {
-          if (res.status === HTTP_STATUS_CODES.OK && isMounted) {
-            setFunctionaries(res.data.functionaries)
-            return
-          } else {
-            setFunctionaries([])
-            setIsLoading(false)
+          if (isMounted) {
+            setFunctionaries(res.functionaries)
             return
           }
+
+          setFunctionaries([])
+          setIsLoading(false)
+          return
         })
     }
 

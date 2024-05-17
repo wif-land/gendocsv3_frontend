@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -7,23 +8,54 @@ import Grid from '@mui/material/Unstable_Grid2'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
-import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
+import {
+  RHFAutocomplete,
+  RHFSwitch,
+  RHFTextField,
+} from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Box } from '@mui/material'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
+import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { Controller } from 'react-hook-form'
+import { MobileDatePicker } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
+import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
+
+import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
+import { label } from 'yet-another-react-lightbox'
+import { IProvince } from '../../../../core/providers/domain/entities/ILocationProvider'
+import { useLocations } from '../../../../core/providers/locations-provider'
 
 type Props = {
-  currentDegreeCertificate?: DegreeCertificateModel
+  currentDegreeCertificate?: IDegreeCertificate
 }
 
 export const DegreeCertificateNewEditForm = ({
   currentDegreeCertificate,
 }: Props) => {
   const mdUp = useResponsive('up', 'md')
-  const { methods, onSubmit } = useDegreeCertificateForm()
+  const { methods, onSubmit, students, setInputValue, isOpen, loading } =
+    useDegreeCertificateForm(currentDegreeCertificate)
 
-  const { handleSubmit } = methods
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+    control,
+    watch,
+    getValues,
+  } = methods
+
+  const { cities, provinces } = useLocations()
+  const { certificateStatuses, certificateTypes, degreeModalities, rooms } =
+    useCertificateData()
 
   const renderDetails = (
     <>
@@ -33,8 +65,7 @@ export const DegreeCertificateNewEditForm = ({
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            El nombre del consejo, tipo, fecha y hora de inicio. Y si está
-            activo o no
+            Hola
           </Typography>
         </Grid>
       )}
@@ -42,9 +73,22 @@ export const DegreeCertificateNewEditForm = ({
       <Grid xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Details" />}
-
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="name" label="Nombre" required />
+          <Stack
+            spacing={3}
+            sx={{ p: 3, display: 'flex', flexDirection: 'row' }}
+          >
+            <RHFTextField
+              name="number"
+              label="Numeracion de acta de grado"
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+            <RHFTextField
+              name="auxNumber"
+              label="Numeracion"
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
           </Stack>
         </Card>
       </Grid>
@@ -56,13 +100,241 @@ export const DegreeCertificateNewEditForm = ({
       {mdUp && (
         <Grid md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Miembros
+            Estudiante
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Se elijen a los miembros del consejo
+            Información relevante del estudiante
           </Typography>
         </Grid>
       )}
+      <Grid xs={12} md={8}>
+        <Card>
+          {!mdUp && <CardHeader title="Details" />}
+
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFAutocomplete
+              name="selectedValue"
+              label="Estudiante"
+              open={isOpen.value}
+              onOpen={isOpen.onTrue}
+              onClose={() => {
+                setInputValue('')
+                isOpen.onFalse()
+              }}
+              loading={loading}
+              noOptionsText="No hay resultados"
+              options={students?.map((student) => ({
+                label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
+                id: student.id,
+              }))}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue)
+              }}
+              getOptionLabel={(option) => (option as { label: string }).label}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <TextField
+              label="Fecha de inicio de estudios"
+              value={getValues('student').startStudiesDate || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+            <TextField
+              name="student.endStudiesDate"
+              label="Fecha de finalización de estudios"
+              value={getValues('student').studyEndDate || ''}
+              // required
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <TextField
+              label="Créditos aprobados"
+              value={getValues('student').approvedCredits || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+            <TextField
+              label="Horas de práctica"
+              value={getValues('student').internshipHours || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <TextField
+              label="Horas de vinculación/Servicio comunitario"
+              value={getValues('student').vinculationHours || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+            <TextField
+              label="Titulo de bachiller"
+              value={getValues('student').bachelorDegree || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{
+              p: 3,
+              pt: 0,
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+            }}
+          >
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel id="provincia">Provincia de residencia</InputLabel>
+              <Select
+                labelId="provincia"
+                label="Provincia de residencia"
+                value={(getValues('student').canton as IProvince)?.id || 0}
+                disabled
+              >
+                {provinces.map((province) => (
+                  <MenuItem key={province.id} value={province.id}>
+                    {province.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel id="ciudad">Ciudad de residencia</InputLabel>
+              <Select
+                labelId="ciudad"
+                label="Ciudad de residencia"
+                value={(getValues('student').canton as IProvince)?.id || 0}
+                disabled
+              >
+                {cities.map((city) => (
+                  <MenuItem key={city.id} value={city.id}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Stack>
+        </Card>
+      </Grid>
+      {mdUp && (
+        <Grid md={4}>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Acta de Grado
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Información relevante del acta de grado
+          </Typography>
+        </Grid>
+      )}
+      <Grid xs={12} md={8}>
+        <Card>
+          {!mdUp && <CardHeader title="Details" />}
+
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFTextField
+              name="topic"
+              label="Tema"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+            <Controller
+              name="presentationDate"
+              rules={{ required: true }}
+              control={control}
+              render={({ field }) => (
+                <MobileDatePicker
+                  {...field}
+                  value={dayjs(field.value)}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      field.onChange(newValue)
+                    }
+                  }}
+                  label="Fecha de presentación"
+                  format="dddd/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                    },
+                  }}
+                  closeOnSelect
+                />
+              )}
+            />
+
+            <RHFSelect
+              id="certificateStatus"
+              label="Estado de acta"
+              name="certificateStatus"
+            >
+              {certificateStatuses.map((certificateStatus) => (
+                <MenuItem
+                  key={certificateStatus.id}
+                  value={certificateStatus.id}
+                >
+                  {certificateStatus.maleName}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+
+            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
+              <RHFSelect
+                id="degreeModality"
+                label="Modalidad"
+                name="degreeModality"
+              >
+                {degreeModalities.map((modality) => (
+                  <MenuItem key={modality.id} value={modality.id}>
+                    {modality.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              {Number(methods.watch('degreeModality')) === 1 && (
+                <RHFTextField name="link" label="Link" sx={{ flexGrow: 1 }} />
+              )}
+            </Stack>
+
+            <RHFSelect
+              id="certificateType"
+              label="Tipo de grado"
+              name="certificateType"
+            >
+              {certificateTypes.map((certificateType) => (
+                <MenuItem key={certificateType.id} value={certificateType.id}>
+                  {certificateType.name}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+
+            <RHFSelect id="room" label="Aula" name="room">
+              {rooms.map((room) => (
+                <MenuItem key={room.id} value={room.id}>
+                  {room.name}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+
+            <RHFTextField
+              name="duration"
+              label="Duración"
+              required
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+        </Card>
+      </Grid>
     </>
   )
 
@@ -75,10 +347,15 @@ export const DegreeCertificateNewEditForm = ({
         sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
       >
         <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Consejo activo" />
+          <RHFSwitch name="isClosed" label="Acta activa" />
         </Box>
 
-        <LoadingButton type="submit" variant="contained" size="large">
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          size="large"
+          loading={isSubmitting}
+        >
           {!currentDegreeCertificate ? 'Crear' : 'Guardar'}
         </LoadingButton>
       </Grid>

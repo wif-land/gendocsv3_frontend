@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCookie } from './CookiesUtil'
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
 import { HTTP_STATUS_CODES } from './app-enums'
@@ -18,16 +19,14 @@ type AxiosErrorResponse = AxiosError<AxiosResponse<Record<string, unknown>>> & {
 }
 
 interface AxiosResponse<T> {
-  status: number
-  data: {
-    message: string
-    content: T
-  }
+  message: string
+  data: T
 }
 
 export class AxiosClient {
   private static client: AxiosInstance
   private static baseUrl? = process.env.NEXT_PUBLIC_API_URL
+  private static accessToken: string | null = null
 
   static getInstance() {
     if (!this.client) {
@@ -40,14 +39,16 @@ export class AxiosClient {
 
       this.client.interceptors.request.use(
         async (config) => {
-          const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+          if (!this.accessToken) {
+            this.accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+          }
 
-          if (!accessToken) {
+          if (!this.accessToken) {
             await new LogoutnUseCase().call()
           }
 
-          if (accessToken && config.headers) {
-            config.headers.Authorization = `Bearer ${accessToken.replaceAll(
+          if (this.accessToken && config.headers) {
+            config.headers.Authorization = `Bearer ${this.accessToken.replaceAll(
               '"',
               '',
             )}`
@@ -57,25 +58,18 @@ export class AxiosClient {
         },
         (error) => Promise.reject(error),
       )
-    }
 
-    this.client.interceptors.request.use(
-      async (config) => {
-        const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
-
-        if (accessToken) {
-          if (config.headers) {
-            config.headers.Authorization = `Bearer ${accessToken.replaceAll(
-              '"',
-              '',
-            )}`
+      this.client.interceptors.response.use(
+        (response) => response,
+        (error) => {
+          if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+            new LogoutnUseCase().call()
           }
-        }
 
-        return config
-      },
-      (error) => Promise.reject(error),
-    )
+          return Promise.reject(error)
+        },
+      )
+    }
 
     return this.client
   }
@@ -87,7 +81,15 @@ export class AxiosClient {
     }
   }
 
-  static async post<T>(path: string, body: unknown): Promise<AxiosResponse<T>> {
+  static async post<T>(
+    path: string,
+    body: unknown,
+  ): Promise<
+    | AxiosResponse<T>
+    | {
+        error: string
+      }
+  > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-post')
       const response = await this.getInstance().post(path, body)
@@ -103,7 +105,12 @@ export class AxiosClient {
   static async get<T>(
     path: string,
     options?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
+  ): Promise<
+    | AxiosResponse<T>
+    | {
+        error: string
+      }
+  > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-get')
       const response = await this.getInstance().get(path, options)
@@ -120,7 +127,12 @@ export class AxiosClient {
     path: string,
     body: unknown,
     params?: Record<string, unknown>,
-  ): Promise<AxiosResponse<T>> {
+  ): Promise<
+    | AxiosResponse<T>
+    | {
+        error: string
+      }
+  > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-put')
       const response = await this.getInstance().put(path, body, {
@@ -145,7 +157,12 @@ export class AxiosClient {
     params?: Record<string, unknown>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body?: any
-  }): Promise<AxiosResponse<T>> {
+  }): Promise<
+    | AxiosResponse<T>
+    | {
+        error: string
+      }
+  > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-delete')
       const response = await this.getInstance().delete(path, {
@@ -164,9 +181,14 @@ export class AxiosClient {
 
   static async patch<T>(
     path: string,
-    body: unknown,
+    body?: unknown,
     params?: Record<string, unknown>,
-  ): Promise<AxiosResponse<T>> {
+  ): Promise<
+    | AxiosResponse<T>
+    | {
+        error: string
+      }
+  > {
     try {
       const response = await this.getInstance().patch(path, body, {
         params,
@@ -181,10 +203,7 @@ export class AxiosClient {
   }
 }
 
-const handleApiResponse = <T>(
-  response: AxiosResponse<T>,
-  method: HTTP_METHODS,
-) => {
+const handleApiResponse = (response: any, method: HTTP_METHODS) => {
   const { status, data } = response
 
   if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
@@ -206,21 +225,19 @@ const handleApiResponse = <T>(
   }
 
   if (method !== 'GET') {
-    enqueueSnackbar('Acción realizada con éxito', {
+    enqueueSnackbar(data.message, {
       variant: 'success',
     })
   }
 
-  return {
-    status,
-    data: {
-      message: 'success',
-      content: response.data as T,
-    },
-  }
+  return response.data
 }
 
-const handleApiError = <T>(error: AxiosErrorResponse) => {
+const handleApiError = (
+  error: AxiosErrorResponse,
+): {
+  error: string
+} => {
   /**
    * Error response -> If the request was made and the server responded with a status code different than 2xx
    * Error request -> If the request was made but no response was received from the server
@@ -228,22 +245,16 @@ const handleApiError = <T>(error: AxiosErrorResponse) => {
    */
 
   if (error.response) {
-    const { status } = error.response
+    const {
+      data: { message },
+    } = error.response as any
 
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      enqueueSnackbar('No estás autorizado para realizar esa acción', {
+    if (message instanceof Array) {
+      enqueueSnackbar('Existen errores en el formulario', {
         variant: 'error',
       })
-    }
-
-    if (status === HTTP_STATUS_CODES.BAD_REQUEST) {
-      enqueueSnackbar(error.response?.data?.message || 'Intenta de nuevo', {
-        variant: 'error',
-      })
-    }
-
-    if (status === HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) {
-      enqueueSnackbar('Ocurrió un error en el servidor', {
+    } else {
+      enqueueSnackbar(message || 'Ha ocurrido un error', {
         variant: 'error',
       })
     }
@@ -256,10 +267,9 @@ const handleApiError = <T>(error: AxiosErrorResponse) => {
   }
 
   return {
-    status: error.response?.status,
-    data: {
-      message: error.response?.data?.message || 'Error desconocido',
-      content: null as T,
-    },
+    error:
+      (error.response?.data as any).message instanceof Array
+        ? 'error'
+        : (error.response?.data as any).message,
   }
 }

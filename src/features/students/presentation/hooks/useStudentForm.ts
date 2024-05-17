@@ -16,7 +16,7 @@ import {
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
 
 import { useStudentStore } from '../state/studentStore'
-import { useCareersStore } from '../../../careers/presentation/state/careerStore'
+import { useCareersStore } from '../../../careers/presentation/store/careerStore'
 import { IStudent } from '../../domain/entities/IStudent'
 
 export const useStudentForm = (currentStudent?: IStudent) => {
@@ -33,7 +33,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
   )
 
   const methods = useForm<IStudent>({
-    // @ts-expect-error - The defaultValues are not being recognized
+    // @ts-expect-error - Fix this
     resolver: yupResolver(NewStudentSchema),
     defaultValues,
   })

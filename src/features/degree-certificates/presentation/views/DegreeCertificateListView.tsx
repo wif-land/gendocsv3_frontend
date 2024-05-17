@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { memo, useCallback } from 'react'
-import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
+import { memo, useCallback, useState } from 'react'
 import {
   Button,
   Card,
   Container,
+  MenuItem,
   Table,
   TableBody,
   TableContainer,
 } from '@mui/material'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs'
 import Iconify from '../../../../core/iconify'
-import { DegreeCertificatesTableToolbar } from '../components/DegreeCertificateTableToolbar'
 import {
   DENSE,
   NO_DENSE,
@@ -24,6 +23,7 @@ import {
   TableSelectedAction,
   TableSkeleton,
   emptyRows,
+  useTable,
 } from '../../../../shared/sdk/table'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
@@ -31,32 +31,57 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
-import { CouncilTableRow } from '../components/DegreeCertificateTableRow'
-import { CouncilTableFiltersResult } from '../components/DegreeCertificateTableFiltersResult'
-import { TABLE_HEAD } from '../constants'
+import { TABLE_HEAD, defaultFilters } from '../constants'
+import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
+import {
+  DegreeCertificatesTableToolbar,
+  IDegreeCertificateTableFilters,
+} from '../components/DegreeCertificateTableToolbar'
+import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
+import CustomPopover, {
+  usePopover,
+} from '../../../../shared/sdk/custom-popover'
+import { DegreeCertificateTableFiltersResult } from '../components/DegreeCertificateTableFiltersResult'
 
-export default memo(({ moduleId }: { moduleId: string }) => {
+const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
+  const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
   const settings = useSettingsContext()
   const confirm = useBoolean()
+  const popover = usePopover()
+  const [visitedPages, setVisitedPages] = useState<number[]>([0])
+  const [isDataFiltered, setIsDataFiltered] = useState(false)
+  const [filters, setFilters] =
+    useState<IDegreeCertificateTableFilters>(defaultFilters)
 
-  const {
-    table,
-    isDataFiltered,
-    setSearchTerm,
-    setVisitedPages,
-    handleFilters,
-    filters,
-    handleResetFilters,
-    setTableData,
-    handleSearch,
-    tableData,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    count,
-    loader,
-  } = useDegreeCertificateView(moduleId)
+  const reportOptions = [
+    {
+      value: 'start',
+      label: 'Reporte inicial',
+      action: () => {
+        router.push(`${pathname}/report`)
+      },
+    },
+    {
+      value: 'final',
+      label: 'Reporte final',
+      action: () => {
+        router.push(`${pathname}/report`)
+      },
+    },
+  ]
+
+  const handleFilters = useCallback(
+    (name: string, value: IDegreeCertificateTableFilters) => {
+      table.onResetPage()
+      setFilters((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }))
+    },
+    [table],
+  )
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -65,55 +90,99 @@ export default memo(({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const handleViewRow = useCallback(
-    (id: string) => {
-      router.push(`${pathname}/${id}`)
-    },
-    [router],
-  )
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setVisitedPages([])
+    setIsDataFiltered(false)
+    setTableData([])
+  }
+
+  const {
+    loader,
+    tableData,
+    count,
+    setTableData,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+  } = useDegreeCertificateView({
+    table,
+    isDataFiltered,
+    visitedPages,
+    setVisitedPages,
+    filters,
+  })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
   const notFound =
     (!loader.length && count === 0) ||
-    (!loader.length && count === 0 && isDataFiltered.value)
+    (!loader.length && count === 0 && isDataFiltered)
 
   return (
     <div key={moduleId}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Actas de Grado"
+          heading="Actas de grado"
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Actas de Grado' },
+            { name: 'Actas de grado' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={`${pathname}/new`}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Nueva Acta
-            </Button>
+            <>
+              <Button
+                onClick={popover.onOpen}
+                variant="contained"
+                startIcon={<Iconify icon="carbon:result" />}
+                sx={{ mr: 1.5 }}
+              >
+                Reportes
+              </Button>
+              <Button
+                component={RouterLink}
+                href={`${pathname}/new`}
+                variant="contained"
+                startIcon={<Iconify icon="ph:list-numbers" />}
+                sx={{ mr: 1.5 }}
+              >
+                Generar numerción
+              </Button>
+              <Button
+                component={RouterLink}
+                href={`${pathname}/templates`}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:document-3-line" />}
+                sx={{ mr: 1.5 }}
+              >
+                Plantillas
+              </Button>
+              <Button
+                component={RouterLink}
+                href={`${pathname}/new`}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                Actas de grado
+              </Button>
+            </>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
           <DegreeCertificatesTableToolbar
+            isDataFiltered={isDataFiltered}
             filters={filters}
             onFilters={handleFilters}
-            setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
-            setIsDataFiltered={isDataFiltered.onToggle}
+            setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            getFilteredCouncils={handleSearch}
+            // getFilteredCouncils={handleSearch}
           />
 
-          {isDataFiltered.value && (
-            <CouncilTableFiltersResult
+          {isDataFiltered && (
+            <DegreeCertificateTableFiltersResult
               onResetFilters={handleResetFilters}
               results={count}
               sx={{ p: 2.5, pt: 0 }}
@@ -133,7 +202,7 @@ export default memo(({ moduleId }: { moduleId: string }) => {
               }
               action={
                 <Button color="primary" onClick={confirm.onTrue}>
-                  Eliminar
+                  Cambiar estado
                 </Button>
               }
             />
@@ -171,7 +240,7 @@ export default memo(({ moduleId }: { moduleId: string }) => {
                           table.page * table.rowsPerPage + table.rowsPerPage,
                         )
                         .map((row) => (
-                          <CouncilTableRow
+                          <DegreeCertificateTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(
@@ -180,9 +249,8 @@ export default memo(({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() => console.log('deleted')}
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
-                            onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}
                     </>
@@ -211,15 +279,39 @@ export default memo(({ moduleId }: { moduleId: string }) => {
         </Card>
       </Container>
 
+      <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="top-right"
+        sx={{ width: 140 }}
+      >
+        {reportOptions.map((option) => (
+          <MenuItem
+            key={option.value}
+            onClick={() => {
+              popover.onClose()
+              option.action()
+            }}
+          >
+            {option.value === 'multiple' && (
+              <Iconify icon="eva:cloud-upload-fill" />
+            )}
+            {option.value === 'single' && (
+              <Iconify icon="solar:file-text-bold" />
+            )}
+            {option.label}
+          </MenuItem>
+        ))}
+      </CustomPopover>
+
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Eliminar Actas de Grado"
+        title="Cambiar estado de consejos"
         content={
           <>
-            ¿Estás seguro de que quieres elimiar
-            <strong> {table.selected.length} </strong> items? Esta acción no se
-            puede deshacer.
+            Estás seguro de que quieres cambiar el estado de
+            <strong> {table.selected.length} </strong> items?
           </>
         }
         action={
@@ -231,10 +323,12 @@ export default memo(({ moduleId }: { moduleId: string }) => {
               confirm.onFalse()
             }}
           >
-            Eliminar
+            Cambiar
           </Button>
         }
       />
     </div>
   )
-})
+}
+
+export default memo(DegreeCertificateListView)

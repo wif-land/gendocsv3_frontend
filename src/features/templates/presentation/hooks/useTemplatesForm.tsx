@@ -1,5 +1,4 @@
 import * as yup from 'yup'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
 import { ITemplate } from '../../domain/entities/ITemplate'
 import { TemplatesUseCasesImpl } from '../../domain/usecases/TemplateServices'
@@ -54,55 +53,26 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
   } = methods
 
   const handleCreate = useCallback(async (values: ITemplate) => {
-    try {
-      const result = await TemplatesUseCasesImpl.getInstance().create(values)
+    const result = await TemplatesUseCasesImpl.getInstance().create(values)
 
-      if (
-        result.status === HTTP_STATUS_CODES.OK ||
-        result.status === HTTP_STATUS_CODES.CREATED
-      ) {
-        console.log('result', result)
-        addTemplateToProcess(result.template, values.processId as number)
-        enqueueSnackbar('Plantilla creada exitosamente')
-        reset()
-      } else {
-        enqueueSnackbar('Error al crear el plantilla', {
-          variant: 'error',
-        })
-      }
-    } catch (error) {
-      enqueueSnackbar('Ocurrió un error al crear el plantilla', {
-        variant: 'error',
-      })
-    }
+    addTemplateToProcess(result.template, values.processId as number)
+    reset()
   }, [])
 
   const handleUpdate = async (
     initialValues: ITemplate,
     editedFields: Partial<ITemplate>,
   ) => {
-    try {
-      const { status } = await TemplatesUseCasesImpl.getInstance().update(
-        initialValues.id as number,
-        editedFields,
-      )
+    const { template } = await TemplatesUseCasesImpl.getInstance().update(
+      initialValues.id as number,
+      editedFields,
+    )
 
-      if (status === HTTP_STATUS_CODES.OK) {
-        updateTemplate(
-          initialValues.processId as number,
-          initialValues.id as number,
-          editedFields,
-        )
-        enqueueSnackbar('Planitlla actualizado exitosamente')
-        reset()
-      } else {
-        enqueueSnackbar('Error al actualizar el plantilla', {
-          variant: 'error',
-        })
-      }
-    } catch (error) {
-      enqueueSnackbar('Ocurrió un error al actualizar el plantilla')
-    }
+    updateTemplate(
+      process?.id as number,
+      initialValues.id as number,
+      template as ITemplate,
+    )
   }
 
   const onSubmit = useCallback(
@@ -128,6 +98,8 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
               '',
             ),
           )
+        } else {
+          router.push(pathname.replace(new RegExp(`template/new`), ''))
         }
 
         reset()

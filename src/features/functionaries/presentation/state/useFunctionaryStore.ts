@@ -23,7 +23,7 @@ export const useFunctionaryStore = create<StoreState>(
           LIMIT,
           0,
         )
-        set({ functionaries: result.data.functionaries })
+        set({ functionaries: result.functionaries })
       },
     }),
     {

@@ -24,7 +24,6 @@ const TemplateEditView = () => {
 
   const templates = currentProcess?.templateProcesses
 
-  console.log('templates', templates)
   const currentTemplate = templates?.find(
     (template) => template.id === +templateId,
   )

@@ -22,7 +22,6 @@ import { StudentUseCasesImpl } from '../../../students/domain/usecases/StudentSe
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const router = useRouter()
@@ -50,7 +49,9 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const [selectedProcess, setSelectedProcess] = useState<ProcessModel>(
     {} as ProcessModel,
   )
-  const [numbers, setNumbers] = useState<NumerationModel>()
+  const [numbers, setNumbers] = useState<NumerationModel>(
+    NumerationModel.fromJson({}),
+  )
 
   const [moduleId, setModuleId] = useState<number>(
     resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
@@ -77,24 +78,19 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
 
   const onSubmit = useCallback(
     async (data: IDocument) => {
-      try {
-        const { status } = await handleCreateDocument(
-          DocumentModel.fromJson({
-            ...data,
-            userId: user?.id,
-          }),
-        )
+      const result = await handleCreateDocument(
+        DocumentModel.fromJson({
+          ...data,
+          userId: user?.id,
+        }),
+      )
 
-        if (status !== HTTP_STATUS_CODES.CREATED) {
-          methods.reset()
-          return
-        }
-
-        router.push(pathname.replace('/new', ''))
-      } catch (error) {
-      } finally {
-        methods.reset()
+      if (!result) {
+        return
       }
+
+      methods.reset()
+      router.push(pathname.replace('/new', ''))
     },
     [currentDocument, enqueueSnackbar, methods.reset, router],
   )
@@ -131,32 +127,32 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     CouncilsUseCasesImpl.getInstance()
       .getAllCouncilsByModuleId(moduleId, 10, 0)
       .then((result) => {
-        if (result.data.councils) {
-          setCouncils(result.data.councils)
+        if (result.councils) {
+          setCouncils(result.councils)
         }
       })
 
     ProcessesUseCasesImpl.getInstance()
       .getAllProcessesByModuleId(moduleId, 10, 0)
       .then((result) => {
-        if (result.data.processes) {
-          setProcesses(result.data.processes)
+        if (result.processes) {
+          setProcesses(result.processes)
         }
       })
 
     StudentUseCasesImpl.getInstance()
       .getAll(10, 0)
       .then((result) => {
-        if (result.data.students) {
-          setStudents(result.data.students)
+        if (result.students) {
+          setStudents(result.students)
         }
       })
 
     FunctionaryUseCasesImpl.getInstance()
       .getAll(10, 0)
       .then((result) => {
-        if (result.data.functionaries) {
-          setFunctionaries(result.data.functionaries)
+        if (result.functionaries) {
+          setFunctionaries(result.functionaries)
         }
       })
   }, [])

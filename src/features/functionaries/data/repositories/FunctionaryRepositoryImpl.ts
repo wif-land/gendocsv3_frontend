@@ -1,5 +1,5 @@
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
+import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 import { FunctionaryRepository } from '../../domain/repositories/FunctionaryRepository'
 import {
   FunctionaryDataSource,
@@ -25,8 +25,11 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
   getAll = async (limit: number, offset: number) =>
     await this.datasource.getAll(limit, offset)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    await this.datasource.getByField(field, limit, offset)
+  getByFilters = async (
+    filters: IFunctionaryFilters,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getByFilters(filters, limit, offset)
 
   update = async (data: Partial<FunctionaryModel>) =>
     await this.datasource.update(data)
@@ -34,18 +37,5 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
   bulkUpdate = async (data: Partial<IFunctionary>[]) =>
     await this.datasource.bulkUpdate(data)
 
-  create = async (data: IFunctionary) => {
-    try {
-      const result = await this.datasource.create(data)
-      const { status } = result
-
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status, functionary: {} as FunctionaryModel }
-      }
-
-      return { status, functionary: result.functionary }
-    } catch (error) {
-      return { status: 500, functionary: {} as FunctionaryModel }
-    }
-  }
+  create = async (data: IFunctionary) => await this.datasource.create(data)
 }

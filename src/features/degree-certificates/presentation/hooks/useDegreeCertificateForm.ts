@@ -1,110 +1,171 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import { useForm } from 'react-hook-form'
-import { NewDegreeCertificateSchema, resolveDefaultValues } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import {
+  FormValuesProps,
+  NewDegreeCertificateSchema,
+  resolveDefaultValues,
+} from '../constants'
+
 import { usePathname, useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { DegreeCertificatesCrudServices } from '../../domain/usecases/DegreeCertificatesCrud'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
+import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
+import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
+import { useStudentStore } from '../../../students/presentation/state/studentStore'
+import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 
 export const useDegreeCertificateForm = (
-  currentDegreeCertificate?: DegreeCertificateModel,
+  currentDegreeCertificate?: IDegreeCertificate,
 ) => {
-  const router = useRouter()
   const pathname = usePathname()
-  const { degreeCertificates } = useDegreeCertificatesStore()
-  const { handleCreateDegreeCertificate, handleUpdateDegreeCertificate } =
-    useDegreeCertificateMethods()
-  const loading = useBoolean()
+  const [inputValue, setInputValue] = useState('' as string)
+  const debouncedValue = useDebounce(inputValue)
+  const isOpen = useBoolean()
+  const [loading, setIsLoading] = useState(false)
+  const { students, setStudents } = useStudentStore()
+  const { user } = useAccountStore()
 
-  const defaultValues: Partial<DegreeCertificateModel> = useMemo(
+  const defaultValues = useMemo(
     () => resolveDefaultValues(currentDegreeCertificate),
-    [DegreeCertificateModel],
+    [currentDegreeCertificate],
   )
-  const methods = useForm<DegreeCertificateModel>({
-    // @ts-expect-error - The resolver is not being recognized
+  const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewDegreeCertificateSchema),
     defaultValues,
   })
 
-  const [searchField, setSearchField] = useState('')
-  const searchDebounced = useDebounce(searchField)
+  const router = useRouter()
+  const { addDegreeCertificate } = useDegreeCertificatesStore()
+  const { resolveStudentById } = useDegreeCertificateMethods()
+  const { reset, handleSubmit } = methods
+
+  const handleCreate = useCallback(async (values: IDegreeCertificate) => {
+    const degree =
+      await DegreeCertificatesUseCasesImpl.getInstance().create(values)
+    addDegreeCertificate(degree)
+  }, [])
+
+  const handleEdit = useCallback(
+    async (values: Partial<IDegreeCertificate>) => {
+      const degree =
+        await DegreeCertificatesUseCasesImpl.getInstance().update(values)
+      addDegreeCertificate(degree)
+    },
+    [],
+  )
+
+  const removeUndefinedFields = <T>(obj: T): Partial<T> => {
+    const newObj: Partial<T> = {}
+    for (const key in obj) {
+      if (
+        obj[key as keyof T] !== undefined &&
+        obj[key as keyof T] !== null &&
+        obj[key as keyof T] !== ''
+      ) {
+        newObj[key as keyof T] = obj[key as keyof T]
+      }
+    }
+    return newObj
+  }
+
+  const formatData = useCallback(
+    (data: Partial<IDegreeCertificate>) => {
+      const formattedData: Partial<IDegreeCertificate> = removeUndefinedFields({
+        topic: data.topic,
+        presentationDate: data.presentationDate,
+        studentId: data.student?.id,
+        certificateTypeId: data.certificateType,
+        certificateStatusId: data.certificateStatus,
+        degreeModalityId: data.degreeModality,
+        roomId: data.room,
+        duration: Number(data.duration),
+        isClosed: data.isClosed,
+        userId: user?.id,
+        link: data.link,
+      })
+
+      return formattedData
+    },
+    [user, currentDegreeCertificate],
+  )
 
   const onSubmit = useCallback(
-    async (data: DegreeCertificateModel) => {
-      try {
-        if (!currentDegreeCertificate) {
-          await handleCreateDegreeCertificate(data)
-        } else {
-          const editedFields = getEditedFields<Partial<DegreeCertificateModel>>(
-            defaultValues,
-            data,
-          )
-
-          if (editedFields) {
-            await handleUpdateDegreeCertificate(
-              currentDegreeCertificate.id as number,
-              editedFields,
-            )
-          }
-        }
-
-        router.push(
-          currentDegreeCertificate
-            ? pathname.replace(
-                new RegExp(`/${currentDegreeCertificate.id}/edit`),
-                '',
-              )
-            : pathname.replace('/new', ''),
-        )
-        enqueueSnackbar(
-          !currentDegreeCertificate
-            ? 'Consejo creado correctamente'
-            : 'Consejo actualizado correctamente',
-          { variant: 'success' },
-        )
-      } catch (error) {
-        enqueueSnackbar(
-          !currentDegreeCertificate
-            ? 'Error al crear el consejo'
-            : 'Error al actualizar el consejo',
-          { variant: 'error' },
-        )
-      } finally {
-        methods.reset()
+    async (data: IDegreeCertificate) => {
+      const formattedData = formatData(data)
+      if (!currentDegreeCertificate) {
+        handleCreate(formattedData as unknown as IDegreeCertificate)
+      } else {
+        handleEdit({
+          ...formattedData,
+          id: currentDegreeCertificate.id,
+        })
       }
+
+      const newPath = currentDegreeCertificate
+        ? pathname.replace(
+            new RegExp(`/${currentDegreeCertificate.id}/edit`),
+            '',
+          )
+        : pathname.replace('/new', '')
+
+      router.push(newPath)
+      reset()
     },
-    [currentDegreeCertificate, enqueueSnackbar, methods.reset, router],
+    [currentDegreeCertificate, enqueueSnackbar, reset, router],
   )
 
   useEffect(() => {
-    let isMounted = true
-    loading.onTrue()
+    if (currentDegreeCertificate) {
+      reset(defaultValues)
+    }
+  }, [currentDegreeCertificate, defaultValues, reset])
 
-    DegreeCertificatesCrudServices.getInstance()
-      .findDegreeCertificates()
-      .then((_) => {
-        if (!isMounted) return
+  useEffect(() => {
+    if (isOpen.value === false) return
 
-        loading.onFalse()
-      })
+    setIsLoading(true)
+
+    const filteredStudents = async (field: string) => {
+      await StudentUseCasesImpl.getInstance()
+        .getByFilters({ field })
+        .then((res) => {
+          setStudents(res.students)
+        })
+    }
+    if (debouncedValue.includes('-')) return
+
+    filteredStudents(debouncedValue)
+  }, [debouncedValue, isOpen.value])
+
+  useEffect(() => {
+    if (currentDegreeCertificate) return
+    const studentId = methods.watch('selectedValue')?.id
+
+    if (!studentId || studentId === 0) return
+
+    // TODO: The selectedValue is from the select component to get the student, if the student is not found, it should be fetched from the API
+    resolveStudentById(studentId).then((student) => {
+      methods.setValue('student', student)
+    })
 
     return () => {
-      isMounted = false
+      reset()
     }
-  }, [searchDebounced])
+  }, [methods.watch('selectedValue')])
 
   return {
-    degreeCertificates,
     methods,
     defaultValues,
     onSubmit,
-    setSearchField,
+    handleSubmit,
+    students,
+    setInputValue,
     loading,
+    isOpen,
   }
 }

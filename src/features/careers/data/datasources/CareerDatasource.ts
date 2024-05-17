@@ -1,24 +1,14 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { CareerModel } from '../models/CareerModel'
-import { ICareer } from '../../domain/entities/ICareer'
+import { ICreateCareer, IUpdateCareer } from '../../domain/entities/ICareer'
 
 export interface CareerDataSource {
-  getAll(): Promise<{
-    status: number
-    careers: CareerModel[]
-  }>
+  getAll(): Promise<CareerModel[]>
 
-  update(career: Partial<ICareer>): Promise<{
-    status: number
-  }>
+  update(career: IUpdateCareer): Promise<CareerModel>
 
-  create(career: ICareer): Promise<{
-    status: number
-    career: CareerModel
-    message?: string
-  }>
+  create(career: ICreateCareer): Promise<CareerModel>
 }
 
 export class CareersDataSourceImpl implements CareerDataSource {
@@ -32,44 +22,37 @@ export class CareersDataSourceImpl implements CareerDataSource {
     return CareersDataSourceImpl.instance
   }
 
-  create = async (career: ICareer) => {
+  create = async (career: ICreateCareer) => {
     const result = await AxiosClient.post(API_ROUTES.CAREERS.CREATE, career)
 
-    console.log({ result })
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, career: {} as CareerModel }
+    if ('error' in result) {
+      return {} as CareerModel
     }
 
-    return { status, career: data.content as CareerModel }
+    return result.data as CareerModel
   }
 
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.CAREERS.GET_ALL)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, careers: [] as CareerModel[] }
+    if ('error' in result) {
+      return [] as CareerModel[]
     }
 
-    return { status, careers: data.content as CareerModel[] }
+    return result.data as CareerModel[]
   }
 
-  update = async (career: Partial<ICareer>) => {
+  update = async (career: IUpdateCareer) => {
     const { id, ...rest } = career
 
     const result = await AxiosClient.put(API_ROUTES.CAREERS.UPDATE, rest, {
       id,
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status }
+    if ('error' in result) {
+      return {} as CareerModel
     }
 
-    return { status, council: data.content as CareerModel }
+    return result.data as CareerModel
   }
 }

@@ -4,7 +4,6 @@ import { PositionModel } from '../../data/models/PositionModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useFunctionaryMethods } from './usePositionMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 
 interface Props {
   tableData: PositionModel[]
@@ -65,13 +64,11 @@ export const useFunctionaryView = ({
     if (newPage > table.page) {
       if (isDataFiltered) {
         fetchDataByField(field, table.rowsPerPage, newPage).then((response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setPositions([...positions, ...response.data.positions])
-            setTableData([
-              ...(positions as PositionModel[]),
-              ...response.data.positions,
-            ])
-          }
+          setPositions([...positions, ...response?.positions])
+          setTableData([
+            ...(positions as PositionModel[]),
+            ...response?.positions,
+          ])
         })
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {
@@ -95,13 +92,11 @@ export const useFunctionaryView = ({
     if (isDataFiltered) {
       fetchDataByField(field, parseInt(event.target.value, 10), 0).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setPositions(response.data.positions)
-            setTableData(response.data.positions)
-            setCount(response.data.count)
-          }
-
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+          if (response?.positions.length > 0) {
+            setPositions(response.positions)
+            setTableData(response.positions)
+            setCount(response.count)
+          } else {
             setPositions([])
             setTableData([])
             setCount(0)
@@ -153,19 +148,17 @@ export const useFunctionaryView = ({
 
   const handleSearch = (field: string) => {
     fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
-      if (response?.status === HTTP_STATUS_CODES.OK) {
-        setPositions(response.data.positions)
-        setTableData(response.data.positions)
-        setCount(response.data.count)
+      if (response?.positions.length > 0) {
+        setPositions(response.positions)
+        setTableData(response.positions)
+        setCount(response.count)
         return
       }
 
-      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-        setPositions([])
-        setTableData([])
-        setCount(0)
-        return
-      }
+      setPositions([])
+      setTableData([])
+      setCount(0)
+      return
     })
   }
 

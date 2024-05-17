@@ -1,4 +1,5 @@
 import { ICreateStudent } from '../../domain/entities/ICreateStudent'
+import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 import { StudentRepository } from '../../domain/repositories/StudentRepository'
 import {
   StudentDataSource,
@@ -24,8 +25,11 @@ export class StudentRepositoryImpl implements StudentRepository {
   getAll = async (limit: number, offset: number) =>
     await this.datasource.getAll(limit, offset)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    await this.datasource.getByField(field, limit, offset)
+  getByFilters = async (
+    filters: IStudentFilters,
+    limit: number,
+    offset: number,
+  ) => await this.datasource.getByFilter(filters, limit, offset)
 
   create = async (data: ICreateStudent) => await this.datasource.create(data)
 

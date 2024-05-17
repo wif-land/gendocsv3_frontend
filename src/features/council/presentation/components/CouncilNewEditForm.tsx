@@ -3,7 +3,6 @@
 import LoadingButton from '@mui/lab/LoadingButton'
 import Card from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
-import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Unstable_Grid2'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
@@ -19,8 +18,7 @@ import { Controller } from 'react-hook-form'
 import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
-import { Box, Chip, IconButton, Tooltip, alpha } from '@mui/material'
-import Iconify from '../../../../core/iconify'
+import { Box, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
 
 type Props = {
@@ -33,18 +31,13 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
     methods,
     unusedFunctionaries,
     onSubmit,
-    handleAddAttendees,
-    handleRemoveAttendee,
     setSearchField,
     loading,
-    attendees: {
-      president: { isOpenPresident, handleOpenPresident, handleClosePresident },
-      subrogant: { isOpenSubrogant, handleOpenSubrogant, handleCloseSubrogant },
-    },
+    defaultMembers,
+    pathname,
   } = useCouncilsForm(currentCouncil)
-  const { handleSubmit, control, watch } = methods
 
-  const values = watch()
+  const { handleSubmit, control } = methods
 
   const renderDetails = (
     <>
@@ -68,15 +61,14 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
             <RHFTextField name="name" label="Nombre" required />
 
             <RHFSelect
-              native
               name="type"
               label="Tipo"
               InputLabelProps={{ shrink: true }}
             >
-              {COUNCIL_TYPES.map((category) => (
-                <option key={category.value} value={category.value}>
-                  {category.label}
-                </option>
+              {COUNCIL_TYPES.map((council) => (
+                <MenuItem key={council.value} value={council.value}>
+                  {council.label}
+                </MenuItem>
               ))}
             </RHFSelect>
 
@@ -101,7 +93,6 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                       required: true,
                     },
                   }}
-                  disablePast
                 />
               )}
             />
@@ -119,7 +110,8 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
             Miembros
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Se elijen a los miembros del consejo
+            Puedes elegir entre los miembros representantes por defecto o en su
+            defecto elegir arbitrariamente a los miembros
           </Typography>
         </Grid>
       )}
@@ -129,195 +121,52 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFAutocomplete
-              name="president"
-              label="Presidente"
-              placeholder="Escribe el nombre del presidente del consejo"
-              freeSolo
-              open={isOpenPresident.value}
-              loading={loading.value}
-              onOpen={handleOpenPresident}
-              onClose={() => {
-                handleClosePresident()
-                setSearchField('')
-              }}
-              noOptionsText="No hay resultados"
-              onInputChange={(_event, newInputValue) => {
-                setSearchField(newInputValue)
-              }}
-              options={unusedFunctionaries?.map(
-                (functionary) =>
-                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-              )}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const {
-                  dni,
-                  firstName,
-                  firstLastName,
-                  secondName,
-                  secondLastName,
-                } = unusedFunctionaries.filter(
-                  (functionary) =>
-                    option ===
-                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )[0]
-
-                if (!dni) {
-                  return null
-                }
-
-                return (
-                  <li {...props} key={dni}>
-                    <Typography variant="body2">
-                      {firstName} {secondName} {firstLastName} {secondLastName}
-                    </Typography>
-
-                    <Typography variant="caption" color="text.secondary">
-                      {dni}
-                    </Typography>
-                  </li>
+            {defaultMembers.length > 0 ? (
+              Object.entries(methods.watch('members'))
+                .sort(
+                  ([, a], [, b]) =>
+                    (a?.positionOrder as number) - (b?.positionOrder as number),
                 )
-              }}
-            />
-
-            <RHFAutocomplete
-              name="subrogant"
-              label="Subrogante"
-              placeholder="Escribe el nombre del subrogante"
-              freeSolo
-              noOptionsText="No hay resultados"
-              open={isOpenSubrogant.value}
-              loading={loading.value}
-              onOpen={handleOpenSubrogant}
-              onClose={() => {
-                handleCloseSubrogant()
-                setSearchField('')
-              }}
-              options={unusedFunctionaries!.map(
-                (functionary) =>
-                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-              )}
-              onInputChange={(event, newInputValue) => {
-                setSearchField(newInputValue)
-              }}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const {
-                  dni,
-                  firstName,
-                  firstLastName,
-                  secondName,
-                  secondLastName,
-                } = unusedFunctionaries.filter(
-                  (functionary) =>
-                    option ===
-                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                )[0]
-
-                if (!dni) {
-                  return null
-                }
-
-                return (
-                  <li key={dni} {...props}>
-                    <Typography variant="body2">
-                      {firstName} {secondName} {firstLastName} {secondLastName}
-                    </Typography>
-
-                    <Typography variant="caption" color="text.secondary">
-                      {dni}
-                    </Typography>
-                  </li>
-                )
-              }}
-              renderTags={(selected, getTagProps) =>
-                selected.map((option, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    key={option}
-                    label={option}
-                    size="small"
-                    color="info"
-                    variant="soft"
-                  />
-                ))
-              }
-            />
-
-            <Divider sx={{ borderStyle: 'dashed' }} />
-
-            {values.attendees &&
-              unusedFunctionaries &&
-              values.attendees.map((attendee, index) => (
-                <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-                  <RHFAutocomplete
-                    sx={{ flexGrow: 1 }}
-                    name={`attendees[${index}]`}
-                    label={`Miembro ${index + 1}`}
-                    placeholder="Escribe el nombre del miembro"
-                    freeSolo
-                    options={unusedFunctionaries!.map(
-                      (functionary) =>
-                        `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                    )}
-                    getOptionLabel={(option) => option}
-                    renderOption={(props, option) => {
-                      const {
-                        dni,
-                        firstName,
-                        firstLastName,
-                        secondName,
-                        secondLastName,
-                      } = unusedFunctionaries!.filter(
-                        (functionary) =>
-                          option ===
-                          `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-                      )[0]
-
-                      if (!dni) {
-                        return null
+                .map(([positionName, member]) => (
+                  <>
+                    <RHFAutocomplete
+                      key={(member?.member?.id as number) + positionName}
+                      name={`members[${positionName}]`}
+                      label={positionName}
+                      placeholder="Escribe el nombre o cédula del miembro deseado"
+                      noOptionsText="No hay resultados"
+                      freeSolo
+                      loading={loading.value}
+                      getOptionLabel={(option) =>
+                        (option as { label: string; id: number }).label
                       }
-
-                      return (
-                        <li key={dni} {...props}>
-                          <Typography variant="body2">
-                            {firstName} {secondName} {firstLastName}{' '}
-                            {secondLastName}
-                          </Typography>
-
-                          <Typography variant="caption" color="text.secondary">
-                            {dni}
-                          </Typography>
-                        </li>
-                      )
-                    }}
-                  />
-
-                  <IconButton onClick={() => handleRemoveAttendee(index)}>
-                    <Iconify icon="fluent:delete-20-regular" />
-                  </IconButton>
-                </Box>
-              ))}
-
-            <Stack
-              direction="row"
-              flexWrap="wrap"
-              alignItems="center"
-              spacing={1}
-            >
-              <Tooltip title="Añadir miembro">
-                <IconButton
-                  onClick={handleAddAttendees}
-                  sx={{
-                    bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
-                    border: (theme) => `dashed 1px ${theme.palette.divider}`,
-                  }}
+                      onInputChange={(_event, newInputValue) => {
+                        setSearchField(newInputValue)
+                      }}
+                      getOptionKey={(option) => (option as { id: number }).id}
+                      options={unusedFunctionaries!.map((functionary) => ({
+                        id: functionary.id,
+                        positionOrder: member?.positionOrder,
+                        label: `${functionary.firstName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                      }))}
+                    />
+                  </>
+                ))
+            ) : (
+              <>
+                <Typography variant="body2" color="text.secondary">
+                  No hay miembros por defecto
+                </Typography>
+                <Link
+                  href={`${pathname
+                    .split('/')
+                    .slice(0, -2)
+                    .join('/')}/representantes`}
                 >
-                  <Iconify icon="mingcute:add-line" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
+                  Crear miembros por defecto
+                </Link>
+              </>
+            )}
           </Stack>
         </Card>
       </Grid>
@@ -336,7 +185,12 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           <RHFSwitch name="isActive" label="Consejo activo" />
         </Box>
 
-        <LoadingButton type="submit" variant="contained" size="large">
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          size="large"
+          // disabled={loading.value}
+        >
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>
       </Grid>

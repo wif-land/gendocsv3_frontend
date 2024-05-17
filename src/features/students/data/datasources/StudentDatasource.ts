@@ -1,53 +1,35 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { StudentModel } from '../models/StudentModel'
 import { IStudent } from '../../domain/entities/IStudent'
 import { ICreateStudent } from '../../domain/entities/ICreateStudent'
+import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 
 export interface StudentDataSource {
   getAll(
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      students: StudentModel[]
-    }
+    count: number
+    students: StudentModel[]
   }>
 
-  getByField(
-    field: string,
+  getByFilter(
+    filter: IStudentFilters,
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      students: StudentModel[]
-    }
-  }>
-
-  update(student: Partial<IStudent>): Promise<{
-    status: number
-    student: StudentModel
-  }>
-
-  bulkUpdate(students: Partial<IStudent>[]): Promise<{
-    status: number
+    count: number
     students: StudentModel[]
   }>
 
-  create(student: ICreateStudent): Promise<{
-    status: number
-    student: StudentModel
-  }>
+  update(student: Partial<IStudent>): Promise<StudentModel>
 
-  bulkCreate(students: ICreateStudent[]): Promise<{
-    status: number
-    students: StudentModel[]
-  }>
+  bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
+
+  create(student: ICreateStudent): Promise<StudentModel>
+
+  bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
 }
 
 export class StudentDataSourceImpl implements StudentDataSource {
@@ -66,35 +48,27 @@ export class StudentDataSourceImpl implements StudentDataSource {
       params: { limit, offset },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return {
-        status,
-        data: data.content as { count: number; students: StudentModel[] },
-      }
+    if ('error' in result) {
+      return { count: 0, students: [] }
     }
-    return { status, data: { count: 0, students: [] } }
+
+    return result.data as { count: number; students: StudentModel[] }
   }
 
-  getByField = async (field: string, limit: number, offset: number) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.STUDENTS.GET_BY_FIELD(field),
-      {
-        params: { limit, offset },
-      },
-    )
+  getByFilter = async (
+    filters: IStudentFilters,
+    limit: number,
+    offset: number,
+  ) => {
+    const result = await AxiosClient.get(API_ROUTES.STUDENTS.GET_BY_FILTERS, {
+      params: { limit, offset, ...filters },
+    })
 
-    const { status, data } = result
-
-    if (status !== HTTP_STATUS_CODES.OK) {
-      return { status, data: { count: 0, students: [] } }
+    if ('error' in result) {
+      return { count: 0, students: [] }
     }
 
-    return {
-      status,
-      data: data.content as { count: number; students: StudentModel[] },
-    }
+    return result.data as { count: number; students: StudentModel[] }
   }
 
   update = async (functionary: Partial<IStudent>) => {
@@ -105,13 +79,11 @@ export class StudentDataSourceImpl implements StudentDataSource {
       body,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, student: data.content as StudentModel }
+    if ('error' in result) {
+      return {} as StudentModel
     }
 
-    return { status, student: {} as StudentModel }
+    return result.data as StudentModel
   }
 
   bulkUpdate = async (students: Partial<IStudent>[]) => {
@@ -120,25 +92,21 @@ export class StudentDataSourceImpl implements StudentDataSource {
       students,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, students: data.content as StudentModel[] }
+    if ('error' in result) {
+      return [] as StudentModel[]
     }
 
-    return { status, students: [] as StudentModel[] }
+    return result.data as StudentModel[]
   }
 
   create = async (student: ICreateStudent) => {
     const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE, student)
 
-    const { status, data } = result
-
-    if (status !== HTTP_STATUS_CODES.CREATED) {
-      return { status, student: {} as StudentModel }
+    if ('error' in result) {
+      return {} as StudentModel
     }
 
-    return { status, student: data.content as StudentModel }
+    return result.data as StudentModel
   }
 
   bulkCreate = async (students: ICreateStudent[]) => {
@@ -146,12 +114,10 @@ export class StudentDataSourceImpl implements StudentDataSource {
       students,
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.CREATED) {
-      return { status, students: data.content as StudentModel[] }
+    if ('error' in result) {
+      return [] as StudentModel[]
     }
 
-    return { status, students: [] as StudentModel[] }
+    return result.data as StudentModel[]
   }
 }

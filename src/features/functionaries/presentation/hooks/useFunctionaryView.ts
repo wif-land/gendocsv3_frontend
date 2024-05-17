@@ -4,7 +4,7 @@ import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useFunctionaryMethods } from './useFunctionaryMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 
 interface Props {
   tableData: FunctionaryModel[]
@@ -14,7 +14,7 @@ interface Props {
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  field: string
+  filters: IFunctionaryFilters
 }
 
 export const useFunctionaryView = ({
@@ -25,7 +25,7 @@ export const useFunctionaryView = ({
   isDataFiltered,
   visitedPages,
   setVisitedPages,
-  field,
+  filters,
 }: Props) => {
   const { functionaries, setFunctionaries } = useFunctionaryStore()
   const { loader } = useLoaderStore()
@@ -64,15 +64,15 @@ export const useFunctionaryView = ({
 
     if (newPage > table.page) {
       if (isDataFiltered) {
-        fetchDataByField(field, table.rowsPerPage, newPage).then((response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setFunctionaries([...functionaries, ...response.data.functionaries])
+        fetchDataByField(filters, table.rowsPerPage, newPage).then(
+          (response) => {
+            setFunctionaries([...functionaries, ...response.functionaries])
             setTableData([
               ...(functionaries as FunctionaryModel[]),
-              ...response.data.functionaries,
+              ...response.functionaries,
             ])
-          }
-        })
+          },
+        )
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {
           if (data?.functionaries) {
@@ -96,23 +96,22 @@ export const useFunctionaryView = ({
     setVisitedPages([])
 
     if (isDataFiltered) {
-      fetchDataByField(field, parseInt(event.target.value, 10), 0).then(
+      fetchDataByField(filters, table.rowsPerPage, table.page).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setFunctionaries(response.data.functionaries)
-            setTableData(response.data.functionaries)
-            setCount(response.data.count)
+          if (response?.functionaries.length > 0) {
+            setFunctionaries(response.functionaries)
+            setTableData(response.functionaries)
+            setCount(response.count)
+            return
           }
 
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-            setFunctionaries([])
-            setTableData([])
-            setCount(0)
-          }
+          setFunctionaries([])
+          setTableData([])
+          setCount(0)
         },
       )
     } else {
-      fetchData(parseInt(event.target.value, 10), table.page).then((data) => {
+      fetchData(table.rowsPerPage, table.page).then((data) => {
         if (data?.functionaries) {
           setFunctionaries(data.functionaries)
           setTableData(data.functionaries)
@@ -174,22 +173,22 @@ export const useFunctionaryView = ({
     })
   }
 
-  const handleSearch = (field: string) => {
-    fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
-      if (response?.status === HTTP_STATUS_CODES.OK) {
-        setFunctionaries(response.data.functionaries)
-        setTableData(response.data.functionaries)
-        setCount(response.data.count)
-        return
-      }
+  const handleSearch = (filters: IFunctionaryFilters) => {
+    fetchDataByField(filters, table.rowsPerPage, table.page).then(
+      (response) => {
+        if (response?.functionaries.length > 0) {
+          setFunctionaries(response.functionaries)
+          setTableData(response.functionaries)
+          setCount(response.count)
+          return
+        }
 
-      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
         setFunctionaries([])
         setTableData([])
         setCount(0)
         return
-      }
-    })
+      },
+    )
   }
 
   return {

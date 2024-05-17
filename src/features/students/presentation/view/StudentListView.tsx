@@ -41,11 +41,11 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import { StudentBulkUploadDialog } from '../components/StudentBulkUploadDialog'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { StudentTableResult } from '../components/StudentTableFiltersResult'
+import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 
 const defaultFilters: IStudentTableFilters = {
-  name: '',
-  personalEmail: '',
-  outlookEmail: '',
+  field: undefined,
+  state: undefined,
 }
 
 const StudentListView = () => {
@@ -56,7 +56,6 @@ const StudentListView = () => {
   const [count, setCount] = useState(0)
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState<IStudentTableFilters>(defaultFilters)
   const upload = useBoolean()
   const popover = usePopover()
@@ -87,7 +86,7 @@ const StudentListView = () => {
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    field: searchTerm,
+    filters: filters as IStudentFilters,
   })
 
   const createActions = [
@@ -115,10 +114,9 @@ const StudentListView = () => {
   )
 
   const handleResetFilters = () => {
-    setFilters(defaultFilters)
-    setSearchTerm('')
-    setVisitedPages([])
     setIsDataFiltered(false)
+    setFilters(defaultFilters)
+    setVisitedPages([])
     setTableData([])
   }
 
@@ -153,12 +151,12 @@ const StudentListView = () => {
           <StudentTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
+            isDataFiltered={isDataFiltered}
             table={table}
             setDataTable={setTableData}
-            getFilteredFunctionaries={handleSearch}
+            getFilteredStudents={handleSearch}
           />
 
           {isDataFiltered && (

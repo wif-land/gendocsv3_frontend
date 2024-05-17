@@ -40,15 +40,21 @@ export const useUsersForm = (currentUser?: IUser) => {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
+      let result
+
       if (!currentUser) {
-        await handleCreate(data)
+        result = await handleCreate(data)
       } else {
         const editedFields = getEditedFields<FormValuesProps>(
           defaultValues,
           data,
         )
 
-        await handleUpdate(currentUser.id!, editedFields)
+        result = await handleUpdate({ ...editedFields, id: currentUser.id })
+      }
+
+      if (!result) {
+        return
       }
 
       const newPath = currentUser

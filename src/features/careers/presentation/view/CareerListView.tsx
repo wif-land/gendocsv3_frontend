@@ -25,7 +25,6 @@ import {
   getComparator,
   useTable,
 } from '../../../../shared/sdk/table'
-import { isEqual } from 'lodash'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
@@ -40,28 +39,24 @@ import {
   ICareerTableFilterValue,
   ICareerTableFilters,
 } from '../components/CareerTableToolbar'
-
-const TABLE_HEAD = [
-  { id: 'name', label: 'Carrera' },
-  { id: 'credits', label: 'Créditos', width: 160 },
-  { id: 'internshipHours', label: 'Horas de prácticas', width: 160 },
-  { id: 'vinculationHours', label: 'Horas de Vinculación', width: 260 },
-  { id: 'isActive', label: 'Estado', width: 100 },
-  { id: 'actions', label: 'Acciones', width: 110 },
-]
-
-const defaultFilters: ICareerTableFilters = {
-  name: '',
-}
+import { CareerTableFiltersResult } from '../components/CareerTableFiltersResult'
+import { TABLE_HEAD, defaultFilters } from '../constants'
 
 const CareerListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
+  const settings = useSettingsContext()
+  const confirm = useBoolean()
+  const denseHeight = table.dense ? 60 : 80
 
-  const { loader, careers } = useCareerView()
+  const { loader, careers, setCareers, handleUpdateRow } = useCareerView()
+  const [isDataFiltered, setIsDataFiltered] = useState(
+    undefined as boolean | undefined,
+  )
 
   const [filters, setFilters] = useState<ICareerTableFilters>(defaultFilters)
+  const [tableData, setTableData] = useState<CareerModel[]>([])
 
   const handleFilters = useCallback(
     (name: string, value: ICareerTableFilterValue) => {
@@ -74,53 +69,11 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
     [table],
   )
 
-  const [tableData, setTableData] = useState<CareerModel[]>([])
-
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   })
-
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage,
-  )
-
-  const denseHeight = table.dense ? 60 : 80
-
-  const canReset = !isEqual(defaultFilters, filters)
-
-  useEffect(() => {
-    if (careers?.length) {
-      setTableData(careers as CareerModel[])
-    }
-  }, [careers])
-
-  const confirm = useBoolean()
-
-  const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id!.toString() !== id)
-      setTableData(deleteRow)
-
-      table.onUpdatePageDeleteRow(dataInPage.length)
-    },
-    [dataInPage.length, table, tableData],
-  )
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter(
-      (row) => !table.selected.includes(row.id!.toString()),
-    )
-    setTableData(deleteRows)
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    })
-  }, [dataFiltered.length, dataInPage.length, table, tableData])
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -130,10 +83,19 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
   )
 
   const notFound =
-    (!dataFiltered.length && canReset) ||
-    (!loader.length && !dataFiltered.length)
+    !dataFiltered.length || (!loader.length && !dataFiltered.length)
 
-  const settings = useSettingsContext()
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setIsDataFiltered(false)
+    setCareers([])
+  }
+
+  useEffect(() => {
+    if (careers?.length) {
+      setTableData(careers as CareerModel[])
+    }
+  }, [careers])
 
   return (
     <div key={moduleId}>
@@ -158,17 +120,19 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <CareerTableToolbar filters={filters} onFilters={handleFilters} />
-          {/*
-          {canReset && (
-            <ProductTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
+          <CareerTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            setIsDataFiltered={setIsDataFiltered}
+          />
+
+          {isDataFiltered && (
+            <CareerTableFiltersResult
               onResetFilters={handleResetFilters}
-              results={0}
+              results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )} */}
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -232,9 +196,7 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() =>
-                              handleDeleteRow(row.id!.toString())
-                            }
+                            onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                           />
                         ))}
@@ -274,7 +236,7 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
         title="Delete"
         content={
           <>
-            Are you sure want to delete{' '}
+            Estás seguro de que deseas cambiar el estado de{' '}
             <strong> {table.selected.length} </strong> items?
           </>
         }
@@ -283,11 +245,10 @@ const CareerListView = ({ moduleId }: { moduleId: string }) => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows()
               confirm.onFalse()
             }}
           >
-            Delete
+            Cambiar
           </Button>
         }
       />
@@ -305,24 +266,27 @@ const applyFilter = ({
   filters: ICareerTableFilters
 }) => {
   let currentInputData = [...inputData]
-  const { name } = filters
+  const { name, state } = filters
 
   const stabilizedThis = currentInputData.map(
     (el, index) => [el, index] as const,
   )
-
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
     if (order !== 0) return order
     return a[1] - b[1]
   })
-
   currentInputData = stabilizedThis.map((el) => el[0])
 
   if (name) {
     currentInputData = currentInputData.filter(
-      (product) =>
-        product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+      (career) => career.name.toLowerCase().indexOf(name.toLowerCase()) !== -1,
+    )
+  }
+
+  if (state !== undefined) {
+    currentInputData = currentInputData.filter(
+      (career) => career.isActive === state,
     )
   }
 

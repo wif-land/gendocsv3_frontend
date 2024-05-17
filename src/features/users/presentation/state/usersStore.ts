@@ -25,7 +25,7 @@ export const useUsersStore = create<StoreState>(
       },
       load: async () => {
         const result = await UserDataSourceImpl.getInstance().getAll()
-        set({ users: result.data.users as IUser[] })
+        set({ users: result.users as IUser[] })
       },
     }),
     {

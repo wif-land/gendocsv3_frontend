@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type GenericObject = { [key: string]: any }
 
+interface DefaultPersonValues {
+  id?: number
+  firstName: string
+  secondName: string
+  firstLastName: string
+  secondLastName: string
+  dni: string
+}
+
 export const getEditedFields = <T extends GenericObject>(
   initialValues: T,
   values: T,
@@ -27,3 +36,10 @@ export const VALIDATION_MESSAGES = {
   minLength: (length: number) => `Mínimo ${length} caracteres.`,
   maxLength: (length: number) => `Máximo ${length} caracteres.`,
 }
+
+export const resolveFormSelectOptions = <T extends DefaultPersonValues>(
+  data: T,
+): { label: string; id: number } => ({
+  id: data.id || 0,
+  label: `${data.firstName} ${data.secondName} ${data.firstLastName} ${data.secondLastName} - ${data.dni}`,
+})

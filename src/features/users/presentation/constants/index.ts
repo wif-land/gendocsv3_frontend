@@ -31,27 +31,23 @@ export const TABLE_HEAD = [
 ]
 
 export const NewFunctionarySchema = Yup.object().shape({
-  firstName: Yup.string().required(VALIDATION_MESSAGES.required),
+  firstName: Yup.string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚüÜ]+$/, VALIDATION_MESSAGES.invalidFormat),
   secondName: Yup.string(),
-  firstLastName: Yup.string().required(VALIDATION_MESSAGES.required),
+  firstLastName: Yup.string()
+    .required(VALIDATION_MESSAGES.required)
+    .matches(/^[A-Za-zñÑáéíóúÁÉÍÓÚüÜ]+$/, VALIDATION_MESSAGES.invalidFormat),
   secondLastName: Yup.string(),
   outlookEmail: Yup.string()
     .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
+    .matches(/^[A-Z0-9._%+-]+@uta\.edu\.ec$/i, `Debe contener (uta.edu.ec)`),
   googleEmail: Yup.string()
     .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
+    .matches(/^[A-Z0-9._%+-]+@gmail\.com$/i, ` Debe contener (gmail.com)`),
   password: Yup.string(),
   role: Yup.string().required(VALIDATION_MESSAGES.required),
-  accessModules: Yup.array()
-    .of(Yup.number())
-    .required(VALIDATION_MESSAGES.required),
+  accessModules: Yup.array().required(VALIDATION_MESSAGES.required),
 })
 
 export const resolveDefaultValues = (currentUser?: IUser) => ({
@@ -62,41 +58,24 @@ export const resolveDefaultValues = (currentUser?: IUser) => ({
   outlookEmail: currentUser?.outlookEmail || '',
   googleEmail: currentUser?.googleEmail || '',
   isActive: currentUser?.isActive || true,
-  password: currentUser?.password || '',
+  password: '',
   role: currentUser?.role || UserRole.ADMIN,
   accessModules: currentUser?.accessModules || [],
 })
 
-export const handleCreate = async (values: FormValuesProps) => {
-  const result = await UserUseCasesImpl.getInstance().create(values)
+export const handleCreate = async (values: FormValuesProps) =>
+  await UserUseCasesImpl.getInstance().create({
+    ...values,
+    accessModules: values.accessModules.map((module) => module.id),
+  })
 
-  if (!result) {
-    enqueueSnackbar('Error al crear el usuario', { variant: 'error' })
-    return
-  }
-
-  enqueueSnackbar('Usuario creado con éxito', { variant: 'success' })
-}
-
-export const handleUpdate = async (
-  id: number,
-  values: Partial<IUser> | null,
-) => {
+export const handleUpdate = async (values: Partial<IUser> | null) => {
   if (!values) {
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
     })
-    return
+
+    return {}
   }
-
-  const result = await UserUseCasesImpl.getInstance().update(id, values)
-
-  if (!result) {
-    enqueueSnackbar('Error al actualizar el usuario', {
-      variant: 'error',
-    })
-    return
-  }
-
-  enqueueSnackbar('Usuario actualizado con éxito', { variant: 'success' })
+  return await UserUseCasesImpl.getInstance().update(values)
 }

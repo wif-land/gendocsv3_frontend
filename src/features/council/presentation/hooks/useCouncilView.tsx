@@ -3,17 +3,17 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useCouncilsMethods } from './useCouncilsMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 interface Props {
   table: TableProps
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  field: string
+  filters: ICouncilFilters
   moduleId: string
 }
 
@@ -22,7 +22,7 @@ export const useCouncilView = ({
   isDataFiltered,
   visitedPages,
   setVisitedPages,
-  field,
+  filters,
   moduleId,
 }: Props) => {
   const [tableData, setTableData] = useState<CouncilModel[]>([])
@@ -68,21 +68,13 @@ export const useCouncilView = ({
     if (newPage > table.page) {
       if (isDataFiltered) {
         fetchDataByField(
-          field,
+          filters,
           moduleIdentifier,
           table.rowsPerPage,
           newPage,
         ).then((response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setCouncils([
-              ...councils,
-              ...(response.data.councils as CouncilModel[]),
-            ])
-            setTableData([
-              ...councils,
-              ...(response.data.councils as CouncilModel[]),
-            ])
-          }
+          setCouncils([...councils, ...(response.councils as CouncilModel[])])
+          setTableData([...councils, ...(response.councils as CouncilModel[])])
         })
       } else {
         fetchData(moduleIdentifier, table.rowsPerPage, newPage).then((data) => {
@@ -105,22 +97,21 @@ export const useCouncilView = ({
 
     if (isDataFiltered) {
       fetchDataByField(
-        field,
+        filters,
         moduleIdentifier,
         parseInt(event.target.value, 10),
         0,
       ).then((response) => {
-        if (response?.status === HTTP_STATUS_CODES.OK) {
-          setCouncils(response.data.councils as CouncilModel[])
-          setTableData(response.data.councils as CouncilModel[])
-          setCount(response.data.count)
+        if (response.councils.length > 0) {
+          setCouncils(response.councils as CouncilModel[])
+          setTableData(response.councils as CouncilModel[])
+          setCount(response.count)
+          return
         }
 
-        if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-          setCouncils([])
-          setTableData([])
-          setCount(0)
-        }
+        setCouncils([])
+        setTableData([])
+        setCount(0)
       })
     } else {
       fetchData(
@@ -156,59 +147,24 @@ export const useCouncilView = ({
     })
   }
 
-  // const handleUpdateRows = () => {
-  //   const rows = tableData.filter((row) =>
-  //     table.selected.includes(row.id!.toString()),
-  //   )
-
-  //   const rowsData = rows.map((row: ICouncil) => ({
-  //     isActive: !row.isActive,
-  //     id: row.id!,
-  //   }))
-
-  //   updateRows(rowsData).then((data) => {
-  //     if (data !== undefined) {
-  //       setCouncils(
-  //         councils.map((functionary) => {
-  //           const updatedFunctionary = data.find(
-  //             (updated) => updated.id === functionary.id,
-  //           )
-  //           return updatedFunctionary ? updatedFunctionary : functionary
-  //         }),
-  //       )
-  //     }
-  //     setTableData(
-  //       (councils as ICouncil[]).map((functionary) => {
-  //         const updatedFunctionary = data?.find(
-  //           (updated) => updated.id === functionary.id,
-  //         )
-  //         return updatedFunctionary ? updatedFunctionary : functionary
-  //       }),
-  //     )
-  //     table.setSelected([])
-  //   })
-  // }
-
-  const handleSearch = (field: string) => {
+  const handleSearch = (filters: ICouncilFilters) => {
     fetchDataByField(
-      field,
+      filters,
       moduleIdentifier,
       table.rowsPerPage,
       table.page,
     ).then((response) => {
-      if (response?.status === HTTP_STATUS_CODES.OK) {
-        setCouncils(response.data.councils as CouncilModel[])
-        setTableData(response.data.councils as CouncilModel[])
-        setCount(response.data.count)
+      if (response.councils.length > 0) {
+        setCouncils(response.councils as CouncilModel[])
+        setTableData(response.councils as CouncilModel[])
+        setCount(response.count)
         return
       }
 
-      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-        setCouncils([])
-        setTableData([])
-        setCount(0)
-        return
-      }
+      setCouncils([])
+      setTableData([])
+      setCount(0)
+      return
     })
   }
 
@@ -221,7 +177,6 @@ export const useCouncilView = ({
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
-    // handleUpdateRows,
     handleSearch,
   }
 }

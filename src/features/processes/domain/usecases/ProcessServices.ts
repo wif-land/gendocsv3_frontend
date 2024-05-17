@@ -1,60 +1,45 @@
 import { ProcessModel } from '../../data/models/ProcessesModel'
-// eslint-disable-next-line import/namespace
 import { ProcessesRepositoryImpl } from '../../data/repositories/ProcessesRepositoryImpl'
 import { IProcess } from '../entities/IProcess'
+import { IProcessFilters } from '../entities/IProcessFilters'
 import { ProcessesRepository } from '../repositories/ProcessesRepository'
 
 interface ProcessUseCases {
   create(process: IProcess): Promise<{
-    status: number
     process: ProcessModel
   }>
 
   getAll(): Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
   getById(id: number): Promise<{
-    status: number
     process: ProcessModel
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      processes: ProcessModel[]
-    }
-  }>
-
-  update(
-    id: number,
-    process: Partial<ProcessModel>,
-  ): Promise<{
-    status: number
-  }>
-
-  toggleProcessStatus(processes: Partial<IProcess>[]): Promise<{
-    status: number
+    count: number
     processes: ProcessModel[]
   }>
 
-  getAllProcessesByModuleId: (
+  update(id: number, process: Partial<ProcessModel>): Promise<void>
+
+  toggleProcessStatus(processes: Partial<IProcess>[]): Promise<{
+    processes: ProcessModel[]
+  }>
+
+  getAllProcessesByModuleId(
     moduleId: number,
     limit: number,
     offset: number,
-  ) => Promise<{
-    status: number
-    data: {
-      processes: ProcessModel[]
-      count: number
-    }
+  ): Promise<{
+    processes: ProcessModel[]
+    count: number
   }>
 }
 
@@ -81,14 +66,20 @@ export class ProcessesUseCasesImpl implements ProcessUseCases {
     throw new Error(`Method not implemented.${id}`)
   }
 
-  getByField = async (field: string, moduleId: number, limit = 5, offset = 0) =>
-    await this.processRepository.getByField(field, moduleId, limit, offset)
+  getByFilters = async (
+    filters: IProcessFilters,
+    moduleId: number,
+    limit = 5,
+    offset = 0,
+  ) =>
+    await this.processRepository.getByFilters(filters, moduleId, limit, offset)
 
-  update = async (id: number, process: Partial<ProcessModel>) =>
+  update = async (id: number, process: Partial<ProcessModel>) => {
     await this.processRepository.update({
       ...process,
       id,
     })
+  }
 
   getAllProcessesByModuleId = async (
     moduleId: number,

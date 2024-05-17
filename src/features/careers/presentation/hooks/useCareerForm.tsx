@@ -1,63 +1,42 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useMemo } from 'react'
-import { ICareer } from '../../domain/entities/ICareer'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  ICareer,
+  ICareerFormValues,
+  ICreateCareer,
+} from '../../domain/entities/ICareer'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { usePathname, useRouter } from 'next/navigation'
-import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
-import { useCareersStore } from '../state/careerStore'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
-import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+import { useCareersStore } from '../store/careerStore'
 import { getEditedFields } from '../../../../shared/utils/FormUtil'
-
-interface FormValuesProps extends ICareer {}
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { NewCareerSchema, resolveDefaultValues } from '../constants'
+import { FunctionaryUseCasesImpl } from '../../../.../../../features/functionaries/domain/usecases/FunctionaryServices'
 
 export const useCareerForm = (currentCareer?: ICareer) => {
-  let coordinator = ''
-
-  if (currentCareer?.coordinator) {
-    coordinator = `${(currentCareer?.coordinator as IFunctionary).firstName} ${
-      (currentCareer?.coordinator as IFunctionary).secondName
-    } ${(currentCareer?.coordinator as IFunctionary).firstLastName} ${
-      (currentCareer?.coordinator as IFunctionary).secondLastName
-    } - ${(currentCareer?.coordinator as IFunctionary).dni}`
-  }
-
-  const router = useRouter()
-  const pathname = usePathname()
-  const { functionaries, get } = useFunctionaryStore()
-  const { enqueueSnackbar } = useSnackbar()
-  const { addCareer, updateCareer } = useCareersStore()
-
-  const NewCareerSchema = Yup.object().shape({
-    name: Yup.string().required('Campo requerido'),
-    credits: Yup.number().required('Campo requerido').max(140).min(130),
-    coordinator: Yup.string().required('Campo requerido'),
-    menDegree: Yup.string().required('Campo requerido'),
-    womenDegree: Yup.string().required('Campo requerido'),
-    internshipHours: Yup.number().required('Campo requerido').max(250).min(230),
-    vinculationHours: Yup.number().required('Campo requerido').max(95).min(80),
-  })
+  const [inputValue, setInputValue] = useState('' as string)
+  const debouncedValue = useDebounce(inputValue)
+  const [loading, setIsLoading] = useState(false)
+  const isOpen = useBoolean()
 
   const defaultValues = useMemo(
-    () => ({
-      name: currentCareer?.name || '',
-      credits: currentCareer?.credits || 0,
-      menDegree: currentCareer?.menDegree || '',
-      womenDegree: currentCareer?.womenDegree || '',
-      coordinator: coordinator || '',
-      internshipHours: currentCareer?.internshipHours || 0,
-      vinculationHours: currentCareer?.vinculationHours || 0,
-      isActive: currentCareer?.isActive || true,
-    }),
+    () => resolveDefaultValues(currentCareer),
     [currentCareer],
   )
 
-  const methods = useForm<FormValuesProps>({
+  const router = useRouter()
+  const pathname = usePathname()
+  const { functionaries, get, setFunctionaries } = useFunctionaryStore()
+  const { enqueueSnackbar } = useSnackbar()
+  const { addCareer, updateCareer } = useCareersStore()
+
+  const methods = useForm<ICareerFormValues>({
     // @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'DeepPartial<FormValuesProps> | undefined'.
     resolver: yupResolver(NewCareerSchema),
     defaultValues,
@@ -69,69 +48,69 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     formState: { isSubmitting },
   } = methods
 
-  const handleCreate = useCallback(async (values: ICareer) => {
+  const handleCreate = useCallback(async (values: ICreateCareer) => {
     const result = await CareersUseCasesImpl.getInstance().create(values)
 
-    if (result.career) {
-      addCareer(result.career)
-      enqueueSnackbar('Carrera creada exitosamente')
+    if (result) {
+      addCareer(result)
     } else {
       throw new Error('Error al crear el consejo')
     }
   }, [])
 
-  const handleUpdate = async (id: number, editedFields: Partial<ICareer>) => {
-    const { status } = await CareersUseCasesImpl.getInstance().update(
-      id,
-      editedFields,
-    )
+  const handleUpdate = async (id: number, editedFields: ICareerFormValues) => {
+    const result = await CareersUseCasesImpl.getInstance().update(id, {
+      ...editedFields,
+      coordinator: editedFields.coordinator.id,
+    })
 
-    if (status === HTTP_STATUS_CODES.OK) {
-      updateCareer(editedFields)
-      enqueueSnackbar('Carrera actualizada exitosamente')
+    if (result) {
+      updateCareer({
+        ...editedFields,
+        coordinator: functionaries?.find(
+          (f) => f.id === editedFields.coordinator.id,
+        ) as any,
+      })
     } else {
       throw new Error('Error al actualizar el consejo')
     }
   }
 
   const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        const functionaryId = functionaries?.find(
-          (f) => f.dni === (data.coordinator as string).split('-')[1].trim(),
-        )?.id
+    async (data: ICareerFormValues) => {
+      if (!currentCareer) {
+        await handleCreate({
+          ...data,
+          coordinator: data.coordinator.id,
+        })
+      } else {
+        const editedFields = getEditedFields<ICareerFormValues>(
+          {
+            ...defaultValues,
+            coordinator: {
+              id: currentCareer.coordinator.id!,
+              label: `${currentCareer.coordinator.firstName} ${currentCareer.coordinator.secondName} ${currentCareer.coordinator.firstLastName} ${currentCareer.coordinator.secondLastName} - ${currentCareer.coordinator.dni}`,
+              ...currentCareer.coordinator,
+            },
+          },
+          data,
+        )
 
-        if (!currentCareer) {
-          await handleCreate({
-            ...data,
-            coordinator: functionaryId as number,
-          })
-        } else {
-          const editedFields = getEditedFields<FormValuesProps>(
-            defaultValues,
-            data,
-          )
-
-          if (editedFields?.coordinator) {
-            editedFields.coordinator = functionaryId as number
-          }
-
-          if (editedFields) {
-            await handleUpdate(currentCareer.id as number, editedFields)
-          }
+        if (editedFields?.coordinator) {
+          editedFields.coordinator = editedFields.coordinator
         }
 
-        router.push(
-          currentCareer
-            ? pathname.replace(new RegExp(`/${currentCareer.id}/edit`), '')
-            : pathname.replace('/new', ''),
-        )
-        reset()
-      } catch (error) {
-        enqueueSnackbar('Error al crear la carrera', {
-          variant: 'error',
-        })
+        if (editedFields) {
+          await handleUpdate(currentCareer.id as number, editedFields)
+        }
       }
+
+      router.push(
+        currentCareer
+          ? pathname.replace(new RegExp(`/${currentCareer.id}/edit`), '')
+          : pathname.replace('/new', ''),
+      )
+      reset()
     },
     [currentCareer, enqueueSnackbar, reset, router],
   )
@@ -143,10 +122,40 @@ export const useCareerForm = (currentCareer?: ICareer) => {
   }, [reset, currentCareer, defaultValues])
 
   useEffect(() => {
-    if (!functionaries) {
+    if (!functionaries.length) {
       get()
     }
   }, [])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (isOpen.value === false) return
+
+    setIsLoading(true)
+
+    const filteredFunctionaries = async (field: string) => {
+      await FunctionaryUseCasesImpl.getInstance()
+        .getByFilters({ field })
+        .then((res) => {
+          if (isMounted) {
+            setFunctionaries(res.functionaries)
+            return
+          }
+          setFunctionaries([])
+          setIsLoading(false)
+          return
+        })
+    }
+
+    if (debouncedValue.includes('-')) return
+
+    filteredFunctionaries(debouncedValue)
+
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedValue, isOpen.value])
 
   return {
     functionaries,
@@ -154,5 +163,8 @@ export const useCareerForm = (currentCareer?: ICareer) => {
     methods,
     onSubmit,
     handleSubmit,
+    setInputValue,
+    isOpen,
+    loading,
   }
 }

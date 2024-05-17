@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import useModulesStore from '../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 import Iconify from '../../iconify'
-import { useAuth } from '../../../features/auth/presentation/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { fetchModules } from '../../../features/modules/api/modules'
 import { LogoutnUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
@@ -27,23 +26,23 @@ const ICONS: {
   consejos: icon('solar:accessibility-bold'),
   documentos: icon('solar:document-bold'),
   actasdegrado: icon('solar:diploma-bold'),
-  procesos: icon('mdi:account-arrow-right'),
+  procesos: icon('clarity:process-on-vm-line'),
   estudiantes: icon('solar:user-bold'),
   funcionarios: icon('solar:user-broken'),
   carreras: icon('mdi:format-rotate-90'),
   usuarios: icon('mdi:account-check'),
   cargos: icon('mdi:account-child-circle'),
+  representantes: icon('mdi:account-multiple'),
 }
 
 export const useNavConfig = () => {
   const { user, retreiveFromCookie } = useAccountStore()
-  const { accessModules, setAccessModules } = useModulesStore()
-  const { modules, setModules } = useModulesStore()
+  const { accessModules, setAccessModules, modules, setModules } = useModulesStore()
 
   useEffect(() => {
     if (modules.length === 0) {
       fetchModules().then((data) => {
-        setModules(data.modules || [])
+        setModules(data)
       })
 
       return
@@ -73,8 +72,8 @@ export const useNavConfig = () => {
       const mainPath = `/dashboard/${module.code
         .toLowerCase()
         .replaceAll(' ', '_')}/${submodule.name
-        .toLowerCase()
-        .replaceAll(' ', '_')}`
+          .toLowerCase()
+          .replaceAll(' ', '_')}`
       const listPath = `${mainPath}`
       const createPath = `${mainPath}/new`
 

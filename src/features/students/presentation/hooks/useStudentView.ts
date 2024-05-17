@@ -4,7 +4,7 @@ import { useStudentStore } from '../state/studentStore'
 import { StudentModel } from '../../data/models/StudentModel'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useStudentCommands } from './useStudentCommands'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
+import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 
 interface Props {
   table: TableProps
@@ -12,7 +12,7 @@ interface Props {
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  field: string
+  filters: IStudentFilters
 }
 
 export const useStudentView = ({
@@ -21,7 +21,7 @@ export const useStudentView = ({
   isDataFiltered,
   visitedPages,
   setVisitedPages,
-  field,
+  filters,
 }: Props) => {
   const [tableData, setTableData] = useState<StudentModel[]>([])
   const { students, setStudents } = useStudentStore()
@@ -41,15 +41,17 @@ export const useStudentView = ({
 
     if (newPage > table.page) {
       if (isDataFiltered) {
-        fetchDataByField(field, table.rowsPerPage, newPage).then((response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setStudents([...(students || []), ...response.data.students])
-            setTableData([
-              ...(students as StudentModel[]),
-              ...response.data.students,
-            ])
-          }
-        })
+        fetchDataByField(filters, table.rowsPerPage, newPage).then(
+          (response) => {
+            if (response?.students.length > 0) {
+              setStudents([...(students || []), ...response.students])
+              setTableData([
+                ...(students as StudentModel[]),
+                ...response.students,
+              ])
+            }
+          },
+        )
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {
           if (data?.students) {
@@ -70,19 +72,18 @@ export const useStudentView = ({
     setVisitedPages([])
 
     if (isDataFiltered) {
-      fetchDataByField(field, parseInt(event.target.value, 10), 0).then(
+      fetchDataByField(filters, parseInt(event.target.value, 10), 0).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setStudents(response.data.students)
-            setTableData(response.data.students)
-            setCount(response.data.count)
+          if (response?.students.length > 0) {
+            setStudents(response.students)
+            setTableData(response.students)
+            setCount(response.count)
+            return
           }
 
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
-            setStudents([])
-            setTableData([])
-            setCount(0)
-          }
+          setStudents([])
+          setTableData([])
+          setCount(0)
         },
       )
     } else {
@@ -148,22 +149,22 @@ export const useStudentView = ({
     })
   }
 
-  const handleSearch = (field: string) => {
-    fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
-      if (response?.status === HTTP_STATUS_CODES.OK) {
-        setStudents(response.data.students)
-        setTableData(response.data.students)
-        setCount(response.data.count)
-        return
-      }
+  const handleSearch = (filters: IStudentFilters) => {
+    fetchDataByField(filters, table.rowsPerPage, table.page).then(
+      (response) => {
+        if (response?.students.length > 0) {
+          setStudents(response.students)
+          setTableData(response.students)
+          setCount(response.count)
+          return
+        }
 
-      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
         setStudents([])
         setTableData([])
         setCount(0)
         return
-      }
-    })
+      },
+    )
   }
 
   useEffect(() => {

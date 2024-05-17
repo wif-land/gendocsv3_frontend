@@ -1,45 +1,33 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { UserModel } from '../models/UserModel'
 import { IUser } from '../../domain/entities/IUser'
+import { IUserFilters } from '../../domain/entities/IUserFilters'
 
 export interface UserDataSource {
   getAll(
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
-  getByField(
-    field: string,
+  getByFilters(
     limit: number,
     offset: number,
+    filters: IUserFilters,
   ): Promise<{
-    status: number
-    data: {
-      count: number
-      users: UserModel[]
-    }
+    count: number
+    users: UserModel[]
   }>
 
   update(user: Partial<IUser>): Promise<{
-    status: number
-    data: {
-      user: UserModel
-      accessToken: string
-    }
+    user: UserModel
+    accessToken: string
   }>
 
-  create(user: IUser): Promise<{
-    status: number
-    user: UserModel
-  }>
+  create(user: IUser): Promise<UserModel>
 }
 
 export class UserDataSourceImpl implements UserDataSource {
@@ -56,79 +44,55 @@ export class UserDataSourceImpl implements UserDataSource {
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return {
-        status,
-        data: data.content as {
-          count: number
-          users: UserModel[]
-        },
-      }
+    if ('error' in result) {
+      return { count: 0, users: [] as UserModel[] }
     }
 
-    return {
-      status,
-      data: { count: 0, users: [] as UserModel[] },
-    }
+    return result.data as { count: number; users: UserModel[] }
   }
 
-  getByField = async (field: string, limit: number, offset: number) => {
-    const result = await AxiosClient.get(API_ROUTES.USERS.GET_BY_FIELD(field), {
-      params: { limit, offset },
+  getByFilters = async (
+    limit: number,
+    offset: number,
+    filters: IUserFilters,
+  ) => {
+    const result = await AxiosClient.get(API_ROUTES.USERS.GET_BY_FILTERS, {
+      params: { limit, offset, ...filters },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return {
-        status,
-        data: data.content as {
-          count: number
-          users: UserModel[]
-        },
-      }
+    if ('error' in result) {
+      return { count: 0, users: [] as UserModel[] }
     }
 
-    return {
-      status,
-      data: { count: 0, users: [] as UserModel[] },
-    }
+    return result.data as { count: number; users: UserModel[] }
   }
 
   update = async (user: Partial<IUser>) => {
-    const { id, ...body } = user
+    const { id, ...rest } = user
+
+    if (user.accessModules) {
+      rest.accessModules = user.accessModules.map((module) => module.id)
+    }
 
     const result = await AxiosClient.patch(
       API_ROUTES.USERS.UPDATE(id as number),
-      body,
+      rest,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return {
-        status,
-        data: data.content as { user: UserModel; accessToken: string },
-      }
+    if ('error' in result) {
+      return { user: {} as UserModel, accessToken: '' }
     }
 
-    return {
-      status,
-      data: data.content as { user: UserModel; accessToken: string },
-    }
+    return result.data as { user: UserModel; accessToken: string }
   }
 
   create = async (user: UserModel) => {
     const result = await AxiosClient.post(API_ROUTES.USERS.CREATE, user)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, user: {} as UserModel }
+    if ('error' in result) {
+      return {} as UserModel
     }
 
-    return { status, user: data.content as UserModel }
+    return result.data as UserModel
   }
 }

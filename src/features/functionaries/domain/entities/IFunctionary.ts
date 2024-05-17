@@ -1,3 +1,5 @@
+import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
+
 export interface IFunctionary {
   id?: number
   dni: string
@@ -9,9 +11,8 @@ export interface IFunctionary {
   personalEmail: string
   phoneNumber: string
   regularPhoneNumber: string
-  secondLevelDegree: string
-  thirdLevelDegree: string
-  fourthLevelDegree: string
+  thirdLevelDegree: number | IDegree
+  fourthLevelDegree?: number | IDegree
   isActive: boolean
   name?: string
 }

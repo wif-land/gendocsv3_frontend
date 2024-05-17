@@ -29,29 +29,23 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
 
   getAll = async () => await this.datasource.getAll()
 
-  create = async (processData: IDocument) => {
-    const result = await this.datasource.create(processData)
-    const { status } = result
-
-    return { status, document: result.document }
-  }
+  create = async (processData: IDocument) =>
+    await this.datasource.create(processData)
 
   deleteById = async (id: number) => {
     try {
       const result = await this.datasource.deleteById(id)
       const { status } = result
-      if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-        return { status }
+      if (status !== HTTP_STATUS_CODES.OK) {
+        return false
       }
-      return { status }
+
+      return true
     } catch (error) {
-      return { status: 500 }
+      return false
     }
   }
 
-  getNumerationByCouncil = async (councilId: number) => {
-    const result = await this.datasource.getNumerationByCouncil(councilId)
-
-    return result.data
-  }
+  getNumerationByCouncil = async (councilId: number) =>
+    await this.datasource.getNumerationByCouncil(councilId)
 }

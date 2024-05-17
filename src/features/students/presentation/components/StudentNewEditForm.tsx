@@ -12,13 +12,15 @@ import { RHFSelect, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { useStudentForm } from '../hooks/useStudentForm'
-import { CANTONES, GENDERS } from '../constants'
+
 import { MenuItem } from '@mui/material'
 import { Controller } from 'react-hook-form'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 
 import { IStudent } from '../../domain/entities/IStudent'
+import { useLocations } from '../../../../core/providers/locations-provider'
+import { GENDERS } from '../constants'
 
 type Props = {
   currentStudent?: IStudent
@@ -26,6 +28,7 @@ type Props = {
 
 export const StudentNewEditForm = ({ currentStudent }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const { cities } = useLocations()
   const { methods, onSubmit, careers } = useStudentForm(currentStudent)
   const {
     handleSubmit,
@@ -125,6 +128,74 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
               <RHFTextField
                 name="approvedCredits"
                 label="Créditos aprobados"
+                required
+                type="number"
+              />
+
+              <RHFTextField
+                name="vinculationHours"
+                label="Horas de vinculación"
+                type="number"
+              />
+
+              <RHFTextField
+                name="internshipHours"
+                label="Horas de pasantía"
+                type="number"
+              />
+
+              <Controller
+                name="startStudiesDate"
+                rules={{ required: true }}
+                control={control}
+                render={({ field }) => (
+                  <MobileDatePicker
+                    {...field}
+                    value={dayjs(field.value)}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        field.onChange(newValue)
+                      }
+                    }}
+                    label="Fecha de inicio de estudios"
+                    format="dddd/MM/YYYY"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                      },
+                    }}
+                    closeOnSelect
+                  />
+                )}
+              />
+
+              <Controller
+                name="endStudiesDate"
+                control={control}
+                render={({ field }) => (
+                  <MobileDatePicker
+                    {...field}
+                    value={dayjs(field.value)}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        field.onChange(newValue)
+                      }
+                    }}
+                    label="Fecha de fin de estudios"
+                    format="dddd/MM/YYYY"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                      },
+                    }}
+                    closeOnSelect
+                  />
+                )}
+              />
+
+              <RHFTextField
+                name="bachelorDegree"
+                label="Título de Bachillerato"
                 required
               />
 
@@ -229,9 +300,9 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
               </RHFSelect>
 
               <RHFSelect name="canton" label="Cantón de residencia">
-                {CANTONES.map((option) => (
-                  <MenuItem key={option.value} value={option.label}>
-                    {option.label}
+                {cities.map((option) => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.name}
                   </MenuItem>
                 ))}
               </RHFSelect>

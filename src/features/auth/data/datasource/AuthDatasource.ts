@@ -13,8 +13,6 @@ export interface AuthDataSource {
     email: string,
     password: string,
   ) => Promise<{
-    status: number
-    message?: string
     decoded?: IUser
   }>
 
@@ -36,29 +34,28 @@ export class AuthDataSourceImpl implements AuthDataSource {
   }
 
   login = async (email: string, password: string) => {
-    const result = await AxiosClient.post<{
-      accessToken: string
-    }>(API_ROUTES.AUTH.LOGIN, { email, password })
+    const result = await AxiosClient.post(API_ROUTES.AUTH.LOGIN, {
+      email,
+      password,
+    })
 
-    const {
-      status,
-      data: { message, content },
-    } = result
+    if ('error' in result) {
+      return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
+    }
 
-    if (status !== HTTP_STATUS_CODES.CREATED) return { status, message }
+    const { data } = result
 
-    await setCookie(ACCESS_TOKEN_COOKIE_NAME, content!.accessToken)
+    await setCookie(ACCESS_TOKEN_COOKIE_NAME, data)
 
-    const userData: IUserPayload = jwtDecode(content!.accessToken)
+    const userData: IUserPayload = jwtDecode(data as string)
 
     const { sub, ...userWithoutSub } = userData
 
-    return { status, decoded: { ...userWithoutSub, id: sub, sub } }
+    return { decoded: { ...userWithoutSub, id: sub, sub } }
   }
 
   logout = async () => {
     await setCookie(ACCESS_TOKEN_COOKIE_NAME, '')
-
     return {
       status: HTTP_STATUS_CODES.OK,
       message: 'Sesión cerrada',

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 
 export class FunctionaryModel implements IFunctionary {
@@ -12,9 +13,8 @@ export class FunctionaryModel implements IFunctionary {
   personalEmail: string
   phoneNumber: string
   regularPhoneNumber: string
-  secondLevelDegree: string
-  thirdLevelDegree: string
-  fourthLevelDegree: string
+  thirdLevelDegree: number | IDegree
+  fourthLevelDegree?: number | IDegree
   isActive: boolean
   name?: string
 
@@ -29,7 +29,6 @@ export class FunctionaryModel implements IFunctionary {
     this.personalEmail = props.personalEmail
     this.phoneNumber = props.phoneNumber
     this.regularPhoneNumber = props.regularPhoneNumber
-    this.secondLevelDegree = props.secondLevelDegree
     this.thirdLevelDegree = props.thirdLevelDegree
     this.fourthLevelDegree = props.fourthLevelDegree
     this.isActive = props.isActive
@@ -48,7 +47,6 @@ export class FunctionaryModel implements IFunctionary {
       personalEmail: json.personalEmail,
       phoneNumber: json.phoneNumber,
       regularPhoneNumber: json.regularPhoneNumber,
-      secondLevelDegree: json.secondLevelDegree,
       thirdLevelDegree: json.thirdLevelDegree,
       fourthLevelDegree: json.fourthLevelDegree,
       isActive: json.isActive,
@@ -68,7 +66,6 @@ export class FunctionaryModel implements IFunctionary {
       personalEmail: this.personalEmail,
       phoneNumber: this.phoneNumber,
       regularPhoneNumber: this.regularPhoneNumber,
-      secondLevelDegree: this.secondLevelDegree,
       thirdLevelDegree: this.thirdLevelDegree,
       fourthLevelDegree: this.fourthLevelDegree,
       isActive: this.isActive,

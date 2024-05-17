@@ -38,7 +38,7 @@ import {
   IProcessTableFilters,
   IProcessTableFilterValue,
   ProcessTableToolbar,
-} from '../components/ProcessTableTooldar'
+} from '../components/ProcessTableToolbar'
 import { defaultFilters, TABLE_HEAD } from '../constants'
 import { ProcessTableFiltersResult } from '../components/ProcessTableFiltersResult'
 
@@ -50,7 +50,6 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
   const confirm = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
 
   const [filters, setFilters] = useState<IProcessTableFilters>(defaultFilters)
 
@@ -81,7 +80,6 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
 
   const handleResetFilters = () => {
     setFilters(defaultFilters)
-    setSearchTerm('')
     setVisitedPages([])
     setIsDataFiltered(false)
     setTableData([])
@@ -101,7 +99,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    field: searchTerm,
+    filters,
     moduleId,
   })
 
@@ -109,7 +107,8 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
 
   const notFound =
     (!loader.length && count === 0) ||
-    (!loader.length && count === 0 && isDataFiltered)
+    (!loader.length && count === 0 && isDataFiltered) ||
+    !tableData
 
   return (
     <div key={moduleId}>
@@ -137,9 +136,9 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
           <ProcessTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            setSearchTerm={setSearchTerm}
             setVisitedPages={setVisitedPages}
             setIsDataFiltered={setIsDataFiltered}
+            isDataFiltered={isDataFiltered}
             table={table}
             setDataTable={setTableData}
             getFilteredProcesss={handleSearch}
@@ -192,13 +191,15 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                 />
 
                 <TableBody>
-                  {loader.length ? (
-                    [...Array(table.rowsPerPage)].map((i, index) => (
-                      <TableSkeleton key={index} sx={{ height: denseHeight }} />
-                    ))
-                  ) : (
-                    <>
-                      {tableData
+                  {loader.length
+                    ? [...Array(table.rowsPerPage)].map((i, index) => (
+                        <TableSkeleton
+                          key={index}
+                          sx={{ height: denseHeight }}
+                        />
+                      ))
+                    : tableData !== undefined &&
+                      tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -218,8 +219,6 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                             onViewRow={() => handleViewRow(row.id!.toString())}
                           />
                         ))}
-                    </>
-                  )}
 
                   <TableEmptyRows
                     height={denseHeight}
@@ -233,7 +232,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
           </TableContainer>
 
           <TablePaginationCustom
-            count={count}
+            count={count || 0}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}

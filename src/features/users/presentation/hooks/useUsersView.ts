@@ -2,10 +2,10 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useEffect } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useUsersMethods } from './useUsersMethods'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IUser } from '../../domain/entities/IUser'
 import { useUsersStore } from '../state/usersStore'
 import { UserModel } from '../../data/models/UserModel'
+import { IUserFilters } from '../../domain/entities/IUserFilters'
 
 interface Props {
   tableData: IUser[]
@@ -15,10 +15,10 @@ interface Props {
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  field: string
+  filters: IUserFilters
 }
 
-export const useFunctionaryView = ({
+export const useUserView = ({
   tableData,
   setTableData,
   table,
@@ -26,7 +26,7 @@ export const useFunctionaryView = ({
   isDataFiltered,
   visitedPages,
   setVisitedPages,
-  field,
+  filters,
 }: Props) => {
   const { users, setUsers } = useUsersStore()
   const { loader } = useLoaderStore()
@@ -39,7 +39,7 @@ export const useFunctionaryView = ({
         fetchData(table.rowsPerPage, table.page).then((data) => {
           if (data?.users) {
             setTableData(data.users)
-            setUsers(data.users as IUser[])
+            setUsers(data.users)
           }
           if (data?.count) {
             setCount(data.count)
@@ -64,12 +64,12 @@ export const useFunctionaryView = ({
 
     if (newPage > table.page) {
       if (isDataFiltered) {
-        fetchDataByField(field, table.rowsPerPage, newPage).then((response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setUsers([...users, ...response.data.users])
-            setTableData([...(users as IUser[]), ...response.data.users])
-          }
-        })
+        fetchDataByField(table.rowsPerPage, newPage, filters).then(
+          (response) => {
+            setUsers([...users, ...response.users])
+            setTableData([...(users as IUser[]), ...response.users])
+          },
+        )
       } else {
         fetchData(table.rowsPerPage, newPage).then((data) => {
           if (data?.users) {
@@ -90,15 +90,13 @@ export const useFunctionaryView = ({
     setVisitedPages([])
 
     if (isDataFiltered) {
-      fetchDataByField(field, parseInt(event.target.value, 10), 0).then(
+      fetchDataByField(table.rowsPerPage, table.page, filters).then(
         (response) => {
-          if (response?.status === HTTP_STATUS_CODES.OK) {
-            setUsers(response.data.users)
-            setTableData(response.data.users)
-            setCount(response.data.count)
-          }
-
-          if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
+          if (response?.users.length > 0) {
+            setUsers(response.users)
+            setTableData(response.users)
+            setCount(response.count)
+          } else {
             setUsers([])
             setTableData([])
             setCount(0)
@@ -106,7 +104,7 @@ export const useFunctionaryView = ({
         },
       )
     } else {
-      fetchData(parseInt(event.target.value, 10), table.page).then((data) => {
+      fetchData(table.rowsPerPage, table.page).then((data) => {
         if (data?.users) {
           setUsers(data.users)
           setTableData(data.users)
@@ -121,30 +119,33 @@ export const useFunctionaryView = ({
   const handleUpdateRow = (row: IUser) => {
     updateRow(row).then((data) => {
       if (data) {
-        setUsers(users?.map((user) => (user.id === data.id ? data : user)))
+        setUsers(
+          users?.map((user) => (user.id === data.user.id ? data.user : user)),
+        )
         setTableData(
-          (users as IUser[]).map((user) => (user.id === data.id ? data : user)),
+          (users as IUser[]).map((user) =>
+            user.id === data.user.id ? data.user : user,
+          ),
         )
       }
     })
   }
 
-  const handleSearch = (field: string) => {
-    fetchDataByField(field, table.rowsPerPage, table.page).then((response) => {
-      if (response?.status === HTTP_STATUS_CODES.OK) {
-        setUsers(response.data.users)
-        setTableData(response.data.users)
-        setCount(response.data.count)
-        return
-      }
+  const handleSearch = (filters: IUserFilters) => {
+    fetchDataByField(table.rowsPerPage, table.page, filters).then(
+      (response) => {
+        if (response?.users.length > 0) {
+          setUsers(response.users)
+          setTableData(response.users)
+          setCount(response.count)
+          return
+        }
 
-      if (response?.status === HTTP_STATUS_CODES.NOT_FOUND) {
         setUsers([])
         setTableData([])
         setCount(0)
-        return
-      }
-    })
+      },
+    )
   }
 
   return {

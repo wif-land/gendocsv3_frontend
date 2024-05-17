@@ -3,10 +3,10 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IProcess } from '../../domain/entities/IProcess'
+import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 
 export interface ProcessesDataSource {
   getAll(): Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
@@ -15,43 +15,29 @@ export interface ProcessesDataSource {
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      processes: ProcessModel[]
-      count: number
-    }
+    processes: ProcessModel[]
+    count: number
   }>
 
-  getByField(
-    field: string,
+  getByFilter(
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,
   ): Promise<{
-    status: number
-    data: {
-      processes: ProcessModel[]
-      count: number
-    }
-  }>
-
-  getById(id: number): Promise<{
-    status: number
-    process: ProcessModel
+    processes: ProcessModel[]
+    count: number
   }>
 
   update(process: Partial<IProcess>): Promise<{
-    status: number
     process: ProcessModel
   }>
 
   bulkUpdate(processes: Partial<IProcess>[]): Promise<{
-    status: number
     processes: ProcessModel[]
   }>
 
   create(process: IProcess): Promise<{
-    status: number
     process: ProcessModel
   }>
 }
@@ -72,68 +58,68 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     limit: number,
     offset: number,
   ) => {
-    const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_ALL, {
+    const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_BY_MODULE, {
       params: { moduleId, limit, offset },
     })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { processes: ProcessModel[]; count: number },
+        processes: [],
+        count: 0,
       }
     }
 
-    return { status, data: { processes: [], count: 0 } }
+    const { data } = result
+
+    return data as { processes: ProcessModel[]; count: number }
   }
 
   create = async (process: ProcessModel) => {
     const result = await AxiosClient.post(API_ROUTES.PROCESSES.CREATE, process)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, process: {} as ProcessModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        process: {} as ProcessModel,
+      }
     }
 
-    return { status, process: data.content as ProcessModel }
+    return result.data as { process: ProcessModel }
   }
 
   getAll = async () => {
     const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_ALL)
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-      return { status, processes: [] as ProcessModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        processes: [] as ProcessModel[],
+      }
     }
 
-    return { status, processes: data.content as ProcessModel[] }
+    return result.data as { processes: ProcessModel[] }
   }
 
-  getByField = async (
-    field: string,
+  getByFilter = async (
+    filters: IProcessFilters,
     moduleId: number,
     limit: number,
     offset: number,
   ) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.PROCESSES.GET_BY_FIELD(field),
-      {
-        params: { moduleId, limit, offset },
-      },
-    )
+    const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_BY_FILTERS, {
+      params: { ...filters, moduleId, limit, offset },
+    })
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
+    if ('error' in result) {
       return {
-        status,
-        data: data.content as { processes: ProcessModel[]; count: number },
+        processes: [] as ProcessModel[],
+        count: 0,
       }
     }
-    return { status, data: { processes: [], count: 0 } }
+
+    const { data } = result
+
+    return data as { processes: ProcessModel[]; count: number }
   }
 
   update = async (process: Partial<IProcess>) => {
@@ -144,27 +130,29 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
       rest,
     )
 
-    const { status, data } = result
-
-    if (status === HTTP_STATUS_CODES.OK) {
-      return { status, process: data.content as ProcessModel }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        process: {} as ProcessModel,
+      }
     }
 
-    return { status, process: {} as ProcessModel }
+    return result.data as { process: ProcessModel }
   }
 
   bulkUpdate = async (processes: IProcess[]) => {
-    const result = AxiosClient.patch(API_ROUTES.COUNCILS.BULK_UPDATE, processes)
+    const result = await AxiosClient.patch(
+      API_ROUTES.COUNCILS.BULK_UPDATE,
+      processes,
+    )
 
-    return result.then(({ status, data }) => {
-      if (status === HTTP_STATUS_CODES.OK) {
-        return { status, processes: data.content as ProcessModel[] }
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        processes: [] as ProcessModel[],
       }
-      return { status, processes: [] as ProcessModel[] }
-    })
-  }
+    }
 
-  getById = async (id: number) => {
-    throw new Error(`Method not implemented.${id}`)
+    return result.data as { processes: ProcessModel[] }
   }
 }

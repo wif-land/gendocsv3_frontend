@@ -1,6 +1,8 @@
 import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { IStudent } from '../../../../features/students/domain/entities/IStudent'
+import { IDegreeModality } from '../../../../core/providers/domain/entities/ICertificateProvider'
 
 interface StoreState {
   degreeCertificate: DegreeCertificateModel
@@ -11,11 +13,23 @@ interface StoreState {
 
 const STORE_NAME = 'degree-certificates-store'
 const DEFAULT_DEGREE_CERTIFICATE: DegreeCertificateModel = {
-  date: new Date(),
-  id: 0,
-  isActive: true,
-  name: '',
-}
+  number: 0,
+  auxNumber: 0,
+  topic: '',
+  presentationDate: new Date(),
+  student: {} as IStudent,
+  career: 0,
+  certificateType: 0,
+  certificateStatus: 0,
+  degreeModality: {} as IDegreeModality,
+  room: 0,
+  duration: 0,
+  link: '',
+  gradesSheetDriveId: '',
+  documentDriveId: '',
+  isClosed: false,
+} as DegreeCertificateModel
+
 const DEFAULT_DEGREE_CERTIFICATES: DegreeCertificateModel[] = []
 
 export const useDegreeCertificatesStore = create<StoreState>(

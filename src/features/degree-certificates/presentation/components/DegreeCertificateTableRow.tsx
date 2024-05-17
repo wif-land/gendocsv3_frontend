@@ -13,36 +13,45 @@ import Iconify from '../../../../core/iconify'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
-import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { IStudent } from '../../../../features/students/domain/entities/IStudent'
+import {
+  IDegreeModality,
+  IRoom,
+} from '../../../../core/providers/domain/entities/ICertificateProvider'
 
 type Props = {
   row: DegreeCertificateModel
   selected: boolean
   onEditRow: VoidFunction
-  onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
   activeState?: boolean | null
   isOnTable?: boolean
 }
 
-export const CouncilTableRow = ({
+export const DegreeCertificateTableRow = ({
   row,
   selected,
   onSelectRow,
   onDeleteRow,
   onEditRow,
-  onViewRow,
   isOnTable = true,
   activeState,
 }: Props) => {
-  const { isActive, date } = row
+  const { isClosed, presentationDate } = row
+
+  const studentName = `${(row.student as IStudent).firstName} ${
+    (row.student as IStudent).secondName
+  } ${(row.student as IStudent).firstLastName} ${
+    (row.student as IStudent).secondLastName
+  }`
 
   const confirm = useBoolean()
 
   const popover = usePopover()
 
-  const finalActiveState = activeState !== undefined ? activeState : isActive
+  const finalActiveState = activeState !== undefined ? activeState : isClosed
 
   return (
     <>
@@ -55,14 +64,36 @@ export const CouncilTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(date), 'p')}
+            primary={row.topic}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(date), 'dd MMM yyyy')}
+            primary={studentName}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondary={(row.student as IStudent).dni}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={format(new Date(presentationDate), 'dd MMM yyyy')}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={(row.degreeModality as IDegreeModality).name}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={(row.room as IRoom).name}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
@@ -75,9 +106,9 @@ export const CouncilTableRow = ({
           ) : (
             <Label
               variant="soft"
-              color={(finalActiveState === true && 'success') || 'primary'}
+              color={(finalActiveState === true && 'error') || 'success'}
             >
-              {finalActiveState === true ? 'Activo' : 'Inactivo'}
+              {finalActiveState === true ? 'Cerrado' : 'Abierto'}
             </Label>
           )}
         </TableCell>
@@ -100,16 +131,6 @@ export const CouncilTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onViewRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          Detalles
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             onEditRow()
             popover.onClose()
           }}
@@ -123,17 +144,17 @@ export const CouncilTableRow = ({
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={row.isActive ? { color: 'error.main' } : { color: 'green' }}
+          sx={row.isClosed ? { color: 'green' } : { color: 'error.main' }}
         >
-          {row.isActive ? (
+          {row.isClosed ? (
             <>
-              <Iconify icon="radix-icons:lock-closed" />
-              Desactivar
+              <Iconify icon="ei:check" />
+              Abrir
             </>
           ) : (
             <>
-              <Iconify icon="radix-icons:lock-open-2" />
-              Activar
+              <Iconify icon="simple-line-icons:close" width="48" height="48" />
+              Cerrar
             </>
           )}
         </MenuItem>
@@ -142,22 +163,26 @@ export const CouncilTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isActive ? 'Desactivar consejo' : 'Activar consejo'}
+        title={
+          row.isClosed
+            ? 'Marcar acta de grado como abierta'
+            : 'Marcar acta de grado como cerrada'
+        }
         content={
-          row.isActive
-            ? '¿Está seguro de desactivar este consejo?'
-            : '¿Está seguro de activar este consejo?'
+          row.isClosed
+            ? '¿Está seguro de marcar esta acta de grado como abierta?'
+            : '¿Está seguro de marcar esta acta de grado como cerrada?'
         }
         action={
           <Button
             variant="contained"
-            color={isActive ? 'error' : 'success'}
+            color={isClosed ? 'success' : 'error'}
             onClick={() => {
               onDeleteRow()
               confirm.onFalse()
             }}
           >
-            {isActive ? 'Desactivar' : 'Activar'}
+            {isClosed ? 'Abrir' : 'Cerrar'}
           </Button>
         }
       />

@@ -1,6 +1,5 @@
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
-import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { useAccountStore } from '../state/useAccountStore'
 import { enqueueSnackbar } from 'notistack'
 import { LoginUseCase } from '../../domain/usecases/loginUseCase'
@@ -52,28 +51,16 @@ export const useAuth = () => {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
-      try {
-        const { status, decoded } = await new LoginUseCase().call({
-          email: data.email,
-          password: data.password,
-        })
+      const { decoded } = await new LoginUseCase().call({
+        email: data.email,
+        password: data.password,
+      })
 
-        if (status === HTTP_STATUS_CODES.CREATED) {
-          decoded && setUser(decoded)
+      decoded && setUser(decoded)
 
-          enqueueSnackbar(`Bienvenido de vuelta ${decoded!.firstName}!`)
-
-          router.push('/dashboard')
-        } else {
-          throw new Error('Error al iniciar sesión')
-        }
-        reset()
-      } catch (error) {
-        enqueueSnackbar(
-          'Error al iniciar sesión, por favor verifica tus credenciales.',
-          { variant: 'error' },
-        )
-      }
+      enqueueSnackbar(`Bienvenido de vuelta ${decoded!.firstName}!`)
+      router.push('/dashboard')
+      reset()
     },
     [enqueueSnackbar, reset, router],
   )

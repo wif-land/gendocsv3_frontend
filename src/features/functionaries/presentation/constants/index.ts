@@ -4,6 +4,7 @@ import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { enqueueSnackbar } from 'notistack'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
+import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
 
 export interface FormValuesProps extends IFunctionary {}
 
@@ -50,7 +51,6 @@ export const NewFunctionarySchema = Yup.object().shape({
     ),
   phoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
   regularPhoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
   thirdLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
   fourthLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
 })
@@ -65,22 +65,14 @@ export const resolveDefaultValues = (currentFunctionary?: IFunctionary) => ({
   personalEmail: currentFunctionary?.personalEmail || '',
   phoneNumber: currentFunctionary?.phoneNumber || '',
   regularPhoneNumber: currentFunctionary?.regularPhoneNumber || '',
-  secondLevelDegree: currentFunctionary?.secondLevelDegree || '',
-  thirdLevelDegree: currentFunctionary?.thirdLevelDegree || '',
-  fourthLevelDegree: currentFunctionary?.fourthLevelDegree || '',
+  thirdLevelDegree: (currentFunctionary?.thirdLevelDegree as IDegree)?.id || 0,
+  fourthLevelDegree:
+    (currentFunctionary?.fourthLevelDegree as IDegree)?.id || 0,
   isActive: currentFunctionary?.isActive || true,
 })
 
-export const handleCreate = async (values: FormValuesProps) => {
-  const result = await FunctionaryUseCasesImpl.getInstance().create(values)
-
-  if (!result) {
-    enqueueSnackbar('Error al crear el funcionario', { variant: 'error' })
-    return
-  }
-
-  enqueueSnackbar('Funcionario creado con éxito', { variant: 'success' })
-}
+export const handleCreate = async (values: FormValuesProps) =>
+  await FunctionaryUseCasesImpl.getInstance().create(values)
 
 export const handleUpdate = async (
   id: number,
@@ -90,17 +82,8 @@ export const handleUpdate = async (
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
     })
-    return
+    return {}
   }
 
-  const result = await FunctionaryUseCasesImpl.getInstance().update(id, values)
-
-  if (!result) {
-    enqueueSnackbar('Error al actualizar el funcionario', {
-      variant: 'error',
-    })
-    return
-  }
-
-  enqueueSnackbar('Funcionario actualizado con éxito', { variant: 'success' })
+  return await FunctionaryUseCasesImpl.getInstance().update(id, values)
 }

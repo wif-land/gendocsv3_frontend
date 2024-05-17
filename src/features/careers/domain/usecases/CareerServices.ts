@@ -1,27 +1,13 @@
 import { CareerModel } from '../../data/models/CareerModel'
-import { CareerRepositoryImpl } from '../../data/repositories/CouncilRepositoryImpl'
-import { ICareer } from '../entities/ICareer'
+import { CareerRepositoryImpl } from '../../data/repositories/CareerRepositoryImpl'
+import { ICreateCareer, IUpdateCareer } from '../entities/ICareer'
 
 interface CareerUseCases {
-  create(Career: ICareer): Promise<{
-    status: number
-    career: CareerModel
-  }>
+  create(Career: ICreateCareer): Promise<CareerModel>
 
-  getAll(): Promise<
-    | {
-        status: number
-        careers: CareerModel[]
-      }
-    | boolean
-  >
+  getAll(): Promise<CareerModel[]>
 
-  update(
-    id: number,
-    Career: Partial<CareerModel>,
-  ): Promise<{
-    status: number
-  }>
+  update(id: number, career: IUpdateCareer): Promise<CareerModel>
 }
 
 export class CareersUseCasesImpl implements CareerUseCases {
@@ -38,20 +24,23 @@ export class CareersUseCasesImpl implements CareerUseCases {
   private careerRepository: CareerRepositoryImpl =
     CareerRepositoryImpl.getInstance()
 
-  create = async (career: ICareer) => await this.careerRepository.create(career)
-
-  getAll = async () => {
-    try {
-      return await this.careerRepository.getAll()
-    } catch (error) {
-      console.error('Error getting careers', error)
-      return false
+  create = async (career: ICreateCareer) => {
+    const data = {
+      ...career,
+      coordinator: career.coordinator || 0,
     }
+
+    delete data.id
+
+    return await this.careerRepository.create(data)
   }
 
-  update = async (id: number, career: Partial<CareerModel>) =>
+  update = async (id: number, career: IUpdateCareer) =>
     await this.careerRepository.update({
       ...career,
+      coordinator: career.coordinator || 0,
       id,
     })
+
+  getAll = async () => await this.careerRepository.getAll()
 }
