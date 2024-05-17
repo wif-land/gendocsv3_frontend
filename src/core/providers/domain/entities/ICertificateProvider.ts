@@ -10,6 +10,7 @@ export interface ICertificateType {
   id: number
   code: string
   name: string
+  driveId: string
   isActive: boolean
 }
 

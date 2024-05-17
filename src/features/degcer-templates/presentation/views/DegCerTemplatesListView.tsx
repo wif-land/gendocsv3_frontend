@@ -33,7 +33,7 @@ import { DegCerTableRow } from '../components/DegCerTemplateTableRow'
 import Iconify from '../../../../shared/sdk/iconify'
 import Link from 'next/link'
 
-const DegreeCertificateListView = () => {
+const DegCerTemplatesListView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
@@ -98,7 +98,7 @@ const DegreeCertificateListView = () => {
                 />
 
                 <TableBody>
-                  {loader.length ? (
+                  {!tableData ? (
                     [...Array(table.rowsPerPage)].map((i, index) => (
                       <TableSkeleton key={index} sx={{ height: denseHeight }} />
                     ))
@@ -152,4 +152,4 @@ const DegreeCertificateListView = () => {
   )
 }
 
-export default memo(DegreeCertificateListView)
+export default memo(DegCerTemplatesListView)
