@@ -25,6 +25,10 @@ export const useTemplateView = ({ processId }: Props) => {
 
   useEffect(() => {
     if (templates?.length !== 0) return
+  }, [templates])
+
+  useEffect(() => {
+    if (templates?.length !== 0) return
     templates = currentProcess?.templateProcesses
   }, [templates, processes, currentProcess, processId])
 
