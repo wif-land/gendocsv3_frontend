@@ -22,7 +22,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   duration: number
   link: string
   gradesSheetDriveId: string
-  documentDriveId: string
+  certificateDriveId: string
   isClosed: boolean
 
   constructor(data: IDegreeCertificate) {
@@ -40,7 +40,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
     this.duration = data.duration
     this.link = data.link
     this.gradesSheetDriveId = data.gradesSheetDriveId
-    this.documentDriveId = data.documentDriveId
+    this.certificateDriveId = data.certificateDriveId
     this.isClosed = data.isClosed
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,7 +60,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       duration: json.duration,
       link: json.link,
       gradesSheetDriveId: json.gradesSheetDriveId,
-      documentDriveId: json.documentDriveId,
+      certificateDriveId: json.documentDriveId,
       isClosed: json.isClosed,
     })
   }
@@ -81,7 +81,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       duration: this.duration,
       link: this.link,
       gradesSheetDriveId: this.gradesSheetDriveId,
-      documentDriveId: this.documentDriveId,
+      documentDriveId: this.certificateDriveId,
       isClosed: this.isClosed,
     }
   }

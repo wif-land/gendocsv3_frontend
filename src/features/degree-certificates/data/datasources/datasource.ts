@@ -8,6 +8,7 @@ export interface IDegreeCertificateDatasource {
   getAll(
     limit: number,
     offset: number,
+    carrerId: number,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -34,6 +35,8 @@ export interface IDegreeCertificateDatasource {
   }>
 
   getLastNumberToRegister(careerId: number): Promise<number>
+
+  generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -50,9 +53,9 @@ export class DegreeCertificateDatasourceImpl
     return DegreeCertificateDatasourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
+  getAll = async (limit: number, offset: number, carrerId: number) => {
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(carrerId),
       {
         params: { limit, offset },
       },
@@ -77,7 +80,7 @@ export class DegreeCertificateDatasourceImpl
     offset: number,
   ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(filters.career),
       {
         params: { ...filters, limit, offset },
       },
@@ -142,5 +145,17 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as number
+  }
+
+  generateDocument = async (degreeCertificateId: number) => {
+    const result = await AxiosClient.patch(
+      API_ROUTES.DEGREE_CERTIFICATES.GENERATE_DOCUMENT(degreeCertificateId),
+    )
+
+    if ('error' in result) {
+      return {} as DegreeCertificateModel
+    }
+
+    return result.data as DegreeCertificateModel
   }
 }

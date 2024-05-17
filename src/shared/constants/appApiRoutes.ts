@@ -98,7 +98,7 @@ export const API_ROUTES = {
     CREATE: '/positions',
   },
   DEGREE_CERTIFICATES: {
-    GET_ALL: '/degree-certificates',
+    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
     GET_BY_FILTERS: `/degree-certificates/filter`,
     UPDATE: (id: number) => `/degree-certificates/${id}`,
     DELETE: '/degree-certificates/:id',
@@ -107,6 +107,8 @@ export const API_ROUTES = {
       `/degree-certificates/numeration/generate/${careerId}`,
     GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>
       `/degree-certificates/numeration/last-number-to-register/${careerId}`,
+    GENERATE_DOCUMENT: (degreeCertificateId: number) =>
+      `/degree-certificates/generate-document/${degreeCertificateId}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL: 'degree-certificates/certificate-type-status-career',
