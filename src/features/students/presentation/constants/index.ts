@@ -4,6 +4,7 @@ import { enqueueSnackbar } from 'notistack'
 import { IStudent } from '../../domain/entities/IStudent'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
+import { ICity } from '../../../../core/providers/domain/entities/ILocationProvider'
 
 export interface FormValuesProps extends IStudent {}
 
@@ -64,10 +65,8 @@ export const NewStudentSchema = yup.object().shape({
     .min(0, 'Debe ser entre 0 y 140'),
   folio: yup.string().required(VALIDATION_MESSAGES.required),
   career: yup.number().required(VALIDATION_MESSAGES.required),
-  studyStartDate: yup.string().required(VALIDATION_MESSAGES.required),
   vinculationHours: yup.number(),
   internshipHours: yup.number(),
-  studyEndDate: yup.string(),
   bachelorDegree: yup.string(),
 })
 
@@ -88,14 +87,14 @@ export const resolveDefaultValues = (
   folio: currentStudent?.folio || '',
   gender: currentStudent?.gender || '',
   birthdate: currentStudent?.birthdate || '',
-  canton: currentStudent?.canton || '',
+  canton: (currentStudent?.canton as ICity)?.id || null,
   career: (currentStudent?.career as ICareer)?.id || null,
   approvedCredits: currentStudent?.approvedCredits || null,
-  studyStartDate: currentStudent?.studyStartDate || null,
+  startStudiesDate: currentStudent?.startStudiesDate || null,
   bachelorDegree: currentStudent?.bachelorDegree || null,
   vinculationHours: currentStudent?.vinculationHours || null,
   internshipHours: currentStudent?.internshipHours || null,
-  studyEndDate: currentStudent?.studyEndDate || null,
+  endStudiesDate: currentStudent?.endStudiesDate || null,
 })
 
 export const handleCreate = async (values: FormValuesProps) => {

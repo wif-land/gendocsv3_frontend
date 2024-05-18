@@ -4,6 +4,7 @@ import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { enqueueSnackbar } from 'notistack'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
+import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
 
 export interface FormValuesProps extends IFunctionary {}
 
@@ -64,8 +65,9 @@ export const resolveDefaultValues = (currentFunctionary?: IFunctionary) => ({
   personalEmail: currentFunctionary?.personalEmail || '',
   phoneNumber: currentFunctionary?.phoneNumber || '',
   regularPhoneNumber: currentFunctionary?.regularPhoneNumber || '',
-  thirdLevelDegree: currentFunctionary?.thirdLevelDegree || '',
-  fourthLevelDegree: currentFunctionary?.fourthLevelDegree || '',
+  thirdLevelDegree: (currentFunctionary?.thirdLevelDegree as IDegree)?.id || 0,
+  fourthLevelDegree:
+    (currentFunctionary?.fourthLevelDegree as IDegree)?.id || 0,
   isActive: currentFunctionary?.isActive || true,
 })
 

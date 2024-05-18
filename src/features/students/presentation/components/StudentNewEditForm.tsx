@@ -12,13 +12,15 @@ import { RHFSelect, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { useStudentForm } from '../hooks/useStudentForm'
-import { CANTONES, GENDERS } from '../constants'
+
 import { MenuItem } from '@mui/material'
 import { Controller } from 'react-hook-form'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 
 import { IStudent } from '../../domain/entities/IStudent'
+import { useLocations } from '../../../../core/providers/locations-provider'
+import { GENDERS } from '../constants'
 
 type Props = {
   currentStudent?: IStudent
@@ -26,6 +28,7 @@ type Props = {
 
 export const StudentNewEditForm = ({ currentStudent }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const { cities } = useLocations()
   const { methods, onSubmit, careers } = useStudentForm(currentStudent)
   const {
     handleSubmit,
@@ -142,7 +145,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
               />
 
               <Controller
-                name="studyStartDate"
+                name="startStudiesDate"
                 rules={{ required: true }}
                 control={control}
                 render={({ field }) => (
@@ -167,7 +170,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
               />
 
               <Controller
-                name="studyEndDate"
+                name="endStudiesDate"
                 control={control}
                 render={({ field }) => (
                   <MobileDatePicker
@@ -297,9 +300,9 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
               </RHFSelect>
 
               <RHFSelect name="canton" label="Cantón de residencia">
-                {CANTONES.map((option) => (
-                  <MenuItem key={option.value} value={option.label}>
-                    {option.label}
+                {cities.map((option) => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.name}
                   </MenuItem>
                 ))}
               </RHFSelect>

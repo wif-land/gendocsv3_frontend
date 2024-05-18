@@ -15,6 +15,7 @@ import { useCareersStore } from '../../../careers/presentation/store/careerStore
 import { IStudent } from '../../domain/entities/IStudent'
 import { transformData } from '../utils'
 import { useStudentCommands } from '../hooks/useStudentCommands'
+import { useLocations } from '../../../../core/providers/locations-provider'
 
 interface Props extends DialogProps {
   title?: string
@@ -35,6 +36,7 @@ export const StudentBulkUploadDialog = ({
   const [files, setFiles] = useState<(File | string)[]>([])
   const [students, setStudents] = useState<IStudent[]>([])
   const { careers, get: getCareers } = useCareersStore()
+  const { cities } = useLocations()
   const { bulkCreate } = useStudentCommands()
 
   const handleDrop = useCallback(
@@ -76,7 +78,9 @@ export const StudentBulkUploadDialog = ({
       const worksheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[worksheetName]
       const data = XLSX.utils.sheet_to_json(worksheet)
-      const transformedData = transformData(data, careers)
+      console.log(data)
+      const transformedData = transformData(data, careers, cities)
+      console.log(transformedData)
       setStudents(transformedData)
     } catch (error) {
       console.error(error)

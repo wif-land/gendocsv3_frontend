@@ -6,6 +6,7 @@ import { DegreeModalityModel } from '../models/degreeModalityModel'
 import { ProvinceModel } from '../models/provinceModel'
 import { RoomModel } from '../models/roomModel'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
+import { DegreeModel } from '../models/degreeModel'
 
 export interface ProvidersDataSource {
   getAllCities(): Promise<CityModel[]>
@@ -19,6 +20,8 @@ export interface ProvidersDataSource {
   getAllDegreeModalities(): Promise<DegreeModalityModel[]>
 
   getAllRooms(): Promise<RoomModel[]>
+  
+  getAllDegrees(): Promise<DegreeModel[]>
 }
 
 export class ProvidersDataSourceImpl implements ProvidersDataSource {
@@ -92,5 +95,14 @@ export class ProvidersDataSourceImpl implements ProvidersDataSource {
     }
 
     return result.data as RoomModel[]
+  } 
+
+  async getAllDegrees(): Promise<DegreeModel[]> {
+      const result = await AxiosClient.get(API_ROUTES.DEGREES.GET_ALL)
+
+      if ('error' in result) {
+        return [] as DegreeModel[]
+      }
+      return result.data as DegreeModel[]
   }
 }

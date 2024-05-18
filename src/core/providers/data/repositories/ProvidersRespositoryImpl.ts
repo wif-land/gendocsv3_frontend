@@ -33,4 +33,6 @@ export class ProvidersRepositoryImpl implements ProvidersRepository {
     await this.datasource.getAllDegreeModalities()
 
   getAllRooms = async () => await this.datasource.getAllRooms()
+
+  getAllDegrees = async () => await this.datasource.getAllDegrees()
 }
