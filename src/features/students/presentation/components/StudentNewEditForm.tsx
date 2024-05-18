@@ -55,7 +55,15 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
           {!mdUp && <CardHeader title="Detalles" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="dni" label="Cédula de identidad" required />
+            <RHFTextField
+              name="dni"
+              type="tel"
+              label="Cédula de identidad"
+              required
+              inputProps={{
+                maxLength: 10,
+              }}
+            />
 
             <Divider />
 
@@ -70,17 +78,41 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 },
               }}
             >
-              <RHFTextField name="firstName" label="Primer nombre" required />
+              <RHFTextField
+                name="firstName"
+                label="Primer nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
-              <RHFTextField name="secondName" label="Segundo nombre" />
+              <RHFTextField
+                name="secondName"
+                label="Segundo nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
               <RHFTextField
                 name="firstLastName"
                 label="Primer apellido"
                 required
+                inputProps={{
+                  maxLength: 50,
+                }}
               />
 
-              <RHFTextField name="secondLastName" label="Segundo apellido" />
+              <RHFTextField
+                name="secondLastName"
+                label="Segundo apellido"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
             </Box>
           </Stack>
         </Card>
@@ -159,6 +191,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                     }}
                     label="Fecha de inicio de estudios"
                     format="dddd/MM/YYYY"
+                    minDate={dayjs().subtract(50, 'year')}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -188,6 +221,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                         fullWidth: true,
                       },
                     }}
+                    minDate={dayjs().subtract(45, 'year')}
                     closeOnSelect
                   />
                 )}
@@ -197,11 +231,28 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 name="bachelorDegree"
                 label="Título de Bachillerato"
                 required
+                inputProps={{
+                  maxLength: 100,
+                }}
               />
 
-              <RHFTextField name="folio" label="Folio" required />
+              <RHFTextField
+                name="folio"
+                label="Folio"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
-              <RHFTextField name="registration" label="Matrícula" required />
+              <RHFTextField
+                name="registration"
+                label="Matrícula"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
             </Box>
           </Stack>
         </Card>
@@ -252,10 +303,21 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
               <RHFTextField
                 name="phoneNumber"
                 label="Número de celular"
+                type="tel"
                 required
+                inputProps={{
+                  maxLength: 10,
+                }}
               />
 
-              <RHFTextField name="regularPhoneNumber" label="Teléfono fijo" />
+              <RHFTextField
+                name="regularPhoneNumber"
+                label="Teléfono fijo"
+                type="tel"
+                inputProps={{
+                  maxLength: 10,
+                }}
+              />
             </Box>
           </Stack>
         </Card>
@@ -329,6 +391,8 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                       },
                     }}
                     disableFuture
+                    maxDate={dayjs().subtract(18, 'year')}
+                    minDate={dayjs().subtract(100, 'year')}
                     closeOnSelect
                   />
                 )}

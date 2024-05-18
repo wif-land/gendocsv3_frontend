@@ -42,15 +42,20 @@ export const useStudentForm = (currentStudent?: IStudent) => {
 
   const onSubmit = useCallback(
     async (data: IStudent) => {
+      let result = {}
       if (!currentStudent) {
-        await handleCreate(data)
+        result = await handleCreate(data)
       } else {
         const editedFields = getEditedFields<Partial<IStudent>>(
           defaultValues,
           data,
         )
 
-        await handleUpdate(currentStudent.id!, editedFields)
+        result = await handleUpdate(currentStudent.id!, editedFields)
+      }
+
+      if (result.id === 0) {
+        return
       }
 
       const newPath = currentStudent

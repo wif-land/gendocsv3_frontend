@@ -1,13 +1,16 @@
 import * as Yup from 'yup'
 
 import {
-  ICreateFunctionary,
   IFunctionary,
   IFunctionaryFormValues,
 } from '../../domain/entities/IFunctionary'
 import { enqueueSnackbar } from 'notistack'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
-import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
+import {
+  DEFAULT_PERSON_SCHEMA,
+  VALIDATION_MESSAGES,
+  resolveDefaultSchema,
+} from '../../../../shared/utils/FormUtil'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
 
@@ -37,24 +40,7 @@ export const TABLE_HEAD = [
 ]
 
 export const NewFunctionarySchema = Yup.object().shape({
-  dni: Yup.string().required(VALIDATION_MESSAGES.required),
-  firstName: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondName: Yup.string().required(VALIDATION_MESSAGES.required),
-  firstLastName: Yup.string().required(VALIDATION_MESSAGES.required),
-  secondLastName: Yup.string().required(VALIDATION_MESSAGES.required),
-  outlookEmail: Yup.string()
-    .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@uta\.edu\.ec$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
-  personalEmail: Yup.string()
-    .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
-  phoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
+  ...DEFAULT_PERSON_SCHEMA.fields,
   regularPhoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
   thirdLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
   fourthLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
@@ -63,14 +49,7 @@ export const NewFunctionarySchema = Yup.object().shape({
 export const resolveDefaultValues = (
   currentFunctionary?: IFunctionary,
 ): IFunctionaryFormValues => ({
-  dni: currentFunctionary?.dni || '',
-  firstName: currentFunctionary?.firstName || '',
-  secondName: currentFunctionary?.secondName || '',
-  firstLastName: currentFunctionary?.firstLastName || '',
-  secondLastName: currentFunctionary?.secondLastName || '',
-  outlookEmail: currentFunctionary?.outlookEmail || '',
-  personalEmail: currentFunctionary?.personalEmail || '',
-  phoneNumber: currentFunctionary?.phoneNumber || '',
+  ...resolveDefaultSchema(currentFunctionary),
   regularPhoneNumber: currentFunctionary?.regularPhoneNumber || '',
   thirdLevelDegree: (currentFunctionary?.thirdLevelDegree as IDegree)?.id || 0,
   fourthLevelDegree:
