@@ -22,7 +22,7 @@ export const usePositionStore = create<StoreState>(
           limit,
           offset,
         )
-        set({ positions: result.data.positions })
+        set({ positions: result.positions })
       },
     }),
     {

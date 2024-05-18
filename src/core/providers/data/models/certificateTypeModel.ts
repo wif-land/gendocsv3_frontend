@@ -5,12 +5,14 @@ export class CertificateTypeModel implements ICertificateType {
   name: string
   isActive: boolean
   code: string
+  driveId: string
 
   constructor(certificateType: ICertificateType) {
     this.id = certificateType.id
     this.name = certificateType.name
     this.isActive = certificateType.isActive
     this.code = certificateType.code
+    this.driveId = certificateType.driveId
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,6 +25,7 @@ export class CertificateTypeModel implements ICertificateType {
         name: json.name,
         isActive: json.isActive,
         code: json.code,
+        driveId: json.driveId,
       })
 
       return certificateType
@@ -40,6 +43,7 @@ export class CertificateTypeModel implements ICertificateType {
       name: this.name,
       isActive: this.isActive,
       code: this.code,
+      driveId: this.driveId,
     }
   }
 }

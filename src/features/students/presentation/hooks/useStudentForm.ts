@@ -42,7 +42,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
 
   const onSubmit = useCallback(
     async (data: IStudent) => {
-      let result = {}
+      let result
       if (!currentStudent) {
         result = await handleCreate(data)
       } else {

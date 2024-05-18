@@ -40,6 +40,7 @@ import { CouncilTableRow } from '../components/CouncilTableRow'
 import { CouncilTableFiltersResult } from '../components/CouncilTableFiltersResult'
 import { TABLE_HEAD, defaultFilters } from '../constants'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
+import { useCouncilsMethods } from '../hooks/useCouncilsMethods'
 
 const CouncilListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
@@ -91,7 +92,6 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleSearch,
-    handleUpdateRow,
   } = useCouncilView({
     table,
     isDataFiltered,
@@ -100,6 +100,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     filters: filters as ICouncilFilters,
     moduleId,
   })
+  const { updateRow } = useCouncilsMethods()
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
@@ -209,7 +210,12 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() => handleUpdateRow(row)}
+                            onDeleteRow={() =>
+                              updateRow({
+                                isActive: !row.isActive,
+                                id: row.id!,
+                              })
+                            }
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onViewRow={() => handleViewRow(row.id!.toString())}
                           />

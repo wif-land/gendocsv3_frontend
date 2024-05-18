@@ -22,7 +22,7 @@ export const useStudentStore = create<StoreState>(
           limit,
           offset,
         )
-        set({ students: result.data.students })
+        set({ students: result.students })
       },
     }),
     {

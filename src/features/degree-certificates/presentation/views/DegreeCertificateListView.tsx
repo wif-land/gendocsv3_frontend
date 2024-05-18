@@ -34,13 +34,13 @@ import { TABLE_HEAD, defaultFilters } from '../constants'
 import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
 import {
   DegreeCertificatesTableToolbar,
+  IDegreeCertificateTableFilterValue,
   IDegreeCertificateTableFilters,
 } from '../components/DegreeCertificateTableToolbar'
 import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
 import CustomPopover, {
   usePopover,
 } from '../../../../shared/sdk/custom-popover'
-import { DegreeCertificateTableFiltersResult } from '../components/DegreeCertificateTableFiltersResult'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
@@ -91,7 +91,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   ]
 
   const handleFilters = useCallback(
-    (name: string, value: IDegreeCertificateTableFilters) => {
+    (name: string, value: IDegreeCertificateTableFilterValue) => {
       table.onResetPage()
       setFilters((prevState) => ({
         ...prevState,
@@ -107,13 +107,6 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     },
     [router],
   )
-
-  const handleResetFilters = () => {
-    setFilters(defaultFilters)
-    setVisitedPages([])
-    setIsDataFiltered(false)
-    setTableData([])
-  }
 
   const onGenerateDocument = useCallback(
     async (row: DegreeCertificateModel) => {
@@ -190,7 +183,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            // getFilteredCouncils={handleSearch}
+            getFilteredCouncils={() => console.log('hi')}
           />
 
           {/* {isDataFiltered && (

@@ -35,6 +35,7 @@ export const useDegreeCertificateForm = (
     [currentDegreeCertificate],
   )
   const methods = useForm<FormValuesProps>({
+    // @ts-expect-error - The resolver is not being recognized
     resolver: yupResolver(NewDegreeCertificateSchema),
     defaultValues,
   })

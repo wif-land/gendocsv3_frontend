@@ -146,7 +146,7 @@ export const DegreeCertificateNewEditForm = ({
             <TextField
               name="student.endStudiesDate"
               label="Fecha de finalización de estudios"
-              value={getValues('student').studyEndDate || ''}
+              value={getValues('student').endStudiesDate || ''}
               // required
               sx={{ flexGrow: 1 }}
             />

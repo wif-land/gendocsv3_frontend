@@ -1,16 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Stack from '@mui/material/Stack'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
-import { usePopover } from '../../../../shared/sdk/custom-popover'
-import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
-import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { TableProps } from '../../../../shared/sdk/table'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { useCareersStore } from '../../../../features/careers/presentation/store/careerStore'
 import { CareerFilter } from '../../../../shared/sdk/filters/career-filter'
 import { SelectChangeEvent } from '@mui/material'
 
@@ -35,24 +29,10 @@ type Props = {
 export const DegreeCertificatesTableToolbar = ({
   filters,
   onFilters,
-  setVisitedPages,
   isDataFiltered,
   setIsDataFiltered,
-  table,
-  setDataTable,
-  getFilteredCouncils,
 }: Props) => {
-  const popover = usePopover()
-  const [inputValue, setInputValue] = useState(undefined as string | undefined)
-  const debouncedValue = useDebounce(inputValue ? inputValue : '')
-  const { careers } = useCareersStore()
-
-  const resetValues = () => {
-    setVisitedPages([])
-    setDataTable([])
-    setIsDataFiltered(false)
-  }
-
+  const [, setInputValue] = useState(undefined as string | undefined)
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
     !isDataFiltered && setIsDataFiltered(true)

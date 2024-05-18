@@ -3,7 +3,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { useParams } from 'next/navigation'
 import { CouncilAttendanceServices } from '../../domain/usecases/CouncilAttendanceServices'
@@ -22,13 +22,14 @@ export const CouncilDetailAttendance = () => {
   const isSubmitting = useBoolean(false)
 
   const handleCheckOrUncheck = (member: ICouncilAttendee) => {
-    setMembersToNotify((prev) => {
-      if (!membersToNotify.includes(member.id!)) {
-        return [...prev, member.id]
-      }
+    const alreadyInList = membersToNotify?.includes(member.id!)
 
-      return prev.filter((id) => id !== member.id) || []
-    })
+    if (alreadyInList) {
+      setMembersToNotify((prev) => prev?.filter((id) => id !== member.id))
+      return
+    }
+
+    setMembersToNotify((prev) => [...(prev || []), member.id!])
   }
 
   const handleNotify = async () => {

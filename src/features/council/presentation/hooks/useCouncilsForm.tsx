@@ -137,7 +137,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         if (!isMounted) return
 
         if (result.functionaries.length > 0) {
-          const usedFunctionaries = methods.getValues().members
+          // const usedFunctionaries = methods.getValues().members
 
           // const filteredFunctionaries = result.functionaries.filter(
           //   (functionary) =>
