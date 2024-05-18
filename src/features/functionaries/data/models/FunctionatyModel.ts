@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 
 export class FunctionaryModel implements IFunctionary {
@@ -13,8 +12,8 @@ export class FunctionaryModel implements IFunctionary {
   personalEmail: string
   phoneNumber: string
   regularPhoneNumber: string
-  thirdLevelDegree: number | IDegree
-  fourthLevelDegree?: number | IDegree
+  thirdLevelDegree: number
+  fourthLevelDegree: number
   isActive: boolean
   name?: string
 
@@ -29,15 +28,15 @@ export class FunctionaryModel implements IFunctionary {
     this.personalEmail = props.personalEmail
     this.phoneNumber = props.phoneNumber
     this.regularPhoneNumber = props.regularPhoneNumber
-    this.thirdLevelDegree = props.thirdLevelDegree
-    this.fourthLevelDegree = props.fourthLevelDegree
+    this.thirdLevelDegree = props.thirdLevelDegree as number
+    this.fourthLevelDegree = props.fourthLevelDegree as number
     this.isActive = props.isActive
     this.name = `${this.firstName} ${this.secondName} ${this.firstLastName} ${this.secondLastName}`
   }
 
   static fromJson(json: Record<string, any>): FunctionaryModel {
     return new FunctionaryModel({
-      id: json.id,
+      id: json.id || 0,
       dni: json.dni,
       firstName: json.firstName,
       secondName: json.secondName,

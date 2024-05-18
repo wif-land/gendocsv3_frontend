@@ -55,10 +55,7 @@ export const useAuth = () => {
         email: data.email,
         password: data.password,
       })
-
       decoded && setUser(decoded)
-
-      enqueueSnackbar(`Bienvenido de vuelta ${decoded!.firstName}!`)
       router.push('/dashboard')
       reset()
     },

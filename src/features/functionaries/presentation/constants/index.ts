@@ -1,9 +1,14 @@
 import * as Yup from 'yup'
 
-import { IFunctionary } from '../../domain/entities/IFunctionary'
+import {
+  ICreateFunctionary,
+  IFunctionary,
+  IFunctionaryFormValues,
+} from '../../domain/entities/IFunctionary'
 import { enqueueSnackbar } from 'notistack'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
+import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
 
 export interface FormValuesProps extends IFunctionary {}
@@ -55,7 +60,9 @@ export const NewFunctionarySchema = Yup.object().shape({
   fourthLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
 })
 
-export const resolveDefaultValues = (currentFunctionary?: IFunctionary) => ({
+export const resolveDefaultValues = (
+  currentFunctionary?: IFunctionary,
+): IFunctionaryFormValues => ({
   dni: currentFunctionary?.dni || '',
   firstName: currentFunctionary?.firstName || '',
   secondName: currentFunctionary?.secondName || '',
@@ -71,18 +78,18 @@ export const resolveDefaultValues = (currentFunctionary?: IFunctionary) => ({
   isActive: currentFunctionary?.isActive || true,
 })
 
-export const handleCreate = async (values: FormValuesProps) =>
+export const handleCreate = async (values: IFunctionaryFormValues) =>
   await FunctionaryUseCasesImpl.getInstance().create(values)
 
 export const handleUpdate = async (
   id: number,
-  values: Partial<IFunctionary> | null,
+  values: Partial<IFunctionaryFormValues>,
 ) => {
   if (!values) {
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
     })
-    return {}
+    return FunctionaryModel.fromJson({})
   }
 
   return await FunctionaryUseCasesImpl.getInstance().update(id, values)

@@ -1,5 +1,8 @@
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
-import { IFunctionary } from '../entities/IFunctionary'
+import {
+  ICreateFunctionary,
+  IUpdateFunctionary,
+} from '../entities/IFunctionary'
 import { IFunctionaryFilters } from '../entities/IFunctionaryFilters'
 
 export interface FunctionaryRepository {
@@ -20,9 +23,9 @@ export interface FunctionaryRepository {
     functionaries: FunctionaryModel[]
   }>
 
-  update: (data: Partial<IFunctionary>) => Promise<FunctionaryModel>
+  update: (data: IUpdateFunctionary) => Promise<FunctionaryModel>
 
-  bulkUpdate: (data: Partial<IFunctionary>[]) => Promise<FunctionaryModel[]>
+  bulkUpdate: (data: IUpdateFunctionary[]) => Promise<FunctionaryModel[]>
 
-  create: (data: IFunctionary) => Promise<FunctionaryModel>
+  create: (data: ICreateFunctionary) => Promise<FunctionaryModel>
 }

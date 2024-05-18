@@ -27,7 +27,7 @@ type Props = {
   getFilteredUsers: (filters: IUsersTableFilters) => void
 }
 
-export const FunctionaryTableToolbar = ({
+export const UsersTableToolbar = ({
   filters,
   onFilters,
   setVisitedPages,

@@ -8,13 +8,11 @@ import {
   TableHeadCustom,
   TableNoData,
   TablePaginationCustom,
-  TableSelectedAction,
   TableSkeleton,
   emptyRows,
   useTable,
 } from '../../../../shared/sdk/table'
 import { useUserView } from '../hooks/useUsersView'
-import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import {
   Button,
@@ -30,7 +28,7 @@ import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { RouterLink } from '../../../../core/routes/components'
 import { UsersTableRow } from '../components/UsersTableRow'
 import {
-  FunctionaryTableToolbar,
+  UsersTableToolbar,
   IUsersTableFilterValue,
   IUsersTableFilters,
 } from '../components/UsersTableToolbar'
@@ -85,8 +83,6 @@ const UsersListView = () => {
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
-  const confirm = useBoolean()
-
   const handleEditRow = useCallback(
     (id: string) => {
       router.push(`${pathname}/${id}/edit`)
@@ -128,7 +124,7 @@ const UsersListView = () => {
         />
 
         <Card>
-          <FunctionaryTableToolbar
+          <UsersTableToolbar
             filters={filters}
             onFilters={handleFilters}
             setVisitedPages={setVisitedPages}
@@ -148,17 +144,6 @@ const UsersListView = () => {
           )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={tableData.length}
-              action={
-                <Button color="primary" onClick={confirm.onTrue}>
-                  Cambiar estado
-                </Button>
-              }
-            />
-
             <Scrollbar>
               <Table
                 size={table.dense ? 'small' : 'medium'}

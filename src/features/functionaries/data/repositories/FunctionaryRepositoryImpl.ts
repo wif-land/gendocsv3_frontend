@@ -1,11 +1,13 @@
-import { IFunctionary } from '../../domain/entities/IFunctionary'
+import {
+  ICreateFunctionary,
+  IUpdateFunctionary,
+} from '../../domain/entities/IFunctionary'
 import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
 import { FunctionaryRepository } from '../../domain/repositories/FunctionaryRepository'
 import {
   FunctionaryDataSource,
   FunctionaryDataSourceImpl,
 } from '../datasources/FunctionaryDatasource'
-import { FunctionaryModel } from '../models/FunctionatyModel'
 
 export class FunctionaryRepositoryImpl implements FunctionaryRepository {
   static instance: FunctionaryRepositoryImpl
@@ -31,11 +33,15 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
     offset: number,
   ) => await this.datasource.getByFilters(filters, limit, offset)
 
-  update = async (data: Partial<FunctionaryModel>) =>
+  update = async (data: IUpdateFunctionary) =>
     await this.datasource.update(data)
 
-  bulkUpdate = async (data: Partial<IFunctionary>[]) =>
+  bulkUpdate = async (data: IUpdateFunctionary[]) =>
     await this.datasource.bulkUpdate(data)
 
-  create = async (data: IFunctionary) => await this.datasource.create(data)
+  create = async (data: ICreateFunctionary) => {
+    const result = await this.datasource.create(data)
+    console.log({ result }, 'result')
+    return result
+  }
 }

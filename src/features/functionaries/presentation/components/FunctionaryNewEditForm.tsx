@@ -25,7 +25,6 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const { methods, onSubmit } = useFunctionaryForm(currentFunctionary)
   const { degrees } = useDegreeData()
-  console.log(degrees)
 
   const {
     handleSubmit,
@@ -50,7 +49,15 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
           {!mdUp && <CardHeader title="Detalles" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="dni" label="Cédula de identidad" required />
+            <RHFTextField
+              name="dni"
+              type="tel"
+              label="Cédula de identidad"
+              required
+              inputProps={{
+                maxLength: 10,
+              }}
+            />
 
             <Divider />
 
@@ -65,17 +72,41 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
                 },
               }}
             >
-              <RHFTextField name="firstName" label="Primer nombre" required />
+              <RHFTextField
+                name="firstName"
+                label="Primer nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
-              <RHFTextField name="secondName" label="Segundo nombre" />
+              <RHFTextField
+                name="secondName"
+                label="Segundo nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
               <RHFTextField
                 name="firstLastName"
                 label="Primer apellido"
                 required
+                inputProps={{
+                  maxLength: 50,
+                }}
               />
 
-              <RHFTextField name="secondLastName" label="Segundo apellido" />
+              <RHFTextField
+                name="secondLastName"
+                label="Segundo apellido"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
             </Box>
 
             <Divider />
@@ -107,14 +138,24 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
 
               <RHFTextField
                 name="phoneNumber"
+                type="tel"
                 label="Número de celular"
                 required
+                inputMode="tel"
+                inputProps={{
+                  maxLength: 10,
+                }}
               />
 
               <RHFTextField
                 name="regularPhoneNumber"
+                type="tel"
                 label="Teléfono fijo"
                 required
+                inputMode="tel"
+                inputProps={{
+                  maxLength: 10,
+                }}
               />
             </Box>
           </Stack>
@@ -131,8 +172,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
             Títulos
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Títulos de segundo, tercer y cuarto nivel conseguido por el
-            funcionario
+            Títulos de tercer y cuarto nivel conseguido por el funcionario
           </Typography>
         </Grid>
       )}
@@ -141,8 +181,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFSelect
-              id="thirdLevelDegree"
+            <RHFTextField
               name="thirdLevelDegree"
               label="Título de tercer nivel"
             >
@@ -155,7 +194,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
                   )
                 }
               })}
-            </RHFSelect>
+            </RHFTextField>
 
             <RHFSelect
               id="fourthLevelDegree"

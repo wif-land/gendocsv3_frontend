@@ -16,3 +16,15 @@ export interface IFunctionary {
   isActive: boolean
   name?: string
 }
+
+export interface ICreateFunctionary extends Omit<IFunctionary, 'id'> {
+  thirdLevelDegree: number
+  fourthLevelDegree: number
+}
+
+export interface IUpdateFunctionary extends Partial<IFunctionary> {}
+
+export interface IFunctionaryFormValues extends Omit<IFunctionary, 'id'> {
+  thirdLevelDegree: number
+  fourthLevelDegree: number
+}

@@ -88,7 +88,7 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     )
 
     if ('error' in result) {
-      return {} as FunctionaryModel
+      return FunctionaryModel.fromJson({})
     }
 
     return result.data as FunctionaryModel
@@ -114,7 +114,7 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     )
 
     if ('error' in result) {
-      return {} as FunctionaryModel
+      return FunctionaryModel.fromJson({})
     }
 
     return result.data as FunctionaryModel
