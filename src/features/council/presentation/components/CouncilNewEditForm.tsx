@@ -189,7 +189,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           type="submit"
           variant="contained"
           size="large"
-          // disabled={loading.value}
+          loading={loading.value}
         >
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>
