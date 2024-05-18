@@ -45,7 +45,7 @@ export const resolveDefaultValues = (
   duration: currentDegreeCertificate?.duration || (null as any),
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',
-  documentDriveId: currentDegreeCertificate?.documentDriveId || '',
+  certificateDriveId: currentDegreeCertificate?.certificateDriveId || '',
   isClosed: currentDegreeCertificate?.isClosed || false,
   selectedValue: {
     id: currentDegreeCertificate?.student?.id || 0,

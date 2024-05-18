@@ -6,6 +6,7 @@ export interface IDegreeCertificatesRepository {
   getAll(
     limit: number,
     offset: number,
+    carrerId: number,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -32,4 +33,6 @@ export interface IDegreeCertificatesRepository {
   }>
 
   getLastNumberToRegister(careerId: number): Promise<number>
+
+  generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
 }

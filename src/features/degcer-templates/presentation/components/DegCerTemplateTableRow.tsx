@@ -71,7 +71,7 @@ export const DegCerTableRow = ({ row, selected, onViewRow }: Props) => {
           {row.certificateTypeCareers.map((career) => (
             <ListItemText
               key={career.id}
-              primary={career.career.name}
+              primary={career?.career?.name}
               primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             />
           ))}

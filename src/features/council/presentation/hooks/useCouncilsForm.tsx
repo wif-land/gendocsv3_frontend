@@ -118,12 +118,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
             : pathname.replace('/new', ''),
         )
       } catch (error) {
-        enqueueSnackbar(
-          !currentCouncil
-            ? 'Error al crear el consejo'
-            : 'Error al actualizar el consejo',
-          { variant: 'error' },
-        )
       } finally {
         methods.reset()
       }

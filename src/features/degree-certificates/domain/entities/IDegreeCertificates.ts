@@ -21,7 +21,7 @@ export interface IDegreeCertificate {
   duration: number
   link: string
   gradesSheetDriveId: string
-  documentDriveId: string
+  certificateDriveId: string
   isClosed: boolean
 }
 
