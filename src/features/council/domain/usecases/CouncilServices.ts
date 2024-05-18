@@ -35,6 +35,8 @@ interface CouncilUseCases {
   toggleCouncilStatus(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 
   notifyMembers(payload: { members: number[] }): Promise<void>
+
+  getById(id: number): Promise<CouncilModel>
 }
 
 export class CouncilsUseCasesImpl implements CouncilUseCases {
@@ -64,6 +66,10 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
     }
 
     return await this.councilRepository.create(values)
+  }
+
+  async getById(id: number): Promise<CouncilModel> {
+    return await this.councilRepository.getById(id)
   }
 
   async notifyMembers(payload: {

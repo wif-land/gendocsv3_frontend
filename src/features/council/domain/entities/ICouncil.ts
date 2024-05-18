@@ -47,6 +47,7 @@ export interface ICreateCouncil
 
 export interface IUpdateCouncil extends Partial<ICreateCouncil> {
   id: number
+  isActive: boolean
 }
 
 export interface ICouncilAttendeeFormValues extends ICouncilAttendee {

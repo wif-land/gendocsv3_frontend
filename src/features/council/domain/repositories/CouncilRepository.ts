@@ -31,4 +31,6 @@ export interface CouncilRepository {
   bulkUpdate: (councils: Partial<ICouncil>[]) => Promise<CouncilModel[]>
 
   notifyMembers: (payload: { members: number[]; id: number }) => Promise<void>
+
+  getById: (id: number) => Promise<CouncilModel>
 }

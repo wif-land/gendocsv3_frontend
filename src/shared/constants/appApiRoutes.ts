@@ -69,6 +69,8 @@ export const API_ROUTES = {
     CREATE: '/councils',
     BULK_UPDATE: '/councils/bulk',
     NOTIFY_MEMBERS: (id: number) => `/councils/${id}/notify-members`,
+    GET_BY_ID: (id: number) => `/councils/${id}`,
+    HANDLE_MEMBER_ATTENDANCE: (memberId: number) => `/attendance/${memberId}`,
   },
   TEMPLATES: {
     GET_ALL: '/templates',

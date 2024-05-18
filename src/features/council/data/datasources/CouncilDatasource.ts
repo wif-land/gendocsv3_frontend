@@ -37,6 +37,10 @@ export interface CouncilsDataSource {
   bulkUpdate(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 
   notifyMembers(payload: { members: number[]; id: number }): Promise<void>
+
+  getById(id: number): Promise<CouncilModel>
+
+  handleMemberAttendance(memberId: number): Promise<void>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -48,6 +52,16 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     }
 
     return CouncilsDataSourceImpl.instance
+  }
+
+  async getById(id: number): Promise<CouncilModel> {
+    const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_BY_ID(id))
+
+    if ('error' in result) {
+      return {} as CouncilModel
+    }
+
+    return result.data as CouncilModel
   }
 
   async notifyMembers(payload: {
@@ -153,5 +167,11 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     }
 
     return result.data as CouncilModel[]
+  }
+
+  handleMemberAttendance = async (memberId: number) => {
+    await AxiosClient.patch(
+      API_ROUTES.COUNCILS.HANDLE_MEMBER_ATTENDANCE(memberId),
+    )
   }
 }

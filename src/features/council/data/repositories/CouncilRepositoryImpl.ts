@@ -49,4 +49,9 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   notifyMembers = async (payload: { members: number[]; id: number }) =>
     await this.datasource.notifyMembers(payload)
+
+  getById = async (id: number) => await this.datasource.getById(id)
+
+  handleMemberAttendance = async (memberId: number) =>
+    await this.datasource.handleMemberAttendance(memberId)
 }

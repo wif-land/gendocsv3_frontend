@@ -11,7 +11,7 @@ interface StoreState {
 const STORE_NAME = 'councils-store'
 const DEFAULT_COUNCILS: CouncilModel[] = []
 
-export const useCouncilStore = create<StoreState>(
+export const useCouncilsStore = create<StoreState>(
   persist(
     (set) => ({
       councils: DEFAULT_COUNCILS,

@@ -1,4 +1,4 @@
-import { useCouncilStore } from '../store/councilsStore'
+import { useCouncilsStore } from '../store/councilsStore'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil, ICouncilFormValues } from '../../domain/entities/ICouncil'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -22,7 +22,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const pathname = usePathname()
   const { codeModule } = useParams()
 
-  const { councils, addCouncil, setCouncils } = useCouncilStore()
+  const { councils, addCouncil, setCouncils } = useCouncilsStore()
 
   const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
   const moduleIdentifier = resolveModuleId(
@@ -84,8 +84,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       } catch (error) {
       } finally {
         methods.reset()
+        loading.onFalse()
       }
-      loading.onFalse()
     },
     [currentCouncil, enqueueSnackbar, methods.reset, router],
   )
@@ -118,12 +118,16 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   useEffect(() => {
     let isMounted = true
     loading.onTrue()
-    if (searchDebounced.includes('-')) return
+    if (searchDebounced.includes('-')) {
+      loading.onFalse()
+      return
+    }
     if (
       !searchDebounced ||
       searchDebounced === '' ||
       searchDebounced.length < 1
     ) {
+      loading.onFalse()
       return
     }
 
@@ -147,8 +151,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         } else {
           setUnusedFunctionaries([])
         }
-        loading.onFalse()
       })
+      .finally(() => loading.onFalse())
 
     return () => {
       isMounted = false
