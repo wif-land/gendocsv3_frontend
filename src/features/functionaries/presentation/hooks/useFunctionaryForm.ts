@@ -57,8 +57,6 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
         )
       }
 
-      console.log({ result })
-
       if (result.id === 0) {
         return
       }
