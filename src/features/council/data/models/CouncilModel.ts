@@ -36,7 +36,7 @@ export class CouncilModel implements ICouncil {
       return JSON.parse(json, CouncilModel.reviver)
     } else {
       const career = new CouncilModel({
-        id: json.id,
+        id: json.id || 0,
         createdAt: json.createdAt,
         updatedAt: json.updatedAt,
         name: json.name,

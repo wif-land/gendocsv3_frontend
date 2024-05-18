@@ -3,6 +3,9 @@ import * as yup from 'yup'
 
 type GenericObject = { [key: string]: any }
 
+/**
+ * Default props for a person.
+ */
 export interface DefaultPersonSchemaProps {
   id?: number
   dni: string
@@ -15,13 +18,38 @@ export interface DefaultPersonSchemaProps {
   phoneNumber: string
 }
 
-export const getEditedFields = <T extends GenericObject>(
+/**
+ * Compares the initial values with the new values and returns the edited fields.
+ * @param initialValues - The initial values of the form.
+ * @param values - The new values of the form.
+ * @returns The edited fields. If there are no edited fields, it returns null.
+ */
+export const resolveEditedFields = <T extends GenericObject>(
   initialValues: T,
   values: T,
 ): T | null => {
   const editedFields: T = {} as T
 
   Object.keys(initialValues).forEach((key) => {
+    // type ARRAY
+    if (Array.isArray(initialValues[key])) {
+      if (JSON.stringify(initialValues[key]) !== JSON.stringify(values[key])) {
+        ;(editedFields as any)[key] = values[key]
+      }
+
+      return
+    }
+
+    // type OBJECT
+    if (typeof initialValues[key] === 'object') {
+      if (JSON.stringify(initialValues[key]) !== JSON.stringify(values[key])) {
+        ;(editedFields as any)[key] = values[key]
+      }
+
+      return
+    }
+
+    // primitive types
     if (initialValues[key] !== values[key]) {
       ;(editedFields as any)[key] = values[key]
     }
@@ -50,6 +78,9 @@ export const resolveFormSelectOptions = <T extends DefaultPersonSchemaProps>(
   label: `${data.firstName} ${data.secondName} ${data.firstLastName} ${data.secondLastName} - ${data.dni}`,
 })
 
+/**
+ * Default schema for a person. Intended to be used in forms where a person is required.
+ */
 export const DEFAULT_PERSON_SCHEMA = yup.object().shape({
   dni: yup.string().required(VALIDATION_MESSAGES.required),
   firstName: yup.string().required(VALIDATION_MESSAGES.required),
@@ -76,6 +107,11 @@ export const DEFAULT_PERSON_SCHEMA = yup.object().shape({
     .matches(/^0\d{9}$/, VALIDATION_MESSAGES.invalidPhone),
 })
 
+/**
+ * Resolves the default schema for a person.
+ * @param props - The props to override the default schema.
+ * @returns The default schema for a person.
+ */
 export const resolveDefaultSchema = (
   props?: Partial<DefaultPersonSchemaProps>,
 ) => ({

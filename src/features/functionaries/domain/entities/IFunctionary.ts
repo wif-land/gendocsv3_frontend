@@ -1,12 +1,7 @@
 import { IDegree } from '../../../../core/providers/domain/entities/IDegreeProvider'
+import { IMember } from '../../../default-members/domain/entities/IDefaultMembers'
 
-export interface IFunctionary {
-  id?: number
-  dni: string
-  firstName: string
-  secondName: string
-  firstLastName: string
-  secondLastName: string
+export interface IFunctionary extends Omit<IMember, 'isStudent'> {
   outlookEmail: string
   personalEmail: string
   phoneNumber: string

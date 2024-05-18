@@ -1,6 +1,6 @@
 import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { IDefaultMembers } from '../../domain/entities/DefaultMembers'
+import { IDefaultMembers } from '../../domain/entities/IDefaultMembers'
 
 interface StoreState {
   defaultMembers: IDefaultMembers[]

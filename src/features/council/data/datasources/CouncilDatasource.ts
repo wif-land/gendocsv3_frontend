@@ -1,7 +1,11 @@
 import { CouncilModel } from '../models/CouncilModel'
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { ICouncil } from '../../domain/entities/ICouncil'
+import {
+  ICouncil,
+  ICreateCouncil,
+  IUpdateCouncil,
+} from '../../domain/entities/ICouncil'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export interface CouncilsDataSource {
@@ -26,9 +30,9 @@ export interface CouncilsDataSource {
     count: number
   }>
 
-  update(council: Partial<ICouncil>): Promise<CouncilModel>
+  update(council: IUpdateCouncil): Promise<CouncilModel>
 
-  create(council: ICouncil): Promise<CouncilModel>
+  create(council: ICreateCouncil): Promise<CouncilModel>
 
   bulkUpdate(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 
@@ -72,7 +76,7 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return result.data as { councils: CouncilModel[]; count: number }
   }
 
-  create = async (council: CouncilModel) => {
+  create = async (council: ICreateCouncil) => {
     const result = await AxiosClient.post(API_ROUTES.COUNCILS.CREATE, council)
 
     if ('error' in result) {
@@ -124,7 +128,7 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return result.data as { councils: CouncilModel[]; count: number }
   }
 
-  update = async (council: ICouncil) => {
+  update = async (council: IUpdateCouncil) => {
     const { id, ...rest } = council
     const result = await AxiosClient.patch(
       API_ROUTES.COUNCILS.UPDATE(id as number),

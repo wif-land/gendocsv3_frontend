@@ -1,11 +1,13 @@
+import { enqueueSnackbar } from 'notistack'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilRepositoryImpl } from '../../data/repositories/CouncilRepositoryImpl'
-import { ICouncil } from '../entities/ICouncil'
+import { ICouncil, ICouncilFormValues } from '../entities/ICouncil'
 import { ICouncilFilters } from '../entities/ICouncilFilters'
 import { CouncilRepository } from '../repositories/CouncilRepository'
 
 interface CouncilUseCases {
-  create(council: ICouncil): Promise<CouncilModel>
+  create(council: ICouncilFormValues): Promise<CouncilModel>
 
   getAll(): Promise<CouncilModel[]>
 
@@ -19,7 +21,7 @@ interface CouncilUseCases {
     councils: CouncilModel[]
   }>
 
-  update(id: number, council: Partial<CouncilModel>): Promise<CouncilModel>
+  update(id: number, council: ICouncilFormValues): Promise<CouncilModel>
 
   getAllCouncilsByModuleId(
     moduleId: number,
@@ -49,8 +51,20 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   private councilRepository: CouncilRepository =
     CouncilRepositoryImpl.getInstance()
 
-  create = async (career: ICouncil) =>
-    await this.councilRepository.create(career)
+  create = async (data: ICouncilFormValues) => {
+    const values = {
+      ...data,
+      members: Object.entries(data.members).map(([positionName, member]) => ({
+        positionName,
+        member: member.id,
+        positionOrder: member.positionOrder,
+      })),
+      moduleId: data.moduleId as number,
+      userId: data.userId as number,
+    }
+
+    return await this.councilRepository.create(values)
+  }
 
   async notifyMembers(payload: {
     members: number[]
@@ -74,11 +88,31 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   ) =>
     await this.councilRepository.getByFilters(filters, moduleId, limit, offset)
 
-  update = async (id: number, council: Partial<CouncilModel>) =>
-    await this.councilRepository.update({
-      ...council,
+  update = async (id: number, data: ICouncilFormValues) => {
+    const editedFields = resolveEditedFields<ICouncilFormValues>(data, data)
+
+    if (!editedFields) {
+      enqueueSnackbar('No se encontraron cambios a realizar', {
+        variant: 'info',
+      })
+
+      return CouncilModel.fromJson({})
+    }
+
+    const values = {
+      ...editedFields,
       id,
-    })
+      members: Object.entries(editedFields.members).map(
+        ([positionName, member]) => ({
+          positionName,
+          member: member.id,
+          positionOrder: member.positionOrder,
+        }),
+      ),
+    }
+
+    return await this.councilRepository.update(values)
+  }
 
   getAllCouncilsByModuleId = async (
     moduleId: number,

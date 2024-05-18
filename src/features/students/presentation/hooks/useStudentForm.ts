@@ -13,7 +13,7 @@ import {
   handleCreate,
   handleUpdate,
 } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 
 import { useStudentStore } from '../state/studentStore'
 import { useCareersStore } from '../../../careers/presentation/store/careerStore'
@@ -46,7 +46,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
       if (!currentStudent) {
         result = await handleCreate(data)
       } else {
-        const editedFields = getEditedFields<Partial<IStudent>>(
+        const editedFields = resolveEditedFields<Partial<IStudent>>(
           defaultValues,
           data,
         )

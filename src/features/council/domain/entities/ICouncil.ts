@@ -35,3 +35,30 @@ export interface ICouncil {
   members: ICouncilAttendee[]
   createdBy?: string
 }
+
+export interface ICreateCouncil
+  extends Omit<ICouncil, 'id' | 'createdAt' | 'updatedAt' | 'members'> {
+  members: {
+    positionName: string
+    member: number
+    positionOrder: number
+  }[]
+}
+
+export interface IUpdateCouncil extends Partial<ICreateCouncil> {
+  id: number
+}
+
+export interface ICouncilAttendeeFormValues extends ICouncilAttendee {
+  id: number
+  label: string
+}
+
+export interface ICouncilFormValues
+  extends Omit<ICouncil, 'members' | 'moduleId' | 'userId'> {
+  members: {
+    [positionName: string]: ICouncilAttendeeFormValues & ICouncilAttendee
+  }
+  moduleId?: number
+  userId?: number
+}

@@ -14,7 +14,7 @@ import {
   handleCreate,
   handleUpdate,
 } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 import { IUser } from '../../domain/entities/IUser'
 import { useUsersStore } from '../state/usersStore'
 
@@ -45,7 +45,7 @@ export const useUsersForm = (currentUser?: IUser) => {
       if (!currentUser) {
         result = await handleCreate(data)
       } else {
-        const editedFields = getEditedFields<FormValuesProps>(
+        const editedFields = resolveEditedFields<FormValuesProps>(
           defaultValues,
           data,
         )

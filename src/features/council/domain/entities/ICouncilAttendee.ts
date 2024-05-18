@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionary'
+import { IMember } from '../../../default-members/domain/entities/IDefaultMembers'
 
 export interface ICouncilAttendee {
   id?: number
@@ -11,13 +11,11 @@ export interface ICouncilAttendee {
 
   isStudent: boolean
 
-  member: any
+  member: IMember
 
   positionName: string
 
   positionOrder: number
 
   defaultMemberId: number
-
-  functionary?: IFunctionary
 }

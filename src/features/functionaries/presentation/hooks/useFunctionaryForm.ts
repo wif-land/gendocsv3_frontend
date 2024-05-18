@@ -18,7 +18,7 @@ import {
   handleCreate,
   handleUpdate,
 } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 
 export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
   const router = useRouter()
@@ -46,7 +46,7 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
       if (!currentFunctionary) {
         result = await handleCreate(data)
       } else {
-        const editedFields = getEditedFields<IFunctionaryFormValues>(
+        const editedFields = resolveEditedFields<IFunctionaryFormValues>(
           defaultValues,
           data,
         )

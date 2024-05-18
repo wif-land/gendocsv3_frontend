@@ -16,7 +16,7 @@ import {
   handleCreate,
   handleUpdate,
 } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 import { IFunctionary } from '../../../../features/functionaries/domain/entities/IFunctionary'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -56,7 +56,7 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
           }
         })
       } else {
-        const editedFields = getEditedFields<FormValuesProps>(
+        const editedFields = resolveEditedFields<FormValuesProps>(
           defaultValues,
           data,
         )

@@ -1,5 +1,5 @@
 import { CouncilModel } from '../../data/models/CouncilModel'
-import { ICouncil } from '../entities/ICouncil'
+import { ICouncil, ICreateCouncil, IUpdateCouncil } from '../entities/ICouncil'
 import { ICouncilFilters } from '../entities/ICouncilFilters'
 
 export interface CouncilRepository {
@@ -15,9 +15,9 @@ export interface CouncilRepository {
     councils: CouncilModel[]
   }>
 
-  update: (data: Partial<ICouncil>) => Promise<CouncilModel>
+  update: (data: IUpdateCouncil) => Promise<CouncilModel>
 
-  create: (councilData: ICouncil) => Promise<CouncilModel>
+  create: (data: ICreateCouncil) => Promise<CouncilModel>
 
   getAllCouncilsByModuleId: (
     moduleId: number,

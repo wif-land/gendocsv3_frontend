@@ -1,4 +1,4 @@
-import { IDefaultMembers, IMember } from '../../domain/entities/DefaultMembers'
+import { IDefaultMembers, IMember } from '../../domain/entities/IDefaultMembers'
 
 export class DefaultMemberModel implements IDefaultMembers {
   positionName: string

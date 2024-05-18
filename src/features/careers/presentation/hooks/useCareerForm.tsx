@@ -13,7 +13,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
 import { useCareersStore } from '../store/careerStore'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { NewCareerSchema, resolveDefaultValues } from '../constants'
@@ -84,7 +84,7 @@ export const useCareerForm = (currentCareer?: ICareer) => {
           coordinator: data.coordinator.id,
         })
       } else {
-        const editedFields = getEditedFields<ICareerFormValues>(
+        const editedFields = resolveEditedFields<ICareerFormValues>(
           {
             ...defaultValues,
             coordinator: {

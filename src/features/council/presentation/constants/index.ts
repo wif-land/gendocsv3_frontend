@@ -1,8 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Yup from 'yup'
-import { CouncilType, ICouncil } from '../../domain/entities/ICouncil'
+import {
+  CouncilType,
+  ICouncil,
+  ICouncilAttendeeFormValues,
+  ICouncilFormValues,
+} from '../../domain/entities/ICouncil'
 import { ICouncilTableFilters } from '../components/CouncilTableToolbar'
 import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
+import {
+  IDefaultMembers,
+  IMember,
+} from '../../../default-members/domain/entities/IDefaultMembers'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -29,28 +38,62 @@ export const NewCouncilSchema = Yup.object().shape({
   isArchived: Yup.boolean().required('El estado es requerido'),
 })
 
-export const resolveDefaultValues = (currentCouncil?: ICouncil) => ({
+export const resolveDefaultValues = (
+  defaultMembers: IDefaultMembers[],
+  currentCouncil?: ICouncil,
+): ICouncilFormValues => ({
   name: currentCouncil?.name || '',
-  date: currentCouncil?.date || new Date(Date.now()),
+  date: currentCouncil?.date || new Date(Date.now() + 1000 * 60 * 60 * 24),
   type: currentCouncil?.type || CouncilType.ORDINARY,
   isActive: !!currentCouncil?.isActive || true,
   isArchived: !!currentCouncil?.isArchived,
-  members:
-    currentCouncil?.members?.reduce(
-      (acc: Record<string, any>, member: ICouncilAttendee) => {
-        acc[member.positionName] = {
-          ...member,
-          member: {
-            ...member.functionary,
-            label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
-            id: member.functionary?.id,
+  members: currentCouncil
+    ? currentCouncil.members.reduce(
+        (
+          acc: {
+            [key: string]: ICouncilAttendeeFormValues & ICouncilAttendee
           },
-          label: `${member?.functionary?.firstName} ${member?.functionary?.firstLastName} ${member?.functionary?.secondLastName} - ${member?.functionary?.dni}`,
-          id: member.functionary?.id,
-        }
+          member: ICouncilAttendee,
+        ) => {
+          acc[member.positionName] = {
+            ...member,
+            label: `${member?.member?.firstName} ${member?.member?.firstLastName} ${member?.member?.secondLastName} - ${member?.member?.dni}`,
+            id: member.member?.id || 0,
+          }
 
-        return acc
-      },
-      {},
-    ) || {},
+          return acc
+        },
+        {} as {
+          [key: string]: ICouncilAttendeeFormValues & ICouncilAttendee
+        },
+      )
+    : defaultMembers.reduce(
+        (
+          acc: {
+            [key: string]: ICouncilAttendeeFormValues & ICouncilAttendee
+          },
+          member: IDefaultMembers,
+        ) => {
+          acc[member.positionName] = {
+            ...member,
+            hasAttended: false,
+            hasBeenNotified: false,
+            isStudent: false,
+            positionOrder: member.positionOrder,
+            defaultMemberId: 0,
+            positionName: member.positionName,
+            member: member.member as IMember,
+            label: `${(member?.member as IMember)?.firstName} ${(
+              member?.member as IMember
+            )?.firstLastName} ${(member?.member as IMember)
+              ?.secondLastName} - ${(member?.member as IMember)?.dni}`,
+            id: (member.member as IMember)?.id || 0,
+          }
+
+          return acc
+        },
+        {} as {
+          [key: string]: ICouncilAttendeeFormValues & ICouncilAttendee
+        },
+      ),
 })

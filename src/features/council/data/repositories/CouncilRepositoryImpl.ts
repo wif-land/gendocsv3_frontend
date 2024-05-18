@@ -1,10 +1,13 @@
-import { ICouncil } from '../../domain/entities/ICouncil'
+import {
+  ICouncil,
+  ICreateCouncil,
+  IUpdateCouncil,
+} from '../../domain/entities/ICouncil'
 import { CouncilRepository } from '../../domain/repositories/CouncilRepository'
 import {
   CouncilsDataSource,
   CouncilsDataSourceImpl,
 } from '../datasources/CouncilDatasource'
-import { CouncilModel } from '../models/CouncilModel'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export class CouncilRepositoryImpl implements CouncilRepository {
@@ -37,11 +40,9 @@ export class CouncilRepositoryImpl implements CouncilRepository {
     offset: number,
   ) => await this.datasource.getByFilters(filters, moduleId, limit, offset)
 
-  update = async (data: Partial<CouncilModel>) =>
-    await this.datasource.update(data)
+  update = async (data: IUpdateCouncil) => await this.datasource.update(data)
 
-  create = async (councilData: ICouncil) =>
-    await this.datasource.create(councilData)
+  create = async (data: ICreateCouncil) => await this.datasource.create(data)
 
   bulkUpdate = async (councils: Partial<ICouncil>[]) =>
     await this.datasource.bulkUpdate(councils)

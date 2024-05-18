@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { IDefaultMembers } from '../../domain/entities/DefaultMembers'
+import { IDefaultMembers } from '../../domain/entities/IDefaultMembers'
 
 export const NewDefaultMemberSchema = Yup.object().shape({
   positionName: Yup.string().required('El nombre de la posición es requerido'),
