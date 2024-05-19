@@ -87,23 +87,6 @@ export default function SettingsDrawer() {
     </div>
   )
 
-  const renderDirection = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Direction
-      </Typography>
-
-      <BaseOptions
-        value={settings.themeDirection}
-        onChange={(newValue: string) =>
-          settings.onUpdate('themeDirection', newValue)
-        }
-        options={['ltr', 'rtl']}
-        icons={['align_right', 'align_left']}
-      />
-    </div>
-  )
-
   const renderLayout = (
     <div>
       <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
@@ -185,8 +168,6 @@ export default function SettingsDrawer() {
           {renderMode}
 
           {renderContrast}
-
-          {renderDirection}
 
           {renderLayout}
 

@@ -13,6 +13,8 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { IProcess } from '../../domain/entities/IProcess'
 
 import { useProcessForm } from '../hooks/useProcessForm'
+import { useRouter } from 'next/navigation'
+import { Button } from '@mui/material'
 
 type Props = {
   currentProcess?: IProcess
@@ -20,6 +22,7 @@ type Props = {
 
 export const ProcessNewEditForm = ({ currentProcess }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
   const { methods, onSubmit } = useProcessForm(currentProcess)
 
   const {
@@ -55,10 +58,25 @@ export const ProcessNewEditForm = ({ currentProcess }: Props) => {
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      <Grid
+        xs={12}
+        md={8}
+        sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+      >
         <Box sx={{ flexGrow: 1 }}>
           <RHFSwitch name="isActive" label="Proceso activo" />
         </Box>
+
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
 
         <LoadingButton
           type="submit"

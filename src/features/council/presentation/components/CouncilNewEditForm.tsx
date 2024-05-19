@@ -18,8 +18,9 @@ import { Controller } from 'react-hook-form'
 import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
-import { Box, Link, MenuItem } from '@mui/material'
+import { Box, Button, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -27,6 +28,7 @@ type Props = {
 
 export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
   const {
     methods,
     unusedFunctionaries,
@@ -180,11 +182,27 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'end',
+          alignItems: 'center',
+          gap: '10px',
+        }}
       >
         <Box sx={{ flexGrow: 1 }}>
           <RHFSwitch name="isActive" label="Consejo activo" />
         </Box>
+
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
 
         <LoadingButton
           type="submit"

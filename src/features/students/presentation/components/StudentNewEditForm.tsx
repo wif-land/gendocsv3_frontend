@@ -13,7 +13,7 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { useStudentForm } from '../hooks/useStudentForm'
 
-import { MenuItem } from '@mui/material'
+import { Button, MenuItem } from '@mui/material'
 import { Controller } from 'react-hook-form'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
@@ -21,6 +21,7 @@ import dayjs from 'dayjs'
 import { IStudent } from '../../domain/entities/IStudent'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { GENDERS } from '../constants'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentStudent?: IStudent
@@ -28,6 +29,8 @@ type Props = {
 
 export const StudentNewEditForm = ({ currentStudent }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
+
   const { cities } = useLocations()
   const { methods, onSubmit, careers } = useStudentForm(currentStudent)
   const {
@@ -410,8 +413,24 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'end',
+          gap: '10px',
+        }}
       >
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
+
         <LoadingButton
           type="submit"
           variant="contained"

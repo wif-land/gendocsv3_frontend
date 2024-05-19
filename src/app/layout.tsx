@@ -52,12 +52,11 @@ type Props = {
 }
 
 export default ({ children }: Props) => (
-  <html lang="en" className={primaryFont.className}>
+  <html lang="es" className={primaryFont.className}>
     <body>
       <SettingsProvider
         defaultSettings={{
           themeMode: 'light', // 'light' | 'dark'
-          themeDirection: 'ltr', //  'rtl' | 'ltr'
           themeContrast: 'default', // 'default' | 'bold'
           themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
           themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'

@@ -10,12 +10,13 @@ import Typography from '@mui/material/Typography'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { MenuItem } from '@mui/material'
+import { Button, MenuItem } from '@mui/material'
 
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 import { useDegreeData } from '../../../../core/providers/functionary-degree- provider'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentFunctionary?: IFunctionary
@@ -23,6 +24,8 @@ type Props = {
 
 export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
+
   const { methods, onSubmit } = useFunctionaryForm(currentFunctionary)
   const { degrees } = useDegreeData()
 
@@ -220,10 +223,25 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      <Grid
+        xs={12}
+        md={8}
+        sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+      >
         <Box sx={{ flexGrow: 1 }}>
           <RHFSwitch name="isActive" label="Funcionario activo" />
         </Box>
+
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
 
         <LoadingButton
           type="submit"

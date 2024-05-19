@@ -19,9 +19,10 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { useUsersForm } from '../hooks/useUsersForm'
 import { IUser, UserRole, UserTypeLabels } from '../../domain/entities/IUser'
-import { MenuItem } from '@mui/material'
+import { Button, MenuItem } from '@mui/material'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentUser?: IUser
@@ -32,6 +33,7 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
   const { methods, onSubmit } = useUsersForm(currentUser)
   const { modules } = useModulesStore()
   const { user } = useAccountStore()
+  const router = useRouter()
 
   const {
     handleSubmit,
@@ -158,12 +160,27 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      <Grid
+        xs={12}
+        md={8}
+        sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+      >
         <Box sx={{ flexGrow: 1 }}>
           {currentUser && currentUser.id !== user?.id && (
             <RHFSwitch name="isActive" label="Usuario activo" />
           )}
         </Box>
+
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
 
         <LoadingButton
           type="submit"
