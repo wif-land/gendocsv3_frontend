@@ -37,7 +37,6 @@ export const useProcessStore = create<StoreState>(
         const processIndex = processes.findIndex((p) => p.id === processId)
 
         if (processIndex === -1) {
-          console.error('Proceso no encontrado')
           return
         }
 
@@ -68,19 +67,16 @@ export const useProcessStore = create<StoreState>(
         const processIndex = processes.findIndex((p) => p.id === processId)
 
         if (processIndex === -1) {
-          console.error('Proceso no encontrado')
           return
         }
 
         const templates = processes[processIndex].templateProcesses
         if (!templates) {
-          console.error('Plantillas no encontradas en el proceso')
           return
         }
 
         const templateIndex = templates.findIndex((t) => t.id === templateId)
         if (templateIndex === -1) {
-          console.error('Plantilla no encontrada')
           return
         }
 

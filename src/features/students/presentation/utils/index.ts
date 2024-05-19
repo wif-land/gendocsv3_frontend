@@ -27,10 +27,9 @@ export const transformData = (
     ) {
       enqueueSnackbar(
         'Por favor, asegúrate de que todos los campos estén completos',
-        { variant: 'error' },
+        { variant: 'warning' },
       )
 
-      console.log({ item })
       return StudentModel.fromJson({})
     }
 

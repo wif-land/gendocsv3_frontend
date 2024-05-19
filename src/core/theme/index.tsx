@@ -16,15 +16,14 @@ import { componentsOverrides } from './overrides'
 import { presets } from './options/presets'
 import { darkMode } from './options/dark-mode'
 import { contrast } from './options/contrast'
-import RTL, { direction } from './options/right-to-left'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useSettingsContext } from '../../shared/sdk/settings'
-import esLocale from 'dayjs/locale/es';
-import dayjs from 'dayjs';
-import { esES } from '@mui/x-date-pickers/locales';
+import esLocale from 'dayjs/locale/es'
+import dayjs from 'dayjs'
+import { esES } from '@mui/x-date-pickers/locales'
 
-dayjs.locale(esLocale); 
+dayjs.locale(esLocale)
 
 type Props = {
   children: React.ReactNode
@@ -41,8 +40,6 @@ export default function ThemeProvider({ children }: Props) {
     settings.themeContrast === 'bold',
     settings.themeMode,
   )
-
-  const directionOption = direction(settings.themeDirection)
 
   const baseOption = useMemo(
     () => ({
@@ -61,8 +58,6 @@ export default function ThemeProvider({ children }: Props) {
       merge(
         // Base
         baseOption,
-        // Direction: remove if not in use
-        directionOption,
         // Dark mode: remove if not in use
         darkModeOption,
         // Presets: remove if not in use
@@ -70,13 +65,7 @@ export default function ThemeProvider({ children }: Props) {
         // Contrast: remove if not in use
         contrastOption.theme,
       ),
-    [
-      baseOption,
-      directionOption,
-      darkModeOption,
-      presetsOption,
-      contrastOption.theme,
-    ],
+    [baseOption, darkModeOption, presetsOption, contrastOption.theme],
   )
 
   const theme = createTheme(memoizedValue as ThemeOptions, esES)
@@ -88,12 +77,15 @@ export default function ThemeProvider({ children }: Props) {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <RTL themeDirection={settings.themeDirection}>
-        <LocalizationProvider dateAdapter={AdapterDayjs} localeText={esES.components.MuiLocalizationProvider.defaultProps.localeText} >
-          <CssBaseline />
-          {children}
-        </LocalizationProvider>
-      </RTL>
+      <LocalizationProvider
+        dateAdapter={AdapterDayjs}
+        localeText={
+          esES.components.MuiLocalizationProvider.defaultProps.localeText
+        }
+      >
+        <CssBaseline />
+        {children}
+      </LocalizationProvider>
     </MuiThemeProvider>
   )
 }
