@@ -33,7 +33,7 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     [currentProcess],
   )
 
-  const methods = useForm<IProcessFormValues>({
+  const methods = useForm({
     resolver: yupResolver(NewProcessSchema),
     defaultValues,
   })
