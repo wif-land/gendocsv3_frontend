@@ -3,12 +3,19 @@ import { persist } from 'zustand/middleware'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IStudent } from '../../../../features/students/domain/entities/IStudent'
 import { IDegreeModality } from '../../../../core/providers/domain/entities/ICertificateProvider'
+import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 
 interface StoreState {
   degreeCertificate: DegreeCertificateModel
   degreeCertificates: DegreeCertificateModel[]
   setDegreeCertificates: (degreeCertificates: DegreeCertificateModel[]) => void
   addDegreeCertificate: (degreeCertificate: DegreeCertificateModel) => void
+  createDegreeCertificate: (
+    degreeCertificate: DegreeCertificateModel,
+  ) => Promise<boolean>
+  updateDegreeCertificate: (
+    degreeCertificate: Partial<DegreeCertificateModel>,
+  ) => Promise<boolean>
 }
 
 const STORE_NAME = 'degree-certificates-store'
@@ -42,6 +49,40 @@ export const useDegreeCertificatesStore = create<StoreState>(
         set((state) => ({
           degreeCertificates: [...state.degreeCertificates, data],
         })),
+      createDegreeCertificate: async (degreeCertificate) => {
+        const result =
+          await DegreeCertificatesUseCasesImpl.getInstance().create(
+            degreeCertificate,
+          )
+
+        if (result.id !== 0) {
+          set((state) => ({
+            degreeCertificates: [...state.degreeCertificates, result],
+          }))
+
+          return true
+        }
+
+        return false
+      },
+      updateDegreeCertificate: async (degreeCertificate) => {
+        const result =
+          await DegreeCertificatesUseCasesImpl.getInstance().update(
+            degreeCertificate,
+          )
+
+        if (result.id !== 0) {
+          set((state) => ({
+            degreeCertificates: state.degreeCertificates.map((item) =>
+              item.id === result.id ? result : item,
+            ),
+          }))
+
+          return true
+        }
+
+        return false
+      },
     }),
     {
       name: STORE_NAME,

@@ -51,9 +51,7 @@ export const useDegreeCertificateView = ({
           setFirstCharge(false)
           setPrevCareer(filters.career || 1)
         }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
+      } catch (error) {}
     }
 
     if (isMounted && (filters.career !== prevCareer || firstCharge)) {
