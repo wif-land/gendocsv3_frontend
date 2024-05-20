@@ -33,7 +33,8 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     [currentProcess],
   )
 
-  const methods = useForm({
+  const methods = useForm<IProcessFormValues>({
+    // @ts-expect-error - The resolver is correctly typed
     resolver: yupResolver(NewProcessSchema),
     defaultValues,
   })
@@ -64,6 +65,9 @@ export const useProcessForm = (currentProcess?: IProcess) => {
             currentProcess.id as number,
             editedFields,
           )
+        } else {
+          enqueueSnackbar('No hay cambios por hacer', { variant: 'info' })
+          return
         }
       }
 

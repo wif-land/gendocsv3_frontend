@@ -10,6 +10,19 @@ interface ReturnType {
   setValue: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+/**
+ * Hook to manage boolean state with helper functions
+ * @param defaultValue - Default value. Can be true or false
+ * @returns Object with value and helper functions
+ * @example
+ * const { value, onTrue, onFalse, onToggle, setValue } = useBoolean()
+ * onTrue() // Set value to true
+ * onFalse() // Set value to false
+ * onToggle() // Toggle value
+ * setValue(true) // Set value to true
+ * setValue(false) // Set value to false
+ * setValue((prev) => !prev) // Toggle value
+ */
 export const useBoolean = (defaultValue?: boolean): ReturnType => {
   const [value, setValue] = useState(!!defaultValue)
 

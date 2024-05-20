@@ -1,8 +1,4 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import {
-  appPrivateRoutes,
-  appPublicRoutes,
-} from './shared/constants/appPublicRoutes'
 import { ACCESS_TOKEN_COOKIE_NAME } from './shared/constants/appApiRoutes'
 
 export const config = {
@@ -19,23 +15,19 @@ export const middleware = async (request: NextRequest) => {
     request.cookies.get(ACCESS_TOKEN_COOKIE_NAME)?.value &&
     request.cookies.get(ACCESS_TOKEN_COOKIE_NAME)?.value !== 'null'
 
-  const isLoginPage = request.nextUrl.pathname.startsWith(appPublicRoutes.login)
+  const isLoginPage = request.nextUrl.pathname.startsWith('/login')
   const isRootPage = request.nextUrl.pathname === '/'
 
   if (!hasAccessToken && !isLoginPage) {
-    return NextResponse.redirect(new URL(appPublicRoutes.login, request.url))
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   if (hasAccessToken && isLoginPage) {
-    return NextResponse.redirect(
-      new URL(appPrivateRoutes.dashboard, request.url),
-    )
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   if (hasAccessToken && isRootPage) {
-    return NextResponse.redirect(
-      new URL(appPrivateRoutes.dashboard, request.url),
-    )
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return NextResponse.next()

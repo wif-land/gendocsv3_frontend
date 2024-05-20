@@ -21,8 +21,8 @@ export class ProcessModel implements IProcess {
     this.name = props.name
     this.driveId = props.driveId
     this.isActive = props.isActive || true
-    this.userId = props.userId
-    this.moduleId = props.moduleId
+    this.userId = props.userId || 0
+    this.moduleId = props.moduleId || 0
     this.submoduleYearModuleId = props.submoduleYearModuleId
     this.templateProcesses = props.templateProcesses
   }
