@@ -60,57 +60,66 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     formState: { isSubmitting },
   } = methods
 
-  const handleCreate = useCallback(async (values: IProcess) => {
-    await ProcessesUseCasesImpl.getInstance().create(values)
-  }, [])
+  const handleCreate = useCallback(
+    async (values: IProcess) =>
+      await ProcessesUseCasesImpl.getInstance().create(values),
+    [],
+  )
 
-  const handleUpdate = async (id: number, editedFields: Partial<IProcess>) => {
-    await ProcessesUseCasesImpl.getInstance()
-      .update(id, editedFields)
-      .then((_) => {
-        setProcesses(
-          processes!.map((process) =>
-            process.id === id
-              ? new ProcessModel({
-                  ...process,
-                  ...editedFields,
-                })
-              : process,
-          ),
-        )
-      })
+  const handleUpdate = async (
+    id: number,
+    editedFields: Partial<IProcess>,
+  ): Promise<ProcessModel> => {
+    const result = await ProcessesUseCasesImpl.getInstance().update(
+      id,
+      editedFields,
+    )
+
+    if (result.id !== 0) {
+      setProcesses(
+        processes!.map((process) =>
+          process.id === id
+            ? new ProcessModel({
+                ...process,
+                ...editedFields,
+              })
+            : process,
+        ),
+      )
+    }
+
+    return result
   }
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
-      try {
-        if (!currentProcess) {
-          await handleCreate({
-            ...data,
-          })
-        } else {
-          const editedFields = getEditedFields<FormValuesProps>(
-            defaultValues,
-            data,
-          )
-
-          if (editedFields) {
-            await handleUpdate(currentProcess.id as number, editedFields)
-          }
-        }
-
-        if (currentProcess) {
-          router.push(
-            pathname.replace(new RegExp(`/${currentProcess.id}/edit`), ''),
-          )
-        }
-
-        reset()
-      } catch (error) {
-        enqueueSnackbar('Error al crear el proceso', {
-          variant: 'error',
+      let result
+      if (!currentProcess) {
+        result = await handleCreate({
+          ...data,
         })
+      } else {
+        const editedFields = getEditedFields<FormValuesProps>(
+          defaultValues,
+          data,
+        )
+
+        if (editedFields) {
+          result = await handleUpdate(currentProcess.id as number, editedFields)
+        }
       }
+
+      if (result?.id !== 0) return
+
+      if (currentProcess) {
+        router.push(
+          pathname.replace(new RegExp(`/${currentProcess.id}/edit`), ''),
+        )
+      } else {
+        router.push(pathname.replace('/new', ''))
+      }
+
+      reset()
     },
     [currentProcess, enqueueSnackbar, reset, router],
   )

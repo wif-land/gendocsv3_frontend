@@ -31,7 +31,7 @@ export class ProcessModel implements IProcess {
       return JSON.parse(json, ProcessModel.reviver)
     } else {
       const process = new ProcessModel({
-        id: json.id,
+        id: json.id || 0,
         createdAt: json.createdAt,
         updatedAt: json.updatedAt,
         name: json.name,

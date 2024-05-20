@@ -29,17 +29,13 @@ export interface ProcessesDataSource {
     count: number
   }>
 
-  update(process: Partial<IProcess>): Promise<{
-    process: ProcessModel
-  }>
+  update(process: Partial<IProcess>): Promise<ProcessModel>
 
   bulkUpdate(processes: Partial<IProcess>[]): Promise<{
     processes: ProcessModel[]
   }>
 
-  create(process: IProcess): Promise<{
-    process: ProcessModel
-  }>
+  create(process: IProcess): Promise<ProcessModel>
 }
 
 export class ProcessesDataSourceImpl implements ProcessesDataSource {
@@ -78,13 +74,10 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     const result = await AxiosClient.post(API_ROUTES.PROCESSES.CREATE, process)
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        process: {} as ProcessModel,
-      }
+      return ProcessModel.fromJson({})
     }
 
-    return result.data as { process: ProcessModel }
+    return result.data as ProcessModel
   }
 
   getAll = async () => {
@@ -131,13 +124,10 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
     )
 
     if ('error' in result) {
-      return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
-        process: {} as ProcessModel,
-      }
+      return ProcessModel.fromJson({})
     }
 
-    return result.data as { process: ProcessModel }
+    return result.data as ProcessModel
   }
 
   bulkUpdate = async (processes: IProcess[]) => {
@@ -148,7 +138,6 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
 
     if ('error' in result) {
       return {
-        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
         processes: [] as ProcessModel[],
       }
     }
