@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { TemplateModel } from '../../../templates/data/models/TemplatesModel'
 import { ITemplate } from '../../../templates/domain/entities/ITemplate'
+import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
 
 interface StoreState {
   processes: ProcessModel[]
@@ -17,6 +18,8 @@ interface StoreState {
     templateId: number,
     newTemplateData: Partial<TemplateModel>,
   ) => void
+  createProcess: (process: ProcessModel) => Promise<boolean>
+  updateProcess: (id: number, data: Partial<ProcessModel>) => Promise<boolean>
 }
 
 const STORE_NAME = 'processes-store'
@@ -101,6 +104,35 @@ export const useProcessStore = create<StoreState>(
         )
 
         set({ processes: updatedProcesses as ProcessModel[] })
+      },
+      updateProcess: async (id, data) => {
+        const result = await ProcessesUseCasesImpl.getInstance().update(
+          id,
+          data,
+        )
+
+        if (result.id !== 0) {
+          set((state) => ({
+            processes: state.processes.map((process) =>
+              process.id === id
+                ? ProcessModel.fromJson({ ...process, ...data })
+                : process,
+            ),
+          }))
+          return true
+        }
+
+        return false
+      },
+      createProcess: async (process) => {
+        const result = await ProcessesUseCasesImpl.getInstance().create(process)
+
+        if (result.id !== 0) {
+          set((state) => ({ processes: [...state.processes, result] }))
+          return true
+        }
+
+        return false
       },
     }),
     {

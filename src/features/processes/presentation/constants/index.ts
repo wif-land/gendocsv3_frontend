@@ -1,7 +1,8 @@
 import * as Yup from 'yup'
 
-import { IProcess } from '../../domain/entities/IProcess'
+import { IProcess, IProcessFormValues } from '../../domain/entities/IProcess'
 import { IProcessTableFilters } from '../components/ProcessTableToolbar'
+import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Proceso' },
@@ -15,11 +16,17 @@ export const defaultFilters: IProcessTableFilters = {
 }
 
 export const NewProcessSchema = Yup.object().shape({
-  name: Yup.string().required('El nombre es requerido'),
-  isActive: Yup.boolean().required('El estado es requerido'),
+  name: Yup.string().required(VALIDATION_MESSAGES.required),
+  isActive: Yup.boolean().required(VALIDATION_MESSAGES.required),
 })
 
-export const resolveDefaultValues = (currentProcess?: IProcess) => ({
+export const resolveDefaultValues = (
+  currentProcess?: IProcess,
+): IProcessFormValues => ({
   name: currentProcess?.name || '',
   isActive: currentProcess?.isActive || true,
+  createdAt: currentProcess?.createdAt || undefined,
+  updatedAt: currentProcess?.updatedAt || undefined,
+  templateProcesses: undefined,
+  userId: currentProcess?.userId || 0,
 })
