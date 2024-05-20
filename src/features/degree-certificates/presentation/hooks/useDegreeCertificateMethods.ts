@@ -17,7 +17,9 @@ export const useDegreeCertificateMethods = () => {
       carrerId,
     )
 
-  const updateRow = async (degreeCertificate: Partial<IDegreeCertificate>) =>
+  const toggleIsClosed = async (
+    degreeCertificate: Partial<IDegreeCertificate>,
+  ) =>
     await DegreeCertificatesUseCasesImpl.getInstance().update({
       id: degreeCertificate.id as number,
       isClosed: !degreeCertificate.isClosed as boolean,
@@ -38,7 +40,7 @@ export const useDegreeCertificateMethods = () => {
 
   return {
     fetchData,
-    updateRow,
+    toggleIsClosed,
     resolveStudentById,
     generateDocument,
     generateNumeration,

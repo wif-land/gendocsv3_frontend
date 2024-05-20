@@ -31,7 +31,7 @@ export const useDegreeCertificateView = ({
   const { degreeCertificates, setDegreeCertificates } =
     useDegreeCertificatesStore()
   const { loader } = useLoaderStore()
-  const { fetchData, updateRow, generateDocument, generateNumeration } =
+  const { fetchData, toggleIsClosed, generateDocument, generateNumeration } =
     useDegreeCertificateMethods()
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export const useDegreeCertificateView = ({
   }
 
   const handleUpdateRow = (row: IDegreeCertificate) => {
-    updateRow(row).then((data) => {
+    toggleIsClosed(row).then((data) => {
       if (data) {
         setDegreeCertificates(
           degreeCertificates?.map((degree) =>

@@ -25,6 +25,23 @@ export interface IDegreeCertificate {
   isClosed: boolean
 }
 
+export interface ICreateDegreeCertificate
+  extends Omit<IDegreeCertificate, 'id'> {
+  certificateType: number
+  certificateStatus: number
+  room: number
+}
+
+export interface IUpdateDegreeCertificate extends Partial<IDegreeCertificate> {
+  id: number
+}
+
+export interface IDegreeCertificateFormValues extends IDegreeCertificate {
+  certificateType: { label: string; id: number } & ICertificateType
+  certificateStatus: { label: string; id: number } & ICertificateStatus
+  room: { label: string; id: number } & IRoom
+}
+
 export interface IDegreeCertificatesAttendee {
   hasAttended: boolean
   hasBeenNotified: boolean
