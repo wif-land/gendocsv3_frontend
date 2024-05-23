@@ -44,7 +44,8 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
     async (data: IFunctionaryFormValues) => {
       let result
       if (!currentFunctionary) {
-        result = await handleCreate(data)
+        const dataWithoutId = { ...data, id: undefined }
+        result = await handleCreate(dataWithoutId as IFunctionaryFormValues)
       } else {
         const editedFields = resolveEditedFields<IFunctionaryFormValues>(
           defaultValues,

@@ -41,7 +41,6 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
 
   create = async (data: ICreateFunctionary) => {
     const result = await this.datasource.create(data)
-    console.log({ result }, 'result')
     return result
   }
 }

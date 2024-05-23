@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Yup from 'yup'
 
 import {
@@ -42,8 +43,8 @@ export const TABLE_HEAD = [
 export const NewFunctionarySchema = Yup.object().shape({
   ...DEFAULT_PERSON_SCHEMA.fields,
   regularPhoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
-  thirdLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
-  fourthLevelDegree: Yup.string().required(VALIDATION_MESSAGES.required),
+  thirdLevelDegree: Yup.number().required(VALIDATION_MESSAGES.required),
+  fourthLevelDegree: Yup.number().required(VALIDATION_MESSAGES.required),
 })
 
 export const resolveDefaultValues = (
@@ -51,9 +52,10 @@ export const resolveDefaultValues = (
 ): IFunctionaryFormValues => ({
   ...resolveDefaultSchema(currentFunctionary),
   regularPhoneNumber: currentFunctionary?.regularPhoneNumber || '',
-  thirdLevelDegree: (currentFunctionary?.thirdLevelDegree as IDegree)?.id || 0,
+  thirdLevelDegree:
+    (currentFunctionary?.thirdLevelDegree as IDegree)?.id || (null as any),
   fourthLevelDegree:
-    (currentFunctionary?.fourthLevelDegree as IDegree)?.id || 0,
+    (currentFunctionary?.fourthLevelDegree as IDegree)?.id || (null as any),
   isActive: currentFunctionary?.isActive || true,
 })
 

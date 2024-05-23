@@ -15,7 +15,7 @@ import { Button, MenuItem } from '@mui/material'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
-import { useDegreeData } from '../../../../core/providers/functionary-degree- provider'
+import { useDegreeData } from '../../../../core/providers/functionary-degree-provider'
 import { useRouter } from 'next/navigation'
 
 type Props = {
@@ -28,6 +28,14 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
 
   const { methods, onSubmit } = useFunctionaryForm(currentFunctionary)
   const { degrees } = useDegreeData()
+
+  const thirdLevelDegree = degrees.filter(
+    (degree) => degree.degreeLevel === '3',
+  )
+
+  const fourthLevelDegree = degrees.filter(
+    (degree) => degree.degreeLevel === '4',
+  )
 
   const {
     handleSubmit,
@@ -184,35 +192,24 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField
-              name="thirdLevelDegree"
-              label="Título de tercer nivel"
-            >
-              {degrees.map((degree) => {
-                if (degree.degreeLevel === '3') {
-                  return (
-                    <MenuItem key={degree.id} value={degree.id}>
-                      {degree.maleTitle}
-                    </MenuItem>
-                  )
-                }
-              })}
-            </RHFTextField>
+            <RHFSelect name="thirdLevelDegree" label="Título de tercer nivel">
+              {thirdLevelDegree.map((degree) => (
+                <MenuItem key={degree.id} value={degree.id}>
+                  {degree.maleTitle}
+                </MenuItem>
+              ))}
+            </RHFSelect>
 
             <RHFSelect
               id="fourthLevelDegree"
               name="fourthLevelDegree"
               label="Título de cuarto nivel"
             >
-              {degrees.map((degree) => {
-                if (degree.degreeLevel === '4') {
-                  return (
-                    <MenuItem key={degree.id} value={degree.id}>
-                      {degree.maleTitle}
-                    </MenuItem>
-                  )
-                }
-              })}
+              {fourthLevelDegree.map((degree) => (
+                <MenuItem key={degree.id} value={degree.id}>
+                  {degree.maleTitle}
+                </MenuItem>
+              ))}
             </RHFSelect>
           </Stack>
         </Card>
