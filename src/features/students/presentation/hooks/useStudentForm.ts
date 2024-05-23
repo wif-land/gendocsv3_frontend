@@ -52,6 +52,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
           data,
         )
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         result = await handleUpdate(currentStudent.id!, editedFields)
       }
       const newPath = currentStudent
