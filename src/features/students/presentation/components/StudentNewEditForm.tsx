@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -14,9 +15,7 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { useStudentForm } from '../hooks/useStudentForm'
 
 import { Button, MenuItem } from '@mui/material'
-import { Controller } from 'react-hook-form'
-import { MobileDatePicker } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers'
 
 import { IStudent } from '../../domain/entities/IStudent'
 import { useLocations } from '../../../../core/providers/locations-provider'
@@ -36,7 +35,6 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
   const {
     handleSubmit,
     formState: { isSubmitting },
-    control,
   } = methods
 
   const renderGeneralInfo = (
@@ -179,55 +177,34 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 type="number"
               />
 
-              <Controller
+              <DatePicker
                 name="startStudiesDate"
-                rules={{ required: true }}
-                control={control}
-                render={({ field }) => (
-                  <MobileDatePicker
-                    {...field}
-                    value={dayjs(field.value)}
-                    onChange={(newValue) => {
-                      if (newValue) {
-                        field.onChange(newValue)
-                      }
-                    }}
-                    label="Fecha de inicio de estudios"
-                    format="dddd/MM/YYYY"
-                    minDate={dayjs().subtract(50, 'year')}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
-                    closeOnSelect
-                  />
-                )}
+                label="Fecha de inicio de estudios"
+                format="dddd/MM/YYYY"
+                sx={{ width: 260 }}
+                slotProps={{
+                  field: { clearable: true },
+                }}
+                onChange={(newValue: any) => {
+                  if (newValue) {
+                    methods.setValue('startStudiesDate', newValue)
+                  }
+                }}
               />
 
-              <Controller
+              <DatePicker
                 name="endStudiesDate"
-                control={control}
-                render={({ field }) => (
-                  <MobileDatePicker
-                    {...field}
-                    value={dayjs(field.value)}
-                    onChange={(newValue) => {
-                      if (newValue) {
-                        field.onChange(newValue)
-                      }
-                    }}
-                    label="Fecha de fin de estudios"
-                    format="dddd/MM/YYYY"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
-                    minDate={dayjs().subtract(45, 'year')}
-                    closeOnSelect
-                  />
-                )}
+                label="Fecha de fin de estudios"
+                format="dddd/MM/YYYY"
+                sx={{ width: 260 }}
+                slotProps={{
+                  field: { clearable: true },
+                }}
+                onChange={(newValue: any) => {
+                  if (newValue) {
+                    methods.setValue('endStudiesDate', newValue)
+                  }
+                }}
               />
 
               <RHFTextField
@@ -372,33 +349,19 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 ))}
               </RHFSelect>
 
-              <Controller
+              <DatePicker
                 name="birthdate"
-                rules={{ required: true }}
-                control={control}
-                render={({ field }) => (
-                  <MobileDatePicker
-                    {...field}
-                    value={dayjs(field.value)}
-                    onChange={(newValue) => {
-                      if (newValue) {
-                        field.onChange(newValue)
-                      }
-                    }}
-                    label="Fecha de nacimiento"
-                    format="dddd/MM/YYYY"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        required: true,
-                      },
-                    }}
-                    disableFuture
-                    maxDate={dayjs().subtract(18, 'year')}
-                    minDate={dayjs().subtract(100, 'year')}
-                    closeOnSelect
-                  />
-                )}
+                label="Fecha de nacimiento"
+                format="dddd/MM/YYYY"
+                sx={{ width: 260 }}
+                slotProps={{
+                  field: { clearable: true },
+                }}
+                onChange={(newValue: any) => {
+                  if (newValue) {
+                    methods.setValue('birthdate', newValue)
+                  }
+                }}
               />
             </Box>
           </Stack>

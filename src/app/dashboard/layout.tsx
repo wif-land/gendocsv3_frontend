@@ -2,16 +2,13 @@
 
 import React from 'react'
 import DashboardLayout from '../../core/layout/dashboard/layout'
-import { CertificateProvider } from '../../core/providers/certificate-degree-provider'
 
 interface LayoutProps {
   children: React.ReactNode
 }
 const layout: React.FC<LayoutProps> = ({ children }) => (
   <div>
-    <DashboardLayout>
-      <CertificateProvider>{children}</CertificateProvider>
-    </DashboardLayout>
+    <DashboardLayout>{children}</DashboardLayout>
     {/*
       <Suspense fallback={<LoadingScreen />}>
         <PrivateRoute>
