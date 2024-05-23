@@ -73,8 +73,10 @@ export const resolveDefaultValues = (
   endStudiesDate: currentStudent?.endStudiesDate || null,
 })
 
-export const handleCreate = async (values: FormValuesProps) =>
+export const handleCreate = async (values: FormValuesProps) => {
+  console.log('values', values)
   await StudentUseCasesImpl.getInstance().create(values)
+}
 
 export const handleUpdate = async (
   id: number,

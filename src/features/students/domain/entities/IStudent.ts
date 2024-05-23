@@ -1,7 +1,7 @@
 import { ICreateStudent } from './ICreateStudent'
 
 export interface IStudent extends ICreateStudent {
-  id: number
+  id?: number
   updatedAt: string
   createdAt: string
   label?: string
