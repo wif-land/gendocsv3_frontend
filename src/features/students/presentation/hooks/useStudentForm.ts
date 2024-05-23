@@ -44,7 +44,8 @@ export const useStudentForm = (currentStudent?: IStudent) => {
     async (data: IStudent) => {
       let result
       if (!currentStudent) {
-        result = await handleCreate(data)
+        const dataWithoutId = { ...data, id: undefined }
+        result = await handleCreate(dataWithoutId)
       } else {
         const editedFields = resolveEditedFields<Partial<IStudent>>(
           defaultValues,
@@ -53,11 +54,6 @@ export const useStudentForm = (currentStudent?: IStudent) => {
 
         result = await handleUpdate(currentStudent.id!, editedFields)
       }
-
-      if (result.id === 0) {
-        return
-      }
-
       const newPath = currentStudent
         ? pathname.replace(new RegExp(`/${currentStudent.id}/edit`), '')
         : pathname.replace('/new', '')
