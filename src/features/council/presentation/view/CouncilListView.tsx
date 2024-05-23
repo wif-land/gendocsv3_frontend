@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Container,
+  Stack,
   Table,
   TableBody,
   TableContainer,
@@ -92,6 +93,8 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleSearch,
+    compilationTemplateDriveId,
+    separatorTemplateDriveId,
   } = useCouncilView({
     table,
     isDataFiltered,
@@ -118,14 +121,39 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
             { name: 'Consejos' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={`${pathname}/new`}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Nuevo consejo
-            </Button>
+            <>
+              <Stack
+                sx={{
+                  display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+                  gap: 2.5,
+                }}
+              >
+                <Button
+                  component={RouterLink}
+                  href={`${pathname}/view/${separatorTemplateDriveId}`}
+                  variant="contained"
+                  startIcon={<Iconify icon="solar:document-bold" />}
+                >
+                  Plantilla separador
+                </Button>
+                <Button
+                  component={RouterLink}
+                  href={`${pathname}/view/${compilationTemplateDriveId}`}
+                  variant="contained"
+                  startIcon={<Iconify icon="solar:document-bold" />}
+                >
+                  Plantilla acta
+                </Button>
+                <Button
+                  component={RouterLink}
+                  href={`${pathname}/new`}
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" />}
+                >
+                  Nuevo consejo
+                </Button>
+              </Stack>
+            </>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

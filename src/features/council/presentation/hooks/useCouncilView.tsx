@@ -32,6 +32,12 @@ export const useCouncilView = ({
   const { fetchData, updateRow, fetchDataByField } = useCouncilsMethods()
   const { modules } = useModulesStore()
 
+  const currentModule = modules?.find(
+    (module) => module.code === moduleId.toLocaleUpperCase(),
+  )
+  const compilationTemplateDriveId = currentModule?.compilationTemplateDriveId
+  const separatorTemplateDriveId = currentModule?.separatorTemplateDriveId
+
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
 
@@ -178,5 +184,7 @@ export const useCouncilView = ({
     handleChangeRowsPerPage,
     handleUpdateRow,
     handleSearch,
+    compilationTemplateDriveId,
+    separatorTemplateDriveId,
   }
 }
