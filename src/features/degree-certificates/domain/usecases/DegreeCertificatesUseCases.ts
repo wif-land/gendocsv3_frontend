@@ -2,7 +2,6 @@ import { DegreeCertificateRepositoryImpl } from '../../data/repositories/reposit
 import { IDegreeCertificate } from '../entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
-import { enqueueSnackbar } from 'notistack'
 
 interface CertificateDegreeUseCases {
   getAll(
@@ -69,16 +68,8 @@ export class DegreeCertificatesUseCasesImpl
   update = async (degreeCertificate: Partial<IDegreeCertificate>) =>
     await this.repository.update(degreeCertificate)
 
-  create = async (degreeCertificate: IDegreeCertificate) => {
-    const result = await this.repository.create(degreeCertificate)
-
-    if (result) {
-      enqueueSnackbar('Acta creada correctamente')
-      return result
-    }
-
-    return DegreeCertificateModel.fromJson({})
-  }
+  create = async (degreeCertificate: IDegreeCertificate) =>
+    await this.repository.create(degreeCertificate)
 
   generateNumeration = async (careerId: number) =>
     await this.repository.generateNumeration(careerId)
