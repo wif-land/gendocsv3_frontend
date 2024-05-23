@@ -140,4 +140,7 @@ export const API_ROUTES = {
   ROOMS: {
     GET_ALL: '/degree-certificates/rooms',
   },
+  VARIABLES: {
+    GET_ALL: '/variables',
+  },
 }

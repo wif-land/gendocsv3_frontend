@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Container,
+  Stack,
   Table,
   TableBody,
   TableContainer,
@@ -94,6 +95,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
     handleChangeRowsPerPage,
     handleSearch,
     handleUpdateRow,
+    defaultTemplate,
   } = useProcessView({
     table,
     isDataFiltered,
@@ -120,14 +122,32 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
             { name: 'Procesos' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={`${pathname}/new`}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Nuevo proceso
-            </Button>
+            <>
+              <Stack
+                sx={{
+                  display: { xs: 'none', md: 'flex' },
+                  flexDirection: 'row',
+                  gap: 1,
+                }}
+              >
+                <Button
+                  component={RouterLink}
+                  href={`${pathname}/view/${defaultTemplate}`}
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" />}
+                >
+                  Plantilla por defecto
+                </Button>
+                <Button
+                  component={RouterLink}
+                  href={`${pathname}/new`}
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" />}
+                >
+                  Nuevo proceso
+                </Button>
+              </Stack>
+            </>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

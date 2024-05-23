@@ -5,6 +5,7 @@ import { DegreeModalityModel } from '../../data/models/degreeModalityModel'
 import { DegreeModel } from '../../data/models/degreeModel'
 import { ProvinceModel } from '../../data/models/provinceModel'
 import { RoomModel } from '../../data/models/roomModel'
+import { IVariableList } from '../entities/IVariableProvider'
 
 export interface ProvidersRepository {
   getAllCities(): Promise<CityModel[]>
@@ -20,4 +21,7 @@ export interface ProvidersRepository {
   getAllRooms(): Promise<RoomModel[]>
 
   getAllDegrees(): Promise<DegreeModel[]>
+
+  getVariables(): Promise<IVariableList>
+
 }

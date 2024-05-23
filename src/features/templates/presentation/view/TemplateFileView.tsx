@@ -23,10 +23,13 @@ const TemplateFileView = () => {
   )
 
   return (
-    <DocumentVisualizer
-      driveId={currentTemplate?.driveId as string}
-      returnLink={pathName.split('/').slice(0, -2).join('/')}
-    />
+    <>
+      <DocumentVisualizer
+        driveId={currentTemplate?.driveId as string}
+        returnLink={pathName.split('/').slice(0, -2).join('/')}
+        shouldLoadVariables
+      />
+    </>
   )
 }
 
