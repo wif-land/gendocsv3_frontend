@@ -18,8 +18,8 @@ export const TABLE_HEAD = [
 ]
 
 export const defaultFilters: ICareerTableFilters = {
-  name: '',
-  state: true,
+  name: undefined,
+  state: undefined,
 }
 
 export const NewCareerSchema = Yup.object().shape({
