@@ -134,6 +134,10 @@ export const useCareerForm = (currentCareer?: ICareer) => {
 
     setIsLoading(true)
 
+    if (debouncedValue === '' || !debouncedValue) {
+      return
+    }
+
     const filteredFunctionaries = async (field: string) => {
       await FunctionaryUseCasesImpl.getInstance()
         .getByFilters({ field })

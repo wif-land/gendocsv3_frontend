@@ -122,6 +122,10 @@ export const useDegreeCertificateForm = (
 
     setIsLoading(true)
 
+    if (debouncedValue === '' || !debouncedValue) {
+      return
+    }
+
     const filteredStudents = async (field: string) => {
       await StudentUseCasesImpl.getInstance()
         .getByFilters({ field })
