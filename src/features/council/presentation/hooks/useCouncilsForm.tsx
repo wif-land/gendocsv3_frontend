@@ -1,5 +1,4 @@
 import { useCouncilsStore } from '../store/councilsStore'
-import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil, ICouncilFormValues } from '../../domain/entities/ICouncil'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -12,7 +11,6 @@ import { useAccountStore } from '../../../auth/presentation/state/useAccountStor
 import { NewCouncilSchema, resolveDefaultValues } from '../constants'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDefaultMembersStore } from '../../../default-members/presentation/store/defaultMembersStore'
 import { DefaultMembersUseCasesImpl } from '../../../default-members/domain/usecases/DefaultMemberServices'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
@@ -22,7 +20,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const pathname = usePathname()
   const { codeModule } = useParams()
 
-  const { councils, addCouncil, setCouncils } = useCouncilsStore()
+  const { councils, setCouncils, createCouncil, updateCouncil } =
+    useCouncilsStore()
 
   const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
   const moduleIdentifier = resolveModuleId(
@@ -36,7 +35,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const [unusedFunctionaries, setUnusedFunctionaries] = useState<
     IFunctionary[]
   >([])
-  const loading = useBoolean()
 
   const defaultValues: ICouncilFormValues = useMemo(
     () => resolveDefaultValues(defaultMembers, currentCouncil),
@@ -49,42 +47,32 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   })
   const values = methods.watch()
 
-  const handleCreateCouncil = async (values: ICouncilFormValues) => {
-    const council = await CouncilsUseCasesImpl.getInstance().create({
-      ...values,
-      moduleId: moduleIdentifier ?? 0,
-      userId: user?.id as number,
-    })
-
-    addCouncil(council)
-  }
-
-  const handleUpdateCouncil = async (
-    id: number,
-    editedFields: ICouncilFormValues,
-  ) => {
-    await CouncilsUseCasesImpl.getInstance().update(id, editedFields)
-  }
-
   const onSubmit = useCallback(
     async (data: ICouncilFormValues) => {
-      loading.onTrue()
       try {
+        let result
         if (!currentCouncil?.id) {
-          await handleCreateCouncil(data)
+          result = await createCouncil({
+            ...data,
+            moduleId: moduleIdentifier ?? 0,
+            userId: user?.id as number,
+          })
         } else {
-          await handleUpdateCouncil(currentCouncil.id, data)
+          result = await updateCouncil({
+            ...data,
+            id: currentCouncil.id,
+          })
         }
 
-        router.push(
-          currentCouncil
-            ? pathname.replace(new RegExp(`/${currentCouncil.id}/edit`), '')
-            : pathname.replace('/new', ''),
-        )
-      } catch (error) {
+        if (!!result && !!result.id) {
+          router.push(
+            currentCouncil
+              ? pathname.replace(new RegExp(`/${currentCouncil.id}/edit`), '')
+              : pathname.replace('/new', ''),
+          )
+        }
       } finally {
         methods.reset()
-        loading.onFalse()
       }
     },
     [currentCouncil, enqueueSnackbar, methods.reset, router],
@@ -117,9 +105,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
   useEffect(() => {
     let isMounted = true
-    loading.onTrue()
     if (searchDebounced.includes('-')) {
-      loading.onFalse()
       return
     }
     if (
@@ -127,7 +113,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       searchDebounced === '' ||
       searchDebounced.length < 1
     ) {
-      loading.onFalse()
       return
     }
 
@@ -152,7 +137,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
           setUnusedFunctionaries([])
         }
       })
-      .finally(() => loading.onFalse())
 
     return () => {
       isMounted = false
@@ -173,10 +157,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     unusedFunctionaries,
     defaultValues,
     setCouncils,
-    handleUpdateCouncil,
     onSubmit,
     setSearchField,
-    loading,
     defaultMembers,
     pathname,
   }

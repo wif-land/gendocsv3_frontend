@@ -21,6 +21,7 @@ import dayjs from 'dayjs'
 import { Box, Button, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
 import { useRouter } from 'next/navigation'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -29,12 +30,12 @@ type Props = {
 export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const router = useRouter()
+  const { loader } = useLoaderStore()
   const {
     methods,
     unusedFunctionaries,
     onSubmit,
     setSearchField,
-    loading,
     defaultMembers,
     pathname,
   } = useCouncilsForm(currentCouncil)
@@ -139,7 +140,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                       placeholder="Escribe el nombre o cédula del miembro deseado"
                       noOptionsText="No hay resultados"
                       freeSolo
-                      loading={loading.value}
+                      loading={loader.length > 0}
                       getOptionLabel={(option) =>
                         (option as { label: string; id: number }).label
                       }
@@ -208,7 +209,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
           type="submit"
           variant="contained"
           size="large"
-          loading={loading.value}
+          loading={loader.length > 0}
         >
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>
