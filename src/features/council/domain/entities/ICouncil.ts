@@ -1,8 +1,8 @@
 import { ICouncilAttendee } from './ICouncilAttendee'
 
 export enum CouncilType {
-  EXTRAORDINARY = 'EXTRAORDINARY',
-  ORDINARY = 'ORDINARY',
+  EXTRAORDINARY = 'EXTRAORDINARIA',
+  ORDINARY = 'ORDINARIA',
 }
 
 export const CouncilTypeLabels = {
@@ -17,8 +17,8 @@ export enum CouncilAttendanceRole {
 }
 
 export const COUNCIL_TYPES = Object.keys(CouncilType).map((key) => ({
-  label: CouncilTypeLabels[key as keyof typeof CouncilType],
-  value: key,
+  label: CouncilTypeLabels[CouncilType[key as keyof typeof CouncilType]],
+  value: CouncilType[key as keyof typeof CouncilType],
 }))
 
 export interface ICouncil {

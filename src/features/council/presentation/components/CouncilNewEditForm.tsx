@@ -68,11 +68,14 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
               label="Tipo"
               InputLabelProps={{ shrink: true }}
             >
-              {COUNCIL_TYPES.map((council) => (
-                <MenuItem key={council.value} value={council.value}>
-                  {council.label}
-                </MenuItem>
-              ))}
+              {COUNCIL_TYPES.map((council) => {
+                console.log(council)
+                return (
+                  <MenuItem key={council.value} value={council.value}>
+                    {council.label}
+                  </MenuItem>
+                )
+              })}
             </RHFSelect>
 
             <Controller
