@@ -85,6 +85,10 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
     setTableData([])
   }
 
+  const handleDocumentActions = (id: number) => {
+    router.push(`${pathname}/${id}/record`)
+  }
+
   const {
     loader,
     tableData,
@@ -128,6 +132,14 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
                   gap: 2.5,
                 }}
               >
+                <Button
+                  component={RouterLink}
+                  href={`${pathname}/numeration`}
+                  variant="contained"
+                  startIcon={<Iconify icon="f7:number" />}
+                >
+                  Gestionar numeración
+                </Button>
                 <Button
                   component={RouterLink}
                   href={`${pathname}/view/${separatorTemplateDriveId}`}
@@ -246,6 +258,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
                             }
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onViewRow={() => handleViewRow(row.id!.toString())}
+                            onDocumentAction={handleDocumentActions}
                           />
                         ))}
                     </>

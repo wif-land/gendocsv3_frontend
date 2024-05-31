@@ -26,6 +26,15 @@ export interface DocumentsDataSource {
   }>
 
   getNumerationByCouncil(councilId: number): Promise<NumerationModel>
+
+  processDocuments(id: number): Promise<{
+    documentsRecopilated: number
+    mergedDocument: boolean
+  }>
+
+  generateRecord(id: number): Promise<{ record: string }>
+
+  downloadDocument(id: number): Promise<void>
 }
 
 export class DocumentsDataSourceImpl implements DocumentsDataSource {
@@ -105,5 +114,39 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     }
 
     return result.data as NumerationModel
+  }
+
+  processDocuments = async (id: number) => {
+    const result = await AxiosClient.post(API_ROUTES.DOCUMENTS.PROCESS(id))
+
+    console.log(result)
+
+    if ('error' in result) {
+      return { documentsRecopilated: 0, mergedDocument: false }
+    }
+
+    return result.data as {
+      documentsRecopilated: number
+      mergedDocument: boolean
+    }
+  }
+
+  generateRecord = async (id: number) => {
+    const result = await AxiosClient.post(
+      API_ROUTES.DOCUMENTS.GENERATE_RECORD(id),
+    )
+
+    console.log(result)
+
+    if ('error' in result) {
+      return { record: '' }
+    }
+
+    return result.data as { record: string }
+  }
+
+  downloadDocument = async (id: number) => {
+    const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.DOWNLOAD(id))
+    console.log(result)
   }
 }

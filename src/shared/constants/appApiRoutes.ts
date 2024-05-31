@@ -88,6 +88,9 @@ export const API_ROUTES = {
     UPDATE: (id: number) => `/documents/${id}`,
     DELETE: '/documents/:id',
     CREATE: '/documents',
+    PROCESS: (id: number) => `/documents/create-recopilation/content/${id}`,
+    GENERATE_RECORD: (id: number) => `/documents/create-recopilation/${id}`,
+    DOWNLOAD: (id: number) => `/documents/create-recopilation/${id}`,
   },
   DOCUMENT_NUMERATION: {
     GET_BY_COUNCIL: '/numeration-document/by-council',

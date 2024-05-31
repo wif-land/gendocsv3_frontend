@@ -150,7 +150,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                 onClick={handleGenerateNumeration}
                 sx={{ mr: 1.5 }}
               >
-                Generar numerción
+                Generar numeración
               </Button>
               <Button
                 component={RouterLink}

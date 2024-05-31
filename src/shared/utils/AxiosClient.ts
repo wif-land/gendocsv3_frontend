@@ -93,7 +93,7 @@ export class AxiosClient {
    */
   static async post<T>(
     path: string,
-    body: unknown,
+    body?: unknown,
   ): Promise<
     | AxiosResponse<T>
     | {
