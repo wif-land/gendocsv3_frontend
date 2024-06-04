@@ -1,4 +1,4 @@
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
 import * as yup from 'yup'
@@ -22,15 +22,20 @@ const resolveDefaultValues = () => ({
 
 const NewDocumentSchema = yup.object({
   councilId: yup.number().required('El consejo es requerido'),
-  from: yup.number().required('Desde es requerido'),
+  from: yup
+    .number()
+    .typeError('Debe ser un número')
+    .required('Desde es requerido'),
   to: yup
     .number()
-    .min(yup.ref('from'), 'Hasta debe ser mayor o igual a Desde')
+    .typeError('Debe ser un número')
+    .min(yup.ref('from'), 'Debe ser mayor ue el número de inicio')
     .required('Hasta es requerido'),
 })
 
 export const useNumerationForm = () => {
   const router = useRouter()
+  const pathname = usePathname()
   const { codeModule } = useParams()
   const [councils, setCouncils] = useState<ICouncil[]>([] as ICouncil[])
 
@@ -88,6 +93,7 @@ export const useNumerationForm = () => {
     councils,
     methods,
     router,
+    pathname,
     onSubmit,
   }
 }

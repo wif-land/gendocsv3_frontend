@@ -40,7 +40,13 @@ export interface CouncilRepository {
 
   reserveNumeration(payload: {
     councilId: number
+    start?: number
+    end?: number
+    isExtension?: boolean
+  }): Promise<void>
+
+  getAvailableExtensionNumeration(councilId: number): Promise<{
     start: number
     end: number
-  }): Promise<void>
+  }>
 }

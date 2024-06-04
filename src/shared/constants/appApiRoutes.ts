@@ -76,6 +76,8 @@ export const API_ROUTES = {
     GET_COUNCILS_THAT_CAN_RESERVE: (moduleId: number) =>
       `/numeration-document/could-reserve/${moduleId}`,
     RESERVE_NUMERATION: `/numeration-document/reserve`,
+    GET_AVAILABLE_EXTENSION_NUMERATION: (councilId: number) =>
+      `/numeration-document/available-extension-numeration/${councilId}`,
   },
   TEMPLATES: {
     GET_ALL: '/templates',

@@ -2,10 +2,14 @@ import { useCouncilsStore } from '../store/councilsStore'
 import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 
 type NumerationFormValues = {
   councilId: number
+  actualStart: number
+  actualEnd: number
   newStart?: number | undefined
   newEnd?: number | undefined
   extendStart: boolean
@@ -14,6 +18,8 @@ type NumerationFormValues = {
 
 const resolveDefaultValues = () => ({
   councilId: 0,
+  actualStart: 0,
+  actualEnd: 0,
   newStart: undefined,
   newEnd: undefined,
   extendStart: true,
@@ -22,6 +28,8 @@ const resolveDefaultValues = () => ({
 
 const NewDocumentSchema = yup.object({
   councilId: yup.number().required(),
+  actualStart: yup.number().required(),
+  actualEnd: yup.number().required(),
   newStart: yup.number(),
   newEnd: yup.number(),
   extendStart: yup.boolean().required(),
@@ -30,28 +38,45 @@ const NewDocumentSchema = yup.object({
 
 export const useExtendNumerationForm = () => {
   const router = useRouter()
-  // const pathname = usePathname()
-  // const { codeModule } = useParams()
+  const pathname = usePathname()
 
   const { councils } = useCouncilsStore()
-  // const moduleIdentifier = resolveModuleId(
-  //   useModulesStore().modules,
-  //   codeModule as string,
-  // )
+
+  const getAvaliableExtension = async (councilId: number) => {
+    const response =
+      await CouncilsUseCasesImpl.getInstance().getAvailableExtensionNumeration(
+        councilId,
+      )
+
+    methods.setValue('actualStart', response.start)
+    methods.setValue('actualEnd', response.end)
+  }
 
   const methods = useForm<NumerationFormValues>({
     defaultValues: resolveDefaultValues(),
     resolver: yupResolver(NewDocumentSchema),
   })
 
-  const handleSubmit = (data: NumerationFormValues) => {
-    console.log(data)
+  const onSubmit = async (data: NumerationFormValues) => {
+    await CouncilsUseCasesImpl.getInstance().reserveNumeration({
+      councilId: data.councilId,
+      start: data.extendStart ? data.newStart : undefined,
+      end: data.extendEnd ? data.newEnd : undefined,
+      isExtension: true,
+    })
   }
+
+  useEffect(() => {
+    if (methods.watch('councilId')) {
+      getAvaliableExtension(methods.watch('councilId'))
+    }
+  }, [methods.watch('councilId')])
 
   return {
     councils,
     methods,
     router,
-    handleSubmit,
+    pathname,
+    onSubmit,
   }
 }

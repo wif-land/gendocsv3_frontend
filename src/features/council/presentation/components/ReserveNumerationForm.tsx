@@ -11,7 +11,7 @@ import { useResponsive } from '../../../../shared/hooks/use-responsive'
 
 export const ReserveNumerationForm = () => {
   const { loader } = useLoaderStore()
-  const { methods, onSubmit, councils } = useNumerationForm()
+  const { methods, onSubmit, councils, router, pathname } = useNumerationForm()
   const mdUp = useResponsive('up', 'md')
 
   const renderForm = (
@@ -74,7 +74,13 @@ export const ReserveNumerationForm = () => {
           gap: '10px',
         }}
       >
-        <Button variant="outlined" size="large">
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() =>
+            router.push(pathname.split('/').slice(0, -1).join('/'))
+          }
+        >
           Cancelar
         </Button>
 

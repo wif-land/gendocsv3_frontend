@@ -48,9 +48,15 @@ export interface CouncilsDataSource {
 
   reserveNumeration(payload: {
     councilId: number
+    start?: number
+    end?: number
+    isExtension?: boolean
+  }): Promise<void>
+
+  getAvailableExtensionNumeration(councilId: number): Promise<{
     start: number
     end: number
-  }): Promise<void>
+  }>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -190,6 +196,8 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
       API_ROUTES.COUNCILS.GET_NEXT_NUMBER_AVAILABLE(moduleId),
     )
 
+    console.log(result)
+
     if ('error' in result) {
       return 0
     }
@@ -215,5 +223,17 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     end: number
   }) => {
     await AxiosClient.post(API_ROUTES.COUNCILS.RESERVE_NUMERATION, payload)
+  }
+
+  getAvailableExtensionNumeration = async (councilId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.COUNCILS.GET_AVAILABLE_EXTENSION_NUMERATION(councilId),
+    )
+
+    if ('error' in result) {
+      return { start: 0, end: 0 }
+    }
+
+    return result.data as { start: number; end: number }
   }
 }

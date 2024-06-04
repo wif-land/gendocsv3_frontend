@@ -63,7 +63,11 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   reserveNumeration = async (payload: {
     councilId: number
-    start: number
-    end: number
+    start?: number
+    end?: number
+    isExtension?: boolean
   }) => await this.datasource.reserveNumeration(payload)
+
+  getAvailableExtensionNumeration = async (councilId: number) =>
+    await this.datasource.getAvailableExtensionNumeration(councilId)
 }

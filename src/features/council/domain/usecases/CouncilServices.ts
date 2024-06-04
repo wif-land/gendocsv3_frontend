@@ -44,9 +44,15 @@ interface CouncilUseCases {
 
   reserveNumeration(payload: {
     councilId: number
+    start?: number
+    end?: number
+    isExtension?: boolean
+  }): Promise<void>
+
+  getAvailableExtensionNumeration(councilId: number): Promise<{
     start: number
     end: number
-  }): Promise<void>
+  }>
 }
 
 export class CouncilsUseCasesImpl implements CouncilUseCases {
@@ -152,7 +158,11 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   reserveNumeration = async (payload: {
     councilId: number
-    start: number
-    end: number
+    start?: number
+    end?: number
+    isExtension?: boolean
   }) => await this.councilRepository.reserveNumeration(payload)
+
+  getAvailableExtensionNumeration = async (councilId: number) =>
+    await this.councilRepository.getAvailableExtensionNumeration(councilId)
 }

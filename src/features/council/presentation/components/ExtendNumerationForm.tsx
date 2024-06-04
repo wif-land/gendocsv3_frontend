@@ -1,4 +1,4 @@
-import { Card, MenuItem, Stack, Button, Grid, TextField } from '@mui/material'
+import { Card, MenuItem, Stack, Button, Grid } from '@mui/material'
 import React from 'react'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
@@ -11,7 +11,8 @@ import { useExtendNumerationForm } from '../hooks/useExtendNumerationForm'
 
 export const ExtendNumerationForm = () => {
   const { loader } = useLoaderStore()
-  const { methods, handleSubmit, councils } = useExtendNumerationForm()
+  const { methods, onSubmit, councils, router, pathname } =
+    useExtendNumerationForm()
   const mdUp = useResponsive('up', 'md')
 
   const renderForm = (
@@ -39,11 +40,11 @@ export const ExtendNumerationForm = () => {
           }}
         >
           <Stack spacing={3} sx={{ width: '100%' }}>
-            <TextField
-              name="from"
+            <RHFTextField
+              name="actualStart"
               label="Actual inicial"
               disabled
-              value={'10'}
+              value={methods.watch('actualStart')}
             />
 
             <RHFTextField
@@ -54,7 +55,12 @@ export const ExtendNumerationForm = () => {
             <RHFSwitch name="extendStart" label="Extender inicial" />
           </Stack>
           <Stack spacing={3} sx={{ width: '100%' }}>
-            <TextField name="to" label="Actual final" disabled value={'10'} />
+            <RHFTextField
+              name="actualEnd"
+              label="Actual final"
+              disabled
+              value={methods.watch('actualEnd')}
+            />
             <RHFTextField
               name="newEnd"
               label="Nuevo final"
@@ -80,7 +86,13 @@ export const ExtendNumerationForm = () => {
           gap: '10px',
         }}
       >
-        <Button variant="outlined" size="large">
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() =>
+            router.push(pathname.split('/').slice(0, -1).join('/'))
+          }
+        >
           Cancelar
         </Button>
 
@@ -98,7 +110,7 @@ export const ExtendNumerationForm = () => {
 
   return (
     <>
-      <FormProvider methods={methods} onSubmit={() => handleSubmit}>
+      <FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
         {renderForm}
         {renderActions}
       </FormProvider>
