@@ -14,7 +14,8 @@ import ProgressBar from '../shared/sdk/progress-bar/progress-bar'
 import { ModulesProvider } from './providers/modules-provider'
 import { primaryFont } from '../core/theme/typography'
 import { LocationProvider } from '../core/providers/locations-provider'
-import { DegreeProvider } from '../core/providers/functionary-degree- provider'
+import { DegreeProvider } from '../core/providers/functionary-degree-provider'
+import { CertificateProvider } from '@/core/providers/certificate-degree-provider'
 
 export const metadata = {
   title: 'Gendocs V3 - Gestión Documental',
@@ -52,12 +53,11 @@ type Props = {
 }
 
 export default ({ children }: Props) => (
-  <html lang="en" className={primaryFont.className}>
+  <html lang="es" className={primaryFont.className}>
     <body>
       <SettingsProvider
         defaultSettings={{
           themeMode: 'light', // 'light' | 'dark'
-          themeDirection: 'ltr', //  'rtl' | 'ltr'
           themeContrast: 'default', // 'default' | 'bold'
           themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
           themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
@@ -67,16 +67,18 @@ export default ({ children }: Props) => (
         <ThemeProvider>
           <LocationProvider>
             <DegreeProvider>
-              <MotionLazy>
-                <ModulesProvider>
-                  <SnackbarProvider>
-                    <SettingsDrawer />
-                    <ProgressBar />
+              <CertificateProvider>
+                <MotionLazy>
+                  <ModulesProvider>
+                    <SnackbarProvider>
+                      <SettingsDrawer />
+                      <ProgressBar />
 
-                    {children}
-                  </SnackbarProvider>
-                </ModulesProvider>
-              </MotionLazy>
+                      {children}
+                    </SnackbarProvider>
+                  </ModulesProvider>
+                </MotionLazy>
+              </CertificateProvider>
             </DegreeProvider>
           </LocationProvider>
         </ThemeProvider>

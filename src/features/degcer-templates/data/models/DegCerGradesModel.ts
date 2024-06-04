@@ -12,8 +12,8 @@ export class DegCerGradesModel implements IDegCerGrades {
     this.id = data.id
     this.cell = data.cell
     this.gradeVariable = data.gradeVariable
-    this.gradeTextVariable = data.gradeTextVariable
-    this.certificateType = data.certificateType
+    this.gradeTextVariable = data.gradeTextVariable || ''
+    this.certificateType = data.certificateType || 0
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

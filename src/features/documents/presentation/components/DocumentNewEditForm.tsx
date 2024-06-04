@@ -13,7 +13,7 @@ import {
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { IconButton, InputAdornment, MenuItem } from '@mui/material'
+import { Button, IconButton, InputAdornment, MenuItem } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
@@ -21,6 +21,7 @@ import Iconify from '../../../../core/iconify'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { DocumentSeeNumerationDialog } from './DocumentSeeNumerationDialog'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -28,6 +29,7 @@ type Props = {
 
 export const DocumentNewEditForm = ({ currentDocument }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
   const { loader } = useLoaderStore()
   const {
     methods,
@@ -221,8 +223,24 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'end',
+          alignItems: 'center',
+          gap: '10px',
+        }}
       >
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
+
         <LoadingButton
           type="submit"
           variant="contained"

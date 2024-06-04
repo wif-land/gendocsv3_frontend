@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { enqueueSnackbar } from 'notistack'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 
@@ -55,6 +55,8 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
   const handleCreate = useCallback(async (values: ITemplate) => {
     const result = await TemplatesUseCasesImpl.getInstance().create(values)
 
+    console.log('result', result)
+
     addTemplateToProcess(result.template, values.processId as number)
     reset()
   }, [])
@@ -81,7 +83,7 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
         if (!currentTemplate?.id) {
           await handleCreate({ ...data })
         } else {
-          const editedFields = getEditedFields<FormValuesProps>(
+          const editedFields = resolveEditedFields<FormValuesProps>(
             defaultValues,
             data,
           )

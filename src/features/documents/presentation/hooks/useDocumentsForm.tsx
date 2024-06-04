@@ -9,7 +9,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { useCouncilStore } from '../../../council/presentation/store/councilsStore'
+import { useCouncilsStore } from '../../../council/presentation/store/councilsStore'
 import { CouncilsUseCasesImpl } from '../../../council/domain/usecases/CouncilServices'
 import { NumerationModel } from '../../data/models/NumerationModel'
 import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
@@ -40,7 +40,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const isProcessSelected = useBoolean(false)
   const isTemplateSelected = useBoolean(false)
 
-  const { councils, setCouncils } = useCouncilStore()
+  const { councils, setCouncils } = useCouncilsStore()
   const { processes, setProcesses } = useProcessStore()
   const { students, setStudents } = useStudentStore()
   const { functionaries, setFunctionaries } = useFunctionaryStore()

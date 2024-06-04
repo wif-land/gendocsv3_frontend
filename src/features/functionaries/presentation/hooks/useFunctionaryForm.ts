@@ -8,15 +8,17 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import { useFunctionaryStore } from '../state/useFunctionaryStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { IFunctionary } from '../../domain/entities/IFunctionary'
 import {
-  FormValuesProps,
+  IFunctionary,
+  IFunctionaryFormValues,
+} from '../../domain/entities/IFunctionary'
+import {
   NewFunctionarySchema,
   resolveDefaultValues,
   handleCreate,
   handleUpdate,
 } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 
 export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
   const router = useRouter()
@@ -30,7 +32,7 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
     [currentFunctionary],
   )
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm<IFunctionaryFormValues>({
     // @ts-expect-error ts-migrate(2554) FIXME: Expected 2 arguments, but got 1.
     resolver: yupResolver(NewFunctionarySchema),
     defaultValues,
@@ -39,20 +41,24 @@ export const useFunctionaryForm = (currentFunctionary?: IFunctionary) => {
   const { reset, handleSubmit } = methods
 
   const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
+    async (data: IFunctionaryFormValues) => {
       let result
       if (!currentFunctionary) {
-        result = await handleCreate(data)
+        const dataWithoutId = { ...data, id: undefined }
+        result = await handleCreate(dataWithoutId as IFunctionaryFormValues)
       } else {
-        const editedFields = getEditedFields<FormValuesProps>(
+        const editedFields = resolveEditedFields<IFunctionaryFormValues>(
           defaultValues,
           data,
         )
 
-        result = await handleUpdate(currentFunctionary.id!, editedFields)
+        result = await handleUpdate(
+          currentFunctionary.id!,
+          editedFields as Partial<IFunctionaryFormValues>,
+        )
       }
 
-      if (!result) {
+      if (result.id === 0) {
         return
       }
 

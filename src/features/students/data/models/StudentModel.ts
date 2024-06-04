@@ -4,7 +4,7 @@ import { ICareer } from '../../../careers/domain/entities/ICareer'
 import { IStudent } from '../../domain/entities/IStudent'
 
 export class StudentModel implements IStudent {
-  id: number
+  id?: number
   dni: string
   firstName: string
   secondName: string
@@ -63,7 +63,7 @@ export class StudentModel implements IStudent {
 
   static fromJson(json: Record<string, any>): StudentModel {
     return new StudentModel({
-      id: json.id,
+      id: json.id || 0,
       dni: json.dni,
       approvedCredits: json.approvedCredits,
       birthdate: json.birthdate,

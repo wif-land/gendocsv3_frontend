@@ -18,8 +18,10 @@ import { Controller } from 'react-hook-form'
 import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
-import { Box, Link, MenuItem } from '@mui/material'
+import { Box, Button, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
+import { useRouter } from 'next/navigation'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -27,12 +29,13 @@ type Props = {
 
 export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
+  const { loader } = useLoaderStore()
   const {
     methods,
     unusedFunctionaries,
     onSubmit,
     setSearchField,
-    loading,
     defaultMembers,
     pathname,
   } = useCouncilsForm(currentCouncil)
@@ -65,11 +68,14 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
               label="Tipo"
               InputLabelProps={{ shrink: true }}
             >
-              {COUNCIL_TYPES.map((council) => (
-                <MenuItem key={council.value} value={council.value}>
-                  {council.label}
-                </MenuItem>
-              ))}
+              {COUNCIL_TYPES.map((council) => {
+                console.log(council)
+                return (
+                  <MenuItem key={council.value} value={council.value}>
+                    {council.label}
+                  </MenuItem>
+                )
+              })}
             </RHFSelect>
 
             <Controller
@@ -93,6 +99,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                       required: true,
                     },
                   }}
+                  disablePast
                 />
               )}
             />
@@ -136,7 +143,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                       placeholder="Escribe el nombre o cédula del miembro deseado"
                       noOptionsText="No hay resultados"
                       freeSolo
-                      loading={loading.value}
+                      loading={loader.length > 0}
                       getOptionLabel={(option) =>
                         (option as { label: string; id: number }).label
                       }
@@ -179,17 +186,33 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'end',
+          alignItems: 'center',
+          gap: '10px',
+        }}
       >
         <Box sx={{ flexGrow: 1 }}>
           <RHFSwitch name="isActive" label="Consejo activo" />
         </Box>
 
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
+
         <LoadingButton
           type="submit"
           variant="contained"
           size="large"
-          // disabled={loading.value}
+          loading={loader.length > 0}
         >
           {!currentCouncil ? 'Crear' : 'Guardar'}
         </LoadingButton>

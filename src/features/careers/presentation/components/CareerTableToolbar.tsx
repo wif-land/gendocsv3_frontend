@@ -1,12 +1,8 @@
 import { useCallback } from 'react'
 import Stack from '@mui/material/Stack'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
-import { usePopover } from '../../../../shared/sdk/custom-popover'
-import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
 import { SelectChangeEvent } from '@mui/material'
 
@@ -28,8 +24,6 @@ export const CareerTableToolbar = ({
   onFilters,
   setIsDataFiltered,
 }: Props) => {
-  const popover = usePopover()
-
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value)
@@ -89,46 +83,8 @@ export const CareerTableToolbar = ({
               ),
             }}
           />
-
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
         </Stack>
       </Stack>
-
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
-      >
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:import-bold" />
-          Import
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:export-bold" />
-          Export
-        </MenuItem>
-      </CustomPopover>
     </>
   )
 }

@@ -1,6 +1,10 @@
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { FunctionaryRepositoryImpl } from '../../data/repositories/FunctionaryRepositoryImpl'
-import { IFunctionary } from '../entities/IFunctionary'
+import {
+  IFunctionary,
+  IFunctionaryFormValues,
+  IUpdateFunctionary,
+} from '../entities/IFunctionary'
 import { IFunctionaryFilters } from '../entities/IFunctionaryFilters'
 import { FunctionaryRepository } from '../repositories/FunctionaryRepository'
 
@@ -24,7 +28,10 @@ interface FunctionaryUseCases {
     functionaries: FunctionaryModel[]
   }>
 
-  update(id: number, data: Partial<FunctionaryModel>): Promise<FunctionaryModel>
+  update(
+    id: number,
+    data: Partial<IFunctionaryFormValues>,
+  ): Promise<FunctionaryModel>
 
   bulkUpdate(
     functionaries: Partial<IFunctionary>[],
@@ -45,8 +52,12 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
   private functionaryRepository: FunctionaryRepository =
     FunctionaryRepositoryImpl.getInstance()
 
-  create = async (data: IFunctionary) =>
-    await this.functionaryRepository.create(data)
+  create = async (data: IFunctionaryFormValues) =>
+    await this.functionaryRepository.create({
+      ...data,
+      fourthLevelDegree: data.fourthLevelDegree,
+      thirdLevelDegree: data.thirdLevelDegree,
+    })
 
   getAll = async (limit: number, offset: number) =>
     await this.functionaryRepository.getAll(limit, offset)
@@ -54,12 +65,27 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
   getByFilters = async (filters: IFunctionaryFilters, limit = 5, offset = 0) =>
     await this.functionaryRepository.getByFilters(filters, limit, offset)
 
-  update = async (id: number, data: Partial<FunctionaryModel>) =>
-    await this.functionaryRepository.update({
+  update = async (id: number, data: Partial<IFunctionaryFormValues>) => {
+    const extraData: Record<string, number> = {}
+
+    const fourthLevelDegree = data.fourthLevelDegree
+    const thirdLevelDegree = data.thirdLevelDegree
+
+    if (fourthLevelDegree) {
+      extraData['fourthLevelDegree'] = fourthLevelDegree
+    }
+
+    if (thirdLevelDegree) {
+      extraData['thirdLevelDegree'] = thirdLevelDegree
+    }
+
+    return await this.functionaryRepository.update({
       ...data,
+      ...extraData,
       id,
     })
+  }
 
-  bulkUpdate = async (functionaries: Partial<IFunctionary>[]) =>
+  bulkUpdate = async (functionaries: IUpdateFunctionary[]) =>
     await this.functionaryRepository.bulkUpdate(functionaries)
 }

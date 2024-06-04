@@ -15,7 +15,8 @@ export const useUsersMethods = () => {
     )
 
   const updateRow = async (user: Partial<IUser>) =>
-    await UserUseCasesImpl.getInstance().update(user.id as number, {
+    await UserUseCasesImpl.getInstance().update({
+      id: user.id,
       isActive: !user.isActive,
     })
 

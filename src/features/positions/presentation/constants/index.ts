@@ -52,12 +52,7 @@ export const handleCreate = async (values: FormValuesProps) => {
     functionary: functionaryDni,
   })
 
-  if (!result) {
-    enqueueSnackbar('Error al crear el cargo', { variant: 'error' })
-    return
-  }
-
-  enqueueSnackbar('Cargo creado con éxito', { variant: 'success' })
+  return !!result
 }
 
 export const handleUpdate = async (values: Partial<IPosition> | null) => {
@@ -65,7 +60,7 @@ export const handleUpdate = async (values: Partial<IPosition> | null) => {
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
     })
-    return
+    return true
   }
 
   let functionaryDni
@@ -85,12 +80,5 @@ export const handleUpdate = async (values: Partial<IPosition> | null) => {
     functionary: functionaryDni,
   })
 
-  if (!result) {
-    enqueueSnackbar('Error al actualizar el funcionario', {
-      variant: 'error',
-    })
-    return
-  }
-
-  enqueueSnackbar('Funcionario actualizado con éxito', { variant: 'success' })
+  return !!result
 }

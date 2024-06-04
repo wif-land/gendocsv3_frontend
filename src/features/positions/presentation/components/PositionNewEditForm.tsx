@@ -12,6 +12,8 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { IPosition } from '../../domain/entities/IPosition'
 import { useFunctionaryForm } from '../hooks/usePositionForm'
+import { Button } from '@mui/material'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentPosition?: IPosition
@@ -19,6 +21,7 @@ type Props = {
 
 export const PositionNewEditForm = ({ currentPosition }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
 
   const { methods, onSubmit, functionaries, setInputValue, isOpen, loading } =
     useFunctionaryForm(currentPosition)
@@ -144,8 +147,23 @@ export const PositionNewEditForm = ({ currentPosition }: Props) => {
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      <Grid
+        xs={12}
+        md={8}
+        sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+      >
         <Box sx={{ flexGrow: 1 }}></Box>
+
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
 
         <LoadingButton
           type="submit"

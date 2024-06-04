@@ -1,7 +1,11 @@
 import { CouncilModel } from '../models/CouncilModel'
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
-import { ICouncil } from '../../domain/entities/ICouncil'
+import {
+  ICouncil,
+  ICreateCouncil,
+  IUpdateCouncil,
+} from '../../domain/entities/ICouncil'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 
 export interface CouncilsDataSource {
@@ -26,13 +30,17 @@ export interface CouncilsDataSource {
     count: number
   }>
 
-  update(council: Partial<ICouncil>): Promise<CouncilModel>
+  update(council: IUpdateCouncil): Promise<CouncilModel>
 
-  create(council: ICouncil): Promise<CouncilModel>
+  create(council: ICreateCouncil): Promise<CouncilModel>
 
   bulkUpdate(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 
   notifyMembers(payload: { members: number[]; id: number }): Promise<void>
+
+  getById(id: number): Promise<CouncilModel>
+
+  handleMemberAttendance(memberId: number): Promise<void>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -44,6 +52,16 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     }
 
     return CouncilsDataSourceImpl.instance
+  }
+
+  async getById(id: number): Promise<CouncilModel> {
+    const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_BY_ID(id))
+
+    if ('error' in result) {
+      return {} as CouncilModel
+    }
+
+    return result.data as CouncilModel
   }
 
   async notifyMembers(payload: {
@@ -72,7 +90,7 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return result.data as { councils: CouncilModel[]; count: number }
   }
 
-  create = async (council: CouncilModel) => {
+  create = async (council: ICreateCouncil) => {
     const result = await AxiosClient.post(API_ROUTES.COUNCILS.CREATE, council)
 
     if ('error' in result) {
@@ -124,7 +142,7 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return result.data as { councils: CouncilModel[]; count: number }
   }
 
-  update = async (council: ICouncil) => {
+  update = async (council: IUpdateCouncil) => {
     const { id, ...rest } = council
     const result = await AxiosClient.patch(
       API_ROUTES.COUNCILS.UPDATE(id as number),
@@ -149,5 +167,11 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     }
 
     return result.data as CouncilModel[]
+  }
+
+  handleMemberAttendance = async (memberId: number) => {
+    await AxiosClient.patch(
+      API_ROUTES.COUNCILS.HANDLE_MEMBER_ATTENDANCE(memberId),
+    )
   }
 }

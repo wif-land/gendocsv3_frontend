@@ -6,33 +6,30 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useState } from 'react'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { useParams } from 'next/navigation'
-import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
-import useModulesStore from '../../../../shared/store/modulesStore'
+import { CouncilAttendanceServices } from '../../domain/usecases/CouncilAttendanceServices'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { useCouncilStore } from '../store/councilStore'
 
-export const CouncilDetailAttendance = (props: {
-  members: ICouncilAttendee[]
-}) => {
-  const { codeModule } = useParams()
-
-  const moduleIdentifier = resolveModuleId(
-    useModulesStore().modules,
-    codeModule as string,
-  )
+export const CouncilDetailAttendance = () => {
+  const { id: councilIdentifier } = useParams()
+  const loader = useLoaderStore()
+  const { council, setCouncil } = useCouncilStore()
 
   const alreadyNotified = useBoolean(
-    props.members.some((member) => member.hasBeenNotified),
+    council.members.some((member) => member.hasBeenNotified),
   )
   const [membersToNotify, setMembersToNotify] = useState<number[]>([])
   const isSubmitting = useBoolean(false)
 
   const handleCheckOrUncheck = (member: ICouncilAttendee) => {
-    setMembersToNotify((prev) => {
-      if (!membersToNotify.includes(member.id!)) {
-        return [...prev, member.id]
-      }
+    const alreadyInList = membersToNotify?.includes(member.id!)
 
-      return prev.filter((id) => id !== member.id) || []
-    })
+    if (alreadyInList) {
+      setMembersToNotify((prev) => prev?.filter((id) => id !== member.id))
+      return
+    }
+
+    setMembersToNotify((prev) => [...(prev || []), member.id!])
   }
 
   const handleNotify = async () => {
@@ -40,19 +37,37 @@ export const CouncilDetailAttendance = (props: {
     CouncilsUseCasesImpl.getInstance()
       .notifyMembers({
         members: membersToNotify,
-        id: moduleIdentifier,
+        id: Number(councilIdentifier),
       })
       .then(() => {
         isSubmitting.onFalse()
+        CouncilsUseCasesImpl.getInstance()
+          .getById(Number(councilIdentifier))
+          .then((data) => {
+            setCouncil(data)
+          })
       })
       .catch(() => {
         isSubmitting.onFalse()
       })
   }
 
+  const handleAttend = async (member: ICouncilAttendee) => {
+    isSubmitting.onTrue()
+    CouncilAttendanceServices.getInstance()
+      .handleCouncilAttendance(member?.id as number)
+      .then(() => {
+        CouncilsUseCasesImpl.getInstance()
+          .getById(Number(councilIdentifier))
+          .then((data) => {
+            setCouncil(data)
+          })
+      })
+  }
+
   return (
     <Stack component={Card} spacing={3} sx={{ p: 3 }}>
-      {props.members.map((member) => (
+      {council.members.map((member) => (
         <Grid key={member.positionName} container spacing={3}>
           {!alreadyNotified.value && (
             <Checkbox
@@ -63,7 +78,7 @@ export const CouncilDetailAttendance = (props: {
           <Grid xs={12} md={4}>
             <ListItemText
               primary={
-                `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
+                `${`${member.member?.firstName} ${member.member?.firstLastName}`}` ||
                 'No asignado'
               }
               secondary={member.positionName}
@@ -77,6 +92,8 @@ export const CouncilDetailAttendance = (props: {
               <Stack spacing={1} alignItems={'end'}>
                 <LoadingButton
                   type="button"
+                  onClick={() => handleAttend(member)}
+                  loading={loader.loader.length > 0}
                   variant="contained"
                   disabled={member.hasAttended}
                 >

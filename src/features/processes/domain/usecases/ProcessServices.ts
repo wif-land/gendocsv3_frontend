@@ -5,9 +5,7 @@ import { IProcessFilters } from '../entities/IProcessFilters'
 import { ProcessesRepository } from '../repositories/ProcessesRepository'
 
 interface ProcessUseCases {
-  create(process: IProcess): Promise<{
-    process: ProcessModel
-  }>
+  create(process: IProcess): Promise<ProcessModel>
 
   getAll(): Promise<{
     processes: ProcessModel[]
@@ -27,7 +25,7 @@ interface ProcessUseCases {
     processes: ProcessModel[]
   }>
 
-  update(id: number, process: Partial<ProcessModel>): Promise<void>
+  update(id: number, process: Partial<ProcessModel>): Promise<ProcessModel>
 
   toggleProcessStatus(processes: Partial<IProcess>[]): Promise<{
     processes: ProcessModel[]
@@ -74,12 +72,11 @@ export class ProcessesUseCasesImpl implements ProcessUseCases {
   ) =>
     await this.processRepository.getByFilters(filters, moduleId, limit, offset)
 
-  update = async (id: number, process: Partial<ProcessModel>) => {
+  update = async (id: number, process: Partial<ProcessModel>) =>
     await this.processRepository.update({
       ...process,
       id,
     })
-  }
 
   getAllProcessesByModuleId = async (
     moduleId: number,

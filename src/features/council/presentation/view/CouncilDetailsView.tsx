@@ -1,35 +1,38 @@
 'use client'
 
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import Tab from '@mui/material/Tab'
 import Container from '@mui/material/Container'
 import { useParams } from 'next/navigation'
-import { useCouncilStore } from '../store/councilsStore'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import Iconify from '../../../../core/iconify'
 import { Tabs } from '@mui/material'
 import { CouncilDetailAttendance } from '../components/CouncilDetailAttendance'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { CouncilDetailsSummary } from '../components/CouncilDetailSummary'
-import { CouncilModel } from '../../data/models/CouncilModel'
+import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
+import { useCouncilStore } from '../store/councilStore'
 
 const CouncilDetailsView = () => {
   const { id } = useParams()
   const settings = useSettingsContext()
-  const { councils } = useCouncilStore()
-
   const [currentTab, setCurrentTab] = useState('general')
+  const { council, setCouncil } = useCouncilStore()
 
   const handleChangeTab = useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
+    (_: React.SyntheticEvent, newValue: string) => {
       setCurrentTab(newValue)
     },
     [],
   )
 
-  const council: CouncilModel | undefined = councils.find(
-    (council) => council.id! === +id,
-  )
+  useEffect(() => {
+    CouncilsUseCasesImpl.getInstance()
+      .getById(Number(id))
+      .then((data) => {
+        setCouncil(data)
+      })
+  }, [id])
 
   const TABS = [
     {
@@ -75,16 +78,11 @@ const CouncilDetailsView = () => {
         ))}
       </Tabs>
 
-      {currentTab === 'general' && (
-        <CouncilDetailsSummary
-          council={council as CouncilModel}
-          councilId={Number(id)}
-        />
+      {currentTab === 'general' && council && (
+        <CouncilDetailsSummary council={council} councilId={Number(id)} />
       )}
 
-      {currentTab === 'attendees' && (
-        <CouncilDetailAttendance members={council?.members || []} />
-      )}
+      {currentTab === 'attendees' && <CouncilDetailAttendance />}
     </Container>
   )
 }

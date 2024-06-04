@@ -28,25 +28,23 @@ import {
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
 import { TABLE_HEAD, defaultFilters } from '../constants'
 import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
 import {
   DegreeCertificatesTableToolbar,
+  IDegreeCertificateTableFilterValue,
   IDegreeCertificateTableFilters,
 } from '../components/DegreeCertificateTableToolbar'
 import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
 import CustomPopover, {
   usePopover,
 } from '../../../../shared/sdk/custom-popover'
-import { DegreeCertificateTableFiltersResult } from '../components/DegreeCertificateTableFiltersResult'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
-  const router = useRouter()
-  const pathname = usePathname()
   const settings = useSettingsContext()
   const confirm = useBoolean()
   const popover = usePopover()
@@ -54,6 +52,26 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [filters, setFilters] =
     useState<IDegreeCertificateTableFilters>(defaultFilters)
+
+  const {
+    loader,
+    tableData,
+    count,
+    router,
+    pathname,
+    setTableData,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    handleUpdateRow,
+    handleGenerateDocument,
+    handleGenerateNumeration,
+  } = useDegreeCertificateView({
+    table,
+    isDataFiltered,
+    visitedPages,
+    setVisitedPages,
+    filters,
+  })
 
   const reportOptions = [
     {
@@ -73,7 +91,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   ]
 
   const handleFilters = useCallback(
-    (name: string, value: IDegreeCertificateTableFilters) => {
+    (name: string, value: IDegreeCertificateTableFilterValue) => {
       table.onResetPage()
       setFilters((prevState) => ({
         ...prevState,
@@ -90,34 +108,22 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     [router],
   )
 
-  const handleResetFilters = () => {
-    setFilters(defaultFilters)
-    setVisitedPages([])
-    setIsDataFiltered(false)
-    setTableData([])
-  }
-
-  const {
-    loader,
-    tableData,
-    count,
-    setTableData,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    handleUpdateRow,
-  } = useDegreeCertificateView({
-    table,
-    isDataFiltered,
-    visitedPages,
-    setVisitedPages,
-    filters,
-  })
+  const onGenerateDocument = useCallback(
+    async (row: DegreeCertificateModel) => {
+      if (row.certificateDriveId) {
+        router.push(`${pathname}/${row.id}/view/${row.certificateDriveId}`)
+        return
+      }
+      await handleGenerateDocument(row)
+    },
+    [handleGenerateDocument, router, pathname],
+  )
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
   const notFound =
-    (!loader.length && count === 0) ||
-    (!loader.length && count === 0 && isDataFiltered)
+    (!loader.length && tableData.length === 0) ||
+    (!loader.length && tableData.length === 0 && isDataFiltered)
 
   return (
     <div key={moduleId}>
@@ -139,13 +145,12 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                 Reportes
               </Button>
               <Button
-                component={RouterLink}
-                href={`${pathname}/new`}
                 variant="contained"
                 startIcon={<Iconify icon="ph:list-numbers" />}
+                onClick={handleGenerateNumeration}
                 sx={{ mr: 1.5 }}
               >
-                Generar numerción
+                Generar numeración
               </Button>
               <Button
                 component={RouterLink}
@@ -178,16 +183,16 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            // getFilteredCouncils={handleSearch}
+            getFilteredCouncils={() => console.log('hi')}
           />
 
-          {isDataFiltered && (
+          {/* {isDataFiltered && (
             <DegreeCertificateTableFiltersResult
               onResetFilters={handleResetFilters}
               results={count}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -251,6 +256,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             }
                             onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
+                            onGenerateDocument={() => onGenerateDocument(row)}
+                            onRegenerateDocument={() => {
+                              handleGenerateDocument(row)
+                            }}
                           />
                         ))}
                     </>

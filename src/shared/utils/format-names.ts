@@ -24,7 +24,6 @@ export const fFunctionaryNamesWithSecondName = (functionary: IFunctionary) =>
   `${functionary.firstName || ''} ${functionary.secondName || ''} ${
     functionary.firstLastName || ''
   }`
-// TODO: Add functionary degree
 
 export const fFunctionaryDegreeNames = (functionary: IFunctionary) =>
   ` ${functionary.firstName || ''} ${functionary.secondName || ''} ${

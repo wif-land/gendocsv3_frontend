@@ -10,12 +10,13 @@ import Typography from '@mui/material/Typography'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { MenuItem } from '@mui/material'
+import { Button, MenuItem } from '@mui/material'
 
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
-import { useDegreeData } from '../../../../core/providers/functionary-degree- provider'
+import { useDegreeData } from '../../../../core/providers/functionary-degree-provider'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentFunctionary?: IFunctionary
@@ -23,9 +24,18 @@ type Props = {
 
 export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
+
   const { methods, onSubmit } = useFunctionaryForm(currentFunctionary)
   const { degrees } = useDegreeData()
-  console.log(degrees)
+
+  const thirdLevelDegree = degrees.filter(
+    (degree) => degree.degreeLevel === '3',
+  )
+
+  const fourthLevelDegree = degrees.filter(
+    (degree) => degree.degreeLevel === '4',
+  )
 
   const {
     handleSubmit,
@@ -50,7 +60,15 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
           {!mdUp && <CardHeader title="Detalles" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="dni" label="Cédula de identidad" required />
+            <RHFTextField
+              name="dni"
+              type="tel"
+              label="Cédula de identidad"
+              required
+              inputProps={{
+                maxLength: 10,
+              }}
+            />
 
             <Divider />
 
@@ -65,17 +83,41 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
                 },
               }}
             >
-              <RHFTextField name="firstName" label="Primer nombre" required />
+              <RHFTextField
+                name="firstName"
+                label="Primer nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
-              <RHFTextField name="secondName" label="Segundo nombre" />
+              <RHFTextField
+                name="secondName"
+                label="Segundo nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
               <RHFTextField
                 name="firstLastName"
                 label="Primer apellido"
                 required
+                inputProps={{
+                  maxLength: 50,
+                }}
               />
 
-              <RHFTextField name="secondLastName" label="Segundo apellido" />
+              <RHFTextField
+                name="secondLastName"
+                label="Segundo apellido"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
             </Box>
 
             <Divider />
@@ -107,14 +149,24 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
 
               <RHFTextField
                 name="phoneNumber"
+                type="tel"
                 label="Número de celular"
                 required
+                inputMode="tel"
+                inputProps={{
+                  maxLength: 10,
+                }}
               />
 
               <RHFTextField
                 name="regularPhoneNumber"
+                type="tel"
                 label="Teléfono fijo"
                 required
+                inputMode="tel"
+                inputProps={{
+                  maxLength: 10,
+                }}
               />
             </Box>
           </Stack>
@@ -131,8 +183,7 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
             Títulos
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Títulos de segundo, tercer y cuarto nivel conseguido por el
-            funcionario
+            Títulos de tercer y cuarto nivel conseguido por el funcionario
           </Typography>
         </Grid>
       )}
@@ -141,20 +192,12 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFSelect
-              id="thirdLevelDegree"
-              name="thirdLevelDegree"
-              label="Título de tercer nivel"
-            >
-              {degrees.map((degree) => {
-                if (degree.degreeLevel === '3') {
-                  return (
-                    <MenuItem key={degree.id} value={degree.id}>
-                      {degree.maleTitle}
-                    </MenuItem>
-                  )
-                }
-              })}
+            <RHFSelect name="thirdLevelDegree" label="Título de tercer nivel">
+              {thirdLevelDegree.map((degree) => (
+                <MenuItem key={degree.id} value={degree.id}>
+                  {degree.maleTitle}
+                </MenuItem>
+              ))}
             </RHFSelect>
 
             <RHFSelect
@@ -162,15 +205,11 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
               name="fourthLevelDegree"
               label="Título de cuarto nivel"
             >
-              {degrees.map((degree) => {
-                if (degree.degreeLevel === '4') {
-                  return (
-                    <MenuItem key={degree.id} value={degree.id}>
-                      {degree.maleTitle}
-                    </MenuItem>
-                  )
-                }
-              })}
+              {fourthLevelDegree.map((degree) => (
+                <MenuItem key={degree.id} value={degree.id}>
+                  {degree.maleTitle}
+                </MenuItem>
+              ))}
             </RHFSelect>
           </Stack>
         </Card>
@@ -181,10 +220,25 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      <Grid
+        xs={12}
+        md={8}
+        sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+      >
         <Box sx={{ flexGrow: 1 }}>
           <RHFSwitch name="isActive" label="Funcionario activo" />
         </Box>
+
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
 
         <LoadingButton
           type="submit"

@@ -1,17 +1,14 @@
 'use client'
 
 import { memo } from 'react'
-import { useParams } from 'next/navigation'
-
-import Container from '@mui/material/Container'
-
-import { useSettingsContext } from '../../../../shared/sdk/settings'
+import { useParams, usePathname } from 'next/navigation'
 
 import { useProcessStore } from '../../../processes/presentation/state/useProcessStore'
+import DocumentVisualizer from '../../../../shared/sdk/document-visualizer/document-visualizer'
 
 const TemplateFileView = () => {
-  const settings = useSettingsContext()
   const params = useParams()
+  const pathName = usePathname()
 
   const { id, templateId } = params
 
@@ -24,12 +21,15 @@ const TemplateFileView = () => {
   const currentTemplate = templates?.find(
     (template) => template.id === +templateId,
   )
-  const documentURL = `https://docs.google.com/document/d/${currentTemplate?.driveId}/edit?usp=sharing`
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <iframe src={documentURL} width="100%" height="1000px" />
-    </Container>
+    <>
+      <DocumentVisualizer
+        driveId={currentTemplate?.driveId as string}
+        returnLink={pathName.split('/').slice(0, -2).join('/')}
+        shouldLoadVariables
+      />
+    </>
   )
 }
 

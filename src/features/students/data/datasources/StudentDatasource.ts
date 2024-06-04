@@ -80,7 +80,7 @@ export class StudentDataSourceImpl implements StudentDataSource {
     )
 
     if ('error' in result) {
-      return {} as StudentModel
+      return StudentModel.fromJson({})
     }
 
     return result.data as StudentModel
@@ -103,7 +103,7 @@ export class StudentDataSourceImpl implements StudentDataSource {
     const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE, student)
 
     if ('error' in result) {
-      return {} as StudentModel
+      return StudentModel.fromJson({})
     }
 
     return result.data as StudentModel

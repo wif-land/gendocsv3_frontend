@@ -2,26 +2,24 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 
-import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { enqueueSnackbar } from 'notistack'
 
 import { ProcessModel } from '../../data/models/ProcessesModel'
-import { IProcess } from '../../domain/entities/IProcess'
-import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
+import { IProcess, IProcessFormValues } from '../../domain/entities/IProcess'
 
 import { useProcessStore } from '../state/useProcessStore'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
-
-interface FormValuesProps extends IProcess {}
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
+import { NewProcessSchema, resolveDefaultValues } from '../constants'
 
 export const useProcessForm = (currentProcess?: IProcess) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { processes, setProcesses } = useProcessStore()
+  const { createProcess, updateProcess } = useProcessStore()
   const { codeModule } = useParams()
   const { user } = useAccountStore()
 
@@ -30,26 +28,13 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     codeModule as string,
   )
 
-  const NewProcessSchema = Yup.object().shape({
-    name: Yup.string().required('Campo requerido'),
-  })
-
   const defaultValues = useMemo(
-    () =>
-      ({
-        name: currentProcess?.name || '',
-        isActive: currentProcess?.isActive || true,
-        moduleId: currentProcess?.moduleId || moduleIdentifier,
-        userId: currentProcess?.userId || (user?.id as number),
-        createdAt: currentProcess?.createdAt || undefined,
-        updatedAt: currentProcess?.updatedAt || undefined,
-        templateProcesses: undefined,
-      }) as IProcess,
+    () => resolveDefaultValues(currentProcess),
     [currentProcess],
   )
 
-  const methods = useForm<FormValuesProps>({
-    // @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'DeepPartial<FormValuesProps> | undefined'.
+  const methods = useForm<IProcessFormValues>({
+    // @ts-expect-error - The resolver is correctly typed
     resolver: yupResolver(NewProcessSchema),
     defaultValues,
   })
@@ -60,57 +45,43 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     formState: { isSubmitting },
   } = methods
 
-  const handleCreate = useCallback(async (values: IProcess) => {
-    await ProcessesUseCasesImpl.getInstance().create(values)
-  }, [])
-
-  const handleUpdate = async (id: number, editedFields: Partial<IProcess>) => {
-    await ProcessesUseCasesImpl.getInstance()
-      .update(id, editedFields)
-      .then((_) => {
-        setProcesses(
-          processes!.map((process) =>
-            process.id === id
-              ? new ProcessModel({
-                  ...process,
-                  ...editedFields,
-                })
-              : process,
-          ),
-        )
-      })
-  }
-
   const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        if (!currentProcess) {
-          await handleCreate({
-            ...data,
-          })
+    async (data: IProcessFormValues) => {
+      let result
+      if (!currentProcess) {
+        result = await createProcess({
+          ...data,
+          userId: user?.id as number,
+          moduleId: moduleIdentifier,
+        } as ProcessModel)
+      } else {
+        const editedFields = resolveEditedFields<IProcessFormValues>(
+          defaultValues,
+          data,
+        )
+
+        if (editedFields) {
+          result = await updateProcess(
+            currentProcess.id as number,
+            editedFields,
+          )
         } else {
-          const editedFields = getEditedFields<FormValuesProps>(
-            defaultValues,
-            data,
-          )
-
-          if (editedFields) {
-            await handleUpdate(currentProcess.id as number, editedFields)
-          }
+          enqueueSnackbar('No hay cambios por hacer', { variant: 'info' })
+          return
         }
-
-        if (currentProcess) {
-          router.push(
-            pathname.replace(new RegExp(`/${currentProcess.id}/edit`), ''),
-          )
-        }
-
-        reset()
-      } catch (error) {
-        enqueueSnackbar('Error al crear el proceso', {
-          variant: 'error',
-        })
       }
+
+      if (!result) return
+
+      if (currentProcess) {
+        router.push(
+          pathname.replace(new RegExp(`/${currentProcess.id}/edit`), ''),
+        )
+      } else {
+        router.push(pathname.replace('/new', ''))
+      }
+
+      reset()
     },
     [currentProcess, enqueueSnackbar, reset, router],
   )
@@ -127,25 +98,4 @@ export const useProcessForm = (currentProcess?: IProcess) => {
     onSubmit,
     handleSubmit,
   }
-}
-
-type GenericObject = { [key: string]: any }
-
-const getEditedFields = <T extends GenericObject>(
-  initialValues: T,
-  values: T,
-): T | null => {
-  const editedFields: T = {} as T
-
-  Object.keys(initialValues).forEach((key) => {
-    if (initialValues[key] !== values[key]) {
-      ;(editedFields as any)[key] = values[key]
-    }
-  })
-
-  if (Object.keys(editedFields).length === 0) {
-    return null
-  }
-
-  return editedFields
 }

@@ -12,12 +12,12 @@ import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -35,29 +35,16 @@ export const useDegreeCertificateForm = (
     [currentDegreeCertificate],
   )
   const methods = useForm<FormValuesProps>({
+    // @ts-expect-error - The resolver is not being recognized
     resolver: yupResolver(NewDegreeCertificateSchema),
     defaultValues,
   })
 
   const router = useRouter()
-  const { addDegreeCertificate } = useDegreeCertificatesStore()
+  const { createDegreeCertificate, updateDegreeCertificate } =
+    useDegreeCertificatesStore()
   const { resolveStudentById } = useDegreeCertificateMethods()
   const { reset, handleSubmit } = methods
-
-  const handleCreate = useCallback(async (values: IDegreeCertificate) => {
-    const degree =
-      await DegreeCertificatesUseCasesImpl.getInstance().create(values)
-    addDegreeCertificate(degree)
-  }, [])
-
-  const handleEdit = useCallback(
-    async (values: Partial<IDegreeCertificate>) => {
-      const degree =
-        await DegreeCertificatesUseCasesImpl.getInstance().update(values)
-      addDegreeCertificate(degree)
-    },
-    [],
-  )
 
   const removeUndefinedFields = <T>(obj: T): Partial<T> => {
     const newObj: Partial<T> = {}
@@ -97,23 +84,28 @@ export const useDegreeCertificateForm = (
   const onSubmit = useCallback(
     async (data: IDegreeCertificate) => {
       const formattedData = formatData(data)
+      let result
       if (!currentDegreeCertificate) {
-        handleCreate(formattedData as unknown as IDegreeCertificate)
+        result = createDegreeCertificate(
+          formattedData as unknown as DegreeCertificateModel,
+        )
       } else {
-        handleEdit({
+        result = updateDegreeCertificate({
           ...formattedData,
           id: currentDegreeCertificate.id,
         })
       }
 
-      const newPath = currentDegreeCertificate
-        ? pathname.replace(
-            new RegExp(`/${currentDegreeCertificate.id}/edit`),
-            '',
-          )
-        : pathname.replace('/new', '')
+      if (!!result && !currentDegreeCertificate) {
+        router.push(pathname.replace('/new', ''))
+      }
 
-      router.push(newPath)
+      if (!!result && currentDegreeCertificate) {
+        router.push(
+          pathname.replace(`/${currentDegreeCertificate.id}/edit`, ''),
+        )
+      }
+
       reset()
     },
     [currentDegreeCertificate, enqueueSnackbar, reset, router],
@@ -129,6 +121,10 @@ export const useDegreeCertificateForm = (
     if (isOpen.value === false) return
 
     setIsLoading(true)
+
+    if (debouncedValue === '' || !debouncedValue) {
+      return
+    }
 
     const filteredStudents = async (field: string) => {
       await StudentUseCasesImpl.getInstance()

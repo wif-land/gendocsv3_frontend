@@ -77,7 +77,7 @@ export const useNavConfig = () => {
       const listPath = `${mainPath}`
       const createPath = `${mainPath}/new`
 
-      return {
+      return  submodule.id !== 10 ? {
         title: submodule.name,
         path: mainPath,
         icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
@@ -91,7 +91,13 @@ export const useNavConfig = () => {
             path: createPath,
           },
         ],
+      } : { 
+        title: submodule.name,
+        path: mainPath,
+        icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
       }
+
+
     }),
   }))
 

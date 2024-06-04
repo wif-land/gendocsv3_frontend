@@ -16,6 +16,7 @@ import {
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import {
   Box,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -33,6 +34,7 @@ import { useCertificateData } from '../../../../core/providers/certificate-degre
 import { label } from 'yet-another-react-lightbox'
 import { IProvince } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { useLocations } from '../../../../core/providers/locations-provider'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -42,6 +44,8 @@ export const DegreeCertificateNewEditForm = ({
   currentDegreeCertificate,
 }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
+
   const { methods, onSubmit, students, setInputValue, isOpen, loading } =
     useDegreeCertificateForm(currentDegreeCertificate)
 
@@ -146,7 +150,7 @@ export const DegreeCertificateNewEditForm = ({
             <TextField
               name="student.endStudiesDate"
               label="Fecha de finalización de estudios"
-              value={getValues('student').studyEndDate || ''}
+              value={getValues('student').endStudiesDate || ''}
               // required
               sx={{ flexGrow: 1 }}
             />
@@ -344,11 +348,27 @@ export const DegreeCertificateNewEditForm = ({
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'end',
+          alignItems: 'center',
+          gap: '10px',
+        }}
       >
         <Box sx={{ flexGrow: 1 }}>
           <RHFSwitch name="isClosed" label="Acta activa" />
         </Box>
+
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
 
         <LoadingButton
           type="submit"

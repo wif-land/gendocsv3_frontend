@@ -1,6 +1,8 @@
+import { ICouncilAttendee } from './ICouncilAttendee'
+
 export enum CouncilType {
-  EXTRAORDINARY = 'EXTRAORDINARY',
-  ORDINARY = 'ORDINARY',
+  EXTRAORDINARY = 'EXTRAORDINARIA',
+  ORDINARY = 'ORDINARIA',
 }
 
 export const CouncilTypeLabels = {
@@ -15,8 +17,8 @@ export enum CouncilAttendanceRole {
 }
 
 export const COUNCIL_TYPES = Object.keys(CouncilType).map((key) => ({
-  label: CouncilTypeLabels[key as keyof typeof CouncilType],
-  value: key,
+  label: CouncilTypeLabels[CouncilType[key as keyof typeof CouncilType]],
+  value: CouncilType[key as keyof typeof CouncilType],
 }))
 
 export interface ICouncil {
@@ -30,6 +32,34 @@ export interface ICouncil {
   type: CouncilType
   moduleId: number
   userId: number
-  members: any
+  members: ICouncilAttendee[]
   createdBy?: string
+}
+
+export interface ICreateCouncil
+  extends Omit<ICouncil, 'id' | 'createdAt' | 'updatedAt' | 'members'> {
+  members: {
+    positionName: string
+    member: number
+    positionOrder: number
+  }[]
+}
+
+export interface IUpdateCouncil extends Partial<ICreateCouncil> {
+  id: number
+  isActive: boolean
+}
+
+export interface ICouncilAttendeeFormValues extends ICouncilAttendee {
+  id: number
+  label: string
+}
+
+export interface ICouncilFormValues
+  extends Omit<ICouncil, 'members' | 'moduleId' | 'userId'> {
+  members: {
+    [positionName: string]: ICouncilAttendeeFormValues & ICouncilAttendee
+  }
+  moduleId?: number
+  userId?: number
 }

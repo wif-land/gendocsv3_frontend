@@ -9,7 +9,7 @@ export interface ICreateStudent {
   secondLastName: string
   gender: string
   birthdate: string
-  canton: number | ICity
+  canton: ICity | number
   regularPhoneNumber?: string
   cellphone?: string
   folio: string

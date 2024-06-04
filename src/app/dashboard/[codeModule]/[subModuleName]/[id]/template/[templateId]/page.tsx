@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation'
 const Page = () => {
   const { codeModule, subModuleName, id } = useParams()
 
-  const route = `${codeModule}/${subModuleName}/template/${id}/edit`
+  const route = `${codeModule}/${subModuleName}/template/${id}`
 
   const routeToComponent = {
     template: TemplateFileView,

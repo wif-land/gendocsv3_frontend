@@ -25,6 +25,7 @@ type Props = {
   onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
+  onDocumentAction: (id: number) => void
   activeState?: boolean | null
   isOnTable?: boolean
 }
@@ -36,6 +37,7 @@ export const CouncilTableRow = ({
   onDeleteRow,
   onEditRow,
   onViewRow,
+  onDocumentAction,
   isOnTable = true,
   activeState,
 }: Props) => {
@@ -146,6 +148,18 @@ export const CouncilTableRow = ({
         >
           <Iconify icon="solar:pen-bold" />
           Editar
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onDocumentAction(row.id!)
+          }}
+        >
+          <Iconify
+            icon="
+            solar:document-outline"
+          />
+          Documentos
         </MenuItem>
 
         <MenuItem

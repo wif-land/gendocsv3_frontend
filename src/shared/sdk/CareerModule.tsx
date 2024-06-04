@@ -5,7 +5,6 @@ import useModulesStore from '../store/modulesStore'
 import { IModule } from '../../features/modules/types/IModule'
 import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
 import { usePathname, useRouter } from 'next/navigation'
-import { submoduleIcons, defaultIcon } from '../constants/submodulesIcons'
 
 const CareerModule = () => {
   const { user } = useAccountStore()
@@ -46,8 +45,6 @@ const CareerModule = () => {
 
           <Listbox aria-label="Actions" className="ml-6 mr-2 ">
             {module.submodules.map((submodule) => {
-              const IconComponent =
-                submoduleIcons[submodule.name] || defaultIcon
               return (
                 <ListboxItem
                   textValue={submodule.name}
@@ -61,7 +58,6 @@ const CareerModule = () => {
                       : 'text-black'
                   }
                 >
-                  <IconComponent className="inline-block mr-2" />
                   {submodule.name}
                 </ListboxItem>
               )

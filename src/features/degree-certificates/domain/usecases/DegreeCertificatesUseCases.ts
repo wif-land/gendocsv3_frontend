@@ -2,12 +2,12 @@ import { DegreeCertificateRepositoryImpl } from '../../data/repositories/reposit
 import { IDegreeCertificate } from '../entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
-import { enqueueSnackbar } from 'notistack'
 
 interface CertificateDegreeUseCases {
   getAll(
     limit: number,
     offset: number,
+    carrerId: number,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -34,6 +34,8 @@ interface CertificateDegreeUseCases {
   }>
 
   getLastNumberToRegister(careerId: number): Promise<number>
+
+  generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -54,8 +56,8 @@ export class DegreeCertificatesUseCasesImpl
 
   constructor(private readonly repository: CertificateDegreeUseCases) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.repository.getAll(limit, offset)
+  getAll = async (limit: number, offset: number, carrerId: number) =>
+    await this.repository.getAll(limit, offset, carrerId)
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,
@@ -66,20 +68,15 @@ export class DegreeCertificatesUseCasesImpl
   update = async (degreeCertificate: Partial<IDegreeCertificate>) =>
     await this.repository.update(degreeCertificate)
 
-  create = async (degreeCertificate: IDegreeCertificate) => {
-    const result = await this.repository.create(degreeCertificate)
-
-    if (result) {
-      enqueueSnackbar('Acta creada correctamente')
-      return result
-    }
-
-    return DegreeCertificateModel.fromJson({})
-  }
+  create = async (degreeCertificate: IDegreeCertificate) =>
+    await this.repository.create(degreeCertificate)
 
   generateNumeration = async (careerId: number) =>
     await this.repository.generateNumeration(careerId)
 
   getLastNumberToRegister = async (careerId: number) =>
     await this.repository.getLastNumberToRegister(careerId)
+
+  generateDocument = async (degreeCertificateId: number) =>
+    await this.repository.generateDocument(degreeCertificateId)
 }

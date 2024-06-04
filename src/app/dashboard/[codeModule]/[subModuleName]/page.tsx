@@ -12,6 +12,7 @@ import { PositionListView } from '../../../../features/positions/presentation/vi
 import { UsersListView } from '../../../../features/users/presentation/view'
 import { DegreeCertificateListView } from '../../../../features/degree-certificates/presentation/views'
 import { DefaultMembersView } from '../../../../features/default-members/presentation/view'
+import NotFound from '../../../not-found'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -31,7 +32,7 @@ const Page = () => {
     representantes: DefaultMembersView,
   }
 
-  const defaultComponent = () => <div>Not found</div>
+  const defaultComponent = () => <NotFound />
 
   const matchedRoute = Object.keys(routeToComponent).find((key) =>
     RegExp(key).test(route),

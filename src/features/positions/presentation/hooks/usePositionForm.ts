@@ -16,7 +16,7 @@ import {
   handleCreate,
   handleUpdate,
 } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 import { IFunctionary } from '../../../../features/functionaries/domain/entities/IFunctionary'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -50,25 +50,26 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       if (!currentFunctionary) {
-        await handleCreate(data)
+        handleCreate(data).then((res) => {
+          if (res) {
+            router.push(pathname.replace('/new', ''))
+          }
+        })
       } else {
-        const editedFields = getEditedFields<FormValuesProps>(
+        const editedFields = resolveEditedFields<FormValuesProps>(
           defaultValues,
           data,
         )
 
-        await handleUpdate({
+        handleUpdate({
           ...editedFields,
           id: currentFunctionary.id,
+        }).then((res) => {
+          if (res) {
+            router.push(pathname.replace(`/${currentFunctionary.id}/edit`, ''))
+          }
         })
       }
-
-      const newPath = currentFunctionary
-        ? pathname.replace(new RegExp(`/${currentFunctionary.id}/edit`), '')
-        : pathname.replace('/new', '')
-
-      router.push(newPath)
-      reset()
     },
     [currentFunctionary, enqueueSnackbar, reset, router],
   )
@@ -85,6 +86,10 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
     if (isOpen.value === false) return
 
     setIsLoading(true)
+
+    if (debouncedValue === '' || !debouncedValue) {
+      return
+    }
 
     const filteredFunctionaries = async (field: string) => {
       await FunctionaryUseCasesImpl.getInstance()

@@ -141,8 +141,8 @@ export const FunctionaryTableRow = ({
         title={row.isActive ? 'Desactivar funcionario' : 'Activar funcionario'}
         content={
           row.isActive
-            ? 'Está seguro de desactivar el funcionario?'
-            : 'Está seguro de activar el funcionario?'
+            ? '¿Está seguro de desactivar el funcionario?'
+            : '¿Está seguro de activar el funcionario?'
         }
         action={
           <Button

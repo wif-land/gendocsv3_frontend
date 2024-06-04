@@ -1,12 +1,12 @@
-import { useCouncilStore } from '../store/councilsStore'
+import { useCouncilsStore } from '../store/councilsStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useCouncilsMethods } from './useCouncilsMethods'
-import { ICouncil } from '../../domain/entities/ICouncil'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
+import { IUpdateCouncil } from '../../domain/entities/ICouncil'
 
 interface Props {
   table: TableProps
@@ -27,10 +27,16 @@ export const useCouncilView = ({
 }: Props) => {
   const [tableData, setTableData] = useState<CouncilModel[]>([])
   const [count, setCount] = useState(0)
-  const { councils, setCouncils } = useCouncilStore()
+  const { councils, setCouncils } = useCouncilsStore()
   const { loader } = useLoaderStore()
   const { fetchData, updateRow, fetchDataByField } = useCouncilsMethods()
   const { modules } = useModulesStore()
+
+  const currentModule = modules?.find(
+    (module) => module.code === moduleId.toLocaleUpperCase(),
+  )
+  const compilationTemplateDriveId = currentModule?.compilationTemplateDriveId
+  const separatorTemplateDriveId = currentModule?.separatorTemplateDriveId
 
   const moduleIdentifier =
     modules?.find((module) => module.code === moduleId.toUpperCase())?.id ?? 0
@@ -130,7 +136,7 @@ export const useCouncilView = ({
     }
   }
 
-  const handleUpdateRow = (row: ICouncil) => {
+  const handleUpdateRow = (row: IUpdateCouncil) => {
     updateRow(row).then((data) => {
       if (data) {
         setCouncils(
@@ -178,5 +184,7 @@ export const useCouncilView = ({
     handleChangeRowsPerPage,
     handleUpdateRow,
     handleSearch,
+    compilationTemplateDriveId,
+    separatorTemplateDriveId,
   }
 }

@@ -29,51 +29,55 @@ export class AxiosClient {
   private static accessToken: string | null = null
 
   static getInstance() {
-    if (!this.client) {
-      this.client = axios.create({
-        baseURL: this.baseUrl,
-        headers: {
-          ['Content-Type']: 'application/json',
-        },
-      })
+    if (this.client) return this.client
 
-      this.client.interceptors.request.use(
-        async (config) => {
-          if (!this.accessToken) {
-            this.accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
-          }
+    this.client = axios.create({
+      baseURL: this.baseUrl,
+      headers: {
+        ['Content-Type']: 'application/json',
+      },
+    })
 
-          if (!this.accessToken) {
-            await new LogoutnUseCase().call()
-          }
+    this.client.interceptors.request.use(
+      async (config) => {
+        if (!this.accessToken) {
+          this.accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
+        }
 
-          if (this.accessToken && config.headers) {
-            config.headers.Authorization = `Bearer ${this.accessToken.replaceAll(
-              '"',
-              '',
-            )}`
-          }
+        if (!this.accessToken) {
+          await new LogoutnUseCase().call()
+        }
 
-          return config
-        },
-        (error) => Promise.reject(error),
-      )
+        if (this.accessToken && config.headers) {
+          config.headers.Authorization = `Bearer ${this.accessToken.replaceAll(
+            '"',
+            '',
+          )}`
+        }
 
-      this.client.interceptors.response.use(
-        (response) => response,
-        (error) => {
-          if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-            new LogoutnUseCase().call()
-          }
+        return config
+      },
+      (error) => Promise.reject(error),
+    )
 
-          return Promise.reject(error)
-        },
-      )
-    }
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+          new LogoutnUseCase().call()
+        }
+
+        return Promise.reject(error)
+      },
+    )
 
     return this.client
   }
 
+  /**
+   * Set headers in the axios instance
+   * @param headers - Headers to set in the axios instance
+   */
   static setHeaders(headers: Record<string, string>) {
     this.client.defaults.headers = {
       ...this.client.defaults.headers,
@@ -81,9 +85,15 @@ export class AxiosClient {
     }
   }
 
+  /**
+   * POST method to make a request to the API
+   * @param path - Path to make the request
+   * @param body - Body to send in the request
+   * @returns Response from the API. You can set the type of the response with the generic type
+   */
   static async post<T>(
     path: string,
-    body: unknown,
+    body?: unknown,
   ): Promise<
     | AxiosResponse<T>
     | {
@@ -123,6 +133,13 @@ export class AxiosClient {
     }
   }
 
+  /**
+   * PUT method to make a request to the API
+   * @param path - Path to make the request
+   * @param body - Body to send in the request
+   * @param params - Query params to send in the request. Optional
+   * @returns Response from the API. You can set the type of the response with the generic type
+   */
   static async put<T>(
     path: string,
     body: unknown,
@@ -148,6 +165,13 @@ export class AxiosClient {
     }
   }
 
+  /**
+   * DELETE method to make a request to the API
+   * @param path - Path to make the request
+   * @param params - Query params to send in the request. Optional
+   * @param body - Body to send in the request
+   * @returns Response from the API. You can set the type of the response with the generic type
+   */
   static async delete<T>({
     path,
     params,
@@ -155,7 +179,6 @@ export class AxiosClient {
   }: {
     path: string
     params?: Record<string, unknown>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body?: any
   }): Promise<
     | AxiosResponse<T>
@@ -179,6 +202,13 @@ export class AxiosClient {
     }
   }
 
+  /**
+   * PATCH method to make a request to the API
+   * @param path - Path to make the request
+   * @param body - Body to send in the request
+   * @param params - Query params to send in the request. Optional
+   * @returns Response from the API. You can set the type of the response with the generic type
+   */
   static async patch<T>(
     path: string,
     body?: unknown,
@@ -203,6 +233,12 @@ export class AxiosClient {
   }
 }
 
+/**
+ * Handle the response from the API
+ * @param response - Response from the API
+ * @param method - Method used to make the request
+ * @returns Response from the API
+ */
 const handleApiResponse = (response: any, method: HTTP_METHODS) => {
   const { status, data } = response
 
@@ -233,17 +269,21 @@ const handleApiResponse = (response: any, method: HTTP_METHODS) => {
   return response.data
 }
 
+/**
+ * Handle the error from the API
+ *
+ * Error Response -> If the request was made and the server responded with a status code different than 2xx
+ * Error Request -> If the request was made but no response was received from the server
+ * Error -> If something happened in setting up the request that triggered an Error
+ *
+ * @param error - Error from the API response. AxiosErrorResponse
+ * @returns Error message
+ */
 const handleApiError = (
   error: AxiosErrorResponse,
 ): {
   error: string
 } => {
-  /**
-   * Error response -> If the request was made and the server responded with a status code different than 2xx
-   * Error request -> If the request was made but no response was received from the server
-   * Error -> If something happened in setting up the request that triggered an Error
-   */
-
   if (error.response) {
     const {
       data: { message },

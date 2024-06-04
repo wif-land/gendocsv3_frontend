@@ -17,13 +17,9 @@ export interface ProcessesRepository {
     processes: ProcessModel[]
   }>
 
-  update: (data: Partial<IProcess>) => Promise<{
-    process: ProcessModel
-  }>
+  update: (data: Partial<IProcess>) => Promise<ProcessModel>
 
-  create: (processData: IProcess) => Promise<{
-    process: ProcessModel
-  }>
+  create: (processData: IProcess) => Promise<ProcessModel>
 
   getAllProcessesByModuleId(
     moduleId: number,

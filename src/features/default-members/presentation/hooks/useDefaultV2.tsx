@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { IDefaultMembers, IMember } from '../../domain/entities/DefaultMembers'
+import { IDefaultMembers, IMember } from '../../domain/entities/IDefaultMembers'
 import { useEffect, useState } from 'react'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'

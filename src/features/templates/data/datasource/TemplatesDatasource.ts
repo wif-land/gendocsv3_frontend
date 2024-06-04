@@ -73,7 +73,9 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
       }
     }
 
-    return result.data as { template: TemplateModel }
+    return {
+      template: result.data as TemplateModel,
+    }
   }
 
   update = async (template: Partial<ITemplate>) => {

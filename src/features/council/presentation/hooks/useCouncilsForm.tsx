@@ -1,6 +1,5 @@
-import { useCouncilStore } from '../store/councilsStore'
-import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { ICouncil } from '../../domain/entities/ICouncil'
+import { useCouncilsStore } from '../store/councilsStore'
+import { ICouncil, ICouncilFormValues } from '../../domain/entities/ICouncil'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -10,22 +9,19 @@ import { IFunctionary } from '../../../functionaries/domain/entities/IFunctionar
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { NewCouncilSchema, resolveDefaultValues } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
-import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDefaultMembersStore } from '../../../default-members/presentation/store/defaultMembersStore'
 import { DefaultMembersUseCasesImpl } from '../../../default-members/domain/usecases/DefaultMemberServices'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
-
-interface FormValuesProps extends ICouncil {}
 
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const router = useRouter()
   const pathname = usePathname()
   const { codeModule } = useParams()
 
-  const { councils, addCouncil, setCouncils } = useCouncilStore()
+  const { councils, setCouncils, createCouncil, updateCouncil } =
+    useCouncilsStore()
 
   const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
   const moduleIdentifier = resolveModuleId(
@@ -39,95 +35,45 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const [unusedFunctionaries, setUnusedFunctionaries] = useState<
     IFunctionary[]
   >([])
-  const loading = useBoolean()
 
-  const defaultValues: Partial<ICouncil> = useMemo(
-    () => resolveDefaultValues(currentCouncil),
+  const defaultValues: ICouncilFormValues = useMemo(
+    () => resolveDefaultValues(defaultMembers, currentCouncil),
     [currentCouncil],
   )
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm<ICouncilFormValues>({
     // @ts-expect-error - The resolver is not being recognized
     resolver: yupResolver(NewCouncilSchema),
     defaultValues,
   })
   const values = methods.watch()
 
-  const handleCreateCouncil = async (values: FormValuesProps) => {
-    const council = await CouncilsUseCasesImpl.getInstance().create({
-      ...values,
-      moduleId: moduleIdentifier ?? 0,
-      userId: user?.id as number,
-      members: values.members,
-    })
-
-    addCouncil(council)
-  }
-
-  const handleUpdateCouncil = async (
-    id: number,
-    editedFields: Partial<FormValuesProps>,
-  ) => {
-    await CouncilsUseCasesImpl.getInstance().update(id, editedFields)
-  }
-
   const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      loading.onTrue()
+    async (data: ICouncilFormValues) => {
       try {
-        if (!currentCouncil) {
-          await handleCreateCouncil({
+        let result
+        if (!currentCouncil?.id) {
+          result = await createCouncil({
             ...data,
-            /**
-             * {
-             *  'Position': {
-             *  id: 1, label: 'position', positionOrder: 1,
-             *   }
-             * }
-             */
-            members: Object.entries(data.members).map(
-              ([positionName, member]) => ({
-                positionName,
-                member: member.id,
-                positionOrder: member.positionOrder,
-              }),
-            ),
+            moduleId: moduleIdentifier ?? 0,
+            userId: user?.id as number,
           })
         } else {
-          const editedFields = getEditedFields<Partial<FormValuesProps>>(
-            defaultValues,
-            {
-              ...data,
-              members: Object.entries(data.members).map(
-                ([positionName, member]) => ({
-                  positionName,
-                  member: member.id,
-                  positionOrder: member.positionOrder,
-                }),
-              ),
-            },
-          )
-
-          if (editedFields) {
-            await handleUpdateCouncil(currentCouncil.id as number, editedFields)
-          }
+          result = await updateCouncil({
+            ...data,
+            id: currentCouncil.id,
+          })
         }
 
-        router.push(
-          currentCouncil
-            ? pathname.replace(new RegExp(`/${currentCouncil.id}/edit`), '')
-            : pathname.replace('/new', ''),
-        )
-      } catch (error) {
-        enqueueSnackbar(
-          !currentCouncil
-            ? 'Error al crear el consejo'
-            : 'Error al actualizar el consejo',
-          { variant: 'error' },
-        )
+        if (!!result && !!result.id) {
+          router.push(
+            currentCouncil
+              ? pathname.replace(new RegExp(`/${currentCouncil.id}/edit`), '')
+              : pathname.replace('/new', ''),
+          )
+        }
       } finally {
         methods.reset()
       }
-      loading.onFalse()
     },
     [currentCouncil, enqueueSnackbar, methods.reset, router],
   )
@@ -159,8 +105,9 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
 
   useEffect(() => {
     let isMounted = true
-    loading.onTrue()
-    if (searchDebounced.includes('-')) return
+    if (searchDebounced.includes('-')) {
+      return
+    }
     if (
       !searchDebounced ||
       searchDebounced === '' ||
@@ -175,7 +122,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         if (!isMounted) return
 
         if (result.functionaries.length > 0) {
-          const usedFunctionaries = methods.getValues().members
+          // const usedFunctionaries = methods.getValues().members
 
           // const filteredFunctionaries = result.functionaries.filter(
           //   (functionary) =>
@@ -189,7 +136,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
         } else {
           setUnusedFunctionaries([])
         }
-        loading.onFalse()
       })
 
     return () => {
@@ -203,20 +149,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       .then((result) => {
         setDefaultMembers(result)
       })
-    if (currentCouncil?.members.length) return
-    methods.setValue(
-      'members',
-      defaultMembers.reduce((acc, member) => {
-        acc[member.positionName] = {
-          ...(member.member as object),
-          label: `${member.member?.firstName} ${member.member?.firstLastName} ${member.member?.secondLastName} - ${member.member?.dni}`,
-          id: member.member?.id,
-          positionOrder: member.positionOrder,
-        }
-
-        return acc
-      }, {}),
-    )
   }, [])
 
   return {
@@ -225,10 +157,8 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     unusedFunctionaries,
     defaultValues,
     setCouncils,
-    handleUpdateCouncil,
     onSubmit,
     setSearchField,
-    loading,
     defaultMembers,
     pathname,
   }

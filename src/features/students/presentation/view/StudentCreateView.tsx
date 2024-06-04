@@ -13,7 +13,7 @@ const StudentCreateView = () => {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Crea un o más estudiantes"
+        heading="Crea un estudiante"
         links={[
           {
             name: 'Dashboard',

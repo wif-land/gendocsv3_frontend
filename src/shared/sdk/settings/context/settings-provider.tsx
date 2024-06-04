@@ -28,13 +28,6 @@ export const SettingsProvider = ({
     [setSettings],
   )
 
-  const onChangeDirectionByLang = useCallback(
-    (lang: string) => {
-      onUpdate('themeDirection', lang === 'ar' ? 'rtl' : 'ltr')
-    },
-    [onUpdate],
-  )
-
   const onReset = useCallback(() => {
     setSettings(defaultSettings)
   }, [defaultSettings, setSettings])
@@ -53,7 +46,6 @@ export const SettingsProvider = ({
     () => ({
       ...settings,
       onUpdate,
-      onChangeDirectionByLang,
       canReset,
       onReset,
       open: openDrawer,
@@ -68,7 +60,6 @@ export const SettingsProvider = ({
       openDrawer,
       onCloseDrawer,
       onToggleDrawer,
-      onChangeDirectionByLang,
     ],
   )
 

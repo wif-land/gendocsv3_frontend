@@ -69,6 +69,8 @@ export const API_ROUTES = {
     CREATE: '/councils',
     BULK_UPDATE: '/councils/bulk',
     NOTIFY_MEMBERS: (id: number) => `/councils/${id}/notify-members`,
+    GET_BY_ID: (id: number) => `/councils/${id}`,
+    HANDLE_MEMBER_ATTENDANCE: (memberId: number) => `/attendance/${memberId}`,
   },
   TEMPLATES: {
     GET_ALL: '/templates',
@@ -86,6 +88,9 @@ export const API_ROUTES = {
     UPDATE: (id: number) => `/documents/${id}`,
     DELETE: '/documents/:id',
     CREATE: '/documents',
+    PROCESS: (id: number) => `/documents/create-recopilation/content/${id}`,
+    GENERATE_RECORD: (id: number) => `/documents/create-recopilation/${id}`,
+    DOWNLOAD: (id: number) => `/documents/create-recopilation/${id}`,
   },
   DOCUMENT_NUMERATION: {
     GET_BY_COUNCIL: '/numeration-document/by-council',
@@ -99,7 +104,7 @@ export const API_ROUTES = {
     CREATE: '/positions',
   },
   DEGREE_CERTIFICATES: {
-    GET_ALL: '/degree-certificates',
+    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
     GET_BY_FILTERS: `/degree-certificates/filter`,
     UPDATE: (id: number) => `/degree-certificates/${id}`,
     DELETE: '/degree-certificates/:id',
@@ -108,6 +113,8 @@ export const API_ROUTES = {
       `/degree-certificates/numeration/generate/${careerId}`,
     GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>
       `/degree-certificates/numeration/last-number-to-register/${careerId}`,
+    GENERATE_DOCUMENT: (degreeCertificateId: number) =>
+      `/degree-certificates/generate-document/${degreeCertificateId}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL: 'degree-certificates/certificate-type-status-career',
@@ -135,5 +142,8 @@ export const API_ROUTES = {
   },
   ROOMS: {
     GET_ALL: '/degree-certificates/rooms',
+  },
+  VARIABLES: {
+    GET_ALL: '/variables',
   },
 }

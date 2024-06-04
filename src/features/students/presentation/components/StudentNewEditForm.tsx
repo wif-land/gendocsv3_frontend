@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -13,14 +14,13 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 
 import { useStudentForm } from '../hooks/useStudentForm'
 
-import { MenuItem } from '@mui/material'
-import { Controller } from 'react-hook-form'
-import { MobileDatePicker } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
+import { Button, MenuItem } from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers'
 
 import { IStudent } from '../../domain/entities/IStudent'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { GENDERS } from '../constants'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   currentStudent?: IStudent
@@ -28,12 +28,13 @@ type Props = {
 
 export const StudentNewEditForm = ({ currentStudent }: Props) => {
   const mdUp = useResponsive('up', 'md')
+  const router = useRouter()
+
   const { cities } = useLocations()
   const { methods, onSubmit, careers } = useStudentForm(currentStudent)
   const {
     handleSubmit,
     formState: { isSubmitting },
-    control,
   } = methods
 
   const renderGeneralInfo = (
@@ -55,7 +56,15 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
           {!mdUp && <CardHeader title="Detalles" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="dni" label="Cédula de identidad" required />
+            <RHFTextField
+              name="dni"
+              type="tel"
+              label="Cédula de identidad"
+              required
+              inputProps={{
+                maxLength: 10,
+              }}
+            />
 
             <Divider />
 
@@ -70,17 +79,41 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 },
               }}
             >
-              <RHFTextField name="firstName" label="Primer nombre" required />
+              <RHFTextField
+                name="firstName"
+                label="Primer nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
-              <RHFTextField name="secondName" label="Segundo nombre" />
+              <RHFTextField
+                name="secondName"
+                label="Segundo nombre"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
               <RHFTextField
                 name="firstLastName"
                 label="Primer apellido"
                 required
+                inputProps={{
+                  maxLength: 50,
+                }}
               />
 
-              <RHFTextField name="secondLastName" label="Segundo apellido" />
+              <RHFTextField
+                name="secondLastName"
+                label="Segundo apellido"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
             </Box>
           </Stack>
         </Card>
@@ -144,64 +177,62 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 type="number"
               />
 
-              <Controller
+              <DatePicker
                 name="startStudiesDate"
-                rules={{ required: true }}
-                control={control}
-                render={({ field }) => (
-                  <MobileDatePicker
-                    {...field}
-                    value={dayjs(field.value)}
-                    onChange={(newValue) => {
-                      if (newValue) {
-                        field.onChange(newValue)
-                      }
-                    }}
-                    label="Fecha de inicio de estudios"
-                    format="dddd/MM/YYYY"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
-                    closeOnSelect
-                  />
-                )}
+                label="Fecha de inicio de estudios"
+                format="dddd/MM/YYYY"
+                sx={{ width: 260 }}
+                slotProps={{
+                  field: { clearable: true },
+                }}
+                onChange={(newValue: any) => {
+                  if (newValue) {
+                    methods.setValue('startStudiesDate', newValue)
+                  }
+                }}
               />
 
-              <Controller
+              <DatePicker
                 name="endStudiesDate"
-                control={control}
-                render={({ field }) => (
-                  <MobileDatePicker
-                    {...field}
-                    value={dayjs(field.value)}
-                    onChange={(newValue) => {
-                      if (newValue) {
-                        field.onChange(newValue)
-                      }
-                    }}
-                    label="Fecha de fin de estudios"
-                    format="dddd/MM/YYYY"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
-                    closeOnSelect
-                  />
-                )}
+                label="Fecha de fin de estudios"
+                format="dddd/MM/YYYY"
+                sx={{ width: 260 }}
+                slotProps={{
+                  field: { clearable: true },
+                }}
+                onChange={(newValue: any) => {
+                  if (newValue) {
+                    methods.setValue('endStudiesDate', newValue)
+                  }
+                }}
               />
 
               <RHFTextField
                 name="bachelorDegree"
                 label="Título de Bachillerato"
                 required
+                inputProps={{
+                  maxLength: 100,
+                }}
               />
 
-              <RHFTextField name="folio" label="Folio" required />
+              <RHFTextField
+                name="folio"
+                label="Folio"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
 
-              <RHFTextField name="registration" label="Matrícula" required />
+              <RHFTextField
+                name="registration"
+                label="Matrícula"
+                required
+                inputProps={{
+                  maxLength: 50,
+                }}
+              />
             </Box>
           </Stack>
         </Card>
@@ -252,10 +283,21 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
               <RHFTextField
                 name="phoneNumber"
                 label="Número de celular"
+                type="tel"
                 required
+                inputProps={{
+                  maxLength: 10,
+                }}
               />
 
-              <RHFTextField name="regularPhoneNumber" label="Teléfono fijo" />
+              <RHFTextField
+                name="regularPhoneNumber"
+                label="Teléfono fijo"
+                type="tel"
+                inputProps={{
+                  maxLength: 10,
+                }}
+              />
             </Box>
           </Stack>
         </Card>
@@ -307,31 +349,19 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                 ))}
               </RHFSelect>
 
-              <Controller
+              <DatePicker
                 name="birthdate"
-                rules={{ required: true }}
-                control={control}
-                render={({ field }) => (
-                  <MobileDatePicker
-                    {...field}
-                    value={dayjs(field.value)}
-                    onChange={(newValue) => {
-                      if (newValue) {
-                        field.onChange(newValue)
-                      }
-                    }}
-                    label="Fecha de nacimiento"
-                    format="dddd/MM/YYYY"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        required: true,
-                      },
-                    }}
-                    disableFuture
-                    closeOnSelect
-                  />
-                )}
+                label="Fecha de nacimiento"
+                format="dddd/MM/YYYY"
+                sx={{ width: 260 }}
+                slotProps={{
+                  field: { clearable: true },
+                }}
+                onChange={(newValue: any) => {
+                  if (newValue) {
+                    methods.setValue('birthdate', newValue)
+                  }
+                }}
               />
             </Box>
           </Stack>
@@ -346,8 +376,24 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
       <Grid
         xs={12}
         md={8}
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'end',
+          gap: '10px',
+        }}
       >
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() => {
+            methods.reset()
+            router.back()
+          }}
+        >
+          Cancelar
+        </Button>
+
         <LoadingButton
           type="submit"
           variant="contained"

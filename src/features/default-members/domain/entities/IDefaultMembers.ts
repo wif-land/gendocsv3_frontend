@@ -5,6 +5,19 @@ export interface IDefaultMembers {
   isStudent: boolean
 }
 
+export interface ICreateDefaultMembers extends IDefaultMembers {
+  member: IDefaultMembersToUpdate
+}
+
+export interface IUpdateDefaultMembers extends Partial<IDefaultMembers> {
+  id: number
+}
+
+export interface IDefaultMembersFormValues
+  extends Omit<IDefaultMembers, 'member'> {
+  member: IMember
+}
+
 export interface IMember {
   id?: number
   dni: string
@@ -14,6 +27,7 @@ export interface IMember {
   secondLastName: string
   isStudent: boolean
 }
+
 export interface IDefaultMembersToUpdate {
   id: number
   label: string

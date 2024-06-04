@@ -1,12 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useRef } from 'react'
 import { SnackbarProvider as NotistackProvider, closeSnackbar } from 'notistack'
-import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import Iconify from '../iconify'
-import { useSettingsContext } from '../settings'
 import { StyledIcon, StyledNotistack } from './styles'
 
 type Props = {
@@ -14,10 +11,6 @@ type Props = {
 }
 
 export default function SnackbarProvider({ children }: Props) {
-  const settings = useSettingsContext()
-
-  const isRTL = settings.themeDirection === 'rtl'
-
   const notistackRef = useRef<any>(null)
 
   return (
@@ -26,7 +19,6 @@ export default function SnackbarProvider({ children }: Props) {
       maxSnack={5}
       preventDuplicate
       autoHideDuration={3000}
-      TransitionComponent={isRTL ? Collapse : undefined}
       variant="success" // Set default variant
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       iconVariant={{

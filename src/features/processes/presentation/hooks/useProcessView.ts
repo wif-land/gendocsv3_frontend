@@ -36,6 +36,11 @@ export const useProcessView = ({
   const { fetchData, updateRow, fetchDataByField } = useProcessesMethods()
   const { modules } = useModulesStore()
   const moduleIdentifier = resolveModuleId(modules, moduleId)
+  const currentModule = useModulesStore().modules.find(
+    (module) => module.id === moduleIdentifier,
+  )
+
+  const defaultTemplate = currentModule?.defaultTemplateDriveId
 
   useEffect(() => {
     let isMounted = true
@@ -160,5 +165,6 @@ export const useProcessView = ({
     handleUpdateRow,
     // handleUpdateRows,
     handleSearch,
+    defaultTemplate,
   }
 }

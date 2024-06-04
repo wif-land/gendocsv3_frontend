@@ -13,7 +13,7 @@ import {
   handleCreate,
   handleUpdate,
 } from '../constants'
-import { getEditedFields } from '../../../../shared/utils/FormUtil'
+import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 
 import { useStudentStore } from '../state/studentStore'
 import { useCareersStore } from '../../../careers/presentation/store/careerStore'
@@ -42,17 +42,19 @@ export const useStudentForm = (currentStudent?: IStudent) => {
 
   const onSubmit = useCallback(
     async (data: IStudent) => {
+      let result
       if (!currentStudent) {
-        await handleCreate(data)
+        const dataWithoutId = { ...data, id: undefined }
+        result = await handleCreate(dataWithoutId)
       } else {
-        const editedFields = getEditedFields<Partial<IStudent>>(
+        const editedFields = resolveEditedFields<Partial<IStudent>>(
           defaultValues,
           data,
         )
 
-        await handleUpdate(currentStudent.id!, editedFields)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        result = await handleUpdate(currentStudent.id!, editedFields)
       }
-
       const newPath = currentStudent
         ? pathname.replace(new RegExp(`/${currentStudent.id}/edit`), '')
         : pathname.replace('/new', '')
