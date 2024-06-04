@@ -71,6 +71,11 @@ export const API_ROUTES = {
     NOTIFY_MEMBERS: (id: number) => `/councils/${id}/notify-members`,
     GET_BY_ID: (id: number) => `/councils/${id}`,
     HANDLE_MEMBER_ATTENDANCE: (memberId: number) => `/attendance/${memberId}`,
+    GET_NEXT_NUMBER_AVAILABLE: (moduleId: number) =>
+      `/numeration-document/next-to-register/${moduleId}`,
+    GET_COUNCILS_THAT_CAN_RESERVE: (moduleId: number) =>
+      `/numeration-document/could-reserve/${moduleId}`,
+    RESERVE_NUMERATION: `/numeration-document/reserve`,
   },
   TEMPLATES: {
     GET_ALL: '/templates',

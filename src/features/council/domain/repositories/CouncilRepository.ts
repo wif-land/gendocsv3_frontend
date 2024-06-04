@@ -33,4 +33,14 @@ export interface CouncilRepository {
   notifyMembers: (payload: { members: number[]; id: number }) => Promise<void>
 
   getById: (id: number) => Promise<CouncilModel>
+
+  getNextNumberAvailable(moduleId: number): Promise<number>
+
+  getCouncilsThatCanReserve(moduleId: number): Promise<CouncilModel[]>
+
+  reserveNumeration(payload: {
+    councilId: number
+    start: number
+    end: number
+  }): Promise<void>
 }

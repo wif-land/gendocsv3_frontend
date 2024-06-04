@@ -37,6 +37,16 @@ interface CouncilUseCases {
   notifyMembers(payload: { members: number[] }): Promise<void>
 
   getById(id: number): Promise<CouncilModel>
+
+  getNextNumberAvailable(moduleId: number): Promise<number>
+
+  getCouncilsThatCanReserve(moduleId: number): Promise<CouncilModel[]>
+
+  reserveNumeration(payload: {
+    councilId: number
+    start: number
+    end: number
+  }): Promise<void>
 }
 
 export class CouncilsUseCasesImpl implements CouncilUseCases {
@@ -133,4 +143,16 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   toggleCouncilStatus = async (councils: Partial<ICouncil>[]) =>
     await this.councilRepository.bulkUpdate(councils)
+
+  getNextNumberAvailable = async (moduleId: number) =>
+    await this.councilRepository.getNextNumberAvailable(moduleId)
+
+  getCouncilsThatCanReserve = async (moduleId: number) =>
+    await this.councilRepository.getCouncilsThatCanReserve(moduleId)
+
+  reserveNumeration = async (payload: {
+    councilId: number
+    start: number
+    end: number
+  }) => await this.councilRepository.reserveNumeration(payload)
 }

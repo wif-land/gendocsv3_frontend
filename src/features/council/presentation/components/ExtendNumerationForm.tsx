@@ -1,17 +1,17 @@
-import { Card, MenuItem, Stack, Button, Grid } from '@mui/material'
+import { Card, MenuItem, Stack, Button, Grid, TextField } from '@mui/material'
 import React from 'react'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
-import { RHFTextField } from '../../../../shared/sdk/hook-form'
+import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { useNumerationForm } from '../hooks/useNumerationForm'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import LoadingButton from '@mui/lab/LoadingButton'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
+import { useExtendNumerationForm } from '../hooks/useExtendNumerationForm'
 
 export const ExtendNumerationForm = () => {
   const { loader } = useLoaderStore()
-  const { methods, handleSubmit, councils } = useNumerationForm()
+  const { methods, handleSubmit, councils } = useExtendNumerationForm()
   const mdUp = useResponsive('up', 'md')
 
   const renderForm = (
@@ -39,16 +39,28 @@ export const ExtendNumerationForm = () => {
           }}
         >
           <Stack spacing={3} sx={{ width: '100%' }}>
-            <RHFTextField name="from" label="Actual inicial" disabled />
-            <RHFTextField name="to" label="Nuevo inicial" />
+            <TextField
+              name="from"
+              label="Actual inicial"
+              disabled
+              value={'10'}
+            />
+
+            <RHFTextField
+              name="newStart"
+              label="Nuevo inicial"
+              disabled={!methods.watch('extendStart')}
+            />
+            <RHFSwitch name="extendStart" label="Extender inicial" />
           </Stack>
           <Stack spacing={3} sx={{ width: '100%' }}>
+            <TextField name="to" label="Actual final" disabled value={'10'} />
             <RHFTextField
-              name="reservedQuantity"
-              label="Actual final"
-              disabled
+              name="newEnd"
+              label="Nuevo final"
+              disabled={!methods.watch('extendEnd')}
             />
-            <RHFTextField name="nextAvaliable" label="Nuevo final" />
+            <RHFSwitch name="extendEnd" label="Extender final" />
           </Stack>
         </Stack>
       </Stack>

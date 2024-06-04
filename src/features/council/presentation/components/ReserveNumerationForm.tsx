@@ -1,9 +1,9 @@
-import { Card, MenuItem, Stack, Button, Grid } from '@mui/material'
+import { Card, MenuItem, Stack, Button, Grid, TextField } from '@mui/material'
 import React from 'react'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 import { RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { useNumerationForm } from '../hooks/useNumerationForm'
+import { useNumerationForm } from '../hooks/useReserveNumerationForm'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import LoadingButton from '@mui/lab/LoadingButton'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
@@ -11,7 +11,7 @@ import { useResponsive } from '../../../../shared/hooks/use-responsive'
 
 export const ReserveNumerationForm = () => {
   const { loader } = useLoaderStore()
-  const { methods, handleSubmit, councils } = useNumerationForm()
+  const { methods, onSubmit, councils } = useNumerationForm()
   const mdUp = useResponsive('up', 'md')
 
   const renderForm = (
@@ -39,12 +39,22 @@ export const ReserveNumerationForm = () => {
           }}
         >
           <Stack spacing={3} sx={{ width: '100%' }}>
-            <RHFTextField name="from" label="Desde" />
-            <RHFTextField name="reservedQuantity" label="Cantidad reservada" />
+            <RHFTextField name="from" label="Desde" disabled />
+            <TextField
+              name="reservedQuantity"
+              label="Cantidad reservada"
+              value={methods.watch('to') - methods.watch('from')}
+              disabled
+            />
           </Stack>
           <Stack spacing={3} sx={{ width: '100%' }}>
             <RHFTextField name="to" label="Hasta" />
-            <RHFTextField name="nextAvaliable" label="Siguiente disponible" />
+            <TextField
+              name="nextAvaliable"
+              label="Siguiente disponible"
+              value={Number(methods.watch('to')) + 1}
+              disabled
+            />
           </Stack>
         </Stack>
       </Stack>
@@ -82,7 +92,7 @@ export const ReserveNumerationForm = () => {
 
   return (
     <>
-      <FormProvider methods={methods} onSubmit={() => handleSubmit}>
+      <FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
         {renderForm}
         {renderActions}
       </FormProvider>

@@ -54,4 +54,16 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   handleMemberAttendance = async (memberId: number) =>
     await this.datasource.handleMemberAttendance(memberId)
+
+  getNextNumberAvailable = async (moduleId: number) =>
+    await this.datasource.getNextNumberAvailable(moduleId)
+
+  getCouncilsThatCanReserve = async (moduleId: number) =>
+    await this.datasource.getCouncilsThatCanReserve(moduleId)
+
+  reserveNumeration = async (payload: {
+    councilId: number
+    start: number
+    end: number
+  }) => await this.datasource.reserveNumeration(payload)
 }

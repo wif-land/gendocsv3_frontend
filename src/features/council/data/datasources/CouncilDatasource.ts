@@ -41,6 +41,16 @@ export interface CouncilsDataSource {
   getById(id: number): Promise<CouncilModel>
 
   handleMemberAttendance(memberId: number): Promise<void>
+
+  getNextNumberAvailable(moduleId: number): Promise<number>
+
+  getCouncilsThatCanReserve(moduleId: number): Promise<CouncilModel[]>
+
+  reserveNumeration(payload: {
+    councilId: number
+    start: number
+    end: number
+  }): Promise<void>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -173,5 +183,37 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     await AxiosClient.patch(
       API_ROUTES.COUNCILS.HANDLE_MEMBER_ATTENDANCE(memberId),
     )
+  }
+
+  getNextNumberAvailable = async (moduleId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.COUNCILS.GET_NEXT_NUMBER_AVAILABLE(moduleId),
+    )
+
+    if ('error' in result) {
+      return 0
+    }
+
+    return result.data as number
+  }
+
+  getCouncilsThatCanReserve = async (moduleId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.COUNCILS.GET_COUNCILS_THAT_CAN_RESERVE(moduleId),
+    )
+
+    if ('error' in result) {
+      return [] as CouncilModel[]
+    }
+
+    return result.data as CouncilModel[]
+  }
+
+  reserveNumeration = async (payload: {
+    councilId: number
+    start: number
+    end: number
+  }) => {
+    await AxiosClient.post(API_ROUTES.COUNCILS.RESERVE_NUMERATION, payload)
   }
 }
