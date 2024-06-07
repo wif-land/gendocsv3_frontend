@@ -11,20 +11,7 @@ export const transformData = (
   canton: ICity[],
 ): IStudent[] =>
   data.map((item: any) => {
-    if (
-      !item['Cédula'] ||
-      !item['Género'] ||
-      !item['Fecha de nacimiento'] ||
-      !item['Cantón'] ||
-      !item['Carrera'] ||
-      !item['Teléfono convencional'] ||
-      !item['Número celular'] ||
-      !item['personalEmail'] ||
-      !item['outlookEmail'] ||
-      !item['registration'] ||
-      !item['Folio'] ||
-      !item['Titulo de Bachillerato']
-    ) {
+    if (!item['Cédula']) {
       enqueueSnackbar(
         'Por favor, asegúrate de que todos los campos estén completos',
         { variant: 'warning' },
@@ -33,42 +20,80 @@ export const transformData = (
       return StudentModel.fromJson({})
     }
 
-    const excelDate = new Date(
-      // eslint-disable-next-line no-magic-numbers
-      Math.round((item['Fecha de nacimiento'] - 25569) * 86400 * 1000),
-    )
-    const formattedDate = excelDate.toISOString().split('T')[0]
+    const safeToString = (value: any) => {
+      if (value === null || value === undefined) return ''
+      return value.toString()
+    }
 
-    const excelDate2 = new Date(
-      // eslint-disable-next-line no-magic-numbers
-      Math.round((item['Fecha de inicio de estudios'] - 25569) * 86400 * 1000),
-    )
+    let firstName = ''
+    let secondName = ''
+    let firstLastName = ''
+    let secondLastName = ''
 
-    const formattedDate2 = excelDate2.toISOString().split('T')[0]
+    if (item['Nombres']) {
+      const names = safeToString(item['Nombres']).split(' ')
+      firstName = names[0]
+      secondName = names[1] || ''
+    } else {
+      firstName = safeToString(item['Primer Nombre'])
+      secondName = safeToString(item['Segundo Nombre'])
+    }
 
-    return {
-      firstName: item['Primer Nombre'],
-      secondName: item['Segundo Nombre'],
-      firstLastName: item['Primer Apellido'],
-      secondLastName: item['Segundo Apellido'],
-      outlookEmail: item['outlookEmail'],
-      personalEmail: item['personalEmail'],
-      phoneNumber: item['Número celular'],
-      regularPhoneNumber: item['Teléfono convencional'],
-      dni: item['Cédula'].toString(),
-      registration: item['registration'].toString(),
-      folio: item['Folio'].toString(),
-      gender: item['Género'],
-      bachelorDegree: item['Titulo de Bachillerato'],
-      startStudiesDate: formattedDate2,
-      vinculationHours: parseInt(item['Horas de vinculación'], 10),
-      internshipHours: parseInt(item['Horas de pasantías'], 10),
-      birthdate: formattedDate,
-      canton: canton.find((city: ICity) => city.name === item['Cantón'])
-        ?.id as number,
-      approvedCredits: parseInt(item['Créditos Aprovados'], 10),
-      isActive: true,
-      career: careers.find((career: ICareer) => career.name === item['Carrera'])
-        ?.id as number,
-    } as StudentModel
+    if (item['Apellidos']) {
+      const lastNames = safeToString(item['Apellidos']).split(' ')
+      firstLastName = lastNames[0]
+      secondLastName = lastNames[1] || ''
+    } else {
+      firstLastName = safeToString(item['Primer Apellido'])
+      secondLastName = safeToString(item['Segundo Apellido'])
+    }
+
+    if (item['Correo'] && item['Fecha Nacimiento']) {
+      return {
+        firstName,
+        secondName,
+        firstLastName,
+        secondLastName,
+        outlookEmail: item['Correo UTA'],
+        personalEmail: item['Correo'],
+        phoneNumber: item['Celular'],
+        regularPhoneNumber: item['Teléfono'],
+        startStudiesDate: item['Fecha Matícula'] || new Date(),
+        dni: item['Cédula'].toString(),
+        folio: item['Folio'],
+        gender: item['Género'],
+        bachelorDegree: item['Título'] || '',
+        registration: item['Matrícula'],
+        birthdate: item['Fecha Nacimiento'],
+        canton: canton.find(
+          (city: ICity) => city.name.toUpperCase() === item['Cantón'],
+        )?.id as number,
+        isActive: true,
+        career: careers.find(
+          (career: ICareer) => career.name === item['Carrera'],
+        )?.id as number,
+      } as StudentModel
+    } else if (item['Horas Vinculación'] && item['Horas Prácticas']) {
+      return {
+        firstName,
+        secondName,
+        firstLastName,
+        secondLastName,
+        dni: item['Cédula'].toString(),
+        vinculationHours: parseInt(item['Horas Vinculación'], 10) || 0,
+        internshipHours: parseInt(item['Horas Prácticas'], 10) || 0,
+      } as StudentModel
+    } else {
+      return {
+        firstName,
+        secondName,
+        firstLastName,
+        secondLastName,
+        dni: item['Cédula'].toString(),
+        startStudiesDate: item['Inicio clases'] || new Date(),
+        endStudiesDate: item['Fin clases'] || new Date(),
+        approvedCredits: parseInt(item['Créditos Aprobados'], 10) || 0,
+        bachelorDegree: item['Título'] || '',
+      } as StudentModel
+    }
   })
