@@ -55,25 +55,26 @@ const DocumentVisualizer = ({
             p: 2,
           }}
         >
-          <Stack sx={{
-            flexGrow: 3,
-            flexBasis: 90,
-          }}>
-            <iframe src={documentURL} width="100%" height="1000px" />
-          </Stack>
           <Stack
             sx={{
-              flexGrow: 1,
-            flexBasis: 10,
-
+              flexGrow: 3,
+              flexBasis: 90,
             }}
           >
-            {shouldLoadVariables && (
-              <>
-                <VariablesAccordion />
-              </>
-            )}
+            <iframe src={documentURL} width="100%" height="1000px" />
           </Stack>
+          {shouldLoadVariables && (
+            <>
+              <Stack
+                sx={{
+                  flexGrow: 1,
+                  flexBasis: 10,
+                }}
+              >
+                <VariablesAccordion />
+              </Stack>
+            </>
+          )}
         </Stack>
       </VariableProvider>
     </div>

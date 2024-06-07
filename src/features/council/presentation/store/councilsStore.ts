@@ -9,6 +9,7 @@ interface StoreState {
   setCouncils: (careers: CouncilModel[]) => void
   addCouncil: (career: CouncilModel) => void
   getCouncils: () => Promise<void>
+  getById: (id: number) => Promise<CouncilModel>
   createCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
   updateCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
 }
@@ -44,6 +45,8 @@ export const useCouncilsStore = create<StoreState>(
         }))
         return updatedCouncil
       },
+      getById: async (id) =>
+        await CouncilsUseCasesImpl.getInstance().getById(id),
     }),
     {
       name: STORE_NAME,

@@ -1,4 +1,13 @@
-import { Card, MenuItem, Stack, Button, Grid, Alert } from '@mui/material'
+import {
+  Card,
+  MenuItem,
+  Stack,
+  Button,
+  Grid,
+  Alert,
+  List,
+  ListItem,
+} from '@mui/material'
 import React from 'react'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
@@ -17,28 +26,45 @@ export const ExtendNumerationForm = () => {
 
   const renderForm = (
     <Card sx={{ p: 2 }}>
-      <Stack spacing={3} sx={{ p: 3 }}>
+      <Stack>
         <Alert
           severity="info"
           variant="outlined"
           sx={{
-            mb: 3,
+            padding: 2,
+            mb: 2,
           }}
         >
-          <ol>
-            <li>
+          <List
+            sx={{
+              spacing: 2,
+            }}
+          >
+            <ListItem
+              sx={{
+                padding: 0,
+              }}
+            >
               Los números cargados por defecto indican el rango disponible de
               extensión
-            </li>
-            <li>
+            </ListItem>
+            <ListItem
+              sx={{
+                padding: 0,
+              }}
+            >
               Si el número a extender cargado por defecto es 0, se puede
               extender desde el número actual al 9999.
-            </li>
-            <li>
+            </ListItem>
+            <ListItem
+              sx={{
+                padding: 0,
+              }}
+            >
               Si el número a extender cargado por defecto es -1, no se puede
               extender
-            </li>
-          </ol>
+            </ListItem>
+          </List>
         </Alert>
         <RHFSelect
           name="councilId"

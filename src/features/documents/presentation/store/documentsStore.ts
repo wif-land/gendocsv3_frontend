@@ -35,7 +35,25 @@ export const useDocumentStore = create<StoreState>(
       },
       downloadDocument: async (id) => {
         const { downloadDocument } = DocumentsDataSourceImpl.getInstance()
-        await downloadDocument(id)
+        await downloadDocument(id).then((data) => {
+          const { file, fileName } = data
+          const byteCharacters = atob(file)
+          const byteNumbers = new Array(byteCharacters.length)
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i)
+          }
+          const byteArray = new Uint8Array(byteNumbers)
+          const blob = new Blob([byteArray], { type: 'application/msword' }) // or other appropriate mime type
+
+          // Crear un enlace temporal para descargar el Blob
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', fileName)
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        })
       },
     }),
     {
