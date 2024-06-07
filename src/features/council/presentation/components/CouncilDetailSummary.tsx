@@ -8,6 +8,7 @@ import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
 import { Box, Button } from '@mui/material'
 import Iconify from '../../../../core/iconify'
 import { useRouter } from 'next/navigation'
+import { CouncilType } from '../../domain/entities/ICouncil'
 
 type Props = {
   council: CouncilModel
@@ -30,7 +31,9 @@ export const CouncilDetailsSummary = ({
     },
     {
       title: 'Tipo',
-      value: `${council?.type === 'ORDINARY' ? 'Ordinaria' : 'Extraordinaria'}`,
+      value: `${
+        council?.type === CouncilType.ORDINARY ? 'Ordinaria' : 'Extraordinaria'
+      }`,
       icon: 'eva:calendar-outline',
     },
     {

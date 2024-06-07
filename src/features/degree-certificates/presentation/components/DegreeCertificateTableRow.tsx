@@ -83,7 +83,11 @@ export const DegreeCertificateTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(presentationDate), 'dd MMM yyyy')}
+            primary={
+              presentationDate
+                ? format(new Date(presentationDate), 'dd MMM yyyy')
+                : ''
+            }
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>

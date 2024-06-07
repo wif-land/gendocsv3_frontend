@@ -383,7 +383,7 @@ export const DegreeCertificateNewEditForm = ({
   )
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit as any)}>
       <Grid container spacing={3}>
         {renderDetails}
 
