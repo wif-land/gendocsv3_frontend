@@ -1,4 +1,4 @@
-import { Card, MenuItem, Stack, Button, Grid } from '@mui/material'
+import { Card, MenuItem, Stack, Button, Grid, Alert } from '@mui/material'
 import React from 'react'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
@@ -18,6 +18,28 @@ export const ExtendNumerationForm = () => {
   const renderForm = (
     <Card sx={{ p: 2 }}>
       <Stack spacing={3} sx={{ p: 3 }}>
+        <Alert
+          severity="info"
+          variant="outlined"
+          sx={{
+            mb: 3,
+          }}
+        >
+          <ol>
+            <li>
+              Los números cargados por defecto indican el rango disponible de
+              extensión
+            </li>
+            <li>
+              Si el número a extender cargado por defecto es 0, se puede
+              extender desde el número actual al 9999.
+            </li>
+            <li>
+              Si el número a extender cargado por defecto es -1, no se puede
+              extender
+            </li>
+          </ol>
+        </Alert>
         <RHFSelect
           name="councilId"
           label="Consejo"
@@ -51,6 +73,7 @@ export const ExtendNumerationForm = () => {
               name="newStart"
               label="Nuevo inicial"
               disabled={!methods.watch('extendStart')}
+              value={methods.watch('newStart')}
             />
             <RHFSwitch name="extendStart" label="Extender inicial" />
           </Stack>
@@ -65,6 +88,7 @@ export const ExtendNumerationForm = () => {
               name="newEnd"
               label="Nuevo final"
               disabled={!methods.watch('extendEnd')}
+              value={methods.watch('newEnd')}
             />
             <RHFSwitch name="extendEnd" label="Extender final" />
           </Stack>

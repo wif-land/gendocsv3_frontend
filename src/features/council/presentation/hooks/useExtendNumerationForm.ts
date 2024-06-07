@@ -20,8 +20,8 @@ const resolveDefaultValues = () => ({
   councilId: 0,
   actualStart: 0,
   actualEnd: 0,
-  newStart: undefined,
-  newEnd: undefined,
+  newStart: 0,
+  newEnd: 0,
   extendStart: true,
   extendEnd: true,
 })
@@ -48,8 +48,10 @@ export const useExtendNumerationForm = () => {
         councilId,
       )
 
-    methods.setValue('actualStart', response.start)
-    methods.setValue('actualEnd', response.end)
+    methods.setValue('actualStart', response.actualStart)
+    methods.setValue('actualEnd', response.actualEnd)
+    methods.setValue('newStart', response.start)
+    methods.setValue('newEnd', response.end)
   }
 
   const methods = useForm<NumerationFormValues>({

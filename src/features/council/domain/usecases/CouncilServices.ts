@@ -52,6 +52,8 @@ interface CouncilUseCases {
   getAvailableExtensionNumeration(councilId: number): Promise<{
     start: number
     end: number
+    actualStart: number
+    actualEnd: number
   }>
 }
 

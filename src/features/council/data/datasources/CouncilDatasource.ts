@@ -56,6 +56,8 @@ export interface CouncilsDataSource {
   getAvailableExtensionNumeration(councilId: number): Promise<{
     start: number
     end: number
+    actualStart: number
+    actualEnd: number
   }>
 }
 
@@ -196,8 +198,6 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
       API_ROUTES.COUNCILS.GET_NEXT_NUMBER_AVAILABLE(moduleId),
     )
 
-    console.log(result)
-
     if ('error' in result) {
       return 0
     }
@@ -231,9 +231,14 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     )
 
     if ('error' in result) {
-      return { start: 0, end: 0 }
+      return { start: 0, end: 0, actualStart: 0, actualEnd: 0 }
     }
 
-    return result.data as { start: number; end: number }
+    return result.data as {
+      start: number
+      end: number
+      actualStart: number
+      actualEnd: number
+    }
   }
 }
