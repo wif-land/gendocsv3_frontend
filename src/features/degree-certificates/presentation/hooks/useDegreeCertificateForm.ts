@@ -15,9 +15,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import {
+  ICreateDegreeCertificate,
+  IDegreeCertificate,
+} from '../../domain/entities/IDegreeCertificates'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
-import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -46,52 +48,17 @@ export const useDegreeCertificateForm = (
   const { resolveStudentById } = useDegreeCertificateMethods()
   const { reset, handleSubmit } = methods
 
-  const removeUndefinedFields = <T>(obj: T): Partial<T> => {
-    const newObj: Partial<T> = {}
-    for (const key in obj) {
-      if (
-        obj[key as keyof T] !== undefined &&
-        obj[key as keyof T] !== null &&
-        obj[key as keyof T] !== ''
-      ) {
-        newObj[key as keyof T] = obj[key as keyof T]
-      }
-    }
-    return newObj
-  }
-
-  const formatData = useCallback(
-    (data: Partial<IDegreeCertificate>) => {
-      const formattedData: Partial<IDegreeCertificate> = removeUndefinedFields({
-        topic: data.topic,
-        presentationDate: data.presentationDate,
-        studentId: data.student?.id,
-        certificateTypeId: data.certificateType,
-        certificateStatusId: data.certificateStatus,
-        degreeModalityId: data.degreeModality,
-        roomId: data.room,
-        duration: Number(data.duration),
-        isClosed: data.isClosed,
-        userId: user?.id,
-        link: data.link,
-      })
-
-      return formattedData
-    },
-    [user, currentDegreeCertificate],
-  )
-
   const onSubmit = useCallback(
-    async (data: IDegreeCertificate) => {
-      const formattedData = formatData(data)
+    async (data: ICreateDegreeCertificate) => {
       let result
       if (!currentDegreeCertificate) {
-        result = createDegreeCertificate(
-          formattedData as unknown as DegreeCertificateModel,
-        )
+        result = createDegreeCertificate({
+          ...data,
+          userId: user!.id,
+        })
       } else {
         result = updateDegreeCertificate({
-          ...formattedData,
+          ...data,
           id: currentDegreeCertificate.id,
         })
       }

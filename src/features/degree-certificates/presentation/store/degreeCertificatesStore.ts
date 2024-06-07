@@ -4,6 +4,7 @@ import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel
 import { IStudent } from '../../../../features/students/domain/entities/IStudent'
 import { IDegreeModality } from '../../../../core/providers/domain/entities/ICertificateProvider'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
+import { ICreateDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 
 interface StoreState {
   degreeCertificate: DegreeCertificateModel
@@ -11,7 +12,7 @@ interface StoreState {
   setDegreeCertificates: (degreeCertificates: DegreeCertificateModel[]) => void
   addDegreeCertificate: (degreeCertificate: DegreeCertificateModel) => void
   createDegreeCertificate: (
-    degreeCertificate: DegreeCertificateModel,
+    degreeCertificate: ICreateDegreeCertificate,
   ) => Promise<boolean>
   updateDegreeCertificate: (
     degreeCertificate: Partial<DegreeCertificateModel>,

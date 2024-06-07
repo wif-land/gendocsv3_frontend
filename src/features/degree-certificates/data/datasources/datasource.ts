@@ -1,7 +1,10 @@
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import {
+  ICreateDegreeCertificate,
+  IDegreeCertificate,
+} from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
 
 export interface IDegreeCertificateDatasource {
@@ -27,7 +30,9 @@ export interface IDegreeCertificateDatasource {
     degreeCertificate: Partial<IDegreeCertificate>,
   ): Promise<DegreeCertificateModel>
 
-  create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
+  create(
+    degreeCertificate: ICreateDegreeCertificate,
+  ): Promise<DegreeCertificateModel>
 
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number
@@ -110,7 +115,7 @@ export class DegreeCertificateDatasourceImpl
     return result.data as DegreeCertificateModel
   }
 
-  create = async (degreeCertificate: IDegreeCertificate) => {
+  create = async (degreeCertificate: ICreateDegreeCertificate) => {
     const result = await AxiosClient.post(
       API_ROUTES.DEGREE_CERTIFICATES.CREATE,
       degreeCertificate,

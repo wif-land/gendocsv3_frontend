@@ -97,7 +97,7 @@ export const DegreeCertificateTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={(row.room as IRoom).name}
+            primary={(row.room as IRoom)?.name}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>

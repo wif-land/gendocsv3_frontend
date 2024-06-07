@@ -1,6 +1,9 @@
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
-import { IDegreeCertificate } from '../entities/IDegreeCertificates'
+import {
+  ICreateDegreeCertificate,
+  IDegreeCertificate,
+} from '../entities/IDegreeCertificates'
 
 export interface IDegreeCertificatesRepository {
   getAll(
@@ -25,7 +28,9 @@ export interface IDegreeCertificatesRepository {
     degreeCertificate: Partial<IDegreeCertificate>,
   ): Promise<DegreeCertificateModel>
 
-  create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
+  create(
+    degreeCertificate: ICreateDegreeCertificate,
+  ): Promise<DegreeCertificateModel>
 
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number
