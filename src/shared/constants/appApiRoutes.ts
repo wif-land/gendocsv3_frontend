@@ -124,7 +124,8 @@ export const API_ROUTES = {
       `/degree-certificates/generate-document/${degreeCertificateId}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
-    GET_ALL: 'degree-certificates/certificate-type-status-career',
+    GET_ALL:
+      'degree-certificates/certificate-types/certificate-type-status-career',
     GET_CELL_GRADES: (certificateTypeId: number) =>
       `/degree-certificates/grade-cells/by-certificate-type/${certificateTypeId}`,
     CREATE_CELL_GRADE: '/degree-certificates/grade-cells',
