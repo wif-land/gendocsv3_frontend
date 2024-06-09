@@ -219,14 +219,6 @@ export const useDefaultMembersView = () => {
 
     setIsLoading(true)
 
-    if (
-      debouncedValue.length === 0 ||
-      debouncedValue === '' ||
-      !debouncedValue
-    ) {
-      return
-    }
-
     const fetchMembers = async () => {
       // TODO: Implement strategy pattern
       const isStudent = methods.getValues('isStudent')
