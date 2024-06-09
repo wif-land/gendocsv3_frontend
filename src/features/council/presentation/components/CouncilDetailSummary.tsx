@@ -1,8 +1,7 @@
+import React from 'react'
 import Stack from '@mui/material/Stack'
-import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import { CouncilModel } from '../../data/models/CouncilModel'
-import Label from '../../../../shared/sdk/label'
 import { format } from 'date-fns'
 import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
 import { Box, Button } from '@mui/material'
@@ -26,35 +25,23 @@ export const CouncilDetailsSummary = ({
   const SUMMARY = [
     {
       title: 'Creado por',
-      value: council?.createdBy,
+      value: council?.createdBy || 'N/A',
       icon: 'eva:person-outline',
     },
     {
       title: 'Tipo',
-      value: `${
-        council?.type === CouncilType.ORDINARY ? 'Ordinaria' : 'Extraordinaria'
-      }`,
+      value:
+        council?.type === CouncilType.ORDINARY ? 'Ordinaria' : 'Extraordinaria',
       icon: 'eva:calendar-outline',
     },
     {
       title: 'Fecha',
-      value: `${
-        council?.date !== undefined
-          ? format(new Date(council.date), ' dd/MM/yyyy HH:mm ')
-          : ''
-      }`,
+      value: council?.date
+        ? format(new Date(council.date), 'dd/MM/yyyy HH:mm')
+        : 'N/A',
       icon: 'eva:calendar-outline',
     },
   ]
-
-  const renderType = (
-    <Label
-      variant="soft"
-      color={(council.isActive === true && 'success') || 'primary'}
-    >
-      {council.isActive === true ? 'Activo' : 'Inactivo'}
-    </Label>
-  )
 
   const renderError = (
     <EmptyContent
@@ -72,41 +59,31 @@ export const CouncilDetailsSummary = ({
       sx={{ py: 10 }}
     />
   )
-  const renderAttendees = () => (
-    <>
-      <Box
-        gap={5}
-        display="grid"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          md: 'repeat(3, 1fr)',
-        }}
-        sx={{ my: 10 }}
-      >
-        {SUMMARY.map((item) => (
-          <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-            <Iconify icon={item.icon} width={40} />
-            <Typography variant="h4" color="text.secondary">
-              {item.title}
-            </Typography>
-            <Typography variant="h6">{item.value}</Typography>
-          </Box>
-        ))}
-      </Box>
-    </>
+
+  const renderDetails = () => (
+    <Box display="flex" flexDirection="column" gap={2}>
+      {SUMMARY.map((item) => (
+        <Box
+          key={item.title}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            textAlign: { xs: 'center', md: 'left' },
+          }}
+        >
+          <Iconify icon={item.icon} width={24} />
+          <Typography sx={{ fontWeight: 'bold' }}>
+            {item.title}: {item.value}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
   )
 
   return (
     <Stack spacing={3} sx={{ pt: 3 }} {...other}>
-      <Stack spacing={2} alignItems="flex-start">
-        <Typography variant="h5">{council.name}</Typography>
-
-        {renderType}
-      </Stack>
-
-      <Divider sx={{ borderStyle: 'dashed' }} />
-
-      {council ? renderAttendees() : renderError}
+      {council ? renderDetails() : renderError}
     </Stack>
   )
 }

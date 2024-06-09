@@ -70,7 +70,6 @@ export const API_ROUTES = {
     BULK_UPDATE: '/councils/bulk',
     NOTIFY_MEMBERS: (id: number) => `/councils/${id}/notify-members`,
     GET_BY_ID: (id: number) => `/councils/${id}`,
-    HANDLE_MEMBER_ATTENDANCE: (memberId: number) => `/attendance/${memberId}`,
     GET_NEXT_NUMBER_AVAILABLE: (moduleId: number) =>
       `/numeration-document/next-to-register/${moduleId}`,
     GET_COUNCILS_THAT_CAN_RESERVE: (moduleId: number) =>
@@ -78,6 +77,7 @@ export const API_ROUTES = {
     RESERVE_NUMERATION: `/numeration-document/reserve`,
     GET_AVAILABLE_EXTENSION_NUMERATION: (councilId: number) =>
       `/numeration-document/available-extension-numeration/${councilId}`,
+    SET_ATTENDANCE: (memberId: number) => `/attendance/${memberId}`,
   },
   TEMPLATES: {
     GET_ALL: '/templates',

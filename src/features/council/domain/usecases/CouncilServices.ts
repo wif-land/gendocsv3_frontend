@@ -5,6 +5,7 @@ import { CouncilRepositoryImpl } from '../../data/repositories/CouncilRepository
 import { ICouncil, ICouncilFormValues } from '../entities/ICouncil'
 import { ICouncilFilters } from '../entities/ICouncilFilters'
 import { CouncilRepository } from '../repositories/CouncilRepository'
+import { ICouncilAttendee } from '../entities/ICouncilAttendee'
 
 interface CouncilUseCases {
   create(council: ICouncilFormValues): Promise<CouncilModel>
@@ -34,7 +35,10 @@ interface CouncilUseCases {
 
   toggleCouncilStatus(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 
-  notifyMembers(payload: { members: number[] }): Promise<void>
+  notifyMembers(payload: {
+    members: ICouncilAttendee[]
+    councilId: number
+  }): Promise<void>
 
   getById(id: number): Promise<CouncilModel>
 
@@ -91,14 +95,17 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   }
 
   async notifyMembers(payload: {
-    members: number[]
-    id: number
+    members: ICouncilAttendee[]
+    councilId: number
   }): Promise<void> {
-    const { members } = payload
-
     await this.councilRepository.notifyMembers({
-      id: payload.id,
-      members,
+      members: payload.members.map((member) => ({
+        email: member.member.outlookEmail,
+        positionName: member.positionName as string,
+        name: `${member.member.firstName} ${member.member.firstLastName}`,
+        id: member.id as number,
+      })),
+      councilId: payload.councilId,
     })
   }
 
@@ -167,4 +174,7 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAvailableExtensionNumeration = async (councilId: number) =>
     await this.councilRepository.getAvailableExtensionNumeration(councilId)
+
+  setAttendance = async (councilAttendee: number) =>
+    await this.councilRepository.setAttendance(councilAttendee)
 }
