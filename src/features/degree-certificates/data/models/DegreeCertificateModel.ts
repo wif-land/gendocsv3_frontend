@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IUser } from '../../../../features/auth/domain/entities/IUser'
 import {
   ICertificateStatus,
   ICertificateType,
@@ -9,46 +11,48 @@ import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 
 export class DegreeCertificateModel implements IDegreeCertificate {
   id?: number
-  number: number
-  auxNumber: number
+  number?: number
+  auxNumber?: number
   topic: string
-  presentationDate: Date
+  presentationDate?: Date
   student: IStudent
   career: number
   certificateType: number | ICertificateType
-  certificateStatus: number | ICertificateStatus
+  certificateStatus?: number | ICertificateStatus
   degreeModality: IDegreeModality
-  room: IRoom | number
-  duration: number
-  link: string
-  gradesSheetDriveId: string
-  certificateDriveId: string
+  room?: IRoom | number
+  duration?: number
+  link?: string
+  gradesSheetDriveId?: string
+  certificateDriveId?: string
   isClosed: boolean
+  user: IUser
 
-  constructor(data: IDegreeCertificate) {
-    this.id = data.id
-    this.number = data.number
-    this.auxNumber = data.auxNumber
-    this.topic = data.topic
-    this.presentationDate = data.presentationDate
-    this.student = data.student
-    this.career = data.career
-    this.certificateType = data.certificateType
-    this.certificateStatus = data.certificateStatus
-    this.degreeModality = data.degreeModality
-    this.room = data.room
-    this.duration = data.duration
-    this.link = data.link
-    this.gradesSheetDriveId = data.gradesSheetDriveId
-    this.certificateDriveId = data.certificateDriveId
-    this.isClosed = data.isClosed
+  constructor(degreeCertificate: IDegreeCertificate) {
+    this.id = degreeCertificate.id
+    this.number = degreeCertificate.number
+    this.auxNumber = degreeCertificate.auxNumber
+    this.topic = degreeCertificate.topic
+    this.presentationDate = degreeCertificate.presentationDate
+    this.student = degreeCertificate.student
+    this.career = degreeCertificate.career
+    this.certificateType = degreeCertificate.certificateType
+    this.certificateStatus = degreeCertificate.certificateStatus
+    this.degreeModality = degreeCertificate.degreeModality
+    this.room = degreeCertificate.room
+    this.duration = degreeCertificate.duration
+    this.link = degreeCertificate.link
+    this.gradesSheetDriveId = degreeCertificate.gradesSheetDriveId
+    this.certificateDriveId = degreeCertificate.certificateDriveId
+    this.isClosed = degreeCertificate.isClosed
+    this.user = degreeCertificate.user
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   static fromJson(json: Record<string, any>): DegreeCertificateModel {
     return new DegreeCertificateModel({
       id: json.id,
       number: json.number,
-      auxNumber: json.auxNumber,
+      auxNumber: json.aux_number,
       topic: json.topic,
       presentationDate: json.presentationDate,
       student: json.studentId,
@@ -62,6 +66,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       gradesSheetDriveId: json.gradesSheetDriveId,
       certificateDriveId: json.documentDriveId,
       isClosed: json.isClosed,
+      user: json.user,
     })
   }
 

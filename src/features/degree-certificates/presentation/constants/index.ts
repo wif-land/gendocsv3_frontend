@@ -53,6 +53,7 @@ export const resolveDefaultValues = (
       getSelectedStudent(currentDegreeCertificate?.student as IStudent).label ||
       '',
   } as any,
+  user: currentDegreeCertificate?.user || ({} as any),
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>

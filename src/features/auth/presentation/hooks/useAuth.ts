@@ -4,7 +4,6 @@ import { useAccountStore } from '../state/useAccountStore'
 import { enqueueSnackbar } from 'notistack'
 import { LoginUseCase } from '../../domain/usecases/loginUseCase'
 import { useForm } from 'react-hook-form'
-import { useCallback } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
 import { LogoutnUseCase } from '../../domain/usecases/logoutUseCase'
@@ -49,18 +48,15 @@ export const useAuth = () => {
   const { reset, watch } = methods
   const values = watch()
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      const { decoded } = await new LoginUseCase().call({
-        email: data.email,
-        password: data.password,
-      })
-      decoded && setUser(decoded)
-      router.push('/dashboard')
-      reset()
-    },
-    [enqueueSnackbar, reset, router],
-  )
+  const onSubmit = async (data: FormValuesProps) => {
+    const { decoded } = await new LoginUseCase().call({
+      email: data.email,
+      password: data.password,
+    })
+    decoded && setUser(decoded)
+    router.push('/dashboard')
+    reset()
+  }
 
   return { handleLogout, methods, values, onSubmit }
 }

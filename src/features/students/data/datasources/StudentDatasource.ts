@@ -30,6 +30,8 @@ export interface StudentDataSource {
   create(student: ICreateStudent): Promise<StudentModel>
 
   bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
+
+  getById(id: number): Promise<StudentModel>
 }
 
 export class StudentDataSourceImpl implements StudentDataSource {
@@ -119,5 +121,15 @@ export class StudentDataSourceImpl implements StudentDataSource {
     }
 
     return result.data as StudentModel[]
+  }
+
+  getById = async (id: number) => {
+    const result = await AxiosClient.get(API_ROUTES.STUDENTS.GET_BY_ID(id))
+
+    if ('error' in result) {
+      return StudentModel.fromJson({})
+    }
+
+    return result.data as StudentModel
   }
 }

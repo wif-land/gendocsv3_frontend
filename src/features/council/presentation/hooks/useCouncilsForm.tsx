@@ -108,13 +108,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     if (searchDebounced.includes('-')) {
       return
     }
-    if (
-      !searchDebounced ||
-      searchDebounced === '' ||
-      searchDebounced.length < 1
-    ) {
-      return
-    }
 
     FunctionaryUseCasesImpl.getInstance()
       .getByFilters({ field: searchDebounced })

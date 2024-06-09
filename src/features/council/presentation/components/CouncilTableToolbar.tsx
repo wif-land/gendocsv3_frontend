@@ -19,7 +19,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
-import { MobileDatePicker } from '@mui/x-date-pickers'
+import { DatePicker } from '@mui/x-date-pickers'
 import {
   DATE_TYPES,
   ICouncilFilters,
@@ -259,7 +259,7 @@ export const CouncilTableToolbar = ({
               width: { xs: 1, md: '20%' },
             }}
           >
-            <MobileDatePicker
+            <DatePicker
               disabled={!filters.dateType}
               value={dayjs(filters.startDate) || null}
               format="YYYY-MM-DD"
@@ -279,7 +279,7 @@ export const CouncilTableToolbar = ({
               width: { xs: 1, md: '20%' },
             }}
           >
-            <MobileDatePicker
+            <DatePicker
               disabled={!filters.dateType || !filters.startDate}
               value={dayjs(filters.endDate) || null}
               minDate={filters.startDate ? dayjs(filters.startDate) : null}

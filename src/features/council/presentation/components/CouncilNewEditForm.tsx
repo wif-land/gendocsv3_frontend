@@ -16,7 +16,7 @@ import {
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Controller } from 'react-hook-form'
 import { COUNCIL_TYPES, ICouncil } from '../../domain/entities/ICouncil'
-import { MobileDateTimePicker } from '@mui/x-date-pickers'
+import { DateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { Box, Button, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
@@ -68,14 +68,11 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
               label="Tipo"
               InputLabelProps={{ shrink: true }}
             >
-              {COUNCIL_TYPES.map((council) => {
-                console.log(council)
-                return (
-                  <MenuItem key={council.value} value={council.value}>
-                    {council.label}
-                  </MenuItem>
-                )
-              })}
+              {COUNCIL_TYPES.map((council) => (
+                <MenuItem key={council.value} value={council.value}>
+                  {council.label}
+                </MenuItem>
+              ))}
             </RHFSelect>
 
             <Controller
@@ -83,7 +80,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
               rules={{ required: true }}
               control={control}
               render={({ field }) => (
-                <MobileDateTimePicker
+                <DateTimePicker
                   {...field}
                   value={dayjs(field.value)}
                   onChange={(newValue) => {

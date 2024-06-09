@@ -95,10 +95,10 @@ export const handleUpdate = async (
 export const GENDERS = [
   {
     value: 'M',
-    label: 'Masculino',
+    label: 'Hombre',
   },
   {
     value: 'F',
-    label: 'Femenino',
+    label: 'Mujer',
   },
 ]

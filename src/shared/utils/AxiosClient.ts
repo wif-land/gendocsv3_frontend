@@ -302,8 +302,15 @@ const handleApiError = (
     enqueueSnackbar('No se ha podido establecer conexión con el servidor', {
       variant: 'error',
     })
+
+    return {
+      error: 'error',
+    }
   } else {
     enqueueSnackbar('Ocurrió un error en la solicitud', { variant: 'error' })
+    return {
+      error: 'error',
+    }
   }
 
   return {

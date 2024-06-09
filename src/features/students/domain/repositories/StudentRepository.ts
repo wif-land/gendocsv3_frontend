@@ -28,4 +28,6 @@ export interface StudentRepository {
   bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
 
   bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
+
+  getById(id: number): Promise<StudentModel>
 }

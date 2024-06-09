@@ -35,13 +35,13 @@ export const API_ROUTES = {
   },
   STUDENTS: {
     GET_ALL: '/students',
-    GET_ONE: '/students/:id',
     GET_BY_FILTERS: `/students/filter`,
     UPDATE: (id: number) => `/students/${id}`,
     BULK_UPDATE: '/students/bulk',
     DELETE: (id: number) => `/students/${id}`,
     CREATE: '/students',
     CREATE_MANY: '/students/bulk',
+    GET_BY_ID: (id: number) => `/students/${id}`,
   },
   FUNCTIONARIES: {
     GET_ALL: '/functionaries',
@@ -62,7 +62,7 @@ export const API_ROUTES = {
   },
   COUNCILS: {
     GET_ALL: '/councils',
-    GET_BY_FILTERS: `/councils/filter`,
+    GET_BY_FILTERS: `/councils/filter/f`,
     GET_COUNT: '/councils/count',
     UPDATE: (id: number) => `/councils/${id}`,
     DELETE: '/councils/:id',
@@ -70,7 +70,14 @@ export const API_ROUTES = {
     BULK_UPDATE: '/councils/bulk',
     NOTIFY_MEMBERS: (id: number) => `/councils/${id}/notify-members`,
     GET_BY_ID: (id: number) => `/councils/${id}`,
-    HANDLE_MEMBER_ATTENDANCE: (memberId: number) => `/attendance/${memberId}`,
+    GET_NEXT_NUMBER_AVAILABLE: (moduleId: number) =>
+      `/numeration-document/next-to-register/${moduleId}`,
+    GET_COUNCILS_THAT_CAN_RESERVE: (moduleId: number) =>
+      `/numeration-document/could-reserve/${moduleId}`,
+    RESERVE_NUMERATION: `/numeration-document/reserve`,
+    GET_AVAILABLE_EXTENSION_NUMERATION: (councilId: number) =>
+      `/numeration-document/available-extension-numeration/${councilId}`,
+    SET_ATTENDANCE: (memberId: number) => `/attendance/${memberId}`,
   },
   TEMPLATES: {
     GET_ALL: '/templates',
@@ -117,7 +124,8 @@ export const API_ROUTES = {
       `/degree-certificates/generate-document/${degreeCertificateId}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
-    GET_ALL: 'degree-certificates/certificate-type-status-career',
+    GET_ALL:
+      'degree-certificates/certificate-types/certificate-type-status-career',
     GET_CELL_GRADES: (certificateTypeId: number) =>
       `/degree-certificates/grade-cells/by-certificate-type/${certificateTypeId}`,
     CREATE_CELL_GRADE: '/degree-certificates/grade-cells',

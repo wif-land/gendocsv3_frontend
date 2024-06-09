@@ -26,6 +26,7 @@ export interface IMember {
   firstLastName: string
   secondLastName: string
   isStudent: boolean
+  outlookEmail: string
 }
 
 export interface IDefaultMembersToUpdate {

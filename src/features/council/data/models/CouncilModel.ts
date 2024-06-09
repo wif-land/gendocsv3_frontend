@@ -15,6 +15,8 @@ export class CouncilModel implements ICouncil {
   userId: number
   createdBy?: string
   members: ICouncilAttendee[]
+  recopilationDriveId?: string
+  hasProcessedDocuments?: boolean
 
   constructor(props: ICouncil) {
     this.id = props.id || undefined
@@ -29,6 +31,8 @@ export class CouncilModel implements ICouncil {
     this.userId = props.userId
     this.members = props.members || []
     this.createdBy = props.createdBy || ''
+    this.recopilationDriveId = props.recopilationDriveId || ''
+    this.hasProcessedDocuments = props.hasProcessedDocuments || false
   }
 
   static fromJson(json: Record<string, any> | string): CouncilModel {
@@ -47,6 +51,9 @@ export class CouncilModel implements ICouncil {
         moduleId: json.moduleId,
         userId: json.userId,
         members: json.members,
+        createdBy: json.createdBy,
+        recopilationDriveId: json.recopilationDriveId,
+        hasProcessedDocuments: json.hasProcessedDocuments,
       })
 
       return career
@@ -70,6 +77,9 @@ export class CouncilModel implements ICouncil {
       moduleId: this.moduleId,
       userId: this.userId,
       members: this.members,
+      createdBy: this.createdBy,
+      recopilationDriveId: this.recopilationDriveId,
+      hasProcessedDocuments: this.hasProcessedDocuments,
     }
   }
 }

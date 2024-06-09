@@ -30,6 +30,8 @@ interface StudentUseCases {
   bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
 
   bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
+
+  getById(id: number): Promise<StudentModel>
 }
 
 export class StudentUseCasesImpl implements StudentUseCases {
@@ -44,6 +46,9 @@ export class StudentUseCasesImpl implements StudentUseCases {
   }
 
   private repository: StudentRepository = StudentRepositoryImpl.getInstance()
+
+  getById = async (id: number): Promise<StudentModel> =>
+    await this.repository.getById(id)
 
   getAll = async (limit: number, offset: number) =>
     await this.repository.getAll(limit, offset)

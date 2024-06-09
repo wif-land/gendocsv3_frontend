@@ -34,6 +34,8 @@ export interface ICouncil {
   userId: number
   members: ICouncilAttendee[]
   createdBy?: string
+  recopilationDriveId?: string
+  hasProcessedDocuments?: boolean
 }
 
 export interface ICreateCouncil

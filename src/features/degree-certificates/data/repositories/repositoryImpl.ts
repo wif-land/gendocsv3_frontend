@@ -1,5 +1,8 @@
 import { IDegreeCertificatesRepository } from '../../domain/repositories/IDegreeCertificatesRepository'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import {
+  ICreateDegreeCertificate,
+  IDegreeCertificate,
+} from '../../domain/entities/IDegreeCertificates'
 import {
   DegreeCertificateDatasourceImpl,
   IDegreeCertificateDatasource,
@@ -38,7 +41,7 @@ export class DegreeCertificateRepositoryImpl
   update = async (degreeCertificate: Partial<IDegreeCertificate>) =>
     await this.datasource.update(degreeCertificate)
 
-  create = async (degreeCertificate: IDegreeCertificate) =>
+  create = async (degreeCertificate: ICreateDegreeCertificate) =>
     await this.datasource.create(degreeCertificate)
 
   generateNumeration = async (careerId: number) =>

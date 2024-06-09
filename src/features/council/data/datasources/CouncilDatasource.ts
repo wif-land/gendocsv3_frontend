@@ -7,6 +7,7 @@ import {
   IUpdateCouncil,
 } from '../../domain/entities/ICouncil'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
+import { INotifyMembers } from '../../domain/entities/INotifyMembers'
 
 export interface CouncilsDataSource {
   getAll(): Promise<CouncilModel[]>
@@ -36,11 +37,32 @@ export interface CouncilsDataSource {
 
   bulkUpdate(councils: Partial<ICouncil>[]): Promise<CouncilModel[]>
 
-  notifyMembers(payload: { members: number[]; id: number }): Promise<void>
+  notifyMembers(payload: {
+    members: INotifyMembers[]
+    councilId: number
+  }): Promise<void>
 
   getById(id: number): Promise<CouncilModel>
 
-  handleMemberAttendance(memberId: number): Promise<void>
+  getNextNumberAvailable(moduleId: number): Promise<number>
+
+  getCouncilsThatCanReserve(moduleId: number): Promise<CouncilModel[]>
+
+  reserveNumeration(payload: {
+    councilId: number
+    start?: number
+    end?: number
+    isExtension?: boolean
+  }): Promise<void>
+
+  getAvailableExtensionNumeration(councilId: number): Promise<{
+    start: number
+    end: number
+    actualStart: number
+    actualEnd: number
+  }>
+
+  setAttendance(memberId: number): Promise<boolean>
 }
 
 export class CouncilsDataSourceImpl implements CouncilsDataSource {
@@ -64,13 +86,16 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return result.data as CouncilModel
   }
 
-  async notifyMembers(payload: {
-    members: number[]
-    id: number
-  }): Promise<void> {
+  async notifyMembers({
+    members,
+    councilId,
+  }: {
+    members: INotifyMembers[]
+    councilId: number
+  }) {
     await AxiosClient.post(
-      API_ROUTES.COUNCILS.NOTIFY_MEMBERS(payload.id),
-      payload.members,
+      API_ROUTES.COUNCILS.NOTIFY_MEMBERS(councilId),
+      members,
     )
   }
 
@@ -169,9 +194,64 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     return result.data as CouncilModel[]
   }
 
-  handleMemberAttendance = async (memberId: number) => {
-    await AxiosClient.patch(
-      API_ROUTES.COUNCILS.HANDLE_MEMBER_ATTENDANCE(memberId),
+  getNextNumberAvailable = async (moduleId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.COUNCILS.GET_NEXT_NUMBER_AVAILABLE(moduleId),
     )
+
+    if ('error' in result) {
+      return 0
+    }
+
+    return result.data as number
+  }
+
+  getCouncilsThatCanReserve = async (moduleId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.COUNCILS.GET_COUNCILS_THAT_CAN_RESERVE(moduleId),
+    )
+
+    if ('error' in result) {
+      return [] as CouncilModel[]
+    }
+
+    return result.data as CouncilModel[]
+  }
+
+  reserveNumeration = async (payload: {
+    councilId: number
+    start: number
+    end: number
+  }) => {
+    await AxiosClient.post(API_ROUTES.COUNCILS.RESERVE_NUMERATION, payload)
+  }
+
+  getAvailableExtensionNumeration = async (councilId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.COUNCILS.GET_AVAILABLE_EXTENSION_NUMERATION(councilId),
+    )
+
+    if ('error' in result) {
+      return { start: 0, end: 0, actualStart: 0, actualEnd: 0 }
+    }
+
+    return result.data as {
+      start: number
+      end: number
+      actualStart: number
+      actualEnd: number
+    }
+  }
+
+  setAttendance = async (memberId: number) => {
+    const result = await AxiosClient.patch(
+      API_ROUTES.COUNCILS.SET_ATTENDANCE(memberId),
+    )
+
+    if ('error' in result) {
+      return false
+    }
+
+    return true
   }
 }

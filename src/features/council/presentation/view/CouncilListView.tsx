@@ -250,12 +250,12 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() =>
+                            onDeleteRow={() => {
                               updateRow({
                                 isActive: !row.isActive,
                                 id: row.id!,
-                              })
-                            }
+                              }).then(() => setTableData([]))
+                            }}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onViewRow={() => handleViewRow(row.id!.toString())}
                             onDocumentAction={handleDocumentActions}

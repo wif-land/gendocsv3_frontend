@@ -1,5 +1,8 @@
 import { DegreeCertificateRepositoryImpl } from '../../data/repositories/repositoryImpl'
-import { IDegreeCertificate } from '../entities/IDegreeCertificates'
+import {
+  ICreateDegreeCertificate,
+  IDegreeCertificate,
+} from '../entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 
@@ -26,7 +29,9 @@ interface CertificateDegreeUseCases {
     degreeCertificate: Partial<IDegreeCertificate>,
   ): Promise<DegreeCertificateModel>
 
-  create(degreeCertificate: IDegreeCertificate): Promise<DegreeCertificateModel>
+  create(
+    degreeCertificate: ICreateDegreeCertificate,
+  ): Promise<DegreeCertificateModel>
 
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number
@@ -68,7 +73,7 @@ export class DegreeCertificatesUseCasesImpl
   update = async (degreeCertificate: Partial<IDegreeCertificate>) =>
     await this.repository.update(degreeCertificate)
 
-  create = async (degreeCertificate: IDegreeCertificate) =>
+  create = async (degreeCertificate: ICreateDegreeCertificate) =>
     await this.repository.create(degreeCertificate)
 
   generateNumeration = async (careerId: number) =>

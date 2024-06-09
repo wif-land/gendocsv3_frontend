@@ -39,7 +39,6 @@ export const DefaultMemberSortableItem = ({
           alignItems: 'center',
         }}
       >
-        <Icon icon="mdi:drag-vertical-variant" width="1.2rem" height="1.2rem" />
         {defaultMember.isStudent === true ? (
           <Icon icon="ph:student-thin" width="48" height="48" />
         ) : (

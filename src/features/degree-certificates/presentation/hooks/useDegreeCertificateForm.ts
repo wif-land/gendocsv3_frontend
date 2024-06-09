@@ -12,12 +12,13 @@ import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
-import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import {
+  ICreateDegreeCertificate,
+  IDegreeCertificate,
+} from '../../domain/entities/IDegreeCertificates'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
-import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { StudentModel } from '../../../students/data/models/StudentModel'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -27,7 +28,11 @@ export const useDegreeCertificateForm = (
   const debouncedValue = useDebounce(inputValue)
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
-  const { students, setStudents } = useStudentStore()
+  const {
+    students,
+    getById: getStudentById,
+    getByFilter: getStudentsByFilter,
+  } = useStudentStore()
   const { user } = useAccountStore()
 
   const defaultValues = useMemo(
@@ -43,55 +48,19 @@ export const useDegreeCertificateForm = (
   const router = useRouter()
   const { createDegreeCertificate, updateDegreeCertificate } =
     useDegreeCertificatesStore()
-  const { resolveStudentById } = useDegreeCertificateMethods()
   const { reset, handleSubmit } = methods
 
-  const removeUndefinedFields = <T>(obj: T): Partial<T> => {
-    const newObj: Partial<T> = {}
-    for (const key in obj) {
-      if (
-        obj[key as keyof T] !== undefined &&
-        obj[key as keyof T] !== null &&
-        obj[key as keyof T] !== ''
-      ) {
-        newObj[key as keyof T] = obj[key as keyof T]
-      }
-    }
-    return newObj
-  }
-
-  const formatData = useCallback(
-    (data: Partial<IDegreeCertificate>) => {
-      const formattedData: Partial<IDegreeCertificate> = removeUndefinedFields({
-        topic: data.topic,
-        presentationDate: data.presentationDate,
-        studentId: data.student?.id,
-        certificateTypeId: data.certificateType,
-        certificateStatusId: data.certificateStatus,
-        degreeModalityId: data.degreeModality,
-        roomId: data.room,
-        duration: Number(data.duration),
-        isClosed: data.isClosed,
-        userId: user?.id,
-        link: data.link,
-      })
-
-      return formattedData
-    },
-    [user, currentDegreeCertificate],
-  )
-
   const onSubmit = useCallback(
-    async (data: IDegreeCertificate) => {
-      const formattedData = formatData(data)
+    async (data: ICreateDegreeCertificate) => {
       let result
       if (!currentDegreeCertificate) {
-        result = createDegreeCertificate(
-          formattedData as unknown as DegreeCertificateModel,
-        )
+        result = createDegreeCertificate({
+          ...data,
+          userId: user!.id,
+        })
       } else {
         result = updateDegreeCertificate({
-          ...formattedData,
+          ...data,
           id: currentDegreeCertificate.id,
         })
       }
@@ -122,31 +91,25 @@ export const useDegreeCertificateForm = (
 
     setIsLoading(true)
 
-    if (debouncedValue === '' || !debouncedValue) {
-      return
-    }
-
-    const filteredStudents = async (field: string) => {
-      await StudentUseCasesImpl.getInstance()
-        .getByFilters({ field })
-        .then((res) => {
-          setStudents(res.students)
-        })
-    }
     if (debouncedValue.includes('-')) return
 
-    filteredStudents(debouncedValue)
+    getStudentsByFilter(debouncedValue)
   }, [debouncedValue, isOpen.value])
 
   useEffect(() => {
-    if (currentDegreeCertificate) return
     const studentId = methods.watch('selectedValue')?.id
-
     if (!studentId || studentId === 0) return
 
-    // TODO: The selectedValue is from the select component to get the student, if the student is not found, it should be fetched from the API
-    resolveStudentById(studentId).then((student) => {
+    // WTF IS GOING ON HERE?
+    methods.setValue(
+      'student',
+      students.find(
+        (student) => student.id === studentId,
+      ) as unknown as StudentModel,
+    )
+    getStudentById(studentId).then((student) => {
       methods.setValue('student', student)
+      methods.trigger('student')
     })
 
     return () => {

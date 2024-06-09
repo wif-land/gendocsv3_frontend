@@ -26,7 +26,7 @@ import {
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { Controller } from 'react-hook-form'
-import { MobileDatePicker } from '@mui/x-date-pickers'
+import { DatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
@@ -258,7 +258,7 @@ export const DegreeCertificateNewEditForm = ({
               rules={{ required: true }}
               control={control}
               render={({ field }) => (
-                <MobileDatePicker
+                <DatePicker
                   {...field}
                   value={dayjs(field.value)}
                   onChange={(newValue) => {
@@ -383,7 +383,7 @@ export const DegreeCertificateNewEditForm = ({
   )
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit as any)}>
       <Grid container spacing={3}>
         {renderDetails}
 

@@ -1,22 +1,71 @@
-import { Card, MenuItem, Stack, Button, Grid } from '@mui/material'
+import {
+  Card,
+  MenuItem,
+  Stack,
+  Button,
+  Grid,
+  Alert,
+  List,
+  ListItem,
+} from '@mui/material'
 import React from 'react'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
-import { RHFTextField } from '../../../../shared/sdk/hook-form'
+import { RHFSwitch, RHFTextField } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { useNumerationForm } from '../hooks/useNumerationForm'
 import { ICouncil } from '../../domain/entities/ICouncil'
 import LoadingButton from '@mui/lab/LoadingButton'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
+import { useExtendNumerationForm } from '../hooks/useExtendNumerationForm'
 
 export const ExtendNumerationForm = () => {
   const { loader } = useLoaderStore()
-  const { methods, handleSubmit, councils } = useNumerationForm()
+  const { methods, onSubmit, councils, router, pathname } =
+    useExtendNumerationForm()
   const mdUp = useResponsive('up', 'md')
 
   const renderForm = (
     <Card sx={{ p: 2 }}>
-      <Stack spacing={3} sx={{ p: 3 }}>
+      <Stack>
+        <Alert
+          severity="info"
+          variant="outlined"
+          sx={{
+            padding: 2,
+            mb: 2,
+          }}
+        >
+          <List
+            sx={{
+              spacing: 2,
+            }}
+          >
+            <ListItem
+              sx={{
+                padding: 0,
+              }}
+            >
+              Los números cargados por defecto indican el rango disponible de
+              extensión
+            </ListItem>
+            <ListItem
+              sx={{
+                padding: 0,
+              }}
+            >
+              Si el número a extender cargado por defecto es 0, se puede
+              extender desde el número actual al 9999.
+            </ListItem>
+            <ListItem
+              sx={{
+                padding: 0,
+              }}
+            >
+              Si el número a extender cargado por defecto es -1, no se puede
+              extender
+            </ListItem>
+          </List>
+        </Alert>
         <RHFSelect
           name="councilId"
           label="Consejo"
@@ -39,16 +88,35 @@ export const ExtendNumerationForm = () => {
           }}
         >
           <Stack spacing={3} sx={{ width: '100%' }}>
-            <RHFTextField name="from" label="Actual inicial" disabled />
-            <RHFTextField name="to" label="Nuevo inicial" />
+            <RHFTextField
+              name="actualStart"
+              label="Actual inicial"
+              disabled
+              value={methods.watch('actualStart')}
+            />
+
+            <RHFTextField
+              name="newStart"
+              label="Nuevo inicial"
+              disabled={!methods.watch('extendStart')}
+              value={methods.watch('newStart')}
+            />
+            <RHFSwitch name="extendStart" label="Extender inicial" />
           </Stack>
           <Stack spacing={3} sx={{ width: '100%' }}>
             <RHFTextField
-              name="reservedQuantity"
+              name="actualEnd"
               label="Actual final"
               disabled
+              value={methods.watch('actualEnd')}
             />
-            <RHFTextField name="nextAvaliable" label="Nuevo final" />
+            <RHFTextField
+              name="newEnd"
+              label="Nuevo final"
+              disabled={!methods.watch('extendEnd')}
+              value={methods.watch('newEnd')}
+            />
+            <RHFSwitch name="extendEnd" label="Extender final" />
           </Stack>
         </Stack>
       </Stack>
@@ -68,7 +136,13 @@ export const ExtendNumerationForm = () => {
           gap: '10px',
         }}
       >
-        <Button variant="outlined" size="large">
+        <Button
+          variant="outlined"
+          size="large"
+          onClick={() =>
+            router.push(pathname.split('/').slice(0, -1).join('/'))
+          }
+        >
           Cancelar
         </Button>
 
@@ -86,7 +160,7 @@ export const ExtendNumerationForm = () => {
 
   return (
     <>
-      <FormProvider methods={methods} onSubmit={() => handleSubmit}>
+      <FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
         {renderForm}
         {renderActions}
       </FormProvider>

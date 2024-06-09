@@ -34,7 +34,10 @@ export interface DocumentsDataSource {
 
   generateRecord(id: number): Promise<{ record: string }>
 
-  downloadDocument(id: number): Promise<void>
+  downloadDocument(id: number): Promise<{
+    fileName: string
+    file: string
+  }>
 }
 
 export class DocumentsDataSourceImpl implements DocumentsDataSource {
@@ -136,8 +139,6 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
       API_ROUTES.DOCUMENTS.GENERATE_RECORD(id),
     )
 
-    console.log(result)
-
     if ('error' in result) {
       return { record: '' }
     }
@@ -147,6 +148,13 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
 
   downloadDocument = async (id: number) => {
     const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.DOWNLOAD(id))
+
     console.log(result)
+
+    if ('error' in result) {
+      return { fileName: '', file: '' }
+    }
+
+    return result.data as { fileName: string; file: string }
   }
 }

@@ -9,6 +9,7 @@ import {
   CouncilsDataSourceImpl,
 } from '../datasources/CouncilDatasource'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
+import { INotifyMembers } from '../../domain/entities/INotifyMembers'
 
 export class CouncilRepositoryImpl implements CouncilRepository {
   static instance: CouncilRepositoryImpl
@@ -47,11 +48,29 @@ export class CouncilRepositoryImpl implements CouncilRepository {
   bulkUpdate = async (councils: Partial<ICouncil>[]) =>
     await this.datasource.bulkUpdate(councils)
 
-  notifyMembers = async (payload: { members: number[]; id: number }) =>
-    await this.datasource.notifyMembers(payload)
+  notifyMembers = async (payload: {
+    members: INotifyMembers[]
+    councilId: number
+  }) => await this.datasource.notifyMembers(payload)
 
   getById = async (id: number) => await this.datasource.getById(id)
 
-  handleMemberAttendance = async (memberId: number) =>
-    await this.datasource.handleMemberAttendance(memberId)
+  getNextNumberAvailable = async (moduleId: number) =>
+    await this.datasource.getNextNumberAvailable(moduleId)
+
+  getCouncilsThatCanReserve = async (moduleId: number) =>
+    await this.datasource.getCouncilsThatCanReserve(moduleId)
+
+  reserveNumeration = async (payload: {
+    councilId: number
+    start?: number
+    end?: number
+    isExtension?: boolean
+  }) => await this.datasource.reserveNumeration(payload)
+
+  getAvailableExtensionNumeration = async (councilId: number) =>
+    await this.datasource.getAvailableExtensionNumeration(councilId)
+
+  setAttendance = async (memberId: number) =>
+    await this.datasource.setAttendance(memberId)
 }
