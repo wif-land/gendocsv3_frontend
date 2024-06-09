@@ -8,7 +8,11 @@ interface StoreState {
   councils: CouncilModel[]
   setCouncils: (careers: CouncilModel[]) => void
   addCouncil: (career: CouncilModel) => void
-  getCouncils: () => Promise<void>
+  getCouncilsByModuleId: (
+    moduleId: number,
+    limit: number,
+    offset: number,
+  ) => Promise<void>
   getById: (id: number) => Promise<CouncilModel>
   createCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
   updateCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
@@ -24,8 +28,10 @@ export const useCouncilsStore = create<StoreState>(
       setCouncils: (councils) => set({ councils }),
       addCouncil: (council: CouncilModel) =>
         set((state) => ({ councils: [...state.councils, council] })),
-      getCouncils: async () => {
-        set({ councils: await CouncilsUseCasesImpl.getInstance().getAll() })
+      getCouncilsByModuleId: async (moduleId, limit, offset) => {
+        await CouncilsUseCasesImpl.getInstance()
+          .getAllCouncilsByModuleId(moduleId, limit, offset)
+          .then((data) => set({ councils: data.councils }))
       },
       createCouncil: async (council) => {
         const newCouncil =

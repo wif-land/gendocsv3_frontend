@@ -186,5 +186,6 @@ export const useCouncilView = ({
     handleSearch,
     compilationTemplateDriveId,
     separatorTemplateDriveId,
+    moduleIdentifier,
   }
 }

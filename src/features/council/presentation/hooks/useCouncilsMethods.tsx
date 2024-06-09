@@ -23,7 +23,7 @@ export const useCouncilsMethods = () => {
   const updateRow = async (council: IUpdateCouncil) =>
     await CouncilRepositoryImpl.getInstance().update({
       id: council.id as number,
-      isActive: !council.isActive,
+      isActive: council.isActive,
     })
 
   const fetchDataByField = async (
