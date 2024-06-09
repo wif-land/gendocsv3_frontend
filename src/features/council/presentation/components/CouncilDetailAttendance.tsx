@@ -8,6 +8,7 @@ import {
   Box,
   Typography,
   Checkbox,
+  Divider,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { ICouncilAttendee } from '../../domain/entities/ICouncilAttendee'
@@ -21,7 +22,7 @@ import { useCouncilStore } from '../store/councilStore'
 const TABS = [
   {
     value: 'description',
-    label: 'Description',
+    label: 'Descripción',
   },
   {
     value: 'notifications',
@@ -110,22 +111,49 @@ export const CouncilDetailAttendance = (props: {
 
 const Description = (props: { members: ICouncilAttendee[] }) => (
   <Stack spacing={3} sx={{ p: 3 }}>
+    <Typography variant="body1">
+      En esta sección se muestra el listado de miembros del consejo, su cargo y
+      si han sido notificados o si han asistido a la reunión.
+    </Typography>
+
     <Stack spacing={3}>
-      {props.members.map((member) => (
-        <Grid key={member.positionName} container spacing={3}>
-          <Grid xs={12} md={4}>
-            <ListItemText
-              primary={
-                `${`${member.member?.firstName} ${member.member?.firstLastName}`}` ||
-                'No asignado'
-              }
-              secondary={member.positionName}
-              primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
-              secondaryTypographyProps={{ component: 'span' }}
-            />
+      {props.members
+        .sort((a, b) => a.positionOrder - b.positionOrder)
+        .map((member) => (
+          <Grid key={member.positionName} container spacing={3}>
+            <Grid
+              xs={12}
+              md={4}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <ListItemText
+                primary={
+                  `${`${member.member?.firstName} ${member.member?.firstLastName}`}` ||
+                  'No asignado'
+                }
+                secondary={member.positionName}
+                primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
+                secondaryTypographyProps={{ component: 'span' }}
+              />
+
+              <Box>
+                <Typography variant="body2">
+                  {member.hasBeenNotified
+                    ? 'Ha sido notificado'
+                    : 'No ha sido notificado'}
+                </Typography>
+
+                <Typography variant="body2">
+                  {member.hasAttended ? 'Ha asistido' : 'No ha asistido'}
+                </Typography>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      ))}
+        ))}
     </Stack>
   </Stack>
 )
@@ -164,40 +192,43 @@ const Notifications = (props: {
   return (
     <Stack spacing={3} sx={{ p: 3 }}>
       <Stack spacing={3}>
-        {props.members.map((member) => (
-          <Grid key={member.positionName} container spacing={3}>
-            <Grid
-              md={4}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-              gap={2}
-            >
-              <Checkbox
-                checked={
-                  selectedItems.some((selected) => selected.id === member.id) ||
-                  member.hasBeenNotified
-                }
-                disabled={member.hasBeenNotified}
-                onChange={() => handleSelect(member)}
-                color="primary"
-                inputProps={{ 'aria-label': 'primary checkbox' }}
-              />
+        {props.members
+          .sort((a, b) => a.positionOrder - b.positionOrder)
+          .map((member) => (
+            <Grid key={member.positionName} container spacing={3}>
+              <Grid
+                md={4}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+                gap={2}
+              >
+                <Checkbox
+                  checked={
+                    selectedItems.some(
+                      (selected) => selected.id === member.id,
+                    ) || member.hasBeenNotified
+                  }
+                  disabled={member.hasBeenNotified}
+                  onChange={() => handleSelect(member)}
+                  color="primary"
+                  inputProps={{ 'aria-label': 'primary checkbox' }}
+                />
 
-              <ListItemText
-                primary={
-                  `${`${member.member?.firstName} ${member.member?.firstLastName}`}` ||
-                  'No asignado'
-                }
-                secondary={member.positionName}
-                primaryTypographyProps={{ mb: 0.5 }}
-                secondaryTypographyProps={{ component: 'span' }}
-              />
+                <ListItemText
+                  primary={
+                    `${`${member.member?.firstName} ${member.member?.firstLastName}`}` ||
+                    'No asignado'
+                  }
+                  secondary={member.positionName}
+                  primaryTypographyProps={{ mb: 0.5 }}
+                  secondaryTypographyProps={{ component: 'span' }}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        ))}
+          ))}
 
         <LoadingButton
           variant="contained"
@@ -222,45 +253,69 @@ const Attendance = (props: {
   isLoading: boolean
   councilId: number
 }) => {
+  const [pickedMember, setPickedMember] = useState<ICouncilAttendee | null>(
+    null,
+  )
+
   const { getCouncil } = useCouncilStore()
 
   const handleSetAttendance = async (member: ICouncilAttendee) => {
+    setPickedMember(member)
     await CouncilsUseCasesImpl.getInstance().setAttendance(member.id as number)
 
     await getCouncil(props.councilId)
+    setPickedMember(null)
   }
 
   return (
     <Stack spacing={3} sx={{ p: 3 }}>
       <Stack spacing={3}>
-        {props.members.map((member) => (
-          <Grid key={member.positionName} container spacing={3}>
-            <Grid xs={12} md={4}>
-              <ListItemText
-                primary={
-                  `${`${member.member?.firstName} ${member.member?.firstLastName}`}` ||
-                  'No asignado'
-                }
-                secondary={member.positionName}
-                primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
-                secondaryTypographyProps={{ component: 'span' }}
-              />
+        {props.members
+          .sort((a, b) => a.positionOrder - b.positionOrder)
+          .map((member) => {
+            const isLast =
+              props.members.indexOf(member) === props.members.length - 1
 
-              <LoadingButton
-                variant="contained"
-                loading={props.isLoading}
-                onClick={() => handleSetAttendance(member)}
-                disabled={
-                  props.isLoading ||
-                  props.members.length === 0 ||
-                  member.hasAttended
-                }
-              >
-                {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
-              </LoadingButton>
-            </Grid>
-          </Grid>
-        ))}
+            return (
+              <Grid key={member.positionName} container spacing={3}>
+                <Grid
+                  xs={12}
+                  md={8}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      `${`${member.member?.firstName} ${member.member?.firstLastName}`}` ||
+                      'No asignado'
+                    }
+                    secondary={member.positionName}
+                    primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
+                    secondaryTypographyProps={{ component: 'span' }}
+                  />
+
+                  <LoadingButton
+                    variant="contained"
+                    loading={props.isLoading && pickedMember?.id === member.id}
+                    onClick={() => handleSetAttendance(member)}
+                    disabled={
+                      (props.isLoading ||
+                        props.members.length === 0 ||
+                        member.hasAttended) &&
+                      pickedMember?.id !== member.id
+                    }
+                  >
+                    {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
+                  </LoadingButton>
+                </Grid>
+
+                {!isLast && <Divider style={{ width: '100%' }} />}
+              </Grid>
+            )
+          })}
       </Stack>
     </Stack>
   )

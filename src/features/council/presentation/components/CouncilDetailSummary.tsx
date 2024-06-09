@@ -62,6 +62,10 @@ export const CouncilDetailsSummary = ({
 
   const renderDetails = () => (
     <Box display="flex" flexDirection="column" gap={2}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        Detalles
+      </Typography>
+
       {SUMMARY.map((item) => (
         <Box
           key={item.title}
@@ -73,9 +77,12 @@ export const CouncilDetailsSummary = ({
           }}
         >
           <Iconify icon={item.icon} width={24} />
-          <Typography sx={{ fontWeight: 'bold' }}>
-            {item.title}: {item.value}
-          </Typography>
+          <Box>
+            <Typography variant="body2">{item.title}</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+              {item.value}
+            </Typography>
+          </Box>
         </Box>
       ))}
     </Box>
