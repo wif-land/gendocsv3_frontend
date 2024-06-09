@@ -11,15 +11,4 @@ export class CouncilAttendanceServices {
 
     return CouncilAttendanceServices.instance
   }
-
-  async notifyMembers(payload: {
-    members: number[]
-    id: number
-  }): Promise<void> {
-    await this.councilRepository.notifyMembers(payload)
-  }
-
-  async handleCouncilAttendance(memberId: number): Promise<void> {
-    return await this.councilRepository.handleMemberAttendance(memberId)
-  }
 }
