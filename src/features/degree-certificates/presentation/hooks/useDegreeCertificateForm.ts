@@ -12,8 +12,6 @@ import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { StudentUseCasesImpl } from '../../../../features/students/domain/usecases/StudentServices'
-import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import {
   ICreateDegreeCertificate,
@@ -29,7 +27,11 @@ export const useDegreeCertificateForm = (
   const debouncedValue = useDebounce(inputValue)
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
-  const { students, setStudents } = useStudentStore()
+  const {
+    students,
+    getById: getStudentById,
+    getByFilter: getStudentsByFilter,
+  } = useStudentStore()
   const { user } = useAccountStore()
 
   const defaultValues = useMemo(
@@ -45,7 +47,6 @@ export const useDegreeCertificateForm = (
   const router = useRouter()
   const { createDegreeCertificate, updateDegreeCertificate } =
     useDegreeCertificatesStore()
-  const { resolveStudentById } = useDegreeCertificateMethods()
   const { reset, handleSubmit } = methods
 
   const onSubmit = useCallback(
@@ -89,31 +90,23 @@ export const useDegreeCertificateForm = (
 
     setIsLoading(true)
 
-    if (debouncedValue === '' || !debouncedValue) {
-      return
-    }
-
-    const filteredStudents = async (field: string) => {
-      await StudentUseCasesImpl.getInstance()
-        .getByFilters({ field })
-        .then((res) => {
-          setStudents(res.students)
-        })
-    }
     if (debouncedValue.includes('-')) return
 
-    filteredStudents(debouncedValue)
+    getStudentsByFilter(debouncedValue)
   }, [debouncedValue, isOpen.value])
 
   useEffect(() => {
-    if (currentDegreeCertificate) return
     const studentId = methods.watch('selectedValue')?.id
-
     if (!studentId || studentId === 0) return
 
-    // TODO: The selectedValue is from the select component to get the student, if the student is not found, it should be fetched from the API
-    resolveStudentById(studentId).then((student) => {
+    // WTF IS GOING ON HERE?
+    methods.setValue(
+      'student',
+      students.find((student) => student.id === studentId) as any,
+    )
+    getStudentById(studentId).then((student) => {
       methods.setValue('student', student)
+      methods.trigger('student')
     })
 
     return () => {

@@ -7,6 +7,8 @@ interface StoreState {
   students: StudentModel[]
   setStudents: (students?: StudentModel[] | undefined) => void
   get: (limit: number, offset: number) => void
+  getById: (id: number) => Promise<StudentModel>
+  getByFilter: (field: string) => Promise<void>
 }
 
 const STORE_NAME = 'students-store'
@@ -23,6 +25,19 @@ export const useStudentStore = create<StoreState>(
           offset,
         )
         set({ students: result.students })
+      },
+      getByFilter: async (field) => {
+        await StudentUseCasesImpl.getInstance()
+          .getByFilters({ field })
+          .then((res) => {
+            set({ students: res.students })
+          })
+      },
+      getById: async (id: number) => {
+        const result = await StudentUseCasesImpl.getInstance().getById(id)
+        set({ students: [result] })
+
+        return result
       },
     }),
     {

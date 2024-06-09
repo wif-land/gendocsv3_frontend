@@ -41,4 +41,6 @@ export class StudentRepositoryImpl implements StudentRepository {
 
   bulkCreate = async (students: ICreateStudent[]) =>
     await this.datasource.bulkCreate(students)
+
+  getById = async (id: number) => await this.datasource.getById(id)
 }
