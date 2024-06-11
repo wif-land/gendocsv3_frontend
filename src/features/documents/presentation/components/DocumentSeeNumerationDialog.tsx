@@ -29,8 +29,6 @@ export const DocumentSeeNumerationDialog = ({
     onClose()
   }
 
-  console.log({ numeration })
-
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other}>
       <DialogTitle sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}>

@@ -1,4 +1,4 @@
-export interface ICity {
+export interface ICanton {
   id: number
   name: string
   province: IProvince

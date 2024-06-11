@@ -19,6 +19,10 @@ export interface DocumentsDataSource {
     count: number
   }>
 
+  getAllByStudentId(studentId: number): Promise<{
+    documents: DocumentModel[]
+  }>
+
   create(process: IDocument): Promise<DocumentModel>
 
   deleteById(id: number): Promise<{
@@ -122,8 +126,6 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
   processDocuments = async (id: number) => {
     const result = await AxiosClient.post(API_ROUTES.DOCUMENTS.PROCESS(id))
 
-    console.log(result)
-
     if ('error' in result) {
       return { documentsRecopilated: 0, mergedDocument: false }
     }
@@ -149,12 +151,22 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
   downloadDocument = async (id: number) => {
     const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.DOWNLOAD(id))
 
-    console.log(result)
-
     if ('error' in result) {
       return { fileName: '', file: '' }
     }
 
     return result.data as { fileName: string; file: string }
+  }
+
+  getAllByStudentId = async (studentId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.DOCUMENTS.GET_BY_STUDENT(studentId),
+    )
+
+    if ('error' in result) {
+      return { documents: [] }
+    }
+
+    return result.data as { documents: DocumentModel[] }
   }
 }

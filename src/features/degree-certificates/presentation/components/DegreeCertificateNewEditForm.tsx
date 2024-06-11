@@ -32,7 +32,10 @@ import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
 import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
 import { label } from 'yet-another-react-lightbox'
-import { IProvince } from '../../../../core/providers/domain/entities/ILocationProvider'
+import {
+  ICanton,
+  IProvince,
+} from '../../../../core/providers/domain/entities/ILocationProvider'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { useRouter } from 'next/navigation'
 
@@ -204,7 +207,7 @@ export const DegreeCertificateNewEditForm = ({
               <Select
                 labelId="provincia"
                 label="Provincia de residencia"
-                value={(getValues('student').canton as IProvince)?.id || 0}
+                value={(watch('student').canton as ICanton)?.province.id || 0}
                 disabled
               >
                 {provinces.map((province) => (
@@ -219,7 +222,7 @@ export const DegreeCertificateNewEditForm = ({
               <Select
                 labelId="ciudad"
                 label="Ciudad de residencia"
-                value={(getValues('student').canton as IProvince)?.id || 0}
+                value={(watch('student').canton as ICanton)?.id || 0}
                 disabled
               >
                 {cities.map((city) => (

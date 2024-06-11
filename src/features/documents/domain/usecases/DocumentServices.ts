@@ -20,6 +20,10 @@ interface DocumentUseCases {
     documents: DocumentModel[]
   }>
 
+  getAllByStudentId(studentId: number): Promise<{
+    documents: DocumentModel[]
+  }>
+
   getNumerationByCouncil(councilId: number): Promise<NumerationModel>
 }
 
@@ -49,4 +53,7 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
 
   getNumerationByCouncil = async (councilId: number) =>
     await this.modelRepository.getNumerationByCouncil(councilId)
+
+  getAllByStudentId = async (studentId: number) =>
+    await this.modelRepository.getAllByStudentId(studentId)
 }

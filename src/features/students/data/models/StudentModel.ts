@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ICity } from '../../../../core/providers/domain/entities/ILocationProvider'
+import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 import { IStudent } from '../../domain/entities/IStudent'
 
@@ -12,7 +12,7 @@ export class StudentModel implements IStudent {
   secondLastName: string
   gender: string
   birthdate: string
-  canton: number | ICity
+  canton: number | ICanton
   regularPhoneNumber?: string | undefined
   cellphone?: string | undefined
   folio: string

@@ -8,7 +8,7 @@ import {
   resolveDefaultSchema,
 } from '../../../../shared/utils/FormUtil'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
-import { ICity } from '../../../../core/providers/domain/entities/ILocationProvider'
+import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { StudentModel } from '../../data/models/StudentModel'
 
 export interface FormValuesProps extends IStudent {}
@@ -63,7 +63,7 @@ export const resolveDefaultValues = (
   folio: currentStudent?.folio || '',
   gender: currentStudent?.gender || '',
   birthdate: currentStudent?.birthdate || '',
-  canton: (currentStudent?.canton as ICity)?.id || null,
+  canton: (currentStudent?.canton as ICanton)?.id || null,
   career: (currentStudent?.career as ICareer)?.id || null,
   approvedCredits: currentStudent?.approvedCredits || null,
   startStudiesDate: currentStudent?.startStudiesDate || null,
@@ -74,7 +74,6 @@ export const resolveDefaultValues = (
 })
 
 export const handleCreate = async (values: FormValuesProps) => {
-  console.log('values', values)
   await StudentUseCasesImpl.getInstance().create(values)
 }
 
@@ -95,10 +94,10 @@ export const handleUpdate = async (
 export const GENDERS = [
   {
     value: 'M',
-    label: 'Hombre',
+    label: 'Masculino',
   },
   {
     value: 'F',
-    label: 'Mujer',
+    label: 'Femenino',
   },
 ]

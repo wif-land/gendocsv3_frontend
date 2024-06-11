@@ -29,6 +29,9 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
 
   getAll = async () => await this.datasource.getAll()
 
+  getAllByStudentId = async (studentId: number) =>
+    await this.datasource.getAllByStudentId(studentId)
+
   create = async (processData: IDocument) =>
     await this.datasource.create(processData)
 

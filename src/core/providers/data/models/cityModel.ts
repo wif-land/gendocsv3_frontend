@@ -1,11 +1,11 @@
-import { ICity, IProvince } from '../../domain/entities/ILocationProvider'
+import { ICanton, IProvince } from '../../domain/entities/ILocationProvider'
 
-export class CityModel implements ICity {
+export class CityModel implements ICanton {
   id: number
   name: string
   province: IProvince
 
-  constructor(city: ICity) {
+  constructor(city: ICanton) {
     this.id = city.id
     this.name = city.name
     this.province = city.province
@@ -31,7 +31,7 @@ export class CityModel implements ICity {
     return key === '' ? new CityModel(value) : value
   }
 
-  toJson(): ICity {
+  toJson(): ICanton {
     return {
       id: this.id,
       name: this.name,
