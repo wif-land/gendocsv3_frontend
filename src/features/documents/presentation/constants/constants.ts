@@ -1,4 +1,3 @@
-import { DocumentModel } from '../../data/models/DocumentsModel'
 import { IDocumentTableFilters } from '../components/DocumentTableToolbar'
 import * as yup from 'yup'
 
@@ -22,14 +21,14 @@ export const defaultFilters: IDocumentTableFilters = {
   number: null,
 }
 
-export const resolveDefaultValues = (currentDocument?: DocumentModel) => ({
-  number: currentDocument?.number,
-  councilId: currentDocument?.councilId,
-  templateId: currentDocument?.templateId,
-  studentId: currentDocument?.studentId,
-  functionariesIds: currentDocument?.functionariesIds || [],
-  userId: currentDocument?.userId,
-  description: currentDocument?.description || '',
+export const resolveDefaultValues = () => ({
+  number: undefined,
+  councilId: undefined,
+  templateId: undefined,
+  student: null,
+  functionariesIds: [],
+  userId: undefined,
+  description: '',
 })
 
 export const NewDocumentSchema = yup.object({

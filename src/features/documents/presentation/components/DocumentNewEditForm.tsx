@@ -34,7 +34,6 @@ import { useRouter } from 'next/navigation'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import { StudentNewEditForm } from '../../../../features/students/presentation/components/StudentNewEditForm'
-import { getSelectedStudent } from '../../../degree-certificates/presentation/constants/index'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -58,29 +57,12 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     selectedProcess,
     onSubmit,
     setSelectedProcess,
+    getSelectedStudent,
   } = useDocumentsForm(currentDocument)
 
   const { handleSubmit, getValues } = methods
   const seeNumeration = useBoolean(false)
   const isStudentModalOpen = useBoolean(false)
-  const isShowDocumentsOpen = useBoolean(false)
-
-  const getSelectedStudent = () => {
-    const studentId = methods.getValues('studentId')?.id
-    const selectedStudent = students.find((student) => student.id === studentId)
-    // selectedStudent &&
-    //   methods.setValue('studentId', {
-    //     id: selectedStudent.id,
-    //     label: `${selectedStudent.dni} - ${selectedStudent.firstLastName} ${selectedStudent.secondLastName} ${selectedStudent.firstName}`,
-    //   })
-
-    return selectedStudent
-      ? {
-          id: selectedStudent.id,
-          label: `${selectedStudent.dni} - ${selectedStudent.firstLastName} ${selectedStudent.secondLastName} ${selectedStudent.firstName}`,
-        }
-      : null
-  }
 
   const renderDetails = (
     <>
@@ -207,7 +189,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           <Stack spacing={3} sx={{ p: 3 }}>
             <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
               <RHFAutocomplete
-                name="studentId"
+                name="student"
                 label="Estudiante"
                 placeholder="Estudiante"
                 sx={{
@@ -219,11 +201,11 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
                 }))}
                 value={getSelectedStudent()}
-                onChange={(e, value) => {
-                  methods.setValue('studentId', value)
+                onSelect={() => {
+                  methods.setValue('student', getSelectedStudent())
                 }}
               />
-              {methods.watch('studentId') && (
+              {methods.watch('student') && (
                 <>
                   <IconButton onClick={popover.onOpen}>
                     <Iconify icon="eva:more-vertical-fill" />
@@ -344,7 +326,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
       >
         <StudentNewEditForm
           currentStudent={students.find(
-            (student) => student.id === methods.watch('studentId' as any)?.id,
+            (student) => student.id === methods.watch('student' as any)?.id,
           )}
           fromModal={true}
         />
@@ -356,10 +338,9 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           color="inherit"
           onClick={() => {
             isStudentModalOpen.onFalse()
-            methods.setValue('studentId', undefined)
           }}
         >
-          Cancelar
+          Regresar
         </Button>
       </DialogActions>
     </Dialog>
