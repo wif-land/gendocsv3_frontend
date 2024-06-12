@@ -16,6 +16,17 @@ export const TABLE_HEAD = [
   },
 ]
 
+export const STUDENT_DOCUMENTS_TABLE_HEAD = [
+  {
+    key: 'number',
+    label: 'Número',
+  },
+  {
+    key: 'description',
+    label: 'Descripción',
+  },
+]
+
 export const defaultFilters: IDocumentTableFilters = {
   createdAt: null,
   number: null,

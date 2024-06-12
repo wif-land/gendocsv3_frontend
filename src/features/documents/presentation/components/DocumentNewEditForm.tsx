@@ -34,6 +34,7 @@ import { useRouter } from 'next/navigation'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import { StudentNewEditForm } from '../../../../features/students/presentation/components/StudentNewEditForm'
+import DocsByStudentListView from '../view/DocsByStudentListView'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -63,6 +64,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
   const { handleSubmit, getValues } = methods
   const seeNumeration = useBoolean(false)
   const isStudentModalOpen = useBoolean(false)
+  const isDocumentModalOpen = useBoolean(false)
 
   const renderDetails = (
     <>
@@ -229,7 +231,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
 
                 <MenuItem
                   onClick={() => {
-                    popover.onClose()
+                    isDocumentModalOpen.onTrue()
                   }}
                 >
                   <Iconify icon="solar:documents-bold-duotone" />
@@ -346,9 +348,45 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     </Dialog>
   )
 
+  const renderDocumentsModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isDocumentModalOpen.value}
+      onClose={isDocumentModalOpen.onFalse}
+      sx={{
+        overflow: 'hidden',
+        padding: 10,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Documentos del estudiante</DialogTitle>
+
+      <DialogContent
+        sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
+      >
+        <DocsByStudentListView
+          studentId={methods.watch('student' as any)?.id}
+        />
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            isDocumentModalOpen.onFalse()
+          }}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
   return (
     <>
       {renderStudentModal}
+      {renderDocumentsModal}
       <DocumentSeeNumerationDialog
         open={seeNumeration.value}
         onClose={seeNumeration.onFalse}
