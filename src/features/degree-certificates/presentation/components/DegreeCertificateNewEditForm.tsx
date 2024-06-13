@@ -17,7 +17,12 @@ import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -31,13 +36,15 @@ import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
 import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
-import { label } from 'yet-another-react-lightbox'
-import {
-  ICanton,
-  IProvince,
-} from '../../../../core/providers/domain/entities/ILocationProvider'
+import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { useRouter } from 'next/navigation'
+import Iconify from '../../../../core/iconify'
+import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
+import { usePopover } from '../../../../shared/sdk/custom-popover'
+import { StudentNewEditForm } from '../../../../features/students/presentation/components/StudentNewEditForm'
+import DocsByStudentListView from '../../../../features/documents/presentation/view/DocsByStudentListView'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -48,9 +55,19 @@ export const DegreeCertificateNewEditForm = ({
 }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const router = useRouter()
+  const isStudentModalOpen = useBoolean(false)
+  const isDocumentModalOpen = useBoolean(false)
+  const popover = usePopover()
 
-  const { methods, onSubmit, students, setInputValue, isOpen, loading } =
-    useDegreeCertificateForm(currentDegreeCertificate)
+  const {
+    methods,
+    onSubmit,
+    students,
+    setInputValue,
+    isOpen,
+    loading,
+    refreshStudent,
+  } = useDegreeCertificateForm(currentDegreeCertificate)
 
   const {
     handleSubmit,
@@ -119,26 +136,62 @@ export const DegreeCertificateNewEditForm = ({
           {!mdUp && <CardHeader title="Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFAutocomplete
-              name="selectedValue"
-              label="Estudiante"
-              open={isOpen.value}
-              onOpen={isOpen.onTrue}
-              onClose={() => {
-                setInputValue('')
-                isOpen.onFalse()
-              }}
-              loading={loading}
-              noOptionsText="No hay resultados"
-              options={students?.map((student) => ({
-                label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
-                id: student.id,
-              }))}
-              onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue)
-              }}
-              getOptionLabel={(option) => (option as { label: string }).label}
-            />
+            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
+              <RHFAutocomplete
+                name="selectedValue"
+                label="Estudiante"
+                sx={{
+                  flexGrow: 1,
+                }}
+                open={isOpen.value}
+                onOpen={isOpen.onTrue}
+                onClose={() => {
+                  setInputValue('')
+                  isOpen.onFalse()
+                }}
+                loading={loading}
+                noOptionsText="No hay resultados"
+                options={students?.map((student) => ({
+                  label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
+                  id: student.id,
+                }))}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue)
+                }}
+                getOptionLabel={(option) => (option as { label: string }).label}
+              />
+              {methods.watch('selectedValue')?.id !== 0 && (
+                <>
+                  <IconButton onClick={popover.onOpen}>
+                    <Iconify icon="eva:more-vertical-fill" />
+                  </IconButton>
+                </>
+              )}
+            </Stack>
+            <CustomPopover
+              open={popover.open}
+              onClose={popover.onClose}
+              arrow="right-top"
+              sx={{ width: 160 }}
+            >
+              <MenuItem
+                onClick={() => {
+                  isStudentModalOpen.onTrue()
+                }}
+              >
+                <Iconify icon="ic:round-edit" />
+                Editar
+              </MenuItem>
+
+              <MenuItem
+                onClick={() => {
+                  isDocumentModalOpen.onTrue()
+                }}
+              >
+                <Iconify icon="solar:documents-bold-duotone" />
+                Documentos
+              </MenuItem>
+            </CustomPopover>
           </Stack>
           <Stack
             spacing={3}
@@ -385,15 +438,96 @@ export const DegreeCertificateNewEditForm = ({
     </>
   )
 
+  const handleStudentModalClose = async () => {
+    isStudentModalOpen.onFalse()
+    await refreshStudent(methods.watch('selectedValue').id)
+  }
+
+  const renderStudentModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isStudentModalOpen.value}
+      onClose={handleStudentModalClose}
+      sx={{
+        overflow: 'hidden',
+        padding: 10,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Editar estudiante</DialogTitle>
+
+      <DialogContent
+        sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
+      >
+        <StudentNewEditForm
+          currentStudent={students.find(
+            (student) =>
+              student.id === methods.watch('selectedValue' as any)?.id,
+          )}
+          fromModal={true}
+        />
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={handleStudentModalClose}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
+  const renderDocumentsModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isDocumentModalOpen.value}
+      onClose={isDocumentModalOpen.onFalse}
+      sx={{
+        overflow: 'hidden',
+        padding: 10,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Documentos del estudiante</DialogTitle>
+
+      <DialogContent
+        sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
+      >
+        <DocsByStudentListView
+          studentId={methods.watch('selectedValue' as any)?.id}
+        />
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            isDocumentModalOpen.onFalse()
+          }}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit as any)}>
-      <Grid container spacing={3}>
-        {renderDetails}
+    <>
+      {renderStudentModal}
+      {renderDocumentsModal}
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit as any)}>
+        <Grid container spacing={3}>
+          {renderDetails}
 
-        {renderProperties}
+          {renderProperties}
 
-        {renderActions}
-      </Grid>
-    </FormProvider>
+          {renderActions}
+        </Grid>
+      </FormProvider>
+    </>
   )
 }
