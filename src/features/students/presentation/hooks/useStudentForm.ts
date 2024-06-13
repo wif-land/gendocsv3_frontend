@@ -18,11 +18,12 @@ import { resolveEditedFields } from '../../../../shared/utils/FormUtil'
 import { useStudentStore } from '../state/studentStore'
 import { useCareersStore } from '../../../careers/presentation/store/careerStore'
 import { IStudent } from '../../domain/entities/IStudent'
+import { StudentModel } from '../../data/models/StudentModel'
 
 export const useStudentForm = (currentStudent?: IStudent) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { students } = useStudentStore()
+  const { students, setStudents } = useStudentStore()
   const { careers, get } = useCareersStore()
   const { enqueueSnackbar } = useSnackbar()
   const { loader } = useLoaderStore()
@@ -42,7 +43,7 @@ export const useStudentForm = (currentStudent?: IStudent) => {
 
   const onSubmit = useCallback(
     async (data: IStudent) => {
-      let result
+      let result: StudentModel | void
       if (!currentStudent) {
         const dataWithoutId = { ...data, id: undefined }
         result = await handleCreate(dataWithoutId)
@@ -54,6 +55,13 @@ export const useStudentForm = (currentStudent?: IStudent) => {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         result = await handleUpdate(currentStudent.id!, editedFields)
+        setStudents(
+          students.map((student) =>
+            student.id === currentStudent.id
+              ? (result as StudentModel)
+              : student,
+          ),
+        )
       }
       const newPath = currentStudent
         ? pathname.replace(new RegExp(`/${currentStudent.id}/edit`), '')

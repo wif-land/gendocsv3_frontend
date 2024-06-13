@@ -117,6 +117,12 @@ export const useDegreeCertificateForm = (
     }
   }, [methods.watch('selectedValue')])
 
+  const refreshStudent = async (studentId: number) => {
+    const student = await getStudentById(studentId)
+    methods.setValue('student', student)
+    methods.trigger('student')
+  }
+
   return {
     methods,
     defaultValues,
@@ -126,5 +132,6 @@ export const useDegreeCertificateForm = (
     setInputValue,
     loading,
     isOpen,
+    refreshStudent,
   }
 }

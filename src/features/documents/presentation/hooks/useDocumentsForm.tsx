@@ -23,6 +23,13 @@ import { useAccountStore } from '../../../auth/presentation/state/useAccountStor
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 
+interface IDocumentsForm extends Omit<Partial<IDocument>, 'studentId' | 'id'> {
+  student: {
+    id: number
+    label: string
+  } | null
+}
+
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -57,11 +64,11 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
   )
 
-  const defaultValues: Partial<DocumentModel> = useMemo(
-    () => resolveDefaultValues(currentDocument),
+  const defaultValues: IDocumentsForm = useMemo(
+    () => resolveDefaultValues(),
     [currentDocument],
   )
-  const methods = useForm<DocumentModel>({
+  const methods = useForm<IDocumentsForm>({
     // @ts-expect-error - The resolver is not being recognized
     resolver: yupResolver(NewDocumentSchema),
     defaultValues,
@@ -77,7 +84,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     await DocumentsUseCasesImpl.getInstance().create(values)
 
   const onSubmit = useCallback(
-    async (data: IDocument) => {
+    async (data: IDocumentsForm) => {
       const result = await handleCreateDocument(
         DocumentModel.fromJson({
           ...data,
@@ -94,6 +101,19 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     },
     [currentDocument, enqueueSnackbar, methods.reset, router],
   )
+
+  const getSelectedStudent = () => {
+    const student = students.find(
+      (student) => student.id === methods.watch('student')?.id,
+    )
+
+    if (!student) return null
+
+    return {
+      id: student?.id as number,
+      label: `${student?.dni} - ${student?.firstLastName} ${student?.secondLastName} ${student?.firstName}`,
+    }
+  }
 
   useEffect(() => {
     if (!values.councilId) {
@@ -171,5 +191,6 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     onSubmit,
     setProcesses,
     setSelectedProcess,
+    getSelectedStudent,
   }
 }

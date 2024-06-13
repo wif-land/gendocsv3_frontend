@@ -98,6 +98,7 @@ export const API_ROUTES = {
     PROCESS: (id: number) => `/documents/create-recopilation/content/${id}`,
     GENERATE_RECORD: (id: number) => `/documents/create-recopilation/${id}`,
     DOWNLOAD: (id: number) => `/documents/create-recopilation/${id}`,
+    GET_BY_STUDENT: (studentId: number) => `/documents/student/${studentId}`,
   },
   DOCUMENT_NUMERATION: {
     GET_BY_COUNCIL: '/numeration-document/by-council',

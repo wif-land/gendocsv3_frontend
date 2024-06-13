@@ -22,7 +22,11 @@ interface CouncilUseCases {
     councils: CouncilModel[]
   }>
 
-  update(id: number, council: ICouncilFormValues): Promise<CouncilModel>
+  update(
+    id: number,
+    council: ICouncilFormValues,
+    councilToUpdate: ICouncil,
+  ): Promise<CouncilModel>
 
   getAllCouncilsByModuleId(
     moduleId: number,
@@ -119,8 +123,29 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   ) =>
     await this.councilRepository.getByFilters(filters, moduleId, limit, offset)
 
-  update = async (id: number, data: ICouncilFormValues) => {
-    const editedFields = resolveEditedFields<ICouncilFormValues>(data, data)
+  update = async (
+    id: number,
+    data: ICouncilFormValues,
+    councilToUpdate: ICouncil,
+  ) => {
+    const editedFields = resolveEditedFields<ICouncilFormValues>(
+      {
+        ...councilToUpdate,
+        members: Object.fromEntries(
+          Object.entries(councilToUpdate.members).map(
+            ([positionName, member]) => [
+              {
+                positionName,
+                member: member.member.id,
+                label: `${member.member.firstName} ${member.member.firstLastName}`,
+                positionOrder: member.positionOrder,
+              },
+            ],
+          ),
+        ),
+      },
+      data,
+    )
 
     if (!editedFields) {
       enqueueSnackbar('No se encontraron cambios a realizar', {
