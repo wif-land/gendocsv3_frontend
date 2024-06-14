@@ -131,6 +131,8 @@ export const API_ROUTES = {
     REPORTS: (careerId: number, isEnd: string) =>
       `/degree-certificates/reports/${careerId}?is-end=${isEnd}`,
     DOWNLOAD: `/degree-certificates/reports/generate`,
+    GET_ATTENDANCE: (degreeCertificateId: number) =>
+      `/degree-certificate-attendance/${degreeCertificateId}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL:

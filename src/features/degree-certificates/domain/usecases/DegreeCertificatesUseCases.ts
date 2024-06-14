@@ -6,6 +6,8 @@ import {
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificatesAttendee } from '../entities/IDegreeCertificateAttendee'
+import { IDegreeCertificatesRepository } from '../repositories/IDegreeCertificatesRepository'
 
 interface CertificateDegreeUseCases {
   getAll(
@@ -74,6 +76,8 @@ interface CertificateDegreeUseCases {
     fileName: string
     file: string
   }>
+
+  getAttendees(id: number): Promise<IDegreeCertificatesAttendee[]>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -81,7 +85,7 @@ export class DegreeCertificatesUseCasesImpl
 {
   static instance: CertificateDegreeUseCases
 
-  static getInstance = (): CertificateDegreeUseCases => {
+  static getInstance = () => {
     if (!DegreeCertificatesUseCasesImpl.instance) {
       DegreeCertificatesUseCasesImpl.instance =
         new DegreeCertificatesUseCasesImpl(
@@ -92,7 +96,11 @@ export class DegreeCertificatesUseCasesImpl
     return DegreeCertificatesUseCasesImpl.instance
   }
 
-  constructor(private readonly repository: CertificateDegreeUseCases) {}
+  constructor(private readonly repository: IDegreeCertificatesRepository) {}
+
+  getAttendees(id: number) {
+    return this.repository.getAttendance(id)
+  }
 
   setAttendance(id: number): Promise<void> {
     return this.repository.setAttendance(id)

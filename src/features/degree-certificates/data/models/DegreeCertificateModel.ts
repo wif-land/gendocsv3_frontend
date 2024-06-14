@@ -8,6 +8,7 @@ import {
 } from '../../../../core/providers/domain/entities/ICertificateProvider'
 import { IStudent } from '../../../students/domain/entities/IStudent'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
 
 export class DegreeCertificateModel implements IDegreeCertificate {
   id?: number
@@ -27,6 +28,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   certificateDriveId?: string
   isClosed: boolean
   user: IUser
+  members?: IDegreeCertificatesAttendee[] | undefined
 
   constructor(degreeCertificate: IDegreeCertificate) {
     this.id = degreeCertificate.id
@@ -46,6 +48,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
     this.certificateDriveId = degreeCertificate.certificateDriveId
     this.isClosed = degreeCertificate.isClosed
     this.user = degreeCertificate.user
+    this.members = degreeCertificate.members
   }
 
   static fromJson(json: Record<string, any>): DegreeCertificateModel {
@@ -67,6 +70,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       certificateDriveId: json.documentDriveId,
       isClosed: json.isClosed,
       user: json.user,
+      members: json.members,
     })
   }
 
@@ -88,6 +92,8 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       gradesSheetDriveId: this.gradesSheetDriveId,
       documentDriveId: this.certificateDriveId,
       isClosed: this.isClosed,
+      user: this.user,
+      members: this.members,
     }
   }
 }

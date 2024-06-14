@@ -9,7 +9,7 @@ import {
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
-import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
+import { ICreateDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
@@ -31,14 +31,11 @@ export class DegreeCertificateRepositoryImpl
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
 
-  createAttendance = async (data: IDegreeCertificatesAttendee) => {
-    console.log({ dataFromLenin: data })
-    const { member, ...rest } = data
+  getAttendance = async (degreeCertificateId: number) =>
+    await this.datasource.getAttendance(degreeCertificateId)
 
-    await this.datasource.createAttendance({
-      ...rest,
-      functionaryId: member.id,
-    })
+  createAttendance = async (data: ICreateDegreeCertificatesAttendee) => {
+    await this.datasource.createAttendance(data)
   }
 
   getById(id: number) {

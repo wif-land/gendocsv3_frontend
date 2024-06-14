@@ -7,7 +7,10 @@ import {
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
-import { IDegreeCertificateAttendance } from '../../domain/entities/IDegreeCertificateAttendee'
+import {
+  ICreateDegreeCertificatesAttendee,
+  IDegreeCertificatesAttendee,
+} from '../../domain/entities/IDegreeCertificateAttendee'
 
 export interface IDegreeCertificateDatasource {
   getAll(
@@ -77,7 +80,9 @@ export interface IDegreeCertificateDatasource {
     file: string
   }>
 
-  createAttendance(data: IDegreeCertificateAttendance): Promise<void>
+  createAttendance(data: ICreateDegreeCertificatesAttendee): Promise<void>
+
+  getAttendance(id: number): Promise<IDegreeCertificatesAttendee[]>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -94,7 +99,19 @@ export class DegreeCertificateDatasourceImpl
     return DegreeCertificateDatasourceImpl.instance
   }
 
-  createAttendance = async (data: IDegreeCertificateAttendance) => {
+  getAttendance = async (id: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ATTENDANCE(id),
+    )
+
+    if ('error' in result) {
+      return [] as IDegreeCertificatesAttendee[]
+    }
+
+    return result.data as IDegreeCertificatesAttendee[]
+  }
+
+  createAttendance = async (data: ICreateDegreeCertificatesAttendee) => {
     const result = await AxiosClient.post(
       API_ROUTES.DEGREE_CERTIFICATES.CREATE_ATTENDANCE,
       data,
@@ -124,9 +141,6 @@ export class DegreeCertificateDatasourceImpl
         params: { limit, offset },
       },
     )
-
-    console.log('desde all')
-    console.log(result)
 
     if ('error' in result) {
       return {
