@@ -65,12 +65,14 @@ interface CertificateDegreeUseCases {
     userId: number
   }): Promise<boolean>
 
-  getReports(
-    carrerId: number,
-    isEnd: string,
-  ): Promise<{
+  getReports(filters: IDegreeCertificateFilters): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
+  }>
+
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
+    fileName: string
+    file: string
   }>
 }
 
@@ -153,6 +155,9 @@ export class DegreeCertificatesUseCasesImpl
     })
   }
 
-  getReports = async (carrerId: number, isEnd: string) =>
-    await this.repository.getReports(carrerId, isEnd)
+  getReports = async (filters: IDegreeCertificateFilters) =>
+    await this.repository.getReports(filters)
+
+  downloadReport = async (filters: IDegreeCertificateFilters) =>
+    await this.repository.downloadReport(filters)
 }

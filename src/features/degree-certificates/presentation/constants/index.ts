@@ -2,7 +2,6 @@
 import * as Yup from 'yup'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { IStudent } from '../../../students/domain/entities/IStudent'
-import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import {
   ICertificateStatus,
   ICertificateType,
@@ -15,6 +14,9 @@ import {
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { enqueueSnackbar } from 'notistack'
 import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
+import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
+import dayjs from 'dayjs'
 
 export interface FormValuesProps
   extends Omit<
@@ -48,7 +50,7 @@ export const RoleLabels = {
   secondSubstitute: 'Segundo suplente',
 }
 
-export const getTableHead = (isReport: string) => {
+export const getTableHead = (isReport: boolean) => {
   const baseHeaders = [
     { id: 'topic', label: 'Tema' },
     { id: 'student', label: 'Estudiante' },
@@ -58,7 +60,7 @@ export const getTableHead = (isReport: string) => {
     { id: 'certificateStatus', label: 'Estado', width: 110 },
   ]
 
-  if (isReport === 'false') {
+  if (isReport === false) {
     baseHeaders.push({ id: 'actions', label: 'Acciones', width: 110 })
   }
 
@@ -147,11 +149,14 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         label: '',
       } as IStudent)
 
-export const defaultFilters: IDegreeCertificateFilters = {
-  name: '',
-  career: 1,
-  isEnd: 'false',
-  isReport: 'false',
+export const defaultFilters: IDegreeCertificateTableFilters = {
+  field: undefined,
+  careerId: 1,
+  isEnd: false,
+  isReport: false,
+  startDate: new Date(),
+  endDate: new Date(),
+  dateType: DateType.CREATION as any,
 }
 
 export const NewDegreeCertificateSchema = Yup.object().shape({

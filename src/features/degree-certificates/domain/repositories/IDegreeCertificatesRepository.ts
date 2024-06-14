@@ -64,10 +64,12 @@ export interface IDegreeCertificatesRepository {
     userId: number
   }): Promise<boolean>
 
-  getReports(
-    carrerId: number,
-    isEnd: string,
-  ): Promise<{
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
+    fileName: string
+    file: string
+  }>
+
+  getReports(filters: IDegreeCertificateFilters): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
   }>

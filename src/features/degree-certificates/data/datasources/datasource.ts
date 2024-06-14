@@ -66,15 +66,12 @@ export interface IDegreeCertificateDatasource {
     userId: number
   }): Promise<boolean>
 
-  getReports(
-    carrerId: number,
-    isEnd: string,
-  ): Promise<{
+  getReports(filters: IDegreeCertificateFilters): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
   }>
 
-  downloadReport(id: number): Promise<{
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
     fileName: string
     file: string
   }>
@@ -112,6 +109,9 @@ export class DegreeCertificateDatasourceImpl
       },
     )
 
+    console.log('desde all')
+    console.log(result)
+
     if ('error' in result) {
       return {
         count: 0,
@@ -131,7 +131,7 @@ export class DegreeCertificateDatasourceImpl
     offset: number,
   ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(filters.career),
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(filters.careerId || 1),
       {
         params: { ...filters, limit, offset },
       },
@@ -254,9 +254,17 @@ export class DegreeCertificateDatasourceImpl
     return result.data as boolean
   }
 
-  async getReports(carrerId: number, isEnd: string) {
+  async getReports(filters: IDegreeCertificateFilters) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isEnd, isReport, ...rest } = filters
+
+    console.log(filters)
+
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.REPORTS(carrerId, isEnd),
+      API_ROUTES.DEGREE_CERTIFICATES.REPORTS,
+      {
+        params: rest,
+      },
     )
 
     if ('error' in result) {
@@ -272,8 +280,15 @@ export class DegreeCertificateDatasourceImpl
     }
   }
 
-  downloadReport = async (id: number) => {
-    const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.DOWNLOAD(id))
+  downloadReport = async (filters: IDegreeCertificateFilters) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isEnd, isReport, ...rest } = filters
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.DOWNLOAD,
+      {
+        params: rest,
+      },
+    )
 
     if ('error' in result) {
       return { fileName: '', file: '' }

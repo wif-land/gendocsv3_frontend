@@ -89,6 +89,9 @@ export class DegreeCertificateRepositoryImpl
     })
   }
 
-  getReports = async (carrerId: number, isEnd: string) =>
-    await this.datasource.getReports(carrerId, isEnd)
+  getReports = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.getReports(filters)
+
+  downloadReport = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.downloadReport(filters)
 }

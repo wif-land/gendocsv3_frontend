@@ -33,7 +33,7 @@ export const CareerFilter = ({ onChange, filters, sx }: IStatusFilterProps) => {
         labelId="council-type-label"
         id="council-simple-select"
         label="Carrera"
-        value={filters.career !== undefined ? filters.career : 3}
+        value={filters.careerId !== undefined ? filters.careerId : 1}
         input={<OutlinedInput label="Estado" />}
         onChange={onChange}
       >

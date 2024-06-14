@@ -31,7 +31,7 @@ type Props = {
   onOpenAttendance: VoidFunction
   activeState?: boolean | null
   isOnTable?: boolean
-  isReport?: string
+  isReport?: boolean
 }
 
 export const DegreeCertificateTableRow = ({
@@ -45,7 +45,7 @@ export const DegreeCertificateTableRow = ({
   onGenerateDocument,
   onOpenAttendance,
   onRegenerateDocument,
-  isReport = 'false',
+  isReport = false,
 }: Props) => {
   const { isClosed, presentationDate } = row
 
@@ -125,7 +125,7 @@ export const DegreeCertificateTableRow = ({
           )}
         </TableCell>
 
-        {isReport === 'false' && (
+        {isReport === false && (
           <TableCell align="right">
             <IconButton
               color={popover.open ? 'primary' : 'default'}
