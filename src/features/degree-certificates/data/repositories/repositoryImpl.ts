@@ -8,6 +8,7 @@ import {
   IDegreeCertificateDatasource,
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
@@ -66,6 +67,19 @@ export class DegreeCertificateRepositoryImpl
       presentationDate,
       duration,
       roomId,
+    })
+  }
+
+  async bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean> {
+    return await this.datasource.bulkLoad({
+      data,
+      userId,
     })
   }
 }

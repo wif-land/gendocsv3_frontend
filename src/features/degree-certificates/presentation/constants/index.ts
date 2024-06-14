@@ -9,6 +9,8 @@ import {
   IDegreeModality,
   IRoom,
 } from '../../../../core/providers/domain/entities/ICertificateProvider'
+import { enqueueSnackbar } from 'notistack'
+import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
 
 export interface FormValuesProps
   extends Omit<
@@ -97,3 +99,42 @@ export const NewDegreeCertificateSchema = Yup.object().shape({
   // room: Yup.mixed().required('El aula es requerida'),
   // duration: Yup.number().required('La duración es requerida'),
 })
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
+  data.reduce((acc: DegreeCertificateForBulk[], item: any) => {
+    const isEmpty = Object.values(item).every((x) => x === null || x === '')
+    if (isEmpty) return acc
+
+    if (!item['Cédula']) {
+      enqueueSnackbar(
+        'Por favor, asegúrate de que todos los campos estén completos',
+        { variant: 'warning' },
+      )
+      return acc
+    }
+
+    const safeToString = (value: any) => {
+      if (value === null || value === undefined) return ''
+      return value.toString()
+    }
+
+    acc.push({
+      topic: safeToString(item['Tema']),
+      presentationDate: item['Fin clases']
+        ? new Date(item['Fin clases'])
+        : undefined,
+      studentDni: safeToString(item['Cédula']),
+      certificateType: safeToString(item['Modalidad Titulación']),
+      certificateStatus: safeToString(item['Estado Acta']),
+      firstMainQualifierDni: safeToString(item['Ced Calif Prino 1']),
+      secondMainQualifierDni: safeToString(item['Ced Calif Prino 2']),
+      firstSecondaryQualifierDni: safeToString(item['Ced Calf Supl 1']),
+      secondSecondaryQualifierDni: safeToString(item['Ced Calf Supl 2']),
+      mentorDni: safeToString(item['Ced Tutor']),
+      qualifiersResolution: safeToString(item['Resolución calificadores']),
+      curriculumGrade: safeToString(item['Nota Malla']),
+      gradesDetails: safeToString(item['Detalle Notas']),
+    } as DegreeCertificateForBulk)
+    return acc
+  }, [])

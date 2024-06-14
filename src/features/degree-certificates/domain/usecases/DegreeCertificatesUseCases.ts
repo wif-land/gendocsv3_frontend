@@ -5,6 +5,7 @@ import {
 } from '../entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 
 interface CertificateDegreeUseCases {
   getAll(
@@ -51,6 +52,14 @@ interface CertificateDegreeUseCases {
     duration?: number
     roomId?: number
   }): Promise<void>
+
+  bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -108,6 +117,19 @@ export class DegreeCertificatesUseCasesImpl
       presentationDate,
       duration,
       roomId,
+    })
+  }
+
+  async bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean> {
+    return await this.repository.bulkLoad({
+      data,
+      userId,
     })
   }
 }

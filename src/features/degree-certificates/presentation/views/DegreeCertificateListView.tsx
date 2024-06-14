@@ -42,12 +42,15 @@ import CustomPopover, {
   usePopover,
 } from '../../../../shared/sdk/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { DegCerBulkUploadDialog } from '../components/DegreeCertificateBulkUploadDialog'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
   const settings = useSettingsContext()
   const confirm = useBoolean()
   const popover = usePopover()
+  const addStudentPopover = usePopover()
+  const upload = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [filters, setFilters] =
@@ -87,6 +90,19 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       action: () => {
         router.push(`${pathname}/report`)
       },
+    },
+  ]
+
+  const createActions = [
+    {
+      value: 'single',
+      label: 'Individual',
+      action: () => router.push(`${pathname}/new`),
+    },
+    {
+      value: 'multiple',
+      label: 'Varios',
+      action: upload.onTrue,
     },
   ]
 
@@ -162,10 +178,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                 Plantillas
               </Button>
               <Button
-                component={RouterLink}
-                href={`${pathname}/new`}
                 variant="contained"
-                startIcon={<Iconify icon="mingcute:add-line" />}
+                startIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+                onClick={addStudentPopover.onOpen}
               >
                 Actas de grado
               </Button>
@@ -299,6 +314,33 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             key={option.value}
             onClick={() => {
               popover.onClose()
+              option.action()
+            }}
+          >
+            {option.value === 'multiple' && (
+              <Iconify icon="eva:cloud-upload-fill" />
+            )}
+            {option.value === 'single' && (
+              <Iconify icon="solar:file-text-bold" />
+            )}
+            {option.label}
+          </MenuItem>
+        ))}
+      </CustomPopover>
+
+      <DegCerBulkUploadDialog open={upload.value} onClose={upload.onFalse} />
+
+      <CustomPopover
+        open={addStudentPopover.open}
+        onClose={addStudentPopover.onClose}
+        arrow="top-right"
+        sx={{ width: 140 }}
+      >
+        {createActions.map((option) => (
+          <MenuItem
+            key={option.value}
+            onClick={() => {
+              addStudentPopover.onClose()
               option.action()
             }}
           >

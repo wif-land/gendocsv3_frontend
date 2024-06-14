@@ -215,14 +215,14 @@ export const DegreeCertificateNewEditForm = ({
           >
             <TextField
               label="Fecha de inicio de estudios"
-              value={getValues('student').startStudiesDate || ''}
+              value={getValues('student')?.startStudiesDate || ''}
               disabled
               sx={{ flexGrow: 1 }}
             />
             <TextField
               name="student.endStudiesDate"
               label="Fecha de finalización de estudios"
-              value={getValues('student').endStudiesDate || ''}
+              value={getValues('student')?.endStudiesDate || ''}
               // required
               sx={{ flexGrow: 1 }}
             />
@@ -276,7 +276,12 @@ export const DegreeCertificateNewEditForm = ({
               <Select
                 labelId="provincia"
                 label="Provincia de residencia"
-                value={(watch('student').canton as ICanton)?.province.id || 0}
+                value={
+                  (watch('student').canton as ICanton)?.province.id ||
+                  (currentDegreeCertificate?.student.canton as ICanton)
+                    ?.province.id ||
+                  0
+                }
                 disabled
               >
                 {provinces.map((province) => (
@@ -291,7 +296,11 @@ export const DegreeCertificateNewEditForm = ({
               <Select
                 labelId="ciudad"
                 label="Ciudad de residencia"
-                value={(watch('student').canton as ICanton)?.id || 0}
+                value={
+                  (watch('student').canton as ICanton)?.id ||
+                  (currentDegreeCertificate?.student.canton as ICanton)?.id ||
+                  0
+                }
                 disabled
               >
                 {cities.map((city) => (

@@ -1,4 +1,5 @@
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import {
   ICreateDegreeCertificate,
@@ -50,4 +51,12 @@ export interface IDegreeCertificatesRepository {
     duration?: number
     roomId?: number
   }): Promise<void>
+
+  bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean>
 }

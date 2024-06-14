@@ -6,6 +6,7 @@ import {
   IDegreeCertificate,
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 
 export interface IDegreeCertificateDatasource {
   getAll(
@@ -52,6 +53,14 @@ export interface IDegreeCertificateDatasource {
     duration?: number
     roomId?: number
   }): Promise<void>
+
+  bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -126,13 +135,10 @@ export class DegreeCertificateDatasourceImpl
   }
 
   create = async (degreeCertificate: ICreateDegreeCertificate) => {
-    console.log(degreeCertificate)
     const result = await AxiosClient.post(
       API_ROUTES.DEGREE_CERTIFICATES.CREATE,
       degreeCertificate,
     )
-
-    console.log(result)
 
     if ('error' in result) {
       return {} as DegreeCertificateModel
@@ -196,5 +202,24 @@ export class DegreeCertificateDatasourceImpl
         },
       },
     )
+  }
+
+  async bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean> {
+    const result = await AxiosClient.patch(
+      API_ROUTES.DEGREE_CERTIFICATES.BULK_LOAD(userId),
+      data,
+    )
+
+    if ('error' in result) {
+      return false
+    }
+
+    return result.data as boolean
   }
 }
