@@ -1,6 +1,6 @@
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
-import { IDegreeCertificateAttendance } from '../entities/IDegreeCertificateAttendee'
+import { ICreateDegreeCertificatesAttendee } from '../entities/IDegreeCertificateAttendee'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import {
   ICreateDegreeCertificate,
@@ -65,13 +65,15 @@ export interface IDegreeCertificatesRepository {
     userId: number
   }): Promise<boolean>
 
-  getReports(
-    carrerId: number,
-    isEnd: string,
-  ): Promise<{
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
+    fileName: string
+    file: string
+  }>
+
+  getReports(filters: IDegreeCertificateFilters): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
   }>
 
-  createAttendance(data: IDegreeCertificateAttendance): Promise<void>
+  createAttendance(data: ICreateDegreeCertificatesAttendee): Promise<void>
 }

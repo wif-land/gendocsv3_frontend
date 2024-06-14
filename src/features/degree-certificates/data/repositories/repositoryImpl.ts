@@ -9,7 +9,7 @@ import {
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
-import { IDegreeCertificateAttendance } from '../../domain/entities/IDegreeCertificateAttendee'
+import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
@@ -31,8 +31,14 @@ export class DegreeCertificateRepositoryImpl
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
 
-  createAttendance = async (data: IDegreeCertificateAttendance) => {
-    await this.datasource.createAttendance(data)
+  createAttendance = async (data: IDegreeCertificatesAttendee) => {
+    console.log({ dataFromLenin: data })
+    const { member, ...rest } = data
+
+    await this.datasource.createAttendance({
+      ...rest,
+      functionaryId: member.id,
+    })
   }
 
   getById(id: number) {
@@ -94,6 +100,9 @@ export class DegreeCertificateRepositoryImpl
     })
   }
 
-  getReports = async (carrerId: number, isEnd: string) =>
-    await this.datasource.getReports(carrerId, isEnd)
+  getReports = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.getReports(filters)
+
+  downloadReport = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.downloadReport(filters)
 }

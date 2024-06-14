@@ -1,10 +1,9 @@
-import { Box, Button, Card, Grid, MenuItem, Stack } from '@mui/material'
+import { Button, Card, Grid, MenuItem, Stack } from '@mui/material'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import LoadingButton from '@mui/lab/LoadingButton'
 import {
   RHFAutocomplete,
   RHFSelect,
-  RHFSwitch,
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import { useResponsive } from '../../../../shared/hooks/use-responsive'
@@ -24,8 +23,6 @@ interface Props {
   degreeCertificateId: number
 }
 export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
-  console.log(props.degreeCertificateId)
-
   const loader = useLoaderStore((state) => state.loader)
   const {
     handleSubmit,
@@ -33,7 +30,10 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
     methods,
     unusedFunctionaries,
     setSearchField,
-  } = useDegreeCertificateAttendanceForm(props.currentAttendee, props.degreeCertificateId)
+  } = useDegreeCertificateAttendanceForm(
+    props.currentAttendee,
+    props.degreeCertificateId,
+  )
 
   const { control } = methods
 
@@ -45,8 +45,8 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
         <Card>
           <Stack spacing={3} sx={{ p: 3 }}>
             <RHFAutocomplete
-              name={'functionary'}
-              label={'Funcionario'}
+              name={'member'}
+              label="Funcionario"
               placeholder="Escribe el nombre o cédula del miembro deseado"
               noOptionsText="No hay resultados"
               freeSolo
@@ -118,10 +118,6 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
           gap: '10px',
         }}
       >
-        <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isActive" label="Consejo activo" />
-        </Box>
-
         <Button
           variant="outlined"
           size="large"

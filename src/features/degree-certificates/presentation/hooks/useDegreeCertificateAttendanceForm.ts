@@ -34,11 +34,10 @@ export const useDegreeCertificateAttendanceForm = (
 
   const { reset, handleSubmit } = methods
 
-  const onSubmit = async () => {
-    const data = methods.getValues()
+  const onSubmit = async (data: AttendanceFormValuesProps) => {
     new CreateDegreeCertificateAttendanceUseCase().call({
       ...data,
-      degreeCertificateId: currentDegreeCertificateId!,
+      degreeCertificateId: +currentDegreeCertificateId!,
     })
     reset()
   }

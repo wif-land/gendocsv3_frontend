@@ -43,9 +43,8 @@ export const useDocumentStore = create<StoreState>(
             byteNumbers[i] = byteCharacters.charCodeAt(i)
           }
           const byteArray = new Uint8Array(byteNumbers)
-          const blob = new Blob([byteArray], { type: 'application/msword' }) // or other appropriate mime type
+          const blob = new Blob([byteArray], { type: 'application/msword' })
 
-          // Crear un enlace temporal para descargar el Blob
           const url = window.URL.createObjectURL(blob)
           const link = document.createElement('a')
           link.href = url

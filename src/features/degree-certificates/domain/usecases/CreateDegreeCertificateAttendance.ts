@@ -1,9 +1,9 @@
 import { UseCase } from '../../../../core/usecases/use-case'
 import { DegreeCertificateRepositoryImpl } from '../../data/repositories/repositoryImpl'
-import { IDegreeCertificatesAttendee } from '../entities/IDegreeCertificateAttendee'
+import { AttendanceFormValuesProps } from '../../presentation/constants'
 import { IDegreeCertificatesRepository } from '../repositories/IDegreeCertificatesRepository'
 
-interface Params extends IDegreeCertificatesAttendee {
+interface Params extends AttendanceFormValuesProps {
   degreeCertificateId: number
 }
 
