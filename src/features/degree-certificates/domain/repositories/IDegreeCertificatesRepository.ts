@@ -52,6 +52,10 @@ export interface IDegreeCertificatesRepository {
     roomId?: number
   }): Promise<void>
 
+  getById(id: number): Promise<DegreeCertificateModel>
+
+  setAttendance(id: number): Promise<void>
+
   bulkLoad({
     data,
     userId,

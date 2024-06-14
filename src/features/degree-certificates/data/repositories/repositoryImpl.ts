@@ -30,6 +30,10 @@ export class DegreeCertificateRepositoryImpl
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
 
+  getById(id: number) {
+    return this.datasource.getById(id)
+  }
+
   getAll = async (limit: number, offset: number, carrerId: number) =>
     await this.datasource.getAll(limit, offset, carrerId)
 
@@ -69,6 +73,8 @@ export class DegreeCertificateRepositoryImpl
       roomId,
     })
   }
+
+  setAttendance = async (id: number) => await this.datasource.setAttendance(id)
 
   async bulkLoad({
     data,

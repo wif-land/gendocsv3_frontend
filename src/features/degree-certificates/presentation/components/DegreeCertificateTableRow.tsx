@@ -28,6 +28,7 @@ type Props = {
   onDeleteRow: VoidFunction
   onGenerateDocument: VoidFunction
   onRegenerateDocument: VoidFunction
+  onOpenAttendance: VoidFunction
   activeState?: boolean | null
   isOnTable?: boolean
 }
@@ -41,6 +42,7 @@ export const DegreeCertificateTableRow = ({
   isOnTable = true,
   activeState,
   onGenerateDocument,
+  onOpenAttendance,
   onRegenerateDocument,
 }: Props) => {
   const { isClosed, presentationDate } = row
@@ -149,6 +151,26 @@ export const DegreeCertificateTableRow = ({
 
         <MenuItem
           onClick={() => {
+            onOpenAttendance()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="solar:people-bold" />
+          Asistencia
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onGenerateDocument()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="solar:document-bold-duotone" />
+          Documento
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             confirm.onTrue()
             popover.onClose()
           }}
@@ -165,15 +187,6 @@ export const DegreeCertificateTableRow = ({
               Cerrar
             </>
           )}
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            onGenerateDocument()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:document-bold-duotone" />
-          Documento
         </MenuItem>
 
         {row.certificateDriveId && (

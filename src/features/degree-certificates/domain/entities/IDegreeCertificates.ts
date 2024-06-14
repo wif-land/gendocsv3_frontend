@@ -6,6 +6,7 @@ import {
   IRoom,
 } from '../../../../core/providers/domain/entities/ICertificateProvider'
 import { IStudent } from '../../../students/domain/entities/IStudent'
+import { IDegreeCertificatesAttendee } from './IDegreeCertificateAttendee'
 
 export interface IDegreeCertificate {
   id?: number
@@ -25,6 +26,7 @@ export interface IDegreeCertificate {
   certificateDriveId?: string
   isClosed: boolean
   user: IUser
+  members?: IDegreeCertificatesAttendee[]
 }
 
 export interface ICreateDegreeCertificate
@@ -57,11 +59,4 @@ export interface IDegreeCertificateFormValues extends IDegreeCertificate {
   certificateType: { label: string; id: number } & ICertificateType
   certificateStatus: { label: string; id: number } & ICertificateStatus
   room: { label: string; id: number } & IRoom
-}
-
-export interface IDegreeCertificatesAttendee {
-  hasAttended: boolean
-  hasBeenNotified: boolean
-  role: 'PRESIDENT' | 'SUBROGATE' | 'MEMBER'
-  functionary: unknown
 }

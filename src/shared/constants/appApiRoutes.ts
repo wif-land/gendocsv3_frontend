@@ -124,6 +124,8 @@ export const API_ROUTES = {
     GENERATE_DOCUMENT: (degreeCertificateId: number) =>
       `/degree-certificates/generate-document/${degreeCertificateId}`,
     CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
+    GET: (id: number) => `/degree-certificates/${id}`,
+    SET_ATTENDANCE: (id: number) => `/degree-certificates/set-attendance/${id}`,
     BULK_LOAD: (userId: number) => `/degree-certificates/bulk/load/${userId}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {

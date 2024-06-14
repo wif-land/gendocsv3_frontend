@@ -141,6 +141,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     (!loader.length && tableData.length === 0) ||
     (!loader.length && tableData.length === 0 && isDataFiltered)
 
+  const openDegreeCertificateDetail = (id: number) => {
+    router.push(`${pathname}/${id}`)
+  }
+
   return (
     <div key={moduleId}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -275,6 +279,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onRegenerateDocument={() => {
                               handleGenerateDocument(row)
                             }}
+                            onOpenAttendance={() =>
+                              openDegreeCertificateDetail(row.id!)
+                            }
                           />
                         ))}
                     </>
