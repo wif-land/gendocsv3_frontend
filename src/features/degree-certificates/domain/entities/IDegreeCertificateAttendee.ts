@@ -7,6 +7,13 @@ export enum DEGREE_ATTENDANCE_ROLES {
   MENTOR = 'TUTOR',
 }
 
+export const DEGREE_ATTENDANCE_ROLES_OPTIONS = [
+  { value: DEGREE_ATTENDANCE_ROLES.PRINCIPAL, label: 'Principal' },
+  { value: DEGREE_ATTENDANCE_ROLES.SUBSTITUTE, label: 'Suplente' },
+  { value: DEGREE_ATTENDANCE_ROLES.PRESIDENT, label: 'Presidente' },
+  { value: DEGREE_ATTENDANCE_ROLES.MENTOR, label: 'Tutor' },
+]
+
 export interface IDegreeCertificatesAttendee {
   id?: number
   hasAttended: boolean

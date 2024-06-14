@@ -28,25 +28,11 @@ export interface FormValuesProps
   roomId?: number
 }
 
-export interface AttendanceFormValuesProps {
-  members: {
-    tutor: IDegreeCertificatesAttendee
-    president: IDegreeCertificatesAttendee
-    firstMember: IDegreeCertificatesAttendee
-    secondMember: IDegreeCertificatesAttendee
-    firstSubstitute: IDegreeCertificatesAttendee
-    secondSubstitute: IDegreeCertificatesAttendee
-  }
-}
-
-export const RoleLabels = {
-  tutor: 'Tutor',
-  president: 'Presidente',
-  firstMember: 'Primer miembro',
-  secondMember: 'Segundo miembro',
-  firstSubstitute: 'Primer suplente',
-  secondSubstitute: 'Segundo suplente',
-}
+export interface AttendanceFormValuesProps
+  extends Omit<
+    IDegreeCertificatesAttendee,
+    'hasAttended' | 'hasBeenNotified'
+  > {}
 
 export const getTableHead = (isReport: string) => {
   const baseHeaders = [
@@ -108,29 +94,14 @@ export const resolveDefaultValuesDegreeCertificate = (
   user: currentDegreeCertificate?.user || ({} as any),
 })
 
-export const resolveDefaultValuesDegreeCertificateAssistance = (
-  currentDegreeCertificate?: IDegreeCertificate,
+export const resolveDefaultValuesDegreeCertificateAttendee = (
+  currentAttendee?: IDegreeCertificatesAttendee,
 ): AttendanceFormValuesProps => ({
-  members: {
-    tutor: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.MENTOR,
-    ) as any,
-    president: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.PRESIDENT,
-    ) as any,
-    firstMember: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
-    ) as any,
-    secondMember: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
-    ) as any,
-    firstSubstitute: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.SUBSTITUTE,
-    ) as any,
-    secondSubstitute: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.SUBSTITUTE,
-    ) as any,
-  },
+  assignationDate: currentAttendee?.assignationDate || new Date(),
+  details: currentAttendee?.details || '',
+  member: currentAttendee?.member || ({} as any),
+  role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
+  id: currentAttendee?.id || undefined,
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
@@ -169,18 +140,9 @@ export const NewDegreeCertificateSchema = Yup.object().shape({
 })
 
 export const NewDegreeCertificateAttendanceSchema = Yup.object().shape({
-  members: Yup.object().shape({
-    tutor: Yup.object().shape({}).required('El tutor es requerido'),
-    president: Yup.object().shape({}).required('El presidente es requerido'),
-    firstMember: Yup.object()
-      .shape({})
-      .required('El primer miembro es requerido'),
-    secondMember: Yup.object()
-      .shape({})
-      .required('El segundo miembro es requerido'),
-    firstSubstitute: Yup.object().shape({}),
-    secondSubstitute: Yup.object().shape({}),
-  }),
+  role: Yup.string().required('El rol es requerido'),
+  details: Yup.string().required('El documento de asignación es requerido'),
+  assignationDate: Yup.date().required('La fecha de asignación es requerida'),
 })
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

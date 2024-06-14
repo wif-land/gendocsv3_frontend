@@ -223,7 +223,6 @@ export const DegreeCertificateNewEditForm = ({
               name="student.endStudiesDate"
               label="Fecha de finalización de estudios"
               value={getValues('student')?.endStudiesDate || ''}
-              // required
               sx={{ flexGrow: 1 }}
             />
           </Stack>
@@ -380,6 +379,7 @@ export const DegreeCertificateNewEditForm = ({
               type="number"
               sx={{ flexGrow: 1 }}
             />
+
             <Controller
               name="presentationDate"
               control={control}

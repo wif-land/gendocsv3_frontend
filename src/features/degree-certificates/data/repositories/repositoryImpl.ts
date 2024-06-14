@@ -9,13 +9,14 @@ import {
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateAttendance } from '../../domain/entities/IDegreeCertificateAttendee'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
 {
   static instance: DegreeCertificateRepositoryImpl
 
-  static getInstance = (): IDegreeCertificateDatasource => {
+  static getInstance = () => {
     if (!DegreeCertificateRepositoryImpl.instance) {
       DegreeCertificateRepositoryImpl.instance =
         new DegreeCertificateRepositoryImpl(
@@ -29,6 +30,10 @@ export class DegreeCertificateRepositoryImpl
   private constructor(
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
+
+  createAttendance = async (data: IDegreeCertificateAttendance) => {
+    await this.datasource.createAttendance(data)
+  }
 
   getById(id: number) {
     return this.datasource.getById(id)

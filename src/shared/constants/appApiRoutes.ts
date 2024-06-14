@@ -112,21 +112,22 @@ export const API_ROUTES = {
     CREATE: '/positions',
   },
   DEGREE_CERTIFICATES: {
-    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
     GET_BY_FILTERS: `/degree-certificates/filter`,
-    UPDATE: (id: number) => `/degree-certificates/${id}`,
     DELETE: '/degree-certificates/:id',
     CREATE: '/degree-certificates',
+    CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
+    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
+    UPDATE: (id: number) => `/degree-certificates/${id}`,
     GENERATE_NUMERATION: (careerId: number) =>
       `/degree-certificates/numeration/generate/${careerId}`,
     GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>
       `/degree-certificates/numeration/last-number-to-register/${careerId}`,
     GENERATE_DOCUMENT: (degreeCertificateId: number) =>
       `/degree-certificates/generate-document/${degreeCertificateId}`,
-    CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
     GET: (id: number) => `/degree-certificates/${id}`,
     SET_ATTENDANCE: (id: number) => `/degree-certificates/set-attendance/${id}`,
     BULK_LOAD: (userId: number) => `/degree-certificates/bulk/load/${userId}`,
+    CREATE_ATTENDANCE: `/degree-certificate-attendance`,
     REPORTS: (careerId: number, isEnd: string) =>
       `/degree-certificates/reports/${careerId}?is-end=${isEnd}`,
   },

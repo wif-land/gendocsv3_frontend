@@ -1,5 +1,6 @@
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateAttendance } from '../entities/IDegreeCertificateAttendee'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import {
   ICreateDegreeCertificate,
@@ -71,4 +72,6 @@ export interface IDegreeCertificatesRepository {
     count: number
     degreeCertificates: DegreeCertificateModel[]
   }>
+
+  createAttendance(data: IDegreeCertificateAttendance): Promise<void>
 }

@@ -7,6 +7,7 @@ import {
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateAttendance } from '../../domain/entities/IDegreeCertificateAttendee'
 
 export interface IDegreeCertificateDatasource {
   getAll(
@@ -78,6 +79,8 @@ export interface IDegreeCertificateDatasource {
     fileName: string
     file: string
   }>
+
+  createAttendance(data: IDegreeCertificateAttendance): Promise<void>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -92,6 +95,19 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return DegreeCertificateDatasourceImpl.instance
+  }
+
+  createAttendance = async (data: IDegreeCertificateAttendance) => {
+    const result = await AxiosClient.post(
+      API_ROUTES.DEGREE_CERTIFICATES.CREATE_ATTENDANCE,
+      data,
+    )
+
+    if ('error' in result) {
+      return Promise.reject()
+    }
+
+    return Promise.resolve()
   }
 
   getById = async (id: number) => {

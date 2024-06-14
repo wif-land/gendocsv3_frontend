@@ -12,7 +12,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { useEffect, useState } from 'react'
@@ -23,7 +22,7 @@ import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertif
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { DegreeCertificateAttendanceNewEditForm } from './DegreeCertificateAttendanceNewEditForm'
+import { DegreeCertificateAttendeeNewEditForm } from './DegreeCertificateAttendanceNewEditForm'
 
 const TABS = [
   {
@@ -91,7 +90,7 @@ export const DegreeCertificateDetailAttendance = (props: {
           <Attendance
             members={memberToAttendance}
             isLoading={loader.length > 0}
-            councilId={councilIdentifier as unknown as number}
+            degreeCertificateId={councilIdentifier as unknown as number}
           />
         )}
       </Card>
@@ -148,10 +147,11 @@ const Description = (props: { members: IDegreeCertificatesAttendee[] }) => (
 const Attendance = (props: {
   members: IDegreeCertificatesAttendee[]
   isLoading: boolean
-  councilId: number
+  degreeCertificateId: number
 }) => {
-  const [pickedMember, setPickedMember] =
-    useState<IDegreeCertificatesAttendee | null>(null)
+  const [pickedMember, setPickedMember] = useState<
+    IDegreeCertificatesAttendee | undefined
+  >(undefined)
 
   const { getDegreeCertificate } = useDegreeCertificateStore()
 
@@ -161,8 +161,8 @@ const Attendance = (props: {
       member.id as number,
     )
 
-    await getDegreeCertificate(props.councilId)
-    setPickedMember(null)
+    await getDegreeCertificate(props.degreeCertificateId)
+    setPickedMember(undefined)
   }
 
   const isAttendanceModalOpen = useBoolean()
@@ -178,27 +178,17 @@ const Attendance = (props: {
         padding: 10,
       }}
     >
-      <DialogTitle sx={{ pb: 2 }}>Gestionar asistencia</DialogTitle>
+      <DialogTitle sx={{ pb: 2 }}>Crear asistencia</DialogTitle>
 
       <DialogContent
         sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
       >
-        <DegreeCertificateAttendanceNewEditForm
+        <DegreeCertificateAttendeeNewEditForm
           onClose={isAttendanceModalOpen.onFalse}
+          degreeCertificateId={props.degreeCertificateId}
+          currentAttendee={pickedMember}
         />
       </DialogContent>
-
-      <DialogActions>
-        <Button
-          variant="outlined"
-          color="inherit"
-          onClick={() => {
-            isAttendanceModalOpen.onFalse()
-          }}
-        >
-          Regresar
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 
