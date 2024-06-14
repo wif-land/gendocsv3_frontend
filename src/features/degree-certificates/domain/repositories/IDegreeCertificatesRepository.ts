@@ -63,4 +63,12 @@ export interface IDegreeCertificatesRepository {
     data: DegreeCertificateForBulk[]
     userId: number
   }): Promise<boolean>
+
+  getReports(
+    carrerId: number,
+    isEnd: string,
+  ): Promise<{
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
+  }>
 }

@@ -88,4 +88,7 @@ export class DegreeCertificateRepositoryImpl
       userId,
     })
   }
+
+  getReports = async (carrerId: number, isEnd: string) =>
+    await this.datasource.getReports(carrerId, isEnd)
 }

@@ -1,11 +1,11 @@
-import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
-import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { useDegreeCertificatesStore } from '../../store/degreeCertificatesStore'
+import useLoaderStore from '../../../../../shared/store/useLoaderStore'
 import { useEffect, useState } from 'react'
-import { TableProps } from '../../../../shared/sdk/table'
-import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
-import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
-import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import { TableProps } from '../../../../../shared/sdk/table'
+import { useDegreeCertificateMethods } from '../useDegreeCertificateMethods'
+import { DegreeCertificateModel } from '../../../data/models/DegreeCertificateModel'
+import { IDegreeCertificateFilters } from '../../../domain/entities/IDegreeCertificateFilters'
+import { IDegreeCertificate } from '../../../domain/entities/IDegreeCertificates'
 import { usePathname, useRouter } from 'next/navigation'
 
 interface Props {
@@ -14,6 +14,7 @@ interface Props {
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
   filters: IDegreeCertificateFilters
+  isEnd?: boolean
 }
 
 export const useDegreeCertificateView = ({
@@ -21,6 +22,7 @@ export const useDegreeCertificateView = ({
   visitedPages,
   setVisitedPages,
   filters,
+  isEnd = false,
 }: Props) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -40,50 +42,23 @@ export const useDegreeCertificateView = ({
   } = useDegreeCertificateMethods()
 
   useEffect(() => {
-    console.log(filters)
     let isMounted = true
 
     const loadData = async () => {
       try {
-        const data = await fetchData(
-          table.rowsPerPage,
-          table.page,
-          filters.career || 1,
-        )
-        if (isMounted && data?.degreeCertificates) {
-          setDegreeCertificates(data.degreeCertificates)
-          setTableData(data.degreeCertificates)
-          setCount(data.count)
+        const data = await getReports(filters.career || 1, isEnd)
+        if (isMounted && data) {
+          setDegreeCertificates(data)
+          setTableData(data)
+          setCount(data.length)
           setFirstCharge(false)
           setPrevCareer(filters.career || 1)
         }
       } catch (error) {}
     }
 
-    const loadReportData = async () => {
-      try {
-        const data = await getReports(
-          filters.career || 1,
-          filters.isEnd || 'false',
-        )
-        if (isMounted && data?.degreeCertificates) {
-          setDegreeCertificates(data.degreeCertificates)
-          setTableData(data.degreeCertificates)
-          setCount(data.count)
-          setFirstCharge(false)
-          setPrevCareer(filters.career || 1)
-        }
-      } catch (error) {}
-    }
-
-    if (
-      isMounted &&
-      (filters.career !== prevCareer || firstCharge) &&
-      filters.isReport === 'false'
-    ) {
+    if (isMounted && (filters.career !== prevCareer || firstCharge)) {
       loadData()
-    } else {
-      loadReportData()
     }
 
     return () => {

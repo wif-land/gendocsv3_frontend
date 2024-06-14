@@ -13,6 +13,8 @@ export type IDegreeCertificateTableFilterValue = string | string[]
 export type IDegreeCertificateTableFilters = {
   name: string
   career: number
+  isReport?: string
+  isEnd?: string
 }
 
 type Props = {

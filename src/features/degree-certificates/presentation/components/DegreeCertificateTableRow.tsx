@@ -31,6 +31,7 @@ type Props = {
   onOpenAttendance: VoidFunction
   activeState?: boolean | null
   isOnTable?: boolean
+  isReport?: string
 }
 
 export const DegreeCertificateTableRow = ({
@@ -44,6 +45,7 @@ export const DegreeCertificateTableRow = ({
   onGenerateDocument,
   onOpenAttendance,
   onRegenerateDocument,
+  isReport = 'false',
 }: Props) => {
   const { isClosed, presentationDate } = row
 
@@ -123,14 +125,16 @@ export const DegreeCertificateTableRow = ({
           )}
         </TableCell>
 
-        <TableCell align="right">
-          <IconButton
-            color={popover.open ? 'primary' : 'default'}
-            onClick={popover.onOpen}
-          >
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
+        {isReport === 'false' && (
+          <TableCell align="right">
+            <IconButton
+              color={popover.open ? 'primary' : 'default'}
+              onClick={popover.onOpen}
+            >
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </TableCell>
+        )}
       </TableRow>
 
       <CustomPopover

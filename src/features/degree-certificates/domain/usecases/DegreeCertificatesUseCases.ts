@@ -64,6 +64,14 @@ interface CertificateDegreeUseCases {
     data: DegreeCertificateForBulk[]
     userId: number
   }): Promise<boolean>
+
+  getReports(
+    carrerId: number,
+    isEnd: string,
+  ): Promise<{
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
+  }>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -144,4 +152,7 @@ export class DegreeCertificatesUseCasesImpl
       userId,
     })
   }
+
+  getReports = async (carrerId: number, isEnd: string) =>
+    await this.repository.getReports(carrerId, isEnd)
 }

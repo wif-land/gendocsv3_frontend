@@ -38,11 +38,18 @@ export const useDegreeCertificateMethods = () => {
       carrerId,
     )
 
+  const getReports = async (carrerId: number, isEnd: string) =>
+    await DegreeCertificatesUseCasesImpl.getInstance().getReports(
+      carrerId,
+      isEnd,
+    )
+
   return {
     fetchData,
     toggleIsClosed,
     resolveStudentById,
     generateDocument,
     generateNumeration,
+    getReports,
   }
 }

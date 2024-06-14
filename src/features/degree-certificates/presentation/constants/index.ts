@@ -48,15 +48,22 @@ export const RoleLabels = {
   secondSubstitute: 'Segundo suplente',
 }
 
-export const TABLE_HEAD = [
-  { id: 'topic', label: 'Tema' },
-  { id: 'student', label: 'Estudiante' },
-  { id: 'presentationDate', label: 'Fecha de presentación' },
-  { id: 'degreeModality', label: 'Modalidad', width: 140 },
-  { id: 'room', label: 'Aula', width: 140 },
-  { id: 'certificateStatus', label: 'Estado', width: 110 },
-  { id: 'actions', label: 'Acciones', width: 110 },
-]
+export const getTableHead = (isReport: string) => {
+  const baseHeaders = [
+    { id: 'topic', label: 'Tema' },
+    { id: 'student', label: 'Estudiante' },
+    { id: 'presentationDate', label: 'Fecha de presentación' },
+    { id: 'degreeModality', label: 'Modalidad', width: 140 },
+    { id: 'room', label: 'Aula', width: 140 },
+    { id: 'certificateStatus', label: 'Estado', width: 110 },
+  ]
+
+  if (isReport === 'false') {
+    baseHeaders.push({ id: 'actions', label: 'Acciones', width: 110 })
+  }
+
+  return baseHeaders
+}
 
 export const TABLE_ASSISTANCE_HEAD = [
   { id: 'topic', label: 'Tema' },
@@ -143,6 +150,8 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
 export const defaultFilters: IDegreeCertificateFilters = {
   name: '',
   career: 1,
+  isEnd: 'false',
+  isReport: 'false',
 }
 
 export const NewDegreeCertificateSchema = Yup.object().shape({

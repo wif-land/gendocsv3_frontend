@@ -65,6 +65,19 @@ export interface IDegreeCertificateDatasource {
     data: DegreeCertificateForBulk[]
     userId: number
   }): Promise<boolean>
+
+  getReports(
+    carrerId: number,
+    isEnd: string,
+  ): Promise<{
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
+  }>
+
+  downloadReport(id: number): Promise<{
+    fileName: string
+    file: string
+  }>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -239,5 +252,33 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as boolean
+  }
+
+  async getReports(carrerId: number, isEnd: string) {
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.REPORTS(carrerId, isEnd),
+    )
+
+    if ('error' in result) {
+      return {
+        count: 0,
+        degreeCertificates: [] as DegreeCertificateModel[],
+      }
+    }
+
+    return result.data as {
+      count: number
+      degreeCertificates: DegreeCertificateModel[]
+    }
+  }
+
+  downloadReport = async (id: number) => {
+    const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.DOWNLOAD(id))
+
+    if ('error' in result) {
+      return { fileName: '', file: '' }
+    }
+
+    return result.data as { fileName: string; file: string }
   }
 }
