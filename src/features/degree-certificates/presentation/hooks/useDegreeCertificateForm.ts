@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import { useForm } from 'react-hook-form'
@@ -46,18 +47,33 @@ export const useDegreeCertificateForm = (
   })
 
   const router = useRouter()
-  const { createDegreeCertificate, updateDegreeCertificate } =
-    useDegreeCertificatesStore()
+  const {
+    createDegreeCertificate,
+    updateDegreeCertificate,
+    checkPresentationDate,
+  } = useDegreeCertificatesStore()
   const { reset, handleSubmit } = methods
 
   const onSubmit = useCallback(
     async (data: ICreateDegreeCertificate) => {
+      const formattedData = {
+        topic: data.topic,
+        presentationDate: data.presentationDate,
+        studentId: (data as any).student.id,
+        certificateTypeId: data.certificateTypeId,
+        certificateStatusId: data.certificateStatusId,
+        degreeModalityId: data.degreeModalityId,
+        roomId: data.roomId,
+        duration: Number(data.duration),
+        link: data.link,
+        isClosed: data.isClosed,
+        userId: user?.id,
+      }
       let result
       if (!currentDegreeCertificate) {
-        result = createDegreeCertificate({
-          ...data,
-          userId: user!.id,
-        })
+        result = createDegreeCertificate(
+          formattedData as ICreateDegreeCertificate,
+        )
       } else {
         result = updateDegreeCertificate({
           ...data,
@@ -107,9 +123,23 @@ export const useDegreeCertificateForm = (
         (student) => student.id === studentId,
       ) as unknown as StudentModel,
     )
+
     getStudentById(studentId).then((student) => {
       methods.setValue('student', student)
       methods.trigger('student')
+      if (
+        student.gender == null ||
+        student.startStudiesDate == null ||
+        student.internshipHours == null ||
+        student.vinculationHours == null
+      ) {
+        enqueueSnackbar(
+          'El estudiante no cuenta con la información necesaria para generar la acta de grado',
+          {
+            variant: 'warning',
+          },
+        )
+      }
     })
 
     return () => {
@@ -122,6 +152,34 @@ export const useDegreeCertificateForm = (
     methods.setValue('student', student)
     methods.trigger('student')
   }
+
+  useEffect(() => {
+    if (
+      !methods.watch('presentationDate') ||
+      Number(methods.watch('degreeModalityId')) === 1
+    ) {
+      return
+    }
+
+    if (!methods.watch('duration') || !methods.watch('roomId')) {
+      enqueueSnackbar(
+        'Asegurate de asignar una duración y un aula para verificar la disponibilidad ',
+        {
+          variant: 'info',
+        },
+      )
+    }
+
+    checkPresentationDate(
+      methods.watch('presentationDate'),
+      methods.watch('duration'),
+      methods.watch('roomId') as number,
+    )
+  }, [
+    methods.watch('presentationDate'),
+    methods.watch('duration'),
+    methods.watch('roomId'),
+  ])
 
   return {
     methods,

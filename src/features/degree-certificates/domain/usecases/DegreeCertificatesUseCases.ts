@@ -41,6 +41,16 @@ interface CertificateDegreeUseCases {
   getLastNumberToRegister(careerId: number): Promise<number>
 
   generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
+
+  checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -84,4 +94,20 @@ export class DegreeCertificatesUseCasesImpl
 
   generateDocument = async (degreeCertificateId: number) =>
     await this.repository.generateDocument(degreeCertificateId)
+
+  async checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void> {
+    await this.repository.checkPresentationDate({
+      presentationDate,
+      duration,
+      roomId,
+    })
+  }
 }

@@ -10,8 +10,16 @@ import {
   IRoom,
 } from '../../../../core/providers/domain/entities/ICertificateProvider'
 
-export interface FormValuesProps extends IDegreeCertificate {
+export interface FormValuesProps
+  extends Omit<
+    IDegreeCertificate,
+    'certificateType' | 'certificateStatus' | 'degreeModality' | 'room'
+  > {
   selectedValue: { id: number; label: string }
+  certificateTypeId: number
+  certificateStatusId: number
+  degreeModalityId: number
+  roomId?: number
 }
 
 export const TABLE_HEAD = [
@@ -30,18 +38,19 @@ export const resolveDefaultValues = (
   number: currentDegreeCertificate?.number || (null as any),
   auxNumber: currentDegreeCertificate?.auxNumber || (null as any),
   topic: currentDegreeCertificate?.topic || '',
-  presentationDate: currentDegreeCertificate?.presentationDate || new Date(),
+  presentationDate: currentDegreeCertificate?.presentationDate || undefined,
   student: getSelectedStudent(currentDegreeCertificate?.student as IStudent),
-  career: currentDegreeCertificate?.career || 0,
-  certificateType:
-    (currentDegreeCertificate?.certificateType as ICertificateType)?.id || 0,
-  certificateStatus:
+  career: currentDegreeCertificate?.career || (undefined as any),
+  certificateTypeId:
+    (currentDegreeCertificate?.certificateType as ICertificateType)?.id ||
+    (undefined as any),
+  certificateStatusId:
     (currentDegreeCertificate?.certificateStatus as ICertificateStatus)?.id ||
-    0,
-  degreeModality:
+    1,
+  degreeModalityId:
     (currentDegreeCertificate?.degreeModality as IDegreeModality)?.id ||
-    ({} as any),
-  room: (currentDegreeCertificate?.room as IRoom)?.id || 0,
+    (undefined as any),
+  roomId: (currentDegreeCertificate?.room as IRoom)?.id || undefined,
   duration: currentDegreeCertificate?.duration || (null as any),
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',

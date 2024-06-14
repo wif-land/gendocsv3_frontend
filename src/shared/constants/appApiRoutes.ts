@@ -123,6 +123,7 @@ export const API_ROUTES = {
       `/degree-certificates/numeration/last-number-to-register/${careerId}`,
     GENERATE_DOCUMENT: (degreeCertificateId: number) =>
       `/degree-certificates/generate-document/${degreeCertificateId}`,
+    CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL:

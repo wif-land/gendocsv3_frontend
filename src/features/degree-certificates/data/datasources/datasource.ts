@@ -42,6 +42,16 @@ export interface IDegreeCertificateDatasource {
   getLastNumberToRegister(careerId: number): Promise<number>
 
   generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
+
+  checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -116,10 +126,13 @@ export class DegreeCertificateDatasourceImpl
   }
 
   create = async (degreeCertificate: ICreateDegreeCertificate) => {
+    console.log(degreeCertificate)
     const result = await AxiosClient.post(
       API_ROUTES.DEGREE_CERTIFICATES.CREATE,
       degreeCertificate,
     )
+
+    console.log(result)
 
     if ('error' in result) {
       return {} as DegreeCertificateModel
@@ -162,5 +175,26 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as DegreeCertificateModel
+  }
+
+  async checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void> {
+    await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.CHECK_PRESENTATION_DATE,
+      {
+        data: {
+          presentationDate,
+          duration,
+          roomId,
+        },
+      },
+    )
   }
 }

@@ -31,7 +31,7 @@ import {
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { Controller } from 'react-hook-form'
-import { DatePicker } from '@mui/x-date-pickers'
+import { DatePicker, DateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
@@ -84,8 +84,18 @@ export const DegreeCertificateNewEditForm = ({
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
+        <Grid
+          md={4}
+          sx={{
+            display: currentDegreeCertificate ? 'block' : 'none',
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 0.5,
+            }}
+          >
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -94,7 +104,13 @@ export const DegreeCertificateNewEditForm = ({
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid
+        xs={12}
+        md={8}
+        sx={{
+          display: currentDegreeCertificate ? 'block' : 'none',
+        }}
+      >
         <Card>
           {!mdUp && <CardHeader title="Details" />}
           <Stack
@@ -309,35 +325,82 @@ export const DegreeCertificateNewEditForm = ({
               required
               sx={{ flexGrow: 1 }}
             />
+
+            <RHFSelect
+              id="certificateTypeId"
+              label="Tipo de grado"
+              name="certificateTypeId"
+            >
+              {certificateTypes.map((certificateType) => (
+                <MenuItem key={certificateType.id} value={certificateType.id}>
+                  {certificateType.name}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+
+            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
+              <RHFSelect
+                id="degreeModalityId"
+                label="Modalidad"
+                name="degreeModalityId"
+              >
+                {degreeModalities.map((modality) => (
+                  <MenuItem key={modality.id} value={modality.id}>
+                    {modality.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              {Number(methods.watch('degreeModalityId')) === 1 && (
+                <RHFTextField name="link" label="Link" sx={{ flexGrow: 1 }} />
+              )}
+            </Stack>
+
+            {Number(methods.watch('degreeModalityId')) === 2 && (
+              <RHFSelect id="roomId" label="Aula" name="roomId">
+                {rooms.map((room) => (
+                  <MenuItem key={room.id} value={room.id}>
+                    {room.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            )}
+
+            <RHFTextField
+              name="duration"
+              label="Duración"
+              type="number"
+              sx={{ flexGrow: 1 }}
+            />
             <Controller
               name="presentationDate"
-              rules={{ required: true }}
               control={control}
               render={({ field }) => (
-                <DatePicker
+                <DateTimePicker
                   {...field}
-                  value={dayjs(field.value)}
+                  value={field.value !== undefined ? dayjs(field.value) : null}
                   onChange={(newValue) => {
                     if (newValue) {
-                      field.onChange(newValue)
+                      field.onChange(newValue.toDate())
+                    } else {
+                      field.value = undefined
                     }
                   }}
-                  label="Fecha de presentación"
-                  format="dddd/MM/YYYY"
+                  label="Fecha y hora de ejecución"
+                  format="dddd/MM/YYYY hh:mm a"
                   slotProps={{
                     textField: {
                       fullWidth: true,
                     },
                   }}
-                  closeOnSelect
+                  disablePast
                 />
               )}
             />
 
             <RHFSelect
-              id="certificateStatus"
+              id="certificateStatusId"
               label="Estado de acta"
-              name="certificateStatus"
+              name="certificateStatusId"
             >
               {certificateStatuses.map((certificateStatus) => (
                 <MenuItem
@@ -348,50 +411,6 @@ export const DegreeCertificateNewEditForm = ({
                 </MenuItem>
               ))}
             </RHFSelect>
-
-            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
-              <RHFSelect
-                id="degreeModality"
-                label="Modalidad"
-                name="degreeModality"
-              >
-                {degreeModalities.map((modality) => (
-                  <MenuItem key={modality.id} value={modality.id}>
-                    {modality.name}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-              {Number(methods.watch('degreeModality')) === 1 && (
-                <RHFTextField name="link" label="Link" sx={{ flexGrow: 1 }} />
-              )}
-            </Stack>
-
-            <RHFSelect
-              id="certificateType"
-              label="Tipo de grado"
-              name="certificateType"
-            >
-              {certificateTypes.map((certificateType) => (
-                <MenuItem key={certificateType.id} value={certificateType.id}>
-                  {certificateType.name}
-                </MenuItem>
-              ))}
-            </RHFSelect>
-
-            <RHFSelect id="room" label="Aula" name="room">
-              {rooms.map((room) => (
-                <MenuItem key={room.id} value={room.id}>
-                  {room.name}
-                </MenuItem>
-              ))}
-            </RHFSelect>
-
-            <RHFTextField
-              name="duration"
-              label="Duración"
-              required
-              sx={{ flexGrow: 1 }}
-            />
           </Stack>
         </Card>
       </Grid>

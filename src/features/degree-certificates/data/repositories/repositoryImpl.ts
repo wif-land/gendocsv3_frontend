@@ -52,4 +52,20 @@ export class DegreeCertificateRepositoryImpl
 
   generateDocument = async (degreeCertificateId: number) =>
     await this.datasource.generateDocument(degreeCertificateId)
+
+  async checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void> {
+    await this.datasource.checkPresentationDate({
+      presentationDate,
+      duration,
+      roomId,
+    })
+  }
 }

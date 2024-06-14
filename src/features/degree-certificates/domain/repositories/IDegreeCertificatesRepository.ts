@@ -40,4 +40,14 @@ export interface IDegreeCertificatesRepository {
   getLastNumberToRegister(careerId: number): Promise<number>
 
   generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
+
+  checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void>
 }

@@ -17,6 +17,11 @@ interface StoreState {
   updateDegreeCertificate: (
     degreeCertificate: Partial<DegreeCertificateModel>,
   ) => Promise<boolean>
+  checkPresentationDate: (
+    presentationDate?: Date,
+    duration?: number,
+    roomId?: number,
+  ) => Promise<void>
 }
 
 const STORE_NAME = 'degree-certificates-store'
@@ -83,6 +88,15 @@ export const useDegreeCertificatesStore = create<StoreState>(
         }
 
         return false
+      },
+      checkPresentationDate: async (presentationDate, duration, roomId) => {
+        await DegreeCertificatesUseCasesImpl.getInstance().checkPresentationDate(
+          {
+            presentationDate,
+            duration,
+            roomId,
+          },
+        )
       },
     }),
     {
