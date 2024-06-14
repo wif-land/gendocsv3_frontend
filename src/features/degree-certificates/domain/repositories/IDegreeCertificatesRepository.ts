@@ -50,4 +50,8 @@ export interface IDegreeCertificatesRepository {
     duration?: number
     roomId?: number
   }): Promise<void>
+
+  getById(id: number): Promise<DegreeCertificateModel>
+
+  setAttendance(id: number): Promise<void>
 }

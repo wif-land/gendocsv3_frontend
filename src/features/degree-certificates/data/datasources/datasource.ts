@@ -52,6 +52,10 @@ export interface IDegreeCertificateDatasource {
     duration?: number
     roomId?: number
   }): Promise<void>
+
+  getById(id: number): Promise<DegreeCertificateModel>
+
+  setAttendance(id: number): Promise<void>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -66,6 +70,16 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return DegreeCertificateDatasourceImpl.instance
+  }
+
+  getById = async (id: number) => {
+    const result = await AxiosClient.get(API_ROUTES.DEGREE_CERTIFICATES.GET(id))
+
+    if ('error' in result) {
+      return {} as DegreeCertificateModel
+    }
+
+    return result.data as DegreeCertificateModel
   }
 
   getAll = async (limit: number, offset: number, carrerId: number) => {
@@ -126,13 +140,10 @@ export class DegreeCertificateDatasourceImpl
   }
 
   create = async (degreeCertificate: ICreateDegreeCertificate) => {
-    console.log(degreeCertificate)
     const result = await AxiosClient.post(
       API_ROUTES.DEGREE_CERTIFICATES.CREATE,
       degreeCertificate,
     )
-
-    console.log(result)
 
     if ('error' in result) {
       return {} as DegreeCertificateModel
@@ -196,5 +207,9 @@ export class DegreeCertificateDatasourceImpl
         },
       },
     )
+  }
+
+  setAttendance = async (id: number) => {
+    await AxiosClient.patch(API_ROUTES.DEGREE_CERTIFICATES.SET_ATTENDANCE(id))
   }
 }

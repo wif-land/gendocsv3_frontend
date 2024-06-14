@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import {
   FormValuesProps,
   NewDegreeCertificateSchema,
-  resolveDefaultValues,
+  resolveDefaultValuesDegreeCertificate,
 } from '../constants'
 
 import { usePathname, useRouter } from 'next/navigation'
@@ -37,7 +37,7 @@ export const useDegreeCertificateForm = (
   const { user } = useAccountStore()
 
   const defaultValues = useMemo(
-    () => resolveDefaultValues(currentDegreeCertificate),
+    () => resolveDefaultValuesDegreeCertificate(currentDegreeCertificate),
     [currentDegreeCertificate],
   )
   const methods = useForm<FormValuesProps>({

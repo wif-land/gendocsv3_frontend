@@ -51,6 +51,10 @@ interface CertificateDegreeUseCases {
     duration?: number
     roomId?: number
   }): Promise<void>
+
+  getById(id: number): Promise<DegreeCertificateModel>
+
+  setAttendance(id: number): Promise<void>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -70,6 +74,14 @@ export class DegreeCertificatesUseCasesImpl
   }
 
   constructor(private readonly repository: CertificateDegreeUseCases) {}
+
+  setAttendance(id: number): Promise<void> {
+    return this.repository.setAttendance(id)
+  }
+
+  getById(id: number) {
+    return this.repository.getById(id)
+  }
 
   getAll = async (limit: number, offset: number, carrerId: number) =>
     await this.repository.getAll(limit, offset, carrerId)
