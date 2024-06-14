@@ -9,59 +9,53 @@ import ListItemButton from '@mui/material/ListItemButton'
 import { fToNow } from '../../../utils/format-time'
 import FileThumbnail from '../../../../shared/sdk/file-thumbnail/file-thumbnail'
 import Label from '../../../../shared/sdk/label'
+import { INotification } from '@/features/notifications/data/entities/INotification'
+import { NotificationStatus } from '@/features/notifications/utils/notification-status'
 
 type NotificationItemProps = {
-  notification: {
-    id: string
-    title: string
-    category: string
-    createdAt: Date
-    isUnRead: boolean
-    type: string
-    avatarUrl: string | null
-  }
+  notification: INotification
 }
 
 export default function NotificationItem({
   notification,
 }: NotificationItemProps) {
-  const renderAvatar = (
-    <ListItemAvatar>
-      {notification.avatarUrl ? (
-        <Avatar
-          src={notification.avatarUrl}
-          sx={{ bgcolor: 'background.neutral' }}
-        />
-      ) : (
-        <Stack
-          alignItems="center"
-          justifyContent="center"
-          sx={{
-            width: 40,
-            height: 40,
-            borderRadius: '50%',
-            bgcolor: 'background.neutral',
-          }}
-        >
-          <Box
-            component="img"
-            src={`/assets/icons/notification/${
-              (notification.type === 'order' && 'ic_order') ||
-              (notification.type === 'chat' && 'ic_chat') ||
-              (notification.type === 'mail' && 'ic_mail') ||
-              (notification.type === 'delivery' && 'ic_delivery')
-            }.svg`}
-            sx={{ width: 24, height: 24 }}
-          />
-        </Stack>
-      )}
-    </ListItemAvatar>
-  )
+  // const renderAvatar = (
+  //   <ListItemAvatar>
+  //     {notification.avatarUrl ? (
+  //       <Avatar
+  //         src={notification.avatarUrl}
+  //         sx={{ bgcolor: 'background.neutral' }}
+  //       />
+  //     ) : (
+  //       <Stack
+  //         alignItems="center"
+  //         justifyContent="center"
+  //         sx={{
+  //           width: 40,
+  //           height: 40,
+  //           borderRadius: '50%',
+  //           bgcolor: 'background.neutral',
+  //         }}
+  //       >
+  //         <Box
+  //           component="img"
+  //           src={`/assets/icons/notification/${
+  //             (notification.type === 'order' && 'ic_order') ||
+  //             (notification.type === 'chat' && 'ic_chat') ||
+  //             (notification.type === 'mail' && 'ic_mail') ||
+  //             (notification.type === 'delivery' && 'ic_delivery')
+  //           }.svg`}
+  //           sx={{ width: 24, height: 24 }}
+  //         />
+  //       </Stack>
+  //     )}
+  //   </ListItemAvatar>
+  // )
 
   const renderText = (
     <ListItemText
       disableTypography
-      primary={reader(notification.title)}
+      primary={reader(notification.name)}
       secondary={
         <Stack
           direction="row"
@@ -80,13 +74,14 @@ export default function NotificationItem({
           }
         >
           {fToNow(notification.createdAt)}
-          {notification.category}
+          {notification.status}
         </Stack>
       }
     />
   )
 
-  const renderUnReadBadge = notification.isUnRead && (
+  const renderUnReadBadge = notification.status ==
+    NotificationStatus.FAILURE && (
     <Box
       sx={{
         top: 26,
@@ -232,7 +227,7 @@ export default function NotificationItem({
     >
       {renderUnReadBadge}
 
-      {renderAvatar}
+      {/* {renderAvatar} */}
 
       <Stack sx={{ flexGrow: 1 }}>
         {renderText}

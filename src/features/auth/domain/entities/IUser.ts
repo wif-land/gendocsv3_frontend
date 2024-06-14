@@ -1,3 +1,5 @@
+import { UserRole } from '../../../../features/users/domain/entities/IUser'
+
 export type IRoleType = 'ADMIN' | 'WRITER' | 'READER'
 
 export interface IUser {
@@ -9,7 +11,7 @@ export interface IUser {
   secondLastName: string
   outlookEmail: string
   googleEmail: string
-  role?: string | null
+  role?: UserRole | null
   isActive: boolean
   accessModules?: number[] | null
 }
@@ -23,7 +25,7 @@ export interface IUserPayload {
   secondLastName: string
   outlookEmail: string
   googleEmail: string
-  role?: string | null
+  role?: UserRole | null
   isActive: boolean
   accessModules?: number[] | null
 }

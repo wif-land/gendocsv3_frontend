@@ -21,24 +21,18 @@ import Iconify from '../../../iconify'
 import Label from '../../../../shared/sdk/label'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { varHover } from '../../../../shared/sdk/animate'
+import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
+import {
+  NotificationStatus,
+  notificationStatusColor,
+} from '@/features/notifications/utils/notification-status'
 
-const TABS = [
-  {
-    value: 'all',
-    label: 'All',
-    count: 22,
-  },
-  {
-    value: 'unread',
-    label: 'Unread',
-    count: 12,
-  },
-  {
-    value: 'archived',
-    label: 'Archived',
-    count: 10,
-  },
-]
+//iterar en los elementos de un enum
+const TABS = Object.values(NotificationStatus).map((value) => ({
+  value,
+  label: value,
+  count: 0,
+}))
 
 export default function NotificationsPopover() {
   const drawer = useBoolean()
@@ -54,30 +48,40 @@ export default function NotificationsPopover() {
     [],
   )
 
-  const [notifications, setNotifications] = useState([
-    {
-      id: '',
-      title: 'Leninsin',
-      category: 'jaja',
-      createdAt: new Date(),
-      isUnRead: false,
-      type: 'some',
-      avatarUrl: null,
-    },
-  ])
+  // const [notifications, setNotifications] = useState([
+  //   {
+  //     id: '',
+  //     title: 'Leninsin',
+  //     category: 'jaja',
+  //     createdAt: new Date(),
+  //     isUnRead: false,
+  //     type: 'some',
+  //     avatarUrl: null,
+  //   },
+  // ])
 
-  const totalUnRead = notifications.filter(
-    (item) => item.isUnRead === true,
+  const { notifications } = useNotificationStore()
+
+  const totalCompleted = notifications.filter(
+    (item) => item.notification.status === NotificationStatus.COMPLETED,
   ).length
 
-  const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        isUnRead: false,
-      })),
-    )
-  }
+  const totalWithErrors = notifications.filter(
+    (item) => item.notification.status === NotificationStatus.WITH_ERRORS,
+  ).length
+
+  const totalProcessing = notifications.filter(
+    (item) => item.notification.status === NotificationStatus.IN_PROGRESS,
+  ).length
+
+  const totalFailed = notifications.filter(
+    (item) => item.notification.status === NotificationStatus.FAILURE,
+  ).length
+
+  TABS[0].count = totalCompleted
+  TABS[1].count = totalWithErrors
+  TABS[2].count = totalProcessing
+  TABS[3].count = totalFailed
 
   const renderHead = (
     <Stack
@@ -86,12 +90,12 @@ export default function NotificationsPopover() {
       sx={{ py: 2, pl: 2.5, pr: 1, minHeight: 68 }}
     >
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
-        Notifications
+        Notificaciones
       </Typography>
 
-      {!!totalUnRead && (
+      {!!totalCompleted && (
         <Tooltip title="Mark all as read">
-          <IconButton color="primary" onClick={handleMarkAllAsRead}>
+          <IconButton color="primary" onClick={() => {}}>
             <Iconify icon="eva:done-all-fill" />
           </IconButton>
         </Tooltip>
@@ -116,15 +120,12 @@ export default function NotificationsPopover() {
           icon={
             <Label
               variant={
-                ((tab.value === 'all' || tab.value === currentTab) &&
+                ((tab.value === NotificationStatus.COMPLETED ||
+                  tab.value === currentTab) &&
                   'filled') ||
                 'soft'
               }
-              color={
-                (tab.value === 'unread' && 'info') ||
-                (tab.value === 'archived' && 'success') ||
-                'default'
-              }
+              color={notificationStatusColor(tab.value)}
             >
               {tab.count}
             </Label>
@@ -139,12 +140,19 @@ export default function NotificationsPopover() {
     </Tabs>
   )
 
-  const renderList = (
+  const renderList = (currentTab: string) => (
     <Scrollbar>
       <List disablePadding>
-        {notifications.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} />
-        ))}
+        {notifications
+          .filter(
+            (notification) => notification.notification.status === currentTab,
+          )
+          .map((notification) => (
+            <NotificationItem
+              key={notification.notification.id}
+              notification={notification.notification}
+            />
+          ))}
       </List>
     </Scrollbar>
   )
@@ -159,7 +167,7 @@ export default function NotificationsPopover() {
         color={drawer.value ? 'primary' : 'default'}
         onClick={drawer.onTrue}
       >
-        <Badge badgeContent={totalUnRead} color="error">
+        <Badge badgeContent={totalCompleted} color="error">
           <Iconify icon="solar:bell-bing-bold-duotone" width={24} />
         </Badge>
       </IconButton>
@@ -186,14 +194,14 @@ export default function NotificationsPopover() {
           sx={{ pl: 2.5, pr: 1 }}
         >
           {renderTabs}
-          <IconButton onClick={handleMarkAllAsRead}>
+          <IconButton onClick={() => {}}>
             <Iconify icon="solar:settings-bold-duotone" />
           </IconButton>
         </Stack>
 
         <Divider />
 
-        {renderList}
+        {renderList(currentTab)}
 
         <Box sx={{ p: 1 }}>
           <Button fullWidth size="large">

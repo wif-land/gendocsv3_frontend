@@ -16,6 +16,7 @@ import { primaryFont } from '../core/theme/typography'
 import { LocationProvider } from '../core/providers/locations-provider'
 import { DegreeProvider } from '../core/providers/functionary-degree-provider'
 import { CertificateProvider } from '@/core/providers/certificate-degree-provider'
+import { SocketProviders } from '@/core/providers/socket-provider'
 
 export const metadata = {
   title: 'Gendocs V3 - Gestión Documental',
@@ -73,8 +74,7 @@ export default ({ children }: Props) => (
                     <SnackbarProvider>
                       <SettingsDrawer />
                       <ProgressBar />
-
-                      {children}
+                      <SocketProviders>{children}</SocketProviders>
                     </SnackbarProvider>
                   </ModulesProvider>
                 </MotionLazy>
