@@ -28,7 +28,7 @@ export interface IDegreeCertificatesAttendee {
 export interface ICreateDegreeCertificatesAttendee
   extends Omit<
     IDegreeCertificatesAttendee,
-    'id' | 'hasAttended' | 'hasBeenNotified' | 'member'
+    'id' | 'hasAttended' | 'hasBeenNotified' | 'functionary'
   > {
   functionaryId: number
 }

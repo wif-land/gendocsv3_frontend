@@ -143,7 +143,6 @@ const Attendance = (props: {
         <DegreeCertificateAttendeeNewEditForm
           onClose={isAttendanceModalOpen.onFalse}
           degreeCertificateId={props.degreeCertificateId}
-          currentAttendee={pickedMember}
         />
       </DialogContent>
     </Dialog>

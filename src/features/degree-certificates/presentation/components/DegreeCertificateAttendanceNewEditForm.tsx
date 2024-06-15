@@ -45,7 +45,7 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
         <Card>
           <Stack spacing={3} sx={{ p: 3 }}>
             <RHFAutocomplete
-              name={'member'}
+              name="functionary"
               label="Funcionario"
               placeholder="Escribe el nombre o cédula del miembro deseado"
               noOptionsText="No hay resultados"

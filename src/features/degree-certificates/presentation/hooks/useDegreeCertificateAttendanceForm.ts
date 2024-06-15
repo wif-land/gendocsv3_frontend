@@ -55,7 +55,7 @@ export const useDegreeCertificateAttendanceForm = (
 
         if (result.functionaries.length > 0) {
           const usedFunctionariesIds = Object.entries(
-            methods.getValues().member,
+            methods.getValues().functionary,
           )
             .map(([_, data]) => data?.id)
             .filter((val) => val)

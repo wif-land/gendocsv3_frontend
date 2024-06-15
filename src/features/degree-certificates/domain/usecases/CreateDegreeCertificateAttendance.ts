@@ -19,6 +19,11 @@ export class CreateDegreeCertificateAttendanceUseCase extends UseCase<
   }
 
   call(params: Params) {
-    return this.repository.createAttendance(params)
+    const { functionary, ...rest } = params
+
+    return this.repository.createAttendance({
+      ...rest,
+      functionaryId: functionary.id || 0,
+    })
   }
 }

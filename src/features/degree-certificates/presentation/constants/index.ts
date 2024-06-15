@@ -16,6 +16,7 @@ import { enqueueSnackbar } from 'notistack'
 import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
 import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
 import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
+import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
 
 export interface FormValuesProps
   extends Omit<
@@ -100,7 +101,12 @@ export const resolveDefaultValuesDegreeCertificateAttendee = (
 ): AttendanceFormValuesProps => ({
   assignationDate: currentAttendee?.assignationDate || new Date(),
   details: currentAttendee?.details || '',
-  member: currentAttendee?.member || ({} as any),
+  functionary:
+    currentAttendee?.functionary ||
+    ({
+      id: 0,
+      label: '',
+    } as any as IFunctionaryFormValues),
   role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
   id: currentAttendee?.id || undefined,
 })
