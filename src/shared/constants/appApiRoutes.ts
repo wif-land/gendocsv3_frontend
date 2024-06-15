@@ -125,7 +125,7 @@ export const API_ROUTES = {
     GENERATE_DOCUMENT: (degreeCertificateId: number) =>
       `/degree-certificates/generate-document/${degreeCertificateId}`,
     GET: (id: number) => `/degree-certificates/get-one/${id}`,
-    SET_ATTENDANCE: (id: number) => `/degree-certificates/set-attendance/${id}`,
+    UPDATE_ATTENDANCE: (id: number) => `/degree-certificate-attendance/${id}`,
     BULK_LOAD: (userId: number) => `/degree-certificates/bulk/load/${userId}`,
     CREATE_ATTENDANCE: `/degree-certificate-attendance`,
     REPORTS: (careerId: number, isEnd: string) =>

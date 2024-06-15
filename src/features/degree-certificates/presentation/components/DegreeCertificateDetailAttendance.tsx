@@ -125,6 +125,7 @@ const Attendance = (props: {
 
   const handleSetAttendance = async (member: IDegreeCertificatesAttendee) => {
     setPickedMember(member)
+
     await DegreeCertificatesUseCasesImpl.getInstance().setAttendance(
       member.id as number,
     )

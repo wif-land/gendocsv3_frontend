@@ -60,8 +60,6 @@ export interface IDegreeCertificateDatasource {
 
   getById(id: number): Promise<DegreeCertificateModel>
 
-  setAttendance(id: number): Promise<void>
-
   bulkLoad({
     data,
     userId,
@@ -79,10 +77,6 @@ export interface IDegreeCertificateDatasource {
     fileName: string
     file: string
   }>
-
-  createAttendance(data: ICreateDegreeCertificatesAttendee): Promise<void>
-
-  getAttendance(id: number): Promise<IDegreeCertificatesAttendee[]>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -97,31 +91,6 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return DegreeCertificateDatasourceImpl.instance
-  }
-
-  getAttendance = async (id: number) => {
-    const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ATTENDANCE(id),
-    )
-
-    if ('error' in result) {
-      return [] as IDegreeCertificatesAttendee[]
-    }
-
-    return result.data as IDegreeCertificatesAttendee[]
-  }
-
-  createAttendance = async (data: ICreateDegreeCertificatesAttendee) => {
-    const result = await AxiosClient.post(
-      API_ROUTES.DEGREE_CERTIFICATES.CREATE_ATTENDANCE,
-      data,
-    )
-
-    if ('error' in result) {
-      return Promise.reject()
-    }
-
-    return Promise.resolve()
   }
 
   getById = async (id: number) => {
@@ -259,10 +228,6 @@ export class DegreeCertificateDatasourceImpl
         },
       },
     )
-  }
-
-  setAttendance = async (id: number) => {
-    await AxiosClient.patch(API_ROUTES.DEGREE_CERTIFICATES.SET_ATTENDANCE(id))
   }
 
   async bulkLoad({
