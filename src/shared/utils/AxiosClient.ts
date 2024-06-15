@@ -25,7 +25,8 @@ interface AxiosResponse<T> {
 
 export class AxiosClient {
   private static client: AxiosInstance
-  private static baseUrl? = process.env.NEXT_PUBLIC_API_URL
+  private static baseUrl? =
+    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
   private static accessToken: string | null = null
 
   static getInstance() {
