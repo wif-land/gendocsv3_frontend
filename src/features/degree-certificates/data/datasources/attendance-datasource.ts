@@ -47,8 +47,11 @@ export class DegreeCertificateAttendanceDatasource {
   }
 
   update = async (data: Partial<IDegreeCertificatesAttendee>) => {
+    const attendanceId = data.id
+    delete data.id
+
     const result = await AxiosClient.patch(
-      API_ROUTES.DEGREE_CERTIFICATES.UPDATE_ATTENDANCE(data.id as number),
+      API_ROUTES.DEGREE_CERTIFICATES.UPDATE_ATTENDANCE(attendanceId as number),
       data,
     )
 

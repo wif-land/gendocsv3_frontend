@@ -11,6 +11,8 @@ import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { CreateDegreeCertificateAttendanceUseCase } from '../../domain/usecases/CreateDegreeCertificateAttendance'
 import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
+import { EditDegreeCertificateAttendanceUseCase } from '../../domain/usecases/EditDegreeCertificateAttendance'
+import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 
 export const useDegreeCertificateAttendanceForm = (
   currentAttendee?: IDegreeCertificatesAttendee,
@@ -22,6 +24,7 @@ export const useDegreeCertificateAttendanceForm = (
   >([])
   const [searchField, setSearchField] = useState('')
   const searchDebounced = useDebounce(searchField)
+  const { getDegreeCertificate } = useDegreeCertificateStore()
 
   const defaultValues = useMemo(
     () => resolveDefaultValuesDegreeCertificateAttendee(currentAttendee),
@@ -36,11 +39,20 @@ export const useDegreeCertificateAttendanceForm = (
   const { reset, handleSubmit } = methods
 
   const onSubmit = async (data: AttendanceFormValuesProps) => {
-    new CreateDegreeCertificateAttendanceUseCase().call({
-      ...data,
-      degreeCertificateId: +currentDegreeCertificateId!,
-    })
+    if (currentAttendee) {
+      await new EditDegreeCertificateAttendanceUseCase().call({
+        ...data,
+        id: currentAttendee.id,
+        degreeCertificateId: +currentDegreeCertificateId!,
+      })
+    } else {
+      await new CreateDegreeCertificateAttendanceUseCase().call({
+        ...data,
+        degreeCertificateId: +currentDegreeCertificateId!,
+      })
+    }
 
+    await getDegreeCertificate(+currentDegreeCertificateId!)
     onClose?.()
     reset()
   }
