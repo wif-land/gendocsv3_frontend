@@ -15,6 +15,7 @@ import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertif
 export const useDegreeCertificateAttendanceForm = (
   currentAttendee?: IDegreeCertificatesAttendee,
   currentDegreeCertificateId?: number,
+  onClose?: VoidFunction,
 ) => {
   const [unusedFunctionaries, setUnusedFunctionaries] = useState<
     IFunctionary[]
@@ -39,6 +40,8 @@ export const useDegreeCertificateAttendanceForm = (
       ...data,
       degreeCertificateId: +currentDegreeCertificateId!,
     })
+
+    onClose?.()
     reset()
   }
 

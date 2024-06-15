@@ -15,7 +15,10 @@ import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import LoadingButton from '@mui/lab/LoadingButton'
-import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
+import {
+  DEGREE_ATTENDANCE_ROLES_OPTIONS,
+  IDegreeCertificatesAttendee,
+} from '../../domain/entities/IDegreeCertificateAttendee'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
@@ -76,7 +79,11 @@ const Description = (props: {
                   `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
                   'No asignado'
                 }
-                secondary={member.role}
+                secondary={
+                  DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
+                    (role) => role.value === member.role,
+                  )?.label
+                }
                 primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
                 secondaryTypographyProps={{ component: 'span' }}
               />

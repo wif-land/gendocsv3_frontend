@@ -1,6 +1,7 @@
 import { UseCase } from '../../../../core/usecases/use-case'
 import { DegreeCertificateRepositoryImpl } from '../../data/repositories/repositoryImpl'
 import { AttendanceFormValuesProps } from '../../presentation/constants'
+import { useDegreeCertificateStore } from '../../presentation/store/useDegreeCertificateStore'
 import { IDegreeCertificatesRepository } from '../repositories/IDegreeCertificatesRepository'
 
 interface Params extends AttendanceFormValuesProps {
@@ -8,7 +9,7 @@ interface Params extends AttendanceFormValuesProps {
 }
 
 export class CreateDegreeCertificateAttendanceUseCase extends UseCase<
-  void,
+  boolean,
   Params
 > {
   private readonly repository: IDegreeCertificatesRepository
@@ -18,12 +19,20 @@ export class CreateDegreeCertificateAttendanceUseCase extends UseCase<
     this.repository = DegreeCertificateRepositoryImpl.getInstance()
   }
 
-  call(params: Params) {
+  async call(params: Params) {
     const { functionary, ...rest } = params
 
-    return this.repository.createAttendance({
-      ...rest,
-      functionaryId: functionary.id || 0,
-    })
+    return this.repository
+      .createAttendance({
+        ...rest,
+        functionaryId: functionary.id || 0,
+      })
+      .then(() => {
+        useDegreeCertificateStore
+          .getState()
+          .getDegreeCertificate(params.degreeCertificateId)
+
+        return true
+      })
   }
 }

@@ -33,6 +33,7 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
   } = useDegreeCertificateAttendanceForm(
     props.currentAttendee,
     props.degreeCertificateId,
+    props.onClose,
   )
 
   const { control } = methods
