@@ -19,11 +19,14 @@ import { contrast } from './options/contrast'
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useSettingsContext } from '../../shared/sdk/settings'
-import esLocale from 'dayjs/locale/es'
 import dayjs from 'dayjs'
 import { esES } from '@mui/x-date-pickers/locales'
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
-dayjs.locale(esLocale)
+dayjs.extend(utc)
+dayjs.extend(timezone)
+// dayjs.locale(esLocale) // this will show the days in a datepicker in an incorrect order starting with Monday and internally it will be Sunday
 
 type Props = {
   children: React.ReactNode

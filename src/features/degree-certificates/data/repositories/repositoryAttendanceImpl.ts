@@ -25,6 +25,10 @@ export class DegreeCertificateAttendanceRepositoryImpl
     private readonly datasource: DegreeCertificateAttendanceDatasource,
   ) {}
 
+  deleteAttendance(id: number) {
+    return this.datasource.deleteAttendance(id)
+  }
+
   getAttendance = async (degreeCertificateId: number) =>
     await this.datasource.getAttendance(degreeCertificateId)
 

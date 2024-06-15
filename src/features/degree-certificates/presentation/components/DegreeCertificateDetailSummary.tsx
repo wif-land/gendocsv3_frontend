@@ -38,7 +38,7 @@ export const DegreeCertificateDetailsSummary = ({
     },
     {
       title: 'Modalidad de grado',
-      value: degreeCertificate?.degreeModality.name || 'No especificado',
+      value: degreeCertificate?.degreeModality?.name || 'No especificado',
       icon: 'fe:book',
     },
     {

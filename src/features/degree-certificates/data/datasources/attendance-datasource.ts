@@ -61,4 +61,16 @@ export class DegreeCertificateAttendanceDatasource {
 
     return Promise.resolve()
   }
+
+  deleteAttendance = async (id: number) => {
+    const result = await AxiosClient.delete({
+      path: API_ROUTES.DEGREE_CERTIFICATES.DELETE_ATTENDANCE(id),
+    })
+
+    if ('error' in result) {
+      return Promise.reject()
+    }
+
+    return Promise.resolve()
+  }
 }

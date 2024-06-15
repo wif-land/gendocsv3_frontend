@@ -133,6 +133,7 @@ export const API_ROUTES = {
     DOWNLOAD: `/degree-certificates/reports/generate`,
     GET_ATTENDANCE: (degreeCertificateId: number) =>
       `/degree-certificate-attendance/${degreeCertificateId}`,
+    DELETE_ATTENDANCE: (id: number) => `/degree-certificate-attendance/${id}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL:
