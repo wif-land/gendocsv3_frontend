@@ -159,7 +159,7 @@ export const DegreeCertificateTableRow = ({
             popover.onClose()
           }}
         >
-          <Iconify icon="solar:people-bold" />
+          <Iconify icon="formkit:people" />
           Asistencia
         </MenuItem>
 

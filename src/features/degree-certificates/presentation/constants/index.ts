@@ -101,12 +101,15 @@ export const resolveDefaultValuesDegreeCertificateAttendee = (
 ): AttendanceFormValuesProps => ({
   assignationDate: currentAttendee?.assignationDate || new Date(),
   details: currentAttendee?.details || '',
-  functionary:
-    currentAttendee?.functionary ||
-    ({
-      id: 0,
-      label: '',
-    } as any as IFunctionaryFormValues),
+  functionary: currentAttendee?.functionary
+    ? ({
+        id: currentAttendee?.functionary.id,
+        label: `${currentAttendee?.functionary.firstName} ${currentAttendee?.functionary.firstLastName} ${currentAttendee?.functionary.secondLastName} - ${currentAttendee?.functionary.dni}`,
+      } as any as IFunctionaryFormValues)
+    : ({
+        id: 0,
+        label: '',
+      } as any as IFunctionaryFormValues),
   role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
   id: currentAttendee?.id || undefined,
 })

@@ -11,7 +11,7 @@ import {
   DialogContent,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -46,6 +46,7 @@ export const DegreeCertificateDetailAttendance = () => {
 const Description = (props: {
   members: IDegreeCertificatesAttendee[]
   handleSetAttendance: (member: IDegreeCertificatesAttendee) => void
+  onEdit: (member: IDegreeCertificatesAttendee) => void
 }) => (
   <Stack spacing={3}>
     <Typography variant="body1">
@@ -61,11 +62,11 @@ const Description = (props: {
           <Grid key={member.role} container spacing={3}>
             <Grid
               xs={12}
-              md={8}
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                gap: 2,
               }}
             >
               <ListItemText
@@ -89,6 +90,13 @@ const Description = (props: {
               >
                 {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
               </LoadingButton>
+
+              <LoadingButton
+                variant="contained"
+                onClick={() => props.onEdit(member)}
+              >
+                Editar
+              </LoadingButton>
             </Grid>
 
             {!isLast && <Divider style={{ width: '100%' }} />}
@@ -103,6 +111,9 @@ const Attendance = (props: {
   isLoading: boolean
   degreeCertificateId: number
 }) => {
+  const [currentMember, setCurrentMember] =
+    useState<IDegreeCertificatesAttendee>()
+
   const { getDegreeCertificate, degreeCertificate } =
     useDegreeCertificateStore()
 
@@ -139,6 +150,7 @@ const Attendance = (props: {
         <DegreeCertificateAttendeeNewEditForm
           onClose={isAttendanceModalOpen.onFalse}
           degreeCertificateId={props.degreeCertificateId}
+          currentAttendee={currentMember}
         />
       </DialogContent>
     </Dialog>
@@ -149,6 +161,10 @@ const Attendance = (props: {
       <Description
         members={degreeCertificate.members || []}
         handleSetAttendance={handleSetAttendance}
+        onEdit={(member) => {
+          setCurrentMember(member)
+          isAttendanceModalOpen.onTrue()
+        }}
       />
       <Button
         variant="contained"

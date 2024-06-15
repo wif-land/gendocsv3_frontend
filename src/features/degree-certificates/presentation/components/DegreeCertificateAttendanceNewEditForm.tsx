@@ -103,9 +103,12 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
               name="role"
               label="Rol"
               InputLabelProps={{ shrink: true }}
+              disabled={!!props.currentAttendee}
             >
               {DEGREE_ATTENDANCE_ROLES_OPTIONS.filter(
-                (role) => !positionsPicked.includes(role.value),
+                (role) =>
+                  !!props.currentAttendee ||
+                  !positionsPicked.includes(role.value),
               ).map((council) => (
                 <MenuItem key={council.value} value={council.value}>
                   {council.label}
