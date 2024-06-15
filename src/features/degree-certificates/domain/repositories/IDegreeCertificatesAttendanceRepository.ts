@@ -12,5 +12,5 @@ export interface IDegreeCertificatesAttendancesRepository {
     degreeCertificateId: number,
   ): Promise<IDegreeCertificatesAttendee[]>
 
-  update(data: Partial<IDegreeCertificatesAttendee>): Promise<void>
+  update(data: Partial<ICreateDegreeCertificatesAttendee>): Promise<void>
 }
