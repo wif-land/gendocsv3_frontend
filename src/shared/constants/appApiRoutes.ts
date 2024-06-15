@@ -98,6 +98,7 @@ export const API_ROUTES = {
     PROCESS: (id: number) => `/documents/create-recopilation/content/${id}`,
     GENERATE_RECORD: (id: number) => `/documents/create-recopilation/${id}`,
     DOWNLOAD: (id: number) => `/documents/create-recopilation/${id}`,
+    GET_BY_STUDENT: (studentId: number) => `/documents/student/${studentId}`,
   },
   DOCUMENT_NUMERATION: {
     GET_BY_COUNCIL: '/numeration-document/by-council',
@@ -111,17 +112,27 @@ export const API_ROUTES = {
     CREATE: '/positions',
   },
   DEGREE_CERTIFICATES: {
-    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
     GET_BY_FILTERS: `/degree-certificates/filter`,
-    UPDATE: (id: number) => `/degree-certificates/${id}`,
     DELETE: '/degree-certificates/:id',
     CREATE: '/degree-certificates',
+    CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
+    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
+    UPDATE: (id: number) => `/degree-certificates/${id}`,
     GENERATE_NUMERATION: (careerId: number) =>
       `/degree-certificates/numeration/generate/${careerId}`,
     GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>
       `/degree-certificates/numeration/last-number-to-register/${careerId}`,
     GENERATE_DOCUMENT: (degreeCertificateId: number) =>
       `/degree-certificates/generate-document/${degreeCertificateId}`,
+    GET: (id: number) => `/degree-certificates/get-one/${id}`,
+    UPDATE_ATTENDANCE: (id: number) => `/degree-certificate-attendance/${id}`,
+    BULK_LOAD: (userId: number) => `/degree-certificates/bulk/load/${userId}`,
+    CREATE_ATTENDANCE: `/degree-certificate-attendance`,
+    REPORTS: (careerId: number, isEnd: string) =>
+      `/degree-certificates/reports/${careerId}?is-end=${isEnd}`,
+    DOWNLOAD: `/degree-certificates/reports/generate`,
+    GET_ATTENDANCE: (degreeCertificateId: number) =>
+      `/degree-certificate-attendance/${degreeCertificateId}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL:

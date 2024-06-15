@@ -1,4 +1,5 @@
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import {
   ICreateDegreeCertificate,
@@ -40,4 +41,34 @@ export interface IDegreeCertificatesRepository {
   getLastNumberToRegister(careerId: number): Promise<number>
 
   generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
+
+  checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void>
+
+  getById(id: number): Promise<DegreeCertificateModel>
+
+  bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean>
+
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
+    fileName: string
+    file: string
+  }>
+
+  getReports(filters: IDegreeCertificateFilters): Promise<{
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
+  }>
 }

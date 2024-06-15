@@ -30,7 +30,7 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
-import { TABLE_HEAD, defaultFilters } from '../constants'
+import { getTableHead, defaultFilters } from '../constants'
 import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
 import {
   DegreeCertificatesTableToolbar,
@@ -42,12 +42,16 @@ import CustomPopover, {
   usePopover,
 } from '../../../../shared/sdk/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { DegCerBulkUploadDialog } from '../components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
   const settings = useSettingsContext()
   const confirm = useBoolean()
   const popover = usePopover()
+  const addStudentPopover = usePopover()
+  const upload = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [filters, setFilters] =
@@ -65,6 +69,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     handleUpdateRow,
     handleGenerateDocument,
     handleGenerateNumeration,
+    handleSearch,
+    handleDownload,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
@@ -73,20 +79,16 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     filters,
   })
 
-  const reportOptions = [
+  const createActions = [
     {
-      value: 'start',
-      label: 'Reporte inicial',
-      action: () => {
-        router.push(`${pathname}/report`)
-      },
+      value: 'single',
+      label: 'Individual',
+      action: () => router.push(`${pathname}/new`),
     },
     {
-      value: 'final',
-      label: 'Reporte final',
-      action: () => {
-        router.push(`${pathname}/report`)
-      },
+      value: 'multiple',
+      label: 'Varios',
+      action: upload.onTrue,
     },
   ]
 
@@ -119,58 +121,128 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     [handleGenerateDocument, router, pathname],
   )
 
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setVisitedPages([])
+    setIsDataFiltered(false)
+    setTableData([])
+  }
+
+  const reportOptions = [
+    {
+      value: 'start',
+      label: 'Reporte inicial',
+      action: () => {
+        handleFilters('isReport', true)
+        handleFilters('isEnd', false)
+      },
+    },
+    {
+      value: 'final',
+      label: 'Reporte final',
+      action: () => {
+        handleFilters('isReport', true)
+        handleFilters('isEnd', true)
+      },
+    },
+    {
+      value: 'template',
+      label: 'Plantilla',
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      action: () => {},
+    },
+  ]
+
+  const degreeActions = (
+    <>
+      <Button
+        onClick={popover.onOpen}
+        variant="contained"
+        startIcon={<Iconify icon="carbon:result" />}
+        sx={{ mr: 1.5 }}
+      >
+        Reportes
+      </Button>
+      <Button
+        variant="contained"
+        startIcon={<Iconify icon="ph:list-numbers" />}
+        onClick={handleGenerateNumeration}
+        sx={{ mr: 1.5 }}
+      >
+        Generar numeración
+      </Button>
+      <Button
+        component={RouterLink}
+        href={`${pathname}/templates`}
+        variant="contained"
+        startIcon={<Iconify icon="mingcute:document-3-line" />}
+        sx={{ mr: 1.5 }}
+      >
+        Plantillas
+      </Button>
+      <Button
+        variant="contained"
+        startIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+        onClick={addStudentPopover.onOpen}
+      >
+        Actas de grado
+      </Button>
+    </>
+  )
+
+  const reportActions = (
+    <>
+      <Button
+        variant="contained"
+        startIcon={<Iconify icon="ph:arrow-left-fill" />}
+        onClick={() => {
+          handleFilters('isReport', false)
+          handleFilters('isEnd', false)
+          handleResetFilters()
+        }}
+        sx={{ mr: 1.5 }}
+      >
+        Actas de grado
+      </Button>
+      <Button
+        variant="contained"
+        startIcon={<Iconify icon="ph:list-numbers" />}
+        onClick={() => handleDownload(filters as IDegreeCertificateFilters)}
+        sx={{ mr: 1.5 }}
+      >
+        {filters.isEnd === false
+          ? 'Generar reporte inicial'
+          : 'Generar reporte final'}
+      </Button>
+    </>
+  )
+
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
   const notFound =
     (!loader.length && tableData.length === 0) ||
     (!loader.length && tableData.length === 0 && isDataFiltered)
 
+  const openDegreeCertificateDetail = (id: number) => {
+    router.push(`${pathname}/${id}`)
+  }
+
   return (
     <div key={moduleId}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Actas de grado"
+          heading={
+            filters.isReport === false
+              ? 'Actas de grado'
+              : filters.isEnd === false
+                ? 'Actas de grado reporte inicial'
+                : 'Actas de grado reporte final'
+          }
           links={[
             { name: 'Dashboard', href: '/dashboard' },
             { name: 'Actas de grado' },
           ]}
-          action={
-            <>
-              <Button
-                onClick={popover.onOpen}
-                variant="contained"
-                startIcon={<Iconify icon="carbon:result" />}
-                sx={{ mr: 1.5 }}
-              >
-                Reportes
-              </Button>
-              <Button
-                variant="contained"
-                startIcon={<Iconify icon="ph:list-numbers" />}
-                onClick={handleGenerateNumeration}
-                sx={{ mr: 1.5 }}
-              >
-                Generar numeración
-              </Button>
-              <Button
-                component={RouterLink}
-                href={`${pathname}/templates`}
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:document-3-line" />}
-                sx={{ mr: 1.5 }}
-              >
-                Plantillas
-              </Button>
-              <Button
-                component={RouterLink}
-                href={`${pathname}/new`}
-                variant="contained"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-              >
-                Actas de grado
-              </Button>
-            </>
-          }
+          action={filters.isReport === false ? degreeActions : reportActions}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
@@ -183,7 +255,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            getFilteredCouncils={() => console.log('hi')}
+            getFilteredDegreCertificates={handleSearch}
           />
 
           {/* {isDataFiltered && (
@@ -220,7 +292,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
+                  headLabel={getTableHead(filters.isReport as boolean)}
                   rowCount={count}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
@@ -260,6 +332,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onRegenerateDocument={() => {
                               handleGenerateDocument(row)
                             }}
+                            onOpenAttendance={() =>
+                              openDegreeCertificateDetail(row.id!)
+                            }
+                            isReport={filters.isReport as boolean}
                           />
                         ))}
                     </>
@@ -299,6 +375,33 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             key={option.value}
             onClick={() => {
               popover.onClose()
+              option.action()
+            }}
+          >
+            {option.value === 'multiple' && (
+              <Iconify icon="eva:cloud-upload-fill" />
+            )}
+            {option.value === 'single' && (
+              <Iconify icon="solar:file-text-bold" />
+            )}
+            {option.label}
+          </MenuItem>
+        ))}
+      </CustomPopover>
+
+      <DegCerBulkUploadDialog open={upload.value} onClose={upload.onFalse} />
+
+      <CustomPopover
+        open={addStudentPopover.open}
+        onClose={addStudentPopover.onClose}
+        arrow="top-right"
+        sx={{ width: 140 }}
+      >
+        {createActions.map((option) => (
+          <MenuItem
+            key={option.value}
+            onClick={() => {
+              addStudentPopover.onClose()
               option.action()
             }}
           >

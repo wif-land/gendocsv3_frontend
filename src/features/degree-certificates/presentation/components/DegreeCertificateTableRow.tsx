@@ -28,8 +28,10 @@ type Props = {
   onDeleteRow: VoidFunction
   onGenerateDocument: VoidFunction
   onRegenerateDocument: VoidFunction
+  onOpenAttendance: VoidFunction
   activeState?: boolean | null
   isOnTable?: boolean
+  isReport?: boolean
 }
 
 export const DegreeCertificateTableRow = ({
@@ -41,7 +43,9 @@ export const DegreeCertificateTableRow = ({
   isOnTable = true,
   activeState,
   onGenerateDocument,
+  onOpenAttendance,
   onRegenerateDocument,
+  isReport = false,
 }: Props) => {
   const { isClosed, presentationDate } = row
 
@@ -121,14 +125,16 @@ export const DegreeCertificateTableRow = ({
           )}
         </TableCell>
 
-        <TableCell align="right">
-          <IconButton
-            color={popover.open ? 'primary' : 'default'}
-            onClick={popover.onOpen}
-          >
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
+        {isReport === false && (
+          <TableCell align="right">
+            <IconButton
+              color={popover.open ? 'primary' : 'default'}
+              onClick={popover.onOpen}
+            >
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </TableCell>
+        )}
       </TableRow>
 
       <CustomPopover
@@ -149,6 +155,26 @@ export const DegreeCertificateTableRow = ({
 
         <MenuItem
           onClick={() => {
+            onOpenAttendance()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="formkit:people" />
+          Asistencia
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onGenerateDocument()
+            popover.onClose()
+          }}
+        >
+          <Iconify icon="solar:document-bold-duotone" />
+          Documento
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             confirm.onTrue()
             popover.onClose()
           }}
@@ -165,15 +191,6 @@ export const DegreeCertificateTableRow = ({
               Cerrar
             </>
           )}
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            onGenerateDocument()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:document-bold-duotone" />
-          Documento
         </MenuItem>
 
         {row.certificateDriveId && (

@@ -6,6 +6,7 @@ import {
   IDegreeCertificate,
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 
 export interface IDegreeCertificateDatasource {
   getAll(
@@ -42,6 +43,36 @@ export interface IDegreeCertificateDatasource {
   getLastNumberToRegister(careerId: number): Promise<number>
 
   generateDocument(degreeCertificateId: number): Promise<DegreeCertificateModel>
+
+  checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void>
+
+  getById(id: number): Promise<DegreeCertificateModel>
+
+  bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean>
+
+  getReports(filters: IDegreeCertificateFilters): Promise<{
+    count: number
+    degreeCertificates: DegreeCertificateModel[]
+  }>
+
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
+    fileName: string
+    file: string
+  }>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -56,6 +87,16 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return DegreeCertificateDatasourceImpl.instance
+  }
+
+  getById = async (id: number) => {
+    const result = await AxiosClient.get(API_ROUTES.DEGREE_CERTIFICATES.GET(id))
+
+    if ('error' in result) {
+      return {} as DegreeCertificateModel
+    }
+
+    return result.data as DegreeCertificateModel
   }
 
   getAll = async (limit: number, offset: number, carrerId: number) => {
@@ -85,7 +126,7 @@ export class DegreeCertificateDatasourceImpl
     offset: number,
   ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(filters.career),
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(filters.careerId || 1),
       {
         params: { ...filters, limit, offset },
       },
@@ -162,5 +203,88 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as DegreeCertificateModel
+  }
+
+  async checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void> {
+    await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.CHECK_PRESENTATION_DATE,
+      {
+        data: {
+          presentationDate,
+          duration,
+          roomId,
+        },
+      },
+    )
+  }
+
+  async bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean> {
+    const result = await AxiosClient.patch(
+      API_ROUTES.DEGREE_CERTIFICATES.BULK_LOAD(userId),
+      data,
+    )
+
+    if ('error' in result) {
+      return false
+    }
+
+    return result.data as boolean
+  }
+
+  async getReports(filters: IDegreeCertificateFilters) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isEnd, isReport, ...rest } = filters
+
+    console.log(filters)
+
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.REPORTS(filters.careerId || 1, 'pdf'),
+      {
+        params: rest,
+      },
+    )
+
+    if ('error' in result) {
+      return {
+        count: 0,
+        degreeCertificates: [] as DegreeCertificateModel[],
+      }
+    }
+
+    return result.data as {
+      count: number
+      degreeCertificates: DegreeCertificateModel[]
+    }
+  }
+
+  downloadReport = async (filters: IDegreeCertificateFilters) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isEnd, isReport, ...rest } = filters
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.DOWNLOAD,
+      {
+        params: rest,
+      },
+    )
+
+    if ('error' in result) {
+      return { fileName: '', file: '' }
+    }
+
+    return result.data as { fileName: string; file: string }
   }
 }

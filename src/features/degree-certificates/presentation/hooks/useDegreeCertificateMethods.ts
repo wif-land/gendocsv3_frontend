@@ -1,5 +1,6 @@
 import { IStudent } from '../../../students/domain/entities/IStudent'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 
@@ -38,11 +39,53 @@ export const useDegreeCertificateMethods = () => {
       carrerId,
     )
 
+  const getReports = async (
+    isEnd: boolean,
+    data: IDegreeCertificateFilters,
+  ) => {
+    if (isEnd === true) {
+      return await DegreeCertificatesUseCasesImpl.getInstance().getReports({
+        careerId: data.careerId,
+        dateType: data.dateType,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        field: data.field,
+      })
+    } else {
+      return await DegreeCertificatesUseCasesImpl.getInstance().getReports({
+        careerId: data.careerId,
+        field: data.field,
+      })
+    }
+  }
+
+  const downloadReport = async (
+    isEnd: boolean,
+    data: IDegreeCertificateFilters,
+  ) => {
+    if (isEnd === true) {
+      return await DegreeCertificatesUseCasesImpl.getInstance().downloadReport({
+        careerId: data.careerId,
+        dateType: data.dateType,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        field: data.field,
+      })
+    } else {
+      return await DegreeCertificatesUseCasesImpl.getInstance().downloadReport({
+        careerId: data.careerId,
+        field: data.field,
+      })
+    }
+  }
+
   return {
     fetchData,
     toggleIsClosed,
     resolveStudentById,
     generateDocument,
     generateNumeration,
+    getReports,
+    downloadReport,
   }
 }

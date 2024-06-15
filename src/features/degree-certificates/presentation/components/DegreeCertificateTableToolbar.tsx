@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -6,13 +6,38 @@ import Iconify from '../../../../core/iconify'
 import { TableProps } from '../../../../shared/sdk/table'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { CareerFilter } from '../../../../shared/sdk/filters/career-filter'
-import { SelectChangeEvent } from '@mui/material'
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material'
+import {
+  DATE_TYPES,
+  IDegreeCertificateFilters,
+} from '../../domain/entities/IDegreeCertificateFilters'
+import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { DatePicker } from '@mui/x-date-pickers'
+import dayjs, { Dayjs } from 'dayjs'
 
-export type IDegreeCertificateTableFilterValue = string | string[]
+export type IDegreeCertificateTableFilterValue =
+  | string
+  | Date
+  | typeof DATE_TYPES
+  | undefined
+  | boolean
 
 export type IDegreeCertificateTableFilters = {
-  name: string
-  career: number
+  careerId?: number
+  field?: string
+  startDate?: Date | undefined
+  endDate?: Date | undefined
+  dateType?: typeof DATE_TYPES | undefined
+  isReport?: boolean
+  isEnd?: boolean
 }
 
 type Props = {
@@ -23,7 +48,7 @@ type Props = {
   isDataFiltered: boolean
   table: TableProps
   setDataTable: (value: DegreeCertificateModel[]) => void
-  getFilteredCouncils: (field: string) => void
+  getFilteredDegreCertificates: (field: IDegreeCertificateFilters) => void
 }
 
 export const DegreeCertificatesTableToolbar = ({
@@ -31,34 +56,66 @@ export const DegreeCertificatesTableToolbar = ({
   onFilters,
   isDataFiltered,
   setIsDataFiltered,
+  setDataTable,
+  setVisitedPages,
+  table,
+  getFilteredDegreCertificates,
 }: Props) => {
-  const [, setInputValue] = useState(undefined as string | undefined)
+  const [inputValue, setInputValue] = useState(undefined as string | undefined)
+  const debouncedValue = useDebounce(inputValue ? inputValue : '')
+  const [areFiltersActive, setAreFiltersActive] = useState(false)
+
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
     !isDataFiltered && setIsDataFiltered(true)
-    onFilters('name', event.target.value)
+    onFilters('field', event.target.value)
   }
 
-  // useEffect(() => {
-  //   let isMounted = true
+  const resetValues = () => {
+    setVisitedPages([])
+    setDataTable([])
+    setIsDataFiltered(false)
+  }
 
-  //   if (!isMounted) return
+  useEffect(() => {
+    let isMounted = true
 
-  //   table.setPage(0)
-  //   setVisitedPages([])
+    if (!isMounted) return
 
-  //   areFiltersAdded() === true
-  //     ? getFilteredCouncils(filters.name)
-  //     : resetValues()
+    table.setPage(0)
+    setVisitedPages([])
 
-  //   return () => {
-  //     isMounted = false
-  //   }
-  // }, [debouncedValue, filters.name])
+    areFiltersAdded() === true
+      ? getFilteredDegreCertificates(filters as IDegreeCertificateFilters)
+      : resetValues()
 
-  // const areFiltersAdded = () =>
-  //   (inputValue !== undefined && inputValue !== '') ||
-  //   filters.name !== undefined
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedValue, filters.careerId])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted) return
+
+    table.setPage(0)
+    setVisitedPages([])
+
+    areFiltersAdded() === true
+      ? getFilteredDegreCertificates(filters as IDegreeCertificateFilters)
+      : resetValues()
+
+    return () => {
+      isMounted = false
+    }
+  }, [filters.endDate, filters.startDate])
+
+  const areFiltersAdded = () =>
+    (inputValue !== undefined && inputValue !== '') ||
+    filters.startDate !== undefined ||
+    filters.endDate !== undefined ||
+    filters.careerId !== undefined
 
   const handleChange = (event: SelectChangeEvent) => {
     const {
@@ -67,7 +124,7 @@ export const DegreeCertificatesTableToolbar = ({
 
     !isDataFiltered && setIsDataFiltered(true)
 
-    onFilters('career', value)
+    onFilters('careerId', value)
   }
 
   return (
@@ -98,7 +155,7 @@ export const DegreeCertificatesTableToolbar = ({
           />
           <TextField
             fullWidth
-            value={filters.name}
+            value={filters.field}
             onChange={handleFilterName}
             placeholder="Busca por nombre de acta"
             InputProps={{
@@ -113,8 +170,101 @@ export const DegreeCertificatesTableToolbar = ({
             }}
             sx={{ flexGrow: 1 }}
           />
+          {filters.isReport === true && filters.isEnd === true && (
+            <IconButton
+              onClick={() => setAreFiltersActive(!areFiltersActive)}
+              title="Más filtros"
+            >
+              <Iconify icon="icon-park-outline:filter" />
+            </IconButton>
+          )}
         </Stack>
       </Stack>
+      {areFiltersActive &&
+        filters.isReport === true &&
+        filters.isEnd === true && (
+          <Stack
+            spacing={2}
+            alignItems={{ xs: 'flex-end', md: 'center' }}
+            direction={{
+              xs: 'column',
+              md: 'row',
+            }}
+            sx={{
+              p: 2.5,
+              pt: 0,
+              pr: { xs: 2.5, md: 2 },
+              ml: 1.2,
+            }}
+          >
+            <FormControl
+              sx={{
+                flexShrink: 0,
+                width: { xs: 1, md: '20%' },
+              }}
+            >
+              <InputLabel id="date-type-label">Tipo de fecha</InputLabel>
+              <Select
+                labelId="date-type-label"
+                id="demo-simple-select"
+                label="Tipo de fecha"
+                value={filters.dateType || ''}
+                input={<OutlinedInput label="Tipo de Fecha" />}
+                onChange={(event) => {
+                  const {
+                    target: { value },
+                  } = event
+
+                  onFilters('dateType', value)
+                }}
+              >
+                {DATE_TYPES.map((item) => (
+                  <MenuItem key={item.value} value={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl
+              sx={{
+                flexShrink: 0,
+                width: { xs: 1, md: '20%' },
+              }}
+            >
+              <DatePicker
+                disabled={!filters.dateType}
+                value={dayjs(filters.startDate) || null}
+                format="YYYY-MM-DD"
+                onAccept={(e) => {
+                  e && onFilters('startDate', (e as unknown as Dayjs).toDate())
+                  if (!filters.endDate) {
+                    e && onFilters('endDate', (e as unknown as Dayjs).toDate())
+                  }
+                }}
+                sx={{ textTransform: 'capitalize' }}
+                label="Fecha de inicio"
+              />
+            </FormControl>
+            <FormControl
+              sx={{
+                flexShrink: 0,
+                width: { xs: 1, md: '20%' },
+              }}
+            >
+              <DatePicker
+                disabled={!filters.dateType || !filters.startDate}
+                value={dayjs(filters.endDate) || null}
+                minDate={filters.startDate ? dayjs(filters.startDate) : null}
+                format="YYYY-MM-DD"
+                onAccept={(e) => {
+                  onFilters('endDate', (e as unknown as Dayjs).toDate())
+                }}
+                sx={{ textTransform: 'capitalize' }}
+                label="Fecha de fin"
+              />
+            </FormControl>
+          </Stack>
+        )}
     </>
   )
 }

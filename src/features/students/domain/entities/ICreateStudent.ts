@@ -1,4 +1,4 @@
-import { ICity } from '../../../../core/providers/domain/entities/ILocationProvider'
+import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 
 export interface ICreateStudent {
@@ -9,7 +9,7 @@ export interface ICreateStudent {
   secondLastName: string
   gender: string
   birthdate: string
-  canton: ICity | number
+  canton: ICanton | number
   regularPhoneNumber?: string
   cellphone?: string
   folio: string

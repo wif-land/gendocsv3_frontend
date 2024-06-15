@@ -8,13 +8,14 @@ import {
   IDegreeCertificateDatasource,
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
 {
   static instance: DegreeCertificateRepositoryImpl
 
-  static getInstance = (): IDegreeCertificateDatasource => {
+  static getInstance = () => {
     if (!DegreeCertificateRepositoryImpl.instance) {
       DegreeCertificateRepositoryImpl.instance =
         new DegreeCertificateRepositoryImpl(
@@ -28,6 +29,10 @@ export class DegreeCertificateRepositoryImpl
   private constructor(
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
+
+  getById(id: number) {
+    return this.datasource.getById(id)
+  }
 
   getAll = async (limit: number, offset: number, carrerId: number) =>
     await this.datasource.getAll(limit, offset, carrerId)
@@ -52,4 +57,39 @@ export class DegreeCertificateRepositoryImpl
 
   generateDocument = async (degreeCertificateId: number) =>
     await this.datasource.generateDocument(degreeCertificateId)
+
+  async checkPresentationDate({
+    presentationDate,
+    duration,
+    roomId,
+  }: {
+    presentationDate?: Date
+    duration?: number
+    roomId?: number
+  }): Promise<void> {
+    await this.datasource.checkPresentationDate({
+      presentationDate,
+      duration,
+      roomId,
+    })
+  }
+
+  async bulkLoad({
+    data,
+    userId,
+  }: {
+    data: DegreeCertificateForBulk[]
+    userId: number
+  }): Promise<boolean> {
+    return await this.datasource.bulkLoad({
+      data,
+      userId,
+    })
+  }
+
+  getReports = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.getReports(filters)
+
+  downloadReport = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.downloadReport(filters)
 }

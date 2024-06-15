@@ -4,16 +4,17 @@ import { useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { usePathname, useRouter } from 'next/navigation'
+import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 
 interface Props {
   table: TableProps
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  filters: IDegreeCertificateFilters
+  filters: IDegreeCertificateTableFilters
 }
 
 export const useDegreeCertificateView = ({
@@ -31,9 +32,14 @@ export const useDegreeCertificateView = ({
   const { degreeCertificates, setDegreeCertificates } =
     useDegreeCertificatesStore()
   const { loader } = useLoaderStore()
-  const { fetchData, toggleIsClosed, generateDocument, generateNumeration } =
-    useDegreeCertificateMethods()
-
+  const {
+    fetchData,
+    toggleIsClosed,
+    generateDocument,
+    generateNumeration,
+    getReports,
+    downloadReport,
+  } = useDegreeCertificateMethods()
   useEffect(() => {
     let isMounted = true
 
@@ -42,26 +48,48 @@ export const useDegreeCertificateView = ({
         const data = await fetchData(
           table.rowsPerPage,
           table.page,
-          filters.career || 1,
+          filters.careerId || 1,
         )
         if (isMounted && data?.degreeCertificates) {
           setDegreeCertificates(data.degreeCertificates)
           setTableData(data.degreeCertificates)
           setCount(data.count)
           setFirstCharge(false)
-          setPrevCareer(filters.career || 1)
+          setPrevCareer(filters.careerId || 1)
         }
       } catch (error) {}
     }
 
-    if (isMounted && (filters.career !== prevCareer || firstCharge)) {
+    const loadReportData = async () => {
+      try {
+        const data = await getReports(
+          filters.isEnd || false,
+          filters as IDegreeCertificateFilters,
+        )
+        if (isMounted && data?.degreeCertificates) {
+          setDegreeCertificates(data.degreeCertificates)
+          setTableData(data.degreeCertificates)
+          setCount(data.count)
+          setFirstCharge(false)
+          setPrevCareer(filters.careerId || 1)
+        }
+      } catch (error) {}
+    }
+
+    if (
+      isMounted &&
+      (filters.careerId !== prevCareer || firstCharge) &&
+      filters.isReport === false
+    ) {
       loadData()
+    } else if (filters.isReport === true) {
+      loadReportData()
     }
 
     return () => {
       isMounted = false
     }
-  }, [filters, table.page, table.rowsPerPage])
+  }, [filters.careerId, filters.isReport, table.page, table.rowsPerPage])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -70,18 +98,37 @@ export const useDegreeCertificateView = ({
     if (visitedPages.includes(newPage)) {
       return
     } else {
-      setVisitedPages([...visitedPages, newPage])
+      visitedPages.push(newPage)
     }
 
-    fetchData(table.rowsPerPage, newPage, filters.career || 1).then((data) => {
-      if (data?.degreeCertificates) {
-        setDegreeCertificates([
-          ...degreeCertificates,
-          ...data.degreeCertificates,
-        ])
-        setTableData([...degreeCertificates, ...data.degreeCertificates])
+    if (newPage > table.page) {
+      if (filters.isReport === true) {
+        getReports(
+          filters.isEnd || false,
+          filters as IDegreeCertificateFilters,
+        ).then((data) => {
+          if (data?.degreeCertificates) {
+            setDegreeCertificates([
+              ...degreeCertificates,
+              ...data.degreeCertificates,
+            ])
+            setTableData([...degreeCertificates, ...data.degreeCertificates])
+          }
+        })
+      } else {
+        fetchData(table.rowsPerPage, newPage, filters.careerId || 1).then(
+          (data) => {
+            if (data?.degreeCertificates) {
+              setDegreeCertificates([
+                ...degreeCertificates,
+                ...data.degreeCertificates,
+              ])
+              setTableData([...degreeCertificates, ...data.degreeCertificates])
+            }
+          },
+        )
       }
-    })
+    }
   }
 
   const handleChangeRowsPerPage = (
@@ -93,15 +140,36 @@ export const useDegreeCertificateView = ({
     setTableData([])
     setVisitedPages([])
 
-    fetchData(newRowsPerPage, 0, filters.career || 1).then((data) => {
-      if (data?.degreeCertificates) {
-        setDegreeCertificates(data.degreeCertificates)
-        setTableData(data.degreeCertificates)
-      }
-      if (data?.count) {
-        setCount(data.count)
-      }
-    })
+    if (filters.isReport === true) {
+      getReports(
+        filters.isEnd || false,
+        filters as IDegreeCertificateFilters,
+      ).then((data) => {
+        if (data?.degreeCertificates.length > 0) {
+          setDegreeCertificates(data.degreeCertificates)
+          setTableData(data.degreeCertificates)
+          if (data?.count) {
+            setCount(data.count)
+          }
+          return
+        }
+        setDegreeCertificates([])
+        setTableData([])
+        setCount(0)
+      })
+    } else {
+      fetchData(newRowsPerPage, table.page, filters.careerId || 1).then(
+        (data) => {
+          if (data?.degreeCertificates) {
+            setDegreeCertificates(data.degreeCertificates)
+            setTableData(data.degreeCertificates)
+          }
+          if (data?.count) {
+            setCount(data.count)
+          }
+        },
+      )
+    }
   }
 
   const handleUpdateRow = (row: IDegreeCertificate) => {
@@ -142,7 +210,51 @@ export const useDegreeCertificateView = ({
   }
 
   const handleGenerateNumeration = () => {
-    generateNumeration(filters.career || 1)
+    generateNumeration(filters.careerId || 1)
+  }
+
+  const handleSearch = (filters: IDegreeCertificateFilters) => {
+    if (filters.isReport === false) return
+    getReports(
+      filters.isEnd || false,
+      filters as IDegreeCertificateFilters,
+    ).then((data) => {
+      if (data?.degreeCertificates.length > 0) {
+        setDegreeCertificates(data.degreeCertificates)
+        setTableData(data.degreeCertificates)
+        if (data?.count) {
+          setCount(data.count)
+        }
+        return
+      }
+      setDegreeCertificates([])
+      setTableData([])
+      setCount(0)
+      return
+    })
+  }
+
+  const handleDownload = async (filters: IDegreeCertificateFilters) => {
+    await downloadReport(filters.isEnd || false, filters).then((data) => {
+      const { file, fileName } = data
+      const byteCharacters = atob(file)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      const blob = new Blob([byteArray], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', fileName)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    })
   }
 
   return {
@@ -158,5 +270,7 @@ export const useDegreeCertificateView = ({
     handleUpdateRow,
     handleGenerateDocument,
     handleGenerateNumeration,
+    handleSearch,
+    handleDownload,
   }
 }

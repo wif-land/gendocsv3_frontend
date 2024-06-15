@@ -58,10 +58,13 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
             userId: user?.id as number,
           })
         } else {
-          result = await updateCouncil({
-            ...data,
-            id: currentCouncil.id,
-          })
+          result = await updateCouncil(
+            {
+              ...data,
+              id: currentCouncil.id,
+            },
+            currentCouncil,
+          )
         }
 
         if (!!result && !!result.id) {

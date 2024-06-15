@@ -2,7 +2,7 @@ import { create, StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
-import { ICouncilFormValues } from '../../domain/entities/ICouncil'
+import { ICouncil, ICouncilFormValues } from '../../domain/entities/ICouncil'
 
 interface StoreState {
   councils: CouncilModel[]
@@ -15,7 +15,10 @@ interface StoreState {
   ) => Promise<void>
   getById: (id: number) => Promise<CouncilModel>
   createCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
-  updateCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
+  updateCouncil: (
+    career: ICouncilFormValues,
+    councilToUpdate: ICouncil,
+  ) => Promise<CouncilModel>
 }
 
 const STORE_NAME = 'councils-store'
@@ -39,10 +42,11 @@ export const useCouncilsStore = create<StoreState>(
         set((state) => ({ councils: [...state.councils, newCouncil] }))
         return newCouncil
       },
-      updateCouncil: async (council) => {
+      updateCouncil: async (council, councilToUpdate) => {
         const updatedCouncil = await CouncilsUseCasesImpl.getInstance().update(
           council.id!,
           council,
+          councilToUpdate,
         )
         set((state) => ({
           councils: state.councils.map((c) =>

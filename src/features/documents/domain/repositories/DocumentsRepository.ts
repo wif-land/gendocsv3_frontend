@@ -18,6 +18,10 @@ export interface DocumentsRepository {
     documents: DocumentModel[]
   }>
 
+  getAllByStudentId(studentId: number): Promise<{
+    documents: DocumentModel[]
+  }>
+
   deleteById: (id: number) => Promise<boolean>
 
   getNumerationByCouncil: (councilId: number) => Promise<NumerationModel>

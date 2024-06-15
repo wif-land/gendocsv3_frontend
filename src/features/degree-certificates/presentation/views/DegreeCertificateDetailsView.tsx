@@ -1,81 +1,49 @@
-// 'use client'
+'use client'
 
-// import { memo, useCallback, useState } from 'react'
-// import Tab from '@mui/material/Tab'
-// import Container from '@mui/material/Container'
-// import { useParams } from 'next/navigation'
-// import { useSettingsContext } from '../../../../shared/sdk/settings'
-// import Iconify from '../../../../core/iconify'
-// import { Tabs } from '@mui/material'
-// import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
-// import { CouncilDetailsSummary } from '../components/DegreeCertificateDetailSummary'
-// import { DegreeCertificateModel } from '../../data/DegreeCertificateModel'
+import { memo, useEffect } from 'react'
+import Container from '@mui/material/Container'
+import { useParams } from 'next/navigation'
+import { useSettingsContext } from '../../../../shared/sdk/settings'
+import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
+import { Divider } from '@mui/material'
+import { DegreeCertificateDetailsSummary } from '../components/DegreeCertificateDetailSummary'
+import { DegreeCertificateDetailAttendance } from '../components/DegreeCertificateDetailAttendance'
+import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 
-// const CouncilDetailsView = () => {
-//   const { id } = useParams()
-//   const settings = useSettingsContext()
-//   const { degreeCertificates } = useDegreeCertificateStote()
+const DegreeCertificateDetailsView = () => {
+  const { id } = useParams()
+  const settings = useSettingsContext()
+  const { degreeCertificate, getDegreeCertificate } =
+    useDegreeCertificateStore()
 
-//   const [currentTab, setCurrentTab] = useState('general')
+  useEffect(() => {
+    getDegreeCertificate(Number(id))
+  }, [id])
 
-//   const handleChangeTab = useCallback(
-//     (event: React.SyntheticEvent, newValue: string) => {
-//       setCurrentTab(newValue)
-//     },
-//     [],
-//   )
+  return (
+    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <CustomBreadcrumbs
+        heading={'Acta de grado'}
+        links={[
+          { name: 'Dashboard', href: '/' },
+          { name: 'Acta de grado', href: '/' },
+          { name: 'Detalle' },
+        ]}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
 
-//   const council: DegreeCertificateModel | undefined = degreeCertificates.find(
-//     (degreeCertificate) => degreeCertificates.id! === +id,
-//   )
+      <DegreeCertificateDetailsSummary
+        degreeCertificate={degreeCertificate}
+        degreeCertificateId={Number(id)}
+      />
 
-//   const TABS = [
-//     {
-//       value: 'general',
-//       label: 'General',
-//       icon: <Iconify icon="solar:user-id-bold" width={24} />,
-//     },
-//   ]
+      <Divider sx={{ my: 3 }} />
 
-//   return (
-//     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-//       <CustomBreadcrumbs
-//         heading="Consejo"
-//         links={[
-//           { name: 'Dashboard', href: '/' },
-//           { name: 'Consejo', href: '/' },
-//           { name: degreeCertificates?.name || 'Cargando...' },
-//         ]}
-//         sx={{
-//           mb: { xs: 3, md: 5 },
-//         }}
-//       />
+      <DegreeCertificateDetailAttendance />
+    </Container>
+  )
+}
 
-//       <Tabs
-//         value={currentTab}
-//         onChange={handleChangeTab}
-//         sx={{
-//           mb: { xs: 3, md: 5 },
-//         }}
-//       >
-//         {TABS.map((tab) => (
-//           <Tab
-//             key={tab.value}
-//             label={tab.label}
-//             icon={tab.icon}
-//             value={tab.value}
-//           />
-//         ))}
-//       </Tabs>
-
-//       {currentTab === 'general' && (
-//         <CouncilDetailsSummary
-//           council={council as DegreeCertificateModel}
-//           councilId={Number(id)}
-//         />
-//       )}
-//     </Container>
-//   )
-// }
-
-// export default memo(CouncilDetailsView)
+export default memo(DegreeCertificateDetailsView)

@@ -13,7 +13,16 @@ import {
   RHFTextField,
 } from '../../../../shared/sdk/hook-form'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
-import { Button, IconButton, InputAdornment, MenuItem } from '@mui/material'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+} from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
@@ -22,6 +31,10 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { DocumentSeeNumerationDialog } from './DocumentSeeNumerationDialog'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useRouter } from 'next/navigation'
+import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { usePopover } from '../../../../shared/sdk/custom-popover'
+import { StudentNewEditForm } from '../../../../features/students/presentation/components/StudentNewEditForm'
+import DocsByStudentListView from '../view/DocsByStudentListView'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -30,6 +43,7 @@ type Props = {
 export const DocumentNewEditForm = ({ currentDocument }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const router = useRouter()
+  const popover = usePopover()
   const { loader } = useLoaderStore()
   const {
     methods,
@@ -44,10 +58,13 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     selectedProcess,
     onSubmit,
     setSelectedProcess,
+    getSelectedStudent,
   } = useDocumentsForm(currentDocument)
 
   const { handleSubmit, getValues } = methods
   const seeNumeration = useBoolean(false)
+  const isStudentModalOpen = useBoolean(false)
+  const isDocumentModalOpen = useBoolean(false)
 
   const renderDetails = (
     <>
@@ -172,17 +189,56 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFAutocomplete
-              name="studentId"
-              label="Estudiante"
-              className="w-full"
-              placeholder="Estudiante"
-              freeSolo
-              options={students?.map((student) => ({
-                id: student.id,
-                label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
-              }))}
-            />
+            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
+              <RHFAutocomplete
+                name="student"
+                label="Estudiante"
+                placeholder="Estudiante"
+                sx={{
+                  flexGrow: 1,
+                }}
+                freeSolo
+                options={students?.map((student) => ({
+                  id: student.id,
+                  label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
+                }))}
+                value={getSelectedStudent()}
+                onSelect={() => {
+                  methods.setValue('student', getSelectedStudent())
+                }}
+              />
+              {methods.watch('student') && (
+                <>
+                  <IconButton onClick={popover.onOpen}>
+                    <Iconify icon="eva:more-vertical-fill" />
+                  </IconButton>
+                </>
+              )}
+              <CustomPopover
+                open={popover.open}
+                onClose={popover.onClose}
+                arrow="right-top"
+                sx={{ width: 160 }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    isStudentModalOpen.onTrue()
+                  }}
+                >
+                  <Iconify icon="ic:round-edit" />
+                  Editar
+                </MenuItem>
+
+                <MenuItem
+                  onClick={() => {
+                    isDocumentModalOpen.onTrue()
+                  }}
+                >
+                  <Iconify icon="solar:documents-bold-duotone" />
+                  Documentos
+                </MenuItem>
+              </CustomPopover>
+            </Stack>
 
             <RHFAutocomplete
               name="functionariesIds"
@@ -246,6 +302,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           variant="contained"
           size="large"
           loading={loader.length > 0}
+          disabled={isStudentModalOpen.value}
         >
           {!currentDocument ? 'Crear' : 'Guardar'}
         </LoadingButton>
@@ -253,25 +310,101 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     </>
   )
 
-  return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={3}>
-        {renderDetails}
+  const renderStudentModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isStudentModalOpen.value}
+      onClose={isStudentModalOpen.onFalse}
+      sx={{
+        overflow: 'hidden',
+        padding: 10,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Editar estudiante</DialogTitle>
 
-        {renderProperties}
-
-        {renderActions}
-
-        <DocumentSeeNumerationDialog
-          open={seeNumeration.value}
-          onClose={seeNumeration.onFalse}
-          numeration={numbers}
-          setNumeration={(number) => {
-            methods.setValue('number', number)
-            seeNumeration.onFalse()
-          }}
+      <DialogContent
+        sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
+      >
+        <StudentNewEditForm
+          currentStudent={students.find(
+            (student) => student.id === methods.watch('student' as any)?.id,
+          )}
+          fromModal={true}
         />
-      </Grid>
-    </FormProvider>
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            isStudentModalOpen.onFalse()
+          }}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
+  const renderDocumentsModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isDocumentModalOpen.value}
+      onClose={isDocumentModalOpen.onFalse}
+      sx={{
+        overflow: 'hidden',
+        padding: 10,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Documentos del estudiante</DialogTitle>
+
+      <DialogContent
+        sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
+      >
+        <DocsByStudentListView
+          studentId={methods.watch('student' as any)?.id}
+        />
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            isDocumentModalOpen.onFalse()
+          }}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
+  return (
+    <>
+      {renderStudentModal}
+      {renderDocumentsModal}
+      <DocumentSeeNumerationDialog
+        open={seeNumeration.value}
+        onClose={seeNumeration.onFalse}
+        numeration={numbers}
+        setNumeration={(number) => {
+          methods.setValue('number', number)
+          seeNumeration.onFalse()
+        }}
+      />
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={3}>
+          {renderDetails}
+
+          {renderProperties}
+
+          {renderActions}
+        </Grid>
+      </FormProvider>
+    </>
   )
 }

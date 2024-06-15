@@ -2,13 +2,13 @@ import { enqueueSnackbar } from 'notistack'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 import { StudentModel } from '../../data/models/StudentModel'
 import { IStudent } from '../../domain/entities/IStudent'
-import { ICity } from '../../../../core/providers/domain/entities/ILocationProvider'
+import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const transformData = (
   data: any[],
   careers: ICareer[],
-  canton: ICity[],
+  canton: ICanton[],
 ): IStudent[] =>
   data.map((item: any) => {
     if (!item['Cédula']) {
@@ -66,7 +66,7 @@ export const transformData = (
         registration: item['Matrícula'],
         birthdate: item['Fecha Nacimiento'],
         canton: canton.find(
-          (city: ICity) => city.name.toUpperCase() === item['Cantón'],
+          (city: ICanton) => city.name.toUpperCase() === item['Cantón'],
         )?.id as number,
         isActive: true,
         career: careers.find(

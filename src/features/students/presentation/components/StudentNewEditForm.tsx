@@ -21,12 +21,17 @@ import { IStudent } from '../../domain/entities/IStudent'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { GENDERS } from '../constants'
 import { useRouter } from 'next/navigation'
+import dayjs from 'dayjs'
 
 type Props = {
   currentStudent?: IStudent
+  fromModal?: boolean
 }
 
-export const StudentNewEditForm = ({ currentStudent }: Props) => {
+export const StudentNewEditForm = ({
+  currentStudent,
+  fromModal = false,
+}: Props) => {
   const mdUp = useResponsive('up', 'md')
   const router = useRouter()
 
@@ -36,6 +41,9 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
     handleSubmit,
     formState: { isSubmitting },
   } = methods
+
+  const showDateValue = (field: any) =>
+    methods.watch(field) ? dayjs(methods.watch(field)) : null
 
   const renderGeneralInfo = (
     <>
@@ -190,6 +198,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                     methods.setValue('startStudiesDate', newValue)
                   }
                 }}
+                value={showDateValue('startStudiesDate')}
               />
 
               <DatePicker
@@ -205,6 +214,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                     methods.setValue('endStudiesDate', newValue)
                   }
                 }}
+                value={showDateValue('endStudiesDate')}
               />
 
               <RHFTextField
@@ -362,6 +372,7 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
                     methods.setValue('birthdate', newValue)
                   }
                 }}
+                value={showDateValue('birthdate')}
               />
             </Box>
           </Stack>
@@ -383,16 +394,18 @@ export const StudentNewEditForm = ({ currentStudent }: Props) => {
           gap: '10px',
         }}
       >
-        <Button
-          variant="outlined"
-          size="large"
-          onClick={() => {
-            methods.reset()
-            router.back()
-          }}
-        >
-          Cancelar
-        </Button>
+        {!fromModal && (
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => {
+              methods.reset()
+              router.back()
+            }}
+          >
+            Cancelar
+          </Button>
+        )}
 
         <LoadingButton
           type="submit"

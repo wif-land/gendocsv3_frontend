@@ -6,6 +6,7 @@ import { DocumentDetailsView } from '../../../../../features/documents/presentat
 import { CouncilDetailsView } from '../../../../../features/council/presentation/view'
 import { ProcessDetailsView } from '../../../../../features/processes/presentation/view'
 import { FunctionaryDetailsView } from '../../../../../features/functionaries/presentation/view'
+import DegreeCertificateDetailsView from '../../../../../features/degree-certificates/presentation/views/DegreeCertificateDetailsView'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
@@ -17,6 +18,7 @@ const Page = () => {
     documentos: DocumentDetailsView,
     procesos: ProcessDetailsView,
     funcionarios: FunctionaryDetailsView,
+    actas_de_grado: DegreeCertificateDetailsView,
   }
 
   const defaultComponent = () => <div>Not found</div>

@@ -2,19 +2,58 @@
 import * as Yup from 'yup'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { IStudent } from '../../../students/domain/entities/IStudent'
-import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import {
   ICertificateStatus,
   ICertificateType,
   IDegreeModality,
   IRoom,
 } from '../../../../core/providers/domain/entities/ICertificateProvider'
+import {
+  DEGREE_ATTENDANCE_ROLES,
+  IDegreeCertificatesAttendee,
+} from '../../domain/entities/IDegreeCertificateAttendee'
+import { enqueueSnackbar } from 'notistack'
+import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
+import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
+import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
 
-export interface FormValuesProps extends IDegreeCertificate {
+export interface FormValuesProps
+  extends Omit<
+    IDegreeCertificate,
+    'certificateType' | 'certificateStatus' | 'degreeModality' | 'room'
+  > {
   selectedValue: { id: number; label: string }
+  certificateTypeId: number
+  certificateStatusId: number
+  degreeModalityId: number
+  roomId?: number
 }
 
-export const TABLE_HEAD = [
+export interface AttendanceFormValuesProps
+  extends Omit<
+    IDegreeCertificatesAttendee,
+    'hasAttended' | 'hasBeenNotified'
+  > {}
+
+export const getTableHead = (isReport: boolean) => {
+  const baseHeaders = [
+    { id: 'topic', label: 'Tema' },
+    { id: 'student', label: 'Estudiante' },
+    { id: 'presentationDate', label: 'Fecha de presentación' },
+    { id: 'degreeModality', label: 'Modalidad', width: 140 },
+    { id: 'room', label: 'Aula', width: 140 },
+    { id: 'certificateStatus', label: 'Estado', width: 110 },
+  ]
+
+  if (isReport === false) {
+    baseHeaders.push({ id: 'actions', label: 'Acciones', width: 110 })
+  }
+
+  return baseHeaders
+}
+
+export const TABLE_ASSISTANCE_HEAD = [
   { id: 'topic', label: 'Tema' },
   { id: 'student', label: 'Estudiante' },
   { id: 'presentationDate', label: 'Fecha de presentación' },
@@ -24,24 +63,25 @@ export const TABLE_HEAD = [
   { id: 'actions', label: 'Acciones', width: 110 },
 ]
 
-export const resolveDefaultValues = (
+export const resolveDefaultValuesDegreeCertificate = (
   currentDegreeCertificate?: IDegreeCertificate,
 ): FormValuesProps => ({
   number: currentDegreeCertificate?.number || (null as any),
   auxNumber: currentDegreeCertificate?.auxNumber || (null as any),
   topic: currentDegreeCertificate?.topic || '',
-  presentationDate: currentDegreeCertificate?.presentationDate || new Date(),
+  presentationDate: currentDegreeCertificate?.presentationDate || undefined,
   student: getSelectedStudent(currentDegreeCertificate?.student as IStudent),
-  career: currentDegreeCertificate?.career || 0,
-  certificateType:
-    (currentDegreeCertificate?.certificateType as ICertificateType)?.id || 0,
-  certificateStatus:
+  career: currentDegreeCertificate?.career || (undefined as any),
+  certificateTypeId:
+    (currentDegreeCertificate?.certificateType as ICertificateType)?.id ||
+    (undefined as any),
+  certificateStatusId:
     (currentDegreeCertificate?.certificateStatus as ICertificateStatus)?.id ||
-    0,
-  degreeModality:
+    1,
+  degreeModalityId:
     (currentDegreeCertificate?.degreeModality as IDegreeModality)?.id ||
-    ({} as any),
-  room: (currentDegreeCertificate?.room as IRoom)?.id || 0,
+    (undefined as any),
+  roomId: (currentDegreeCertificate?.room as IRoom)?.id || undefined,
   duration: currentDegreeCertificate?.duration || (null as any),
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',
@@ -54,6 +94,24 @@ export const resolveDefaultValues = (
       '',
   } as any,
   user: currentDegreeCertificate?.user || ({} as any),
+})
+
+export const resolveDefaultValuesDegreeCertificateAttendee = (
+  currentAttendee?: IDegreeCertificatesAttendee,
+): AttendanceFormValuesProps => ({
+  assignationDate: currentAttendee?.assignationDate || new Date(),
+  details: currentAttendee?.details || '',
+  functionary: currentAttendee?.functionary
+    ? ({
+        id: currentAttendee?.functionary.id,
+        label: `${currentAttendee?.functionary.firstName} ${currentAttendee?.functionary.firstLastName} ${currentAttendee?.functionary.secondLastName} - ${currentAttendee?.functionary.dni}`,
+      } as any as IFunctionaryFormValues)
+    : ({
+        id: 0,
+        label: '',
+      } as any as IFunctionaryFormValues),
+  role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
+  id: currentAttendee?.id || undefined,
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
@@ -70,9 +128,14 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         label: '',
       } as IStudent)
 
-export const defaultFilters: IDegreeCertificateFilters = {
-  name: '',
-  career: 1,
+export const defaultFilters: IDegreeCertificateTableFilters = {
+  field: undefined,
+  careerId: 1,
+  isEnd: false,
+  isReport: false,
+  startDate: new Date(),
+  endDate: new Date(),
+  dateType: DateType.CREATION as any,
 }
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
@@ -88,3 +151,48 @@ export const NewDegreeCertificateSchema = Yup.object().shape({
   // room: Yup.mixed().required('El aula es requerida'),
   // duration: Yup.number().required('La duración es requerida'),
 })
+
+export const NewDegreeCertificateAttendanceSchema = Yup.object().shape({
+  role: Yup.string().required('El rol es requerido'),
+  details: Yup.string().required('El documento de asignación es requerido'),
+  assignationDate: Yup.date().required('La fecha de asignación es requerida'),
+})
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
+  data.reduce((acc: DegreeCertificateForBulk[], item: any) => {
+    const isEmpty = Object.values(item).every((x) => x === null || x === '')
+    if (isEmpty) return acc
+
+    if (!item['Cédula']) {
+      enqueueSnackbar(
+        'Por favor, asegúrate de que todos los campos estén completos',
+        { variant: 'warning' },
+      )
+      return acc
+    }
+
+    const safeToString = (value: any) => {
+      if (value === null || value === undefined) return ''
+      return value.toString()
+    }
+
+    acc.push({
+      topic: safeToString(item['Tema']),
+      presentationDate: item['Fin clases']
+        ? new Date(item['Fin clases'])
+        : undefined,
+      studentDni: safeToString(item['Cédula']),
+      certificateType: safeToString(item['Modalidad Titulación']),
+      certificateStatus: safeToString(item['Estado Acta']),
+      firstMainQualifierDni: safeToString(item['Ced Calif Prino 1']),
+      secondMainQualifierDni: safeToString(item['Ced Calif Prino 2']),
+      firstSecondaryQualifierDni: safeToString(item['Ced Calf Supl 1']),
+      secondSecondaryQualifierDni: safeToString(item['Ced Calf Supl 2']),
+      mentorDni: safeToString(item['Ced Tutor']),
+      qualifiersResolution: safeToString(item['Resolución calificadores']),
+      curriculumGrade: safeToString(item['Nota Malla']),
+      gradesDetails: safeToString(item['Detalle Notas']),
+    } as DegreeCertificateForBulk)
+    return acc
+  }, [])
