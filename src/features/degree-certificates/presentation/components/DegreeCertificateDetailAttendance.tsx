@@ -45,6 +45,7 @@ export const DegreeCertificateDetailAttendance = () => {
 
 const Description = (props: {
   members: IDegreeCertificatesAttendee[]
+  degreeClosed: boolean
   handleSetAttendance: (member: IDegreeCertificatesAttendee) => void
   onEdit: (member: IDegreeCertificatesAttendee) => void
 }) => (
@@ -86,7 +87,11 @@ const Description = (props: {
               <LoadingButton
                 variant="contained"
                 onClick={() => props.handleSetAttendance(member)}
-                disabled={props.members.length === 0 || member.hasAttended}
+                disabled={
+                  props.members.length === 0 ||
+                  member.hasAttended ||
+                  props.degreeClosed
+                }
               >
                 {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
               </LoadingButton>
@@ -94,6 +99,7 @@ const Description = (props: {
               <LoadingButton
                 variant="contained"
                 onClick={() => props.onEdit(member)}
+                disabled={props.degreeClosed}
               >
                 Editar
               </LoadingButton>
@@ -165,10 +171,13 @@ const Attendance = (props: {
           setCurrentMember(member)
           isAttendanceModalOpen.onTrue()
         }}
+        degreeClosed={degreeCertificate.isClosed}
       />
       <Button
         variant="contained"
-        disabled={degreeCertificate.members?.length === 6}
+        disabled={
+          degreeCertificate.members?.length === 6 || degreeCertificate.isClosed
+        }
         onClick={() => isAttendanceModalOpen.onTrue()}
       >
         {degreeCertificate.members?.length === 6
