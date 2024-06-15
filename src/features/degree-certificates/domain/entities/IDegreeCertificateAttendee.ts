@@ -20,7 +20,7 @@ export interface IDegreeCertificatesAttendee {
   role: DEGREE_ATTENDANCE_ROLES
   details: string
   assignationDate: Date
-  member: IFunctionary
+  functionary: IFunctionary
   id?: number
   degreeCertificateId?: number
 }

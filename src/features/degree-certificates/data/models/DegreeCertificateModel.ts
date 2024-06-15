@@ -70,7 +70,7 @@ export class DegreeCertificateModel implements IDegreeCertificate {
       certificateDriveId: json.documentDriveId,
       isClosed: json.isClosed,
       user: json.user,
-      members: json.members,
+      members: json.attendances,
     })
   }
 
