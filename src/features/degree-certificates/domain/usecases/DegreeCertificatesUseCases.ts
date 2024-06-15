@@ -80,6 +80,8 @@ interface CertificateDegreeUseCases {
   }>
 
   getAttendees(id: number): Promise<IDegreeCertificatesAttendee[]>
+
+  deleteAttendee(id: number): Promise<void>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -103,6 +105,10 @@ export class DegreeCertificatesUseCasesImpl
     private readonly repository: IDegreeCertificatesRepository,
     private readonly attendanceRepository: IDegreeCertificatesAttendancesRepository,
   ) {}
+
+  deleteAttendee(id: number) {
+    return this.attendanceRepository.deleteAttendance(id)
+  }
 
   getAttendees(id: number) {
     return this.attendanceRepository.getAttendance(id)

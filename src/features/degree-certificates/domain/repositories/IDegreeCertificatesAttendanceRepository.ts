@@ -13,4 +13,6 @@ export interface IDegreeCertificatesAttendancesRepository {
   ): Promise<IDegreeCertificatesAttendee[]>
 
   update(data: Partial<ICreateDegreeCertificatesAttendee>): Promise<void>
+
+  deleteAttendance(id: number): Promise<void>
 }
