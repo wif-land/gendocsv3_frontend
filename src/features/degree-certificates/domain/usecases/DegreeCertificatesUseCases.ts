@@ -8,6 +8,8 @@ import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
 import { IDegreeCertificatesAttendee } from '../entities/IDegreeCertificateAttendee'
 import { IDegreeCertificatesRepository } from '../repositories/IDegreeCertificatesRepository'
+import { IDegreeCertificatesAttendancesRepository } from '../repositories/IDegreeCertificatesAttendanceRepository'
+import { DegreeCertificateAttendanceRepositoryImpl } from '../../data/repositories/repositoryAttendanceImpl'
 
 interface CertificateDegreeUseCases {
   getAll(
@@ -90,20 +92,24 @@ export class DegreeCertificatesUseCasesImpl
       DegreeCertificatesUseCasesImpl.instance =
         new DegreeCertificatesUseCasesImpl(
           DegreeCertificateRepositoryImpl.getInstance(),
+          DegreeCertificateAttendanceRepositoryImpl.getInstance(),
         )
     }
 
     return DegreeCertificatesUseCasesImpl.instance
   }
 
-  constructor(private readonly repository: IDegreeCertificatesRepository) {}
+  constructor(
+    private readonly repository: IDegreeCertificatesRepository,
+    private readonly attendanceRepository: IDegreeCertificatesAttendancesRepository,
+  ) {}
 
   getAttendees(id: number) {
-    return this.repository.getAttendance(id)
+    return this.attendanceRepository.getAttendance(id)
   }
 
   setAttendance(id: number): Promise<void> {
-    return this.repository.setAttendance(id)
+    return this.attendanceRepository.setAttendance(id)
   }
 
   getById(id: number) {

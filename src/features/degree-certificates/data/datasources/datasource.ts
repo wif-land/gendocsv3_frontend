@@ -7,10 +7,6 @@ import {
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
-import {
-  ICreateDegreeCertificatesAttendee,
-  IDegreeCertificatesAttendee,
-} from '../../domain/entities/IDegreeCertificateAttendee'
 
 export interface IDegreeCertificateDatasource {
   getAll(
@@ -256,7 +252,7 @@ export class DegreeCertificateDatasourceImpl
     console.log(filters)
 
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.REPORTS,
+      API_ROUTES.DEGREE_CERTIFICATES.REPORTS(filters.careerId || 1, 'pdf'),
       {
         params: rest,
       },

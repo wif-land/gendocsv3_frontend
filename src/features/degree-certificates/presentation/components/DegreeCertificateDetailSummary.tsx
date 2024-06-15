@@ -21,7 +21,11 @@ export const DegreeCertificateDetailsSummary = ({
 }: Props) => {
   const router = useRouter()
 
-  const SUMMARY = [
+  const SUMMARY: {
+    title: string
+    value: string
+    icon: string
+  }[] = [
     {
       title: 'Fecha de presentación',
       value: degreeCertificate?.presentationDate
@@ -34,7 +38,7 @@ export const DegreeCertificateDetailsSummary = ({
     },
     {
       title: 'Modalidad de grado',
-      value: degreeCertificate?.degreeModality || 'No especificado',
+      value: degreeCertificate?.degreeModality.name || 'No especificado',
       icon: 'fe:book',
     },
     {
@@ -44,7 +48,8 @@ export const DegreeCertificateDetailsSummary = ({
     },
     {
       title: 'Estado',
-      value: degreeCertificate?.certificateStatus || 'No especificado',
+      value:
+        degreeCertificate?.certificateStatus?.toString() || 'No especificado',
       icon: 'fe:activity',
     },
     {
