@@ -1,4 +1,3 @@
-import { useCareersStore } from '@/features/careers/presentation/store/careerStore'
 import {
   FormControl,
   InputLabel,
@@ -8,6 +7,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import { useEffect } from 'react'
+import { useCareersStore } from '../../../features/careers/presentation/store/careerStore'
 
 interface IStatusFilterProps {
   onChange: (event: SelectChangeEvent) => void
