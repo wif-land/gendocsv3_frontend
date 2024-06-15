@@ -56,6 +56,7 @@ const Description = (props: {
   <Stack spacing={3}>
     <Typography variant="body1">
       En esta sección podrás ver el detalle de los miembros del acta de grado.
+      Puedes añadir 5 miembros obligatorios y 2 suplentes.
     </Typography>
 
     <Stack spacing={3}>
@@ -164,9 +165,10 @@ const Attendance = (props: {
       />
       <Button
         variant="contained"
+        disabled={props.members.length === 7}
         onClick={() => isAttendanceModalOpen.onTrue()}
       >
-        Gestionar asistencia
+        Añadir asistente
       </Button>
 
       {attendanceModal}
