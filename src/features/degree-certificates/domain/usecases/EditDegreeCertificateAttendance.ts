@@ -7,7 +7,7 @@ interface Params extends AttendanceFormValuesProps {
   degreeCertificateId: number
 }
 
-export class CreateDegreeCertificateAttendanceUseCase extends UseCase<
+export class EditDegreeCertificateAttendanceUseCase extends UseCase<
   void,
   Params
 > {
@@ -21,7 +21,7 @@ export class CreateDegreeCertificateAttendanceUseCase extends UseCase<
   call(params: Params) {
     const { functionary, ...rest } = params
 
-    return this.repository.createAttendance({
+    return this.repository.update({
       ...rest,
       functionaryId: functionary.id || 0,
     })

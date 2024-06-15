@@ -175,7 +175,7 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
           size="large"
           loading={loader.length > 0}
         >
-          Crear
+          {props.currentAttendee ? 'Editar' : 'Crear'}
         </LoadingButton>
       </Grid>
     </>

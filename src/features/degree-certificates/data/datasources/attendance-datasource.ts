@@ -45,4 +45,17 @@ export class DegreeCertificateAttendanceDatasource {
 
     return Promise.resolve()
   }
+
+  update = async (data: Partial<IDegreeCertificatesAttendee>) => {
+    const result = await AxiosClient.patch(
+      API_ROUTES.DEGREE_CERTIFICATES.UPDATE_ATTENDANCE(data.id as number),
+      data,
+    )
+
+    if ('error' in result) {
+      return Promise.reject()
+    }
+
+    return Promise.resolve()
+  }
 }

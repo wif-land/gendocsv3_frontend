@@ -9,8 +9,6 @@ import {
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
-import { ICreateDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
-import { DegreeCertificateAttendanceDatasource } from '../datasources/attendance-datasource'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
@@ -21,7 +19,6 @@ export class DegreeCertificateRepositoryImpl
     if (!DegreeCertificateRepositoryImpl.instance) {
       DegreeCertificateRepositoryImpl.instance =
         new DegreeCertificateRepositoryImpl(
-          new DegreeCertificateAttendanceDatasource(),
           DegreeCertificateDatasourceImpl.getInstance(),
         )
     }
@@ -30,16 +27,8 @@ export class DegreeCertificateRepositoryImpl
   }
 
   private constructor(
-    private readonly attendanceDatasource: DegreeCertificateAttendanceDatasource,
     private readonly datasource: IDegreeCertificateDatasource,
   ) {}
-
-  getAttendance = async (degreeCertificateId: number) =>
-    await this.attendanceDatasource.getAttendance(degreeCertificateId)
-
-  createAttendance = async (data: ICreateDegreeCertificatesAttendee) => {
-    await this.attendanceDatasource.createAttendance(data)
-  }
 
   getById(id: number) {
     return this.datasource.getById(id)
@@ -84,9 +73,6 @@ export class DegreeCertificateRepositoryImpl
       roomId,
     })
   }
-
-  setAttendance = async (id: number) =>
-    await this.attendanceDatasource.setAttendance(id)
 
   async bulkLoad({
     data,
