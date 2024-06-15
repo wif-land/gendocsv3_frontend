@@ -14,6 +14,13 @@ export const DEGREE_ATTENDANCE_ROLES_OPTIONS = [
   { value: DEGREE_ATTENDANCE_ROLES.MENTOR, label: 'Tutor' },
 ]
 
+export const ROL_PRIORIDAD: { [key: string]: number } = {
+  Tutor: 1,
+  Presidente: 2,
+  'Miembro principal': 3,
+  'Miembro suplente': 4,
+}
+
 export interface IDegreeCertificatesAttendee {
   hasAttended: boolean
   hasBeenNotified: boolean

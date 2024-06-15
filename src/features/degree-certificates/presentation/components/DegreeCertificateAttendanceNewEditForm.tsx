@@ -13,9 +13,12 @@ import { Controller } from 'react-hook-form'
 import { DatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import {
+  DEGREE_ATTENDANCE_ROLES,
   DEGREE_ATTENDANCE_ROLES_OPTIONS,
   IDegreeCertificatesAttendee,
 } from '../../domain/entities/IDegreeCertificateAttendee'
+import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
+import { useEffect, useState } from 'react'
 
 interface Props {
   onClose: VoidFunction
@@ -35,6 +38,37 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
     props.degreeCertificateId,
     props.onClose,
   )
+  const { members } = useDegreeCertificateStore().degreeCertificate
+  const [positionsPicked, setPositionsPicked] = useState<
+    DEGREE_ATTENDANCE_ROLES[]
+  >([])
+
+  useEffect(() => {
+    if (!members || members.length === 0) return
+
+    const positions = members?.map((member) => member.role)
+    const hasTutor = positions.includes(DEGREE_ATTENDANCE_ROLES.MENTOR)
+    const hasPresident = positions.includes(DEGREE_ATTENDANCE_ROLES.PRESIDENT)
+    const mainMembersLength = positions.filter(
+      (position) => position === DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
+    )?.length
+
+    const temporalPicked = []
+
+    if (hasTutor) {
+      temporalPicked.push(DEGREE_ATTENDANCE_ROLES.MENTOR)
+    }
+
+    if (hasPresident) {
+      temporalPicked.push(DEGREE_ATTENDANCE_ROLES.PRESIDENT)
+    }
+
+    if (mainMembersLength === 2) {
+      temporalPicked.push(DEGREE_ATTENDANCE_ROLES.PRINCIPAL)
+    }
+
+    setPositionsPicked(temporalPicked)
+  }, [members])
 
   const { control } = methods
 
@@ -70,7 +104,9 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
               label="Rol"
               InputLabelProps={{ shrink: true }}
             >
-              {DEGREE_ATTENDANCE_ROLES_OPTIONS.map((council) => (
+              {DEGREE_ATTENDANCE_ROLES_OPTIONS.filter(
+                (role) => !positionsPicked.includes(role.value),
+              ).map((council) => (
                 <MenuItem key={council.value} value={council.value}>
                   {council.label}
                 </MenuItem>

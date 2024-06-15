@@ -18,6 +18,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import {
   DEGREE_ATTENDANCE_ROLES_OPTIONS,
   IDegreeCertificatesAttendee,
+  ROL_PRIORIDAD,
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
@@ -56,55 +57,57 @@ const Description = (props: {
   <Stack spacing={3}>
     <Typography variant="body1">
       En esta sección podrás ver el detalle de los miembros del acta de grado.
-      Puedes añadir 5 miembros obligatorios y 2 suplentes.
+      Puedes añadir 4 miembros obligatorios y 2 suplentes.
     </Typography>
 
     <Stack spacing={3}>
-      {props.members.map((member) => {
-        const isLast =
-          props.members.indexOf(member) === props.members.length - 1
+      {props.members
+        .sort((a, b) => ROL_PRIORIDAD[a.role] - ROL_PRIORIDAD[b.role])
+        .map((member) => {
+          const isLast =
+            props.members.indexOf(member) === props.members.length - 1
 
-        return (
-          <Grid key={member.role} container spacing={3}>
-            <Grid
-              xs={12}
-              md={8}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <ListItemText
-                primary={
-                  `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
-                  'No asignado'
-                }
-                secondary={
-                  DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
-                    (role) => role.value === member.role,
-                  )?.label
-                }
-                primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
-                secondaryTypographyProps={{ component: 'span' }}
-              />
-
-              <LoadingButton
-                variant="contained"
-                onClick={() => props.handleSetAttendance(member)}
-                disabled={
-                  (props.members.length === 0 || member.hasAttended) &&
-                  props.pickedMember?.id !== member.id
-                }
+          return (
+            <Grid key={member.role} container spacing={3}>
+              <Grid
+                xs={12}
+                md={8}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
               >
-                {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
-              </LoadingButton>
-            </Grid>
+                <ListItemText
+                  primary={
+                    `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
+                    'No asignado'
+                  }
+                  secondary={
+                    DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
+                      (role) => role.value === member.role,
+                    )?.label
+                  }
+                  primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
+                  secondaryTypographyProps={{ component: 'span' }}
+                />
 
-            {!isLast && <Divider style={{ width: '100%' }} />}
-          </Grid>
-        )
-      })}
+                <LoadingButton
+                  variant="contained"
+                  onClick={() => props.handleSetAttendance(member)}
+                  disabled={
+                    (props.members.length === 0 || member.hasAttended) &&
+                    props.pickedMember?.id !== member.id
+                  }
+                >
+                  {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
+                </LoadingButton>
+              </Grid>
+
+              {!isLast && <Divider style={{ width: '100%' }} />}
+            </Grid>
+          )
+        })}
     </Stack>
   </Stack>
 )
@@ -165,10 +168,12 @@ const Attendance = (props: {
       />
       <Button
         variant="contained"
-        disabled={props.members.length === 7}
+        disabled={props.members.length === 6}
         onClick={() => isAttendanceModalOpen.onTrue()}
       >
-        Añadir asistente
+        {props.members.length === 6
+          ? 'Ya se han añadido todos los miembros'
+          : 'Añadir miembro'}
       </Button>
 
       {attendanceModal}
