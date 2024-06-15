@@ -11,25 +11,20 @@ import {
   DialogContent,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import LoadingButton from '@mui/lab/LoadingButton'
 import {
   DEGREE_ATTENDANCE_ROLES_OPTIONS,
   IDegreeCertificatesAttendee,
-  ROL_PRIORIDAD,
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { DegreeCertificateAttendeeNewEditForm } from './DegreeCertificateAttendanceNewEditForm'
 
-export const DegreeCertificateDetailAttendance = (props: {
-  members: IDegreeCertificatesAttendee[]
-}) => {
-  const members = props.members
-
+export const DegreeCertificateDetailAttendance = () => {
   const { id: councilIdentifier } = useParams()
   const { loader } = useLoaderStore()
 
@@ -40,7 +35,6 @@ export const DegreeCertificateDetailAttendance = (props: {
       </Typography>
       <Card>
         <Attendance
-          members={members}
           isLoading={loader.length > 0}
           degreeCertificateId={councilIdentifier as unknown as number}
         />
@@ -51,7 +45,6 @@ export const DegreeCertificateDetailAttendance = (props: {
 
 const Description = (props: {
   members: IDegreeCertificatesAttendee[]
-  pickedMember: IDegreeCertificatesAttendee | undefined
   handleSetAttendance: (member: IDegreeCertificatesAttendee) => void
 }) => (
   <Stack spacing={3}>
@@ -61,77 +54,68 @@ const Description = (props: {
     </Typography>
 
     <Stack spacing={3}>
-      {props.members
-        .sort((a, b) => ROL_PRIORIDAD[a.role] - ROL_PRIORIDAD[b.role])
-        .map((member) => {
-          const isLast =
-            props.members.indexOf(member) === props.members.length - 1
+      {props.members.map((member, index) => {
+        const isLast = index === props.members.length - 1
 
-          return (
-            <Grid key={member.role} container spacing={3}>
-              <Grid
-                xs={12}
-                md={8}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
+        return (
+          <Grid key={member.role} container spacing={3}>
+            <Grid
+              xs={12}
+              md={8}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <ListItemText
+                primary={
+                  `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
+                  'No asignado'
+                }
+                secondary={
+                  DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
+                    (role) => role.value === member.role,
+                  )?.label
+                }
+                primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
+                secondaryTypographyProps={{ component: 'span' }}
+              />
+
+              <LoadingButton
+                variant="contained"
+                onClick={() => props.handleSetAttendance(member)}
+                disabled={props.members.length === 0 || member.hasAttended}
               >
-                <ListItemText
-                  primary={
-                    `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
-                    'No asignado'
-                  }
-                  secondary={
-                    DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
-                      (role) => role.value === member.role,
-                    )?.label
-                  }
-                  primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
-                  secondaryTypographyProps={{ component: 'span' }}
-                />
-
-                <LoadingButton
-                  variant="contained"
-                  onClick={() => props.handleSetAttendance(member)}
-                  disabled={
-                    (props.members.length === 0 || member.hasAttended) &&
-                    props.pickedMember?.id !== member.id
-                  }
-                >
-                  {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
-                </LoadingButton>
-              </Grid>
-
-              {!isLast && <Divider style={{ width: '100%' }} />}
+                {!member.hasAttended ? 'Marcar asistencia' : 'Ha asistido '}
+              </LoadingButton>
             </Grid>
-          )
-        })}
+
+            {!isLast && <Divider style={{ width: '100%' }} />}
+          </Grid>
+        )
+      })}
     </Stack>
   </Stack>
 )
 
 const Attendance = (props: {
-  members: IDegreeCertificatesAttendee[]
   isLoading: boolean
   degreeCertificateId: number
 }) => {
-  const [pickedMember, setPickedMember] = useState<
-    IDegreeCertificatesAttendee | undefined
-  >(undefined)
+  const { getDegreeCertificate, degreeCertificate } =
+    useDegreeCertificateStore()
 
-  const { getDegreeCertificate } = useDegreeCertificateStore()
+  useEffect(() => {
+    getDegreeCertificate(props.degreeCertificateId)
+  }, [props.degreeCertificateId, getDegreeCertificate])
 
   const handleSetAttendance = async (member: IDegreeCertificatesAttendee) => {
-    setPickedMember(member)
-
     await DegreeCertificatesUseCasesImpl.getInstance().setAttendance(
       member.id as number,
     )
 
     await getDegreeCertificate(props.degreeCertificateId)
-    setPickedMember(undefined)
   }
 
   const isAttendanceModalOpen = useBoolean()
@@ -163,16 +147,15 @@ const Attendance = (props: {
   return (
     <Stack spacing={3} sx={{ p: 3 }}>
       <Description
-        members={props.members}
+        members={degreeCertificate.members || []}
         handleSetAttendance={handleSetAttendance}
-        pickedMember={pickedMember}
       />
       <Button
         variant="contained"
-        disabled={props.members.length === 6}
+        disabled={degreeCertificate.members?.length === 6}
         onClick={() => isAttendanceModalOpen.onTrue()}
       >
-        {props.members.length === 6
+        {degreeCertificate.members?.length === 6
           ? 'Ya se han añadido todos los miembros'
           : 'Añadir miembro'}
       </Button>

@@ -41,9 +41,7 @@ const DegreeCertificateDetailsView = () => {
 
       <Divider sx={{ my: 3 }} />
 
-      <DegreeCertificateDetailAttendance
-        members={degreeCertificate.members || []}
-      />
+      <DegreeCertificateDetailAttendance />
     </Container>
   )
 }
