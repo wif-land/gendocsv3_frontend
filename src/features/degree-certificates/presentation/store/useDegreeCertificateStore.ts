@@ -16,7 +16,7 @@ export const useDegreeCertificateStore = create<StoreState>((set) => ({
     await DegreeCertificatesUseCasesImpl.getInstance()
       .getById(id)
       .then((data) => {
-        set({ degreeCertificate: data })
+        set({ degreeCertificate: DegreeCertificateModel.fromJson(data) })
       })
   },
 }))

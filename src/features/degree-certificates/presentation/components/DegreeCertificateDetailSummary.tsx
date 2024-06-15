@@ -3,7 +3,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { format } from 'date-fns'
 import EmptyContent from '../../../../shared/sdk/empty-content/empty-content'
-import { Box, Button } from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import Iconify from '../../../../core/iconify'
 import { useRouter } from 'next/navigation'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
@@ -29,8 +29,28 @@ export const DegreeCertificateDetailsSummary = ({
             new Date(degreeCertificate.presentationDate),
             'dd/MM/yyyy HH:mm',
           )
-        : 'N/A',
+        : 'Acta no presentada',
       icon: 'eva:calendar-outline',
+    },
+    {
+      title: 'Modalidad de grado',
+      value: degreeCertificate?.degreeModality || 'No especificado',
+      icon: 'fe:book',
+    },
+    {
+      title: 'Duración de la presentación',
+      value: `${degreeCertificate?.duration} minutos` || 'No especificado',
+      icon: 'fe:clock',
+    },
+    {
+      title: 'Estado',
+      value: degreeCertificate?.certificateStatus || 'No especificado',
+      icon: 'fe:activity',
+    },
+    {
+      title: 'Link del acta de grado',
+      value: degreeCertificate?.link || 'No especificado',
+      icon: 'fe:link',
     },
   ]
 
@@ -53,34 +73,37 @@ export const DegreeCertificateDetailsSummary = ({
 
   const renderDetails = () => (
     <Box display="flex" flexDirection="column" gap={2}>
-      <Typography variant="h6" sx={{ mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 1 }}>
         Detalles
       </Typography>
 
-      {SUMMARY.map((item) => (
-        <Box
-          key={item.title}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            textAlign: { xs: 'center', md: 'left' },
-          }}
-        >
-          <Iconify icon={item.icon} width={24} />
-          <Box>
-            <Typography variant="body2">{item.title}</Typography>
-            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-              {item.value}
-            </Typography>
-          </Box>
-        </Box>
-      ))}
+      <Grid container spacing={2}>
+        {SUMMARY.map((item) => (
+          <Grid item xs={12} md={6} key={item.title}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                textAlign: { xs: 'center', md: 'left' },
+              }}
+            >
+              <Iconify icon={item.icon} width={24} />
+              <Box>
+                <Typography variant="body2">{item.title}</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  {item.value}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   )
 
   return (
-    <Stack spacing={3} sx={{ pt: 3 }} {...other}>
+    <Stack {...other}>
       {degreeCertificate ? renderDetails() : renderError}
     </Stack>
   )
