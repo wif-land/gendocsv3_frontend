@@ -54,8 +54,6 @@ export interface IDegreeCertificatesRepository {
 
   getById(id: number): Promise<DegreeCertificateModel>
 
-  setAttendance(id: number): Promise<void>
-
   bulkLoad({
     data,
     userId,
@@ -64,10 +62,12 @@ export interface IDegreeCertificatesRepository {
     userId: number
   }): Promise<boolean>
 
-  getReports(
-    carrerId: number,
-    isEnd: string,
-  ): Promise<{
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
+    fileName: string
+    file: string
+  }>
+
+  getReports(filters: IDegreeCertificateFilters): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
   }>

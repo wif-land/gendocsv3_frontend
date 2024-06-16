@@ -43,6 +43,7 @@ import CustomPopover, {
 } from '../../../../shared/sdk/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { DegCerBulkUploadDialog } from '../components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
@@ -68,6 +69,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     handleUpdateRow,
     handleGenerateDocument,
     handleGenerateNumeration,
+    handleSearch,
+    handleDownload,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
@@ -118,21 +121,28 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     [handleGenerateDocument, router, pathname],
   )
 
+  const handleResetFilters = () => {
+    setFilters(defaultFilters)
+    setVisitedPages([])
+    setIsDataFiltered(false)
+    setTableData([])
+  }
+
   const reportOptions = [
     {
       value: 'start',
       label: 'Reporte inicial',
       action: () => {
-        handleFilters('isReport', 'true')
-        handleFilters('isEnd', 'false')
+        handleFilters('isReport', true)
+        handleFilters('isEnd', false)
       },
     },
     {
       value: 'final',
       label: 'Reporte final',
       action: () => {
-        handleFilters('isReport', 'true')
-        handleFilters('isEnd', 'true')
+        handleFilters('isReport', true)
+        handleFilters('isEnd', true)
       },
     },
     {
@@ -186,8 +196,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
         variant="contained"
         startIcon={<Iconify icon="ph:arrow-left-fill" />}
         onClick={() => {
-          handleFilters('isReport', 'false')
-          handleFilters('isEnd', 'false')
+          handleFilters('isReport', false)
+          handleFilters('isEnd', false)
+          handleResetFilters()
         }}
         sx={{ mr: 1.5 }}
       >
@@ -196,10 +207,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       <Button
         variant="contained"
         startIcon={<Iconify icon="ph:list-numbers" />}
-        onClick={handleGenerateNumeration}
+        onClick={() => handleDownload(filters as IDegreeCertificateFilters)}
         sx={{ mr: 1.5 }}
       >
-        {filters.isEnd === 'false'
+        {filters.isEnd === false
           ? 'Generar reporte inicial'
           : 'Generar reporte final'}
       </Button>
@@ -221,9 +232,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading={
-            filters.isReport === 'false'
+            filters.isReport === false
               ? 'Actas de grado'
-              : filters.isEnd === 'false'
+              : filters.isEnd === false
                 ? 'Actas de grado reporte inicial'
                 : 'Actas de grado reporte final'
           }
@@ -231,7 +242,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             { name: 'Dashboard', href: '/dashboard' },
             { name: 'Actas de grado' },
           ]}
-          action={filters.isReport === 'false' ? degreeActions : reportActions}
+          action={filters.isReport === false ? degreeActions : reportActions}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
@@ -244,7 +255,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             setIsDataFiltered={setIsDataFiltered}
             table={table}
             setDataTable={setTableData}
-            getFilteredCouncils={() => console.log('hi')}
+            getFilteredDegreCertificates={handleSearch}
           />
 
           {/* {isDataFiltered && (
@@ -281,7 +292,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
-                  headLabel={getTableHead(filters.isReport as string)}
+                  headLabel={getTableHead(filters.isReport as boolean)}
                   rowCount={count}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
@@ -324,7 +335,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onOpenAttendance={() =>
                               openDegreeCertificateDetail(row.id!)
                             }
-                            isReport={filters.isReport}
+                            isReport={filters.isReport as boolean}
                           />
                         ))}
                     </>

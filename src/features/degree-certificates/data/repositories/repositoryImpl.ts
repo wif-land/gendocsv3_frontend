@@ -15,7 +15,7 @@ export class DegreeCertificateRepositoryImpl
 {
   static instance: DegreeCertificateRepositoryImpl
 
-  static getInstance = (): IDegreeCertificateDatasource => {
+  static getInstance = () => {
     if (!DegreeCertificateRepositoryImpl.instance) {
       DegreeCertificateRepositoryImpl.instance =
         new DegreeCertificateRepositoryImpl(
@@ -74,8 +74,6 @@ export class DegreeCertificateRepositoryImpl
     })
   }
 
-  setAttendance = async (id: number) => await this.datasource.setAttendance(id)
-
   async bulkLoad({
     data,
     userId,
@@ -89,6 +87,9 @@ export class DegreeCertificateRepositoryImpl
     })
   }
 
-  getReports = async (carrerId: number, isEnd: string) =>
-    await this.datasource.getReports(carrerId, isEnd)
+  getReports = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.getReports(filters)
+
+  downloadReport = async (filters: IDegreeCertificateFilters) =>
+    await this.datasource.downloadReport(filters)
 }

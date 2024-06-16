@@ -2,7 +2,6 @@
 import * as Yup from 'yup'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { IStudent } from '../../../students/domain/entities/IStudent'
-import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import {
   ICertificateStatus,
   ICertificateType,
@@ -15,6 +14,9 @@ import {
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { enqueueSnackbar } from 'notistack'
 import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
+import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
+import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
 
 export interface FormValuesProps
   extends Omit<
@@ -28,27 +30,13 @@ export interface FormValuesProps
   roomId?: number
 }
 
-export interface AttendanceFormValuesProps {
-  members: {
-    tutor: IDegreeCertificatesAttendee
-    president: IDegreeCertificatesAttendee
-    firstMember: IDegreeCertificatesAttendee
-    secondMember: IDegreeCertificatesAttendee
-    firstSubstitute: IDegreeCertificatesAttendee
-    secondSubstitute: IDegreeCertificatesAttendee
-  }
-}
+export interface AttendanceFormValuesProps
+  extends Omit<
+    IDegreeCertificatesAttendee,
+    'hasAttended' | 'hasBeenNotified'
+  > {}
 
-export const RoleLabels = {
-  tutor: 'Tutor',
-  president: 'Presidente',
-  firstMember: 'Primer miembro',
-  secondMember: 'Segundo miembro',
-  firstSubstitute: 'Primer suplente',
-  secondSubstitute: 'Segundo suplente',
-}
-
-export const getTableHead = (isReport: string) => {
+export const getTableHead = (isReport: boolean) => {
   const baseHeaders = [
     { id: 'topic', label: 'Tema' },
     { id: 'student', label: 'Estudiante' },
@@ -58,7 +46,7 @@ export const getTableHead = (isReport: string) => {
     { id: 'certificateStatus', label: 'Estado', width: 110 },
   ]
 
-  if (isReport === 'false') {
+  if (isReport === false) {
     baseHeaders.push({ id: 'actions', label: 'Acciones', width: 110 })
   }
 
@@ -108,29 +96,22 @@ export const resolveDefaultValuesDegreeCertificate = (
   user: currentDegreeCertificate?.user || ({} as any),
 })
 
-export const resolveDefaultValuesDegreeCertificateAssistance = (
-  currentDegreeCertificate?: IDegreeCertificate,
+export const resolveDefaultValuesDegreeCertificateAttendee = (
+  currentAttendee?: IDegreeCertificatesAttendee,
 ): AttendanceFormValuesProps => ({
-  members: {
-    tutor: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.MENTOR,
-    ) as any,
-    president: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.PRESIDENT,
-    ) as any,
-    firstMember: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
-    ) as any,
-    secondMember: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
-    ) as any,
-    firstSubstitute: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.SUBSTITUTE,
-    ) as any,
-    secondSubstitute: currentDegreeCertificate?.members?.find(
-      (member) => member.role === DEGREE_ATTENDANCE_ROLES.SUBSTITUTE,
-    ) as any,
-  },
+  assignationDate: currentAttendee?.assignationDate || new Date(),
+  details: currentAttendee?.details || '',
+  functionary: currentAttendee?.functionary
+    ? ({
+        id: currentAttendee?.functionary.id,
+        label: `${currentAttendee?.functionary.firstName} ${currentAttendee?.functionary.firstLastName} ${currentAttendee?.functionary.secondLastName} - ${currentAttendee?.functionary.dni}`,
+      } as any as IFunctionaryFormValues)
+    : ({
+        id: 0,
+        label: '',
+      } as any as IFunctionaryFormValues),
+  role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
+  id: currentAttendee?.id || undefined,
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
@@ -147,11 +128,14 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         label: '',
       } as IStudent)
 
-export const defaultFilters: IDegreeCertificateFilters = {
-  name: '',
-  career: 1,
-  isEnd: 'false',
-  isReport: 'false',
+export const defaultFilters: IDegreeCertificateTableFilters = {
+  field: undefined,
+  careerId: 1,
+  isEnd: false,
+  isReport: false,
+  startDate: new Date(),
+  endDate: new Date(),
+  dateType: DateType.CREATION as any,
 }
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
@@ -169,18 +153,9 @@ export const NewDegreeCertificateSchema = Yup.object().shape({
 })
 
 export const NewDegreeCertificateAttendanceSchema = Yup.object().shape({
-  members: Yup.object().shape({
-    tutor: Yup.object().shape({}).required('El tutor es requerido'),
-    president: Yup.object().shape({}).required('El presidente es requerido'),
-    firstMember: Yup.object()
-      .shape({})
-      .required('El primer miembro es requerido'),
-    secondMember: Yup.object()
-      .shape({})
-      .required('El segundo miembro es requerido'),
-    firstSubstitute: Yup.object().shape({}),
-    secondSubstitute: Yup.object().shape({}),
-  }),
+  role: Yup.string().required('El rol es requerido'),
+  details: Yup.string().required('El documento de asignación es requerido'),
+  assignationDate: Yup.date().required('La fecha de asignación es requerida'),
 })
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

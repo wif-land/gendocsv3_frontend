@@ -1,16 +1,10 @@
 'use client'
-import { Button, Container, IconButton, Stack, Typography } from '@mui/material'
-import { useParams } from 'next/navigation'
+import { Button, Stack, Typography } from '@mui/material'
 import React from 'react'
-import CustomBreadcrumbs from '../custom-breadcrumbs/custom-breadcrumbs'
 import Iconify from '../iconify'
 import Link from 'next/link'
-import { IVariableList } from '@/core/providers/domain/entities/IVariableProvider'
-import {
-  useVariables,
-  VariableProvider,
-} from '@/core/providers/variables-provider'
 import { VariablesAccordion } from '../variables-accordion/varibles-accordion'
+import { VariableProvider } from '../../../core/providers/variables-provider'
 
 const DocumentVisualizer = ({
   driveId,

@@ -6,6 +6,10 @@ import {
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { IDegreeCertificatesAttendee } from '../entities/IDegreeCertificateAttendee'
+import { IDegreeCertificatesRepository } from '../repositories/IDegreeCertificatesRepository'
+import { IDegreeCertificatesAttendancesRepository } from '../repositories/IDegreeCertificatesAttendanceRepository'
+import { DegreeCertificateAttendanceRepositoryImpl } from '../../data/repositories/repositoryAttendanceImpl'
 
 interface CertificateDegreeUseCases {
   getAll(
@@ -65,13 +69,19 @@ interface CertificateDegreeUseCases {
     userId: number
   }): Promise<boolean>
 
-  getReports(
-    carrerId: number,
-    isEnd: string,
-  ): Promise<{
+  getReports(filters: IDegreeCertificateFilters): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
   }>
+
+  downloadReport(filters: IDegreeCertificateFilters): Promise<{
+    fileName: string
+    file: string
+  }>
+
+  getAttendees(id: number): Promise<IDegreeCertificatesAttendee[]>
+
+  deleteAttendee(id: number): Promise<void>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -79,21 +89,33 @@ export class DegreeCertificatesUseCasesImpl
 {
   static instance: CertificateDegreeUseCases
 
-  static getInstance = (): CertificateDegreeUseCases => {
+  static getInstance = () => {
     if (!DegreeCertificatesUseCasesImpl.instance) {
       DegreeCertificatesUseCasesImpl.instance =
         new DegreeCertificatesUseCasesImpl(
           DegreeCertificateRepositoryImpl.getInstance(),
+          DegreeCertificateAttendanceRepositoryImpl.getInstance(),
         )
     }
 
     return DegreeCertificatesUseCasesImpl.instance
   }
 
-  constructor(private readonly repository: CertificateDegreeUseCases) {}
+  constructor(
+    private readonly repository: IDegreeCertificatesRepository,
+    private readonly attendanceRepository: IDegreeCertificatesAttendancesRepository,
+  ) {}
+
+  deleteAttendee(id: number) {
+    return this.attendanceRepository.deleteAttendance(id)
+  }
+
+  getAttendees(id: number) {
+    return this.attendanceRepository.getAttendance(id)
+  }
 
   setAttendance(id: number): Promise<void> {
-    return this.repository.setAttendance(id)
+    return this.attendanceRepository.setAttendance(id)
   }
 
   getById(id: number) {
@@ -153,6 +175,9 @@ export class DegreeCertificatesUseCasesImpl
     })
   }
 
-  getReports = async (carrerId: number, isEnd: string) =>
-    await this.repository.getReports(carrerId, isEnd)
+  getReports = async (filters: IDegreeCertificateFilters) =>
+    await this.repository.getReports(filters)
+
+  downloadReport = async (filters: IDegreeCertificateFilters) =>
+    await this.repository.downloadReport(filters)
 }
