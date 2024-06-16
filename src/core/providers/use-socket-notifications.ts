@@ -38,7 +38,8 @@ export const useSocketListeners = () => {
               vertical: 'top',
               horizontal: 'right',
             },
-            transitionDuration: 1500,
+            transitionDuration: 800,
+            autoHideDuration: 2500,
           },
         )
       }

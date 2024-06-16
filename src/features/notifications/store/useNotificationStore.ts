@@ -16,13 +16,27 @@ const DEFAULT_NOTIFICATIONS: IRootNotification[] = []
 
 export const useNotificationStore = create<StoreState>(
   persist(
-    (set) => ({
+    (set, get) => ({
       notifications: DEFAULT_NOTIFICATIONS,
       setNotifications: (notifications) => set({ notifications }),
       addNotification: (notification, user) => {
         if (filterByScope(notification, user)) {
+          const inListNotification = get().notifications.find(
+            (n) => n.notification.id === notification.notification.id,
+          )
+          if (inListNotification) {
+            set((state) => ({
+              notifications: state.notifications.map((n) =>
+                n.notification.id === notification.notification.id
+                  ? notification
+                  : n,
+              ),
+            }))
+            return
+          }
+
           set((state) => ({
-            notifications: [...state.notifications, notification],
+            notifications: [notification, ...state.notifications],
           }))
         }
       },

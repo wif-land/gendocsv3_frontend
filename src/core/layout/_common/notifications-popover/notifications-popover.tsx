@@ -26,6 +26,7 @@ import {
   NotificationStatus,
   notificationStatusColor,
 } from '@/features/notifications/utils/notification-status'
+import { IRootNotification } from '@/features/notifications/data/entities/IRootNotification'
 
 //iterar en los elementos de un enum
 const TABS = Object.values(NotificationStatus).map((value) => ({
@@ -78,9 +79,9 @@ export default function NotificationsPopover() {
     (item) => item.notification.status === NotificationStatus.FAILURE,
   ).length
 
-  TABS[0].count = totalCompleted
-  TABS[1].count = totalWithErrors
-  TABS[2].count = totalProcessing
+  TABS[0].count = totalProcessing
+  TABS[1].count = totalCompleted
+  TABS[2].count = totalWithErrors
   TABS[3].count = totalFailed
 
   const renderHead = (
@@ -150,7 +151,7 @@ export default function NotificationsPopover() {
           .map((notification) => (
             <NotificationItem
               key={notification.notification.id}
-              notification={notification.notification}
+              rootNotification={notification}
             />
           ))}
       </List>
@@ -202,12 +203,6 @@ export default function NotificationsPopover() {
         <Divider />
 
         {renderList(currentTab)}
-
-        <Box sx={{ p: 1 }}>
-          <Button fullWidth size="large">
-            View All
-          </Button>
-        </Box>
       </Drawer>
     </>
   )
