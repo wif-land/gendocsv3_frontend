@@ -1,4 +1,5 @@
 import { format, getTime, formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale/es'
 
 // ----------------------------------------------------------------------
 
@@ -23,5 +24,6 @@ export const fToNow = (date: InputValue) =>
   date
     ? formatDistanceToNow(new Date(date), {
         addSuffix: true,
+        locale: es,
       })
     : ''

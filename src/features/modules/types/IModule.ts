@@ -6,4 +6,5 @@ export interface IModule {
   separatorTemplateDriveId?: string
   defaultTemplateDriveId?: string
   submodules: { id: number; name: string }[]
+  reportTemplateDriveId?: string
 }

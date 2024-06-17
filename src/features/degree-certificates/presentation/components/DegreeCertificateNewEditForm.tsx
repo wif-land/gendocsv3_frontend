@@ -45,6 +45,7 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import { StudentNewEditForm } from '../../../../features/students/presentation/components/StudentNewEditForm'
 import DocsByStudentListView from '../../../../features/documents/presentation/view/DocsByStudentListView'
+import { useDegreeCertificatesStore } from '../../../../features/degcer-templates/presentation/store/degCerTemplatesStore'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -59,6 +60,7 @@ export const DegreeCertificateNewEditForm = ({
   const isDocumentModalOpen = useBoolean(false)
   const popover = usePopover()
 
+  const { degCerTemplates } = useDegreeCertificatesStore()
   const {
     methods,
     onSubmit,
@@ -167,6 +169,7 @@ export const DegreeCertificateNewEditForm = ({
                 }}
                 loading={loading}
                 noOptionsText="No hay resultados"
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={students?.map((student) => ({
                   label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
                   id: student.id,
@@ -232,13 +235,13 @@ export const DegreeCertificateNewEditForm = ({
           >
             <TextField
               label="Créditos aprobados"
-              value={getValues('student').approvedCredits || ''}
+              value={getValues('student')?.approvedCredits || ''}
               disabled
               sx={{ flexGrow: 1 }}
             />
             <TextField
               label="Horas de práctica"
-              value={getValues('student').internshipHours || ''}
+              value={getValues('student')?.internshipHours || ''}
               disabled
               sx={{ flexGrow: 1 }}
             />
@@ -249,13 +252,13 @@ export const DegreeCertificateNewEditForm = ({
           >
             <TextField
               label="Horas de vinculación/Servicio comunitario"
-              value={getValues('student').vinculationHours || ''}
+              value={getValues('student')?.vinculationHours || ''}
               disabled
               sx={{ flexGrow: 1 }}
             />
             <TextField
               label="Titulo de bachiller"
-              value={getValues('student').bachelorDegree || ''}
+              value={getValues('student')?.bachelorDegree || ''}
               disabled
               sx={{ flexGrow: 1 }}
             />
@@ -358,20 +361,22 @@ export const DegreeCertificateNewEditForm = ({
                   </MenuItem>
                 ))}
               </RHFSelect>
-              {Number(methods.watch('degreeModalityId')) === 1 && (
-                <RHFTextField name="link" label="Link" sx={{ flexGrow: 1 }} />
-              )}
+              {methods.watch('degreeModalityId') &&
+                Number(methods.watch('degreeModalityId')) === 1 && (
+                  <RHFTextField name="link" label="Link" sx={{ flexGrow: 1 }} />
+                )}
             </Stack>
 
-            {Number(methods.watch('degreeModalityId')) === 2 && (
-              <RHFSelect id="roomId" label="Aula" name="roomId">
-                {rooms.map((room) => (
-                  <MenuItem key={room.id} value={room.id}>
-                    {room.name}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            )}
+            {methods.watch('degreeModalityId') &&
+              Number(methods.watch('degreeModalityId')) === 2 && (
+                <RHFSelect id="roomId" label="Aula" name="roomId">
+                  {rooms.map((room) => (
+                    <MenuItem key={room.id} value={room.id}>
+                      {room.name}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+              )}
 
             <RHFTextField
               name="duration"
@@ -406,20 +411,26 @@ export const DegreeCertificateNewEditForm = ({
               )}
             />
 
-            <RHFSelect
-              id="certificateStatusId"
-              label="Estado de acta"
-              name="certificateStatusId"
-            >
-              {certificateStatuses.map((certificateStatus) => (
-                <MenuItem
-                  key={certificateStatus.id}
-                  value={certificateStatus.id}
-                >
-                  {certificateStatus.maleName}
-                </MenuItem>
-              ))}
-            </RHFSelect>
+            {methods.watch('certificateTypeId') && (
+              <RHFSelect
+                id="certificateStatusId"
+                label="Estado de acta"
+                name="certificateStatusId"
+              >
+                {degCerTemplates
+                  .find(
+                    (type) => type.id === methods.watch('certificateTypeId'),
+                  )
+                  ?.certificateTypeStatuses.map((certificateStatus) => (
+                    <MenuItem
+                      key={certificateStatus.certificateStatus.id}
+                      value={certificateStatus.certificateStatus.id}
+                    >
+                      {certificateStatus.certificateStatus.maleName}
+                    </MenuItem>
+                  ))}
+              </RHFSelect>
+            )}
           </Stack>
         </Card>
       </Grid>

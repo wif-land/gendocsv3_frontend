@@ -27,6 +27,7 @@ type Props = {
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
   onGenerateDocument: VoidFunction
+  onShowSheetsGrade: VoidFunction
   onRegenerateDocument: VoidFunction
   onOpenAttendance: VoidFunction
   activeState?: boolean | null
@@ -44,6 +45,7 @@ export const DegreeCertificateTableRow = ({
   activeState,
   onGenerateDocument,
   onOpenAttendance,
+  onShowSheetsGrade,
   onRegenerateDocument,
   isReport = false,
 }: Props) => {
@@ -69,6 +71,20 @@ export const DegreeCertificateTableRow = ({
             <Checkbox checked={selected} onClick={onSelectRow} />
           </TableCell>
         )}
+
+        <TableCell>
+          <ListItemText
+            primary={row.auxNumber ?? ''}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={row.number ?? '--'}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
 
         <TableCell>
           <ListItemText
@@ -161,6 +177,15 @@ export const DegreeCertificateTableRow = ({
         >
           <Iconify icon="formkit:people" />
           Asistencia
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onShowSheetsGrade()
+          }}
+        >
+          <Iconify icon="solar:document-bold-duotone" />
+          Notas
         </MenuItem>
 
         <MenuItem

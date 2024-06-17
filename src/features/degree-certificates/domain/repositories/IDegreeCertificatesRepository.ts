@@ -57,9 +57,11 @@ export interface IDegreeCertificatesRepository {
   bulkLoad({
     data,
     userId,
+    retryId,
   }: {
     data: DegreeCertificateForBulk[]
     userId: number
+    retryId?: number
   }): Promise<boolean>
 
   downloadReport(filters: IDegreeCertificateFilters): Promise<{
