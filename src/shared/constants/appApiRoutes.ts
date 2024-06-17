@@ -128,8 +128,7 @@ export const API_ROUTES = {
     UPDATE_ATTENDANCE: (id: number) => `/degree-certificate-attendance/${id}`,
     BULK_LOAD: (userId: number) => `/degree-certificates/bulk/load/${userId}`,
     CREATE_ATTENDANCE: `/degree-certificate-attendance`,
-    REPORTS: (careerId: number, isEnd: string) =>
-      `/degree-certificates/reports/${careerId}?is-end=${isEnd}`,
+    REPORTS: `/degree-certificates/reports`,
     DOWNLOAD: `/degree-certificates/reports/generate`,
     GET_ATTENDANCE: (degreeCertificateId: number) =>
       `/degree-certificate-attendance/${degreeCertificateId}`,

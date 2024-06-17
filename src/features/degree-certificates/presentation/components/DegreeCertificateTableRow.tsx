@@ -72,6 +72,20 @@ export const DegreeCertificateTableRow = ({
 
         <TableCell>
           <ListItemText
+            primary={row.auxNumber ?? ''}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
+            primary={row.number ?? '--'}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          />
+        </TableCell>
+
+        <TableCell>
+          <ListItemText
             primary={row.topic}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
