@@ -64,9 +64,11 @@ interface CertificateDegreeUseCases {
   bulkLoad({
     data,
     userId,
+    retryId,
   }: {
     data: DegreeCertificateForBulk[]
     userId: number
+    retryId?: number
   }): Promise<boolean>
 
   getReports(filters: IDegreeCertificateFilters): Promise<{
@@ -165,13 +167,16 @@ export class DegreeCertificatesUseCasesImpl
   async bulkLoad({
     data,
     userId,
+    retryId,
   }: {
     data: DegreeCertificateForBulk[]
     userId: number
+    retryId?: number
   }): Promise<boolean> {
     return await this.repository.bulkLoad({
       data,
       userId,
+      retryId,
     })
   }
 

@@ -77,13 +77,16 @@ export class DegreeCertificateRepositoryImpl
   async bulkLoad({
     data,
     userId,
+    retryId,
   }: {
     data: DegreeCertificateForBulk[]
     userId: number
+    retryId?: number
   }): Promise<boolean> {
     return await this.datasource.bulkLoad({
       data,
       userId,
+      retryId,
     })
   }
 

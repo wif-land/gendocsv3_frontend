@@ -29,6 +29,7 @@ interface StoreState {
   bulkLoad: (
     data: DegreeCertificateForBulk[],
     userId: number,
+    retryId?: number,
   ) => Promise<boolean>
 }
 
@@ -106,11 +107,12 @@ export const useDegreeCertificatesStore = create<StoreState>(
           },
         )
       },
-      bulkLoad: async (data, userId) => {
+      bulkLoad: async (data, userId, retryId) => {
         const result =
           await DegreeCertificatesUseCasesImpl.getInstance().bulkLoad({
             data,
             userId,
+            retryId,
           })
         return result
       },
