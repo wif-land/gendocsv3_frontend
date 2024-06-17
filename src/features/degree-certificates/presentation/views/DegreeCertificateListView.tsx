@@ -128,6 +128,15 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     [handleGenerateDocument, router, pathname],
   )
 
+  const onShowGradesSheet = useCallback(
+    (row: DegreeCertificateModel) => {
+      router.push(
+        `${pathname}/${row.id}/view/${row.gradesSheetDriveId}**spreadsheet**`,
+      )
+    },
+    [router, pathname],
+  )
+
   const onShowReportTemplate = useCallback(() => {
     router.push(
       `${pathname}/view/${module.reportTemplateDriveId}**spreadsheet**`,
@@ -350,6 +359,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onOpenAttendance={() =>
                               openDegreeCertificateDetail(row.id!)
                             }
+                            onShowSheetsGrade={() => onShowGradesSheet(row)}
                             isReport={filters.isReport as boolean}
                           />
                         ))}
