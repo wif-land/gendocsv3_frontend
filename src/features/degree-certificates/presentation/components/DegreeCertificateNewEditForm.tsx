@@ -380,7 +380,7 @@ export const DegreeCertificateNewEditForm = ({
 
             <RHFTextField
               name="duration"
-              label="Duración"
+              label="Duración (min)"
               type="number"
               sx={{ flexGrow: 1 }}
             />

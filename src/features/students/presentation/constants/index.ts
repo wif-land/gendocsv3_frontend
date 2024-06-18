@@ -24,7 +24,7 @@ export const TABLE_HEAD = [
   },
   {
     id: 'career',
-    label: 'Carrrera',
+    label: 'Carrera',
   },
   {
     id: 'isActive',

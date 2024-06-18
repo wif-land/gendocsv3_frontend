@@ -70,11 +70,11 @@ export const useDegreeCertificateForm = (
       }
       let result
       if (!currentDegreeCertificate) {
-        result = createDegreeCertificate(
+        result = await createDegreeCertificate(
           formattedData as ICreateDegreeCertificate,
         )
       } else {
-        result = updateDegreeCertificate({
+        result = await updateDegreeCertificate({
           ...formattedData,
           auxNumber: undefined,
           number: undefined,
@@ -82,17 +82,19 @@ export const useDegreeCertificateForm = (
         })
       }
 
+      console.log('result', result)
+
       if (!!result && !currentDegreeCertificate) {
         router.push(pathname.replace('/new', ''))
+        reset()
       }
 
       if (!!result && currentDegreeCertificate) {
         router.push(
           pathname.replace(`/${currentDegreeCertificate.id}/edit`, ''),
         )
+        reset()
       }
-
-      reset()
     },
     [currentDegreeCertificate, enqueueSnackbar, reset, router],
   )

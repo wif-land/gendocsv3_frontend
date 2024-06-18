@@ -1,6 +1,6 @@
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
@@ -40,56 +40,6 @@ export const useDegreeCertificateView = ({
     getReports,
     downloadReport,
   } = useDegreeCertificateMethods()
-  useEffect(() => {
-    let isMounted = true
-
-    const loadData = async () => {
-      try {
-        const data = await fetchData(
-          table.rowsPerPage,
-          table.page,
-          filters.careerId || 1,
-        )
-        if (isMounted && data?.degreeCertificates) {
-          setDegreeCertificates(data.degreeCertificates)
-          setTableData(data.degreeCertificates)
-          setCount(data.count)
-          setFirstCharge(false)
-          setPrevCareer(filters.careerId || 1)
-        }
-      } catch (error) {}
-    }
-
-    const loadReportData = async () => {
-      try {
-        const data = await getReports(
-          filters.isEnd || false,
-          filters as IDegreeCertificateFilters,
-        )
-        if (isMounted && data?.degreeCertificates) {
-          setDegreeCertificates(data.degreeCertificates)
-          setTableData(data.degreeCertificates)
-          setCount(data.count)
-          setFirstCharge(false)
-          setPrevCareer(filters.careerId || 1)
-        }
-      } catch (error) {}
-    }
-
-    if (
-      isMounted &&
-      (filters.careerId !== prevCareer || firstCharge) &&
-      filters.isReport === false
-    ) {
-      loadData()
-    } else if (filters.isReport === true) {
-      loadReportData()
-    }
-
-    return () => {
-      isMounted = false
-    }
-  }, [filters.careerId, filters.isReport, table.page, table.rowsPerPage])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -209,8 +159,9 @@ export const useDegreeCertificateView = ({
     })
   }
 
-  const handleGenerateNumeration = () => {
-    generateNumeration(filters.careerId || 1)
+  const handleGenerateNumeration = async () => {
+    await generateNumeration(filters.careerId || 1)
+    await loadData()
   }
 
   const handleSearch = (filters: IDegreeCertificateFilters) => {
@@ -256,6 +207,57 @@ export const useDegreeCertificateView = ({
       document.body.removeChild(link)
     })
   }
+
+  const loadData = useCallback(async () => {
+    try {
+      const data = await fetchData(
+        table.rowsPerPage,
+        table.page,
+        filters.careerId || 1,
+      )
+      if (data?.degreeCertificates) {
+        setDegreeCertificates(data.degreeCertificates)
+        setTableData(data.degreeCertificates)
+        setCount(data.count)
+        setFirstCharge(false)
+        setPrevCareer(filters.careerId || 1)
+      }
+    } catch (error) {}
+  }, [table.rowsPerPage, table.page, filters.careerId])
+
+  const loadReportData = useCallback(async () => {
+    try {
+      const data = await getReports(
+        filters.isEnd || false,
+        filters as IDegreeCertificateFilters,
+      )
+      if (data?.degreeCertificates) {
+        setDegreeCertificates(data.degreeCertificates)
+        setTableData(data.degreeCertificates)
+        setCount(data.count)
+        setFirstCharge(false)
+        setPrevCareer(filters.careerId || 1)
+      }
+    } catch (error) {}
+  }, [filters])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (
+      isMounted &&
+      (filters.careerId !== prevCareer || firstCharge) &&
+      filters.isReport === false
+    ) {
+      loadData()
+    } else if (filters.isReport === true) {
+      loadReportData()
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [filters.careerId, filters.isReport, table.page, table.rowsPerPage])
 
   return {
     count,
