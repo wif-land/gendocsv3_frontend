@@ -44,6 +44,9 @@ import CustomPopover, {
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { DegCerBulkUploadDialog } from '../components/DegreeCertificateBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
+import useModulesStore from '../../../../shared/store/modulesStore'
+import { useParams } from 'next/navigation'
+import { resolveModuleByCode } from '../../../../shared/utils/ModuleUtil'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const table = useTable()
@@ -56,6 +59,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const [filters, setFilters] =
     useState<IDegreeCertificateTableFilters>(defaultFilters)
+  const { modules } = useModulesStore()
+  const { codeModule } = useParams()
+
+  const module = resolveModuleByCode(modules, codeModule as string)
 
   const {
     loader,
@@ -121,6 +128,21 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     [handleGenerateDocument, router, pathname],
   )
 
+  const onShowGradesSheet = useCallback(
+    (row: DegreeCertificateModel) => {
+      router.push(
+        `${pathname}/${row.id}/view/${row.gradesSheetDriveId}**spreadsheet**`,
+      )
+    },
+    [router, pathname],
+  )
+
+  const onShowReportTemplate = useCallback(() => {
+    router.push(
+      `${pathname}/view/${module.reportTemplateDriveId}**spreadsheet**`,
+    )
+  }, [router, pathname])
+
   const handleResetFilters = () => {
     setFilters(defaultFilters)
     setVisitedPages([])
@@ -149,7 +171,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       value: 'template',
       label: 'Plantilla',
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      action: () => {},
+      action: () => {
+        onShowReportTemplate()
+      },
     },
   ]
 
@@ -335,6 +359,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onOpenAttendance={() =>
                               openDegreeCertificateDetail(row.id!)
                             }
+                            onShowSheetsGrade={() => onShowGradesSheet(row)}
                             isReport={filters.isReport as boolean}
                           />
                         ))}

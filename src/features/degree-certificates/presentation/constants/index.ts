@@ -38,6 +38,8 @@ export interface AttendanceFormValuesProps
 
 export const getTableHead = (isReport: boolean) => {
   const baseHeaders = [
+    { id: 'auxNumber', label: '#Reg' },
+    { id: 'number', label: 'Número' },
     { id: 'topic', label: 'Tema' },
     { id: 'student', label: 'Estudiante' },
     { id: 'presentationDate', label: 'Fecha de presentación' },
@@ -81,7 +83,7 @@ export const resolveDefaultValuesDegreeCertificate = (
   degreeModalityId:
     (currentDegreeCertificate?.degreeModality as IDegreeModality)?.id ||
     (undefined as any),
-  roomId: (currentDegreeCertificate?.room as IRoom)?.id || undefined,
+  roomId: (currentDegreeCertificate?.room as IRoom)?.id || (undefined as any),
   duration: currentDegreeCertificate?.duration || (null as any),
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',

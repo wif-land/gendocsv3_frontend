@@ -59,9 +59,11 @@ export interface IDegreeCertificateDatasource {
   bulkLoad({
     data,
     userId,
+    retryId,
   }: {
     data: DegreeCertificateForBulk[]
     userId: number
+    retryId?: number
   }): Promise<boolean>
 
   getReports(filters: IDegreeCertificateFilters): Promise<{
@@ -229,13 +231,18 @@ export class DegreeCertificateDatasourceImpl
   async bulkLoad({
     data,
     userId,
+    retryId,
   }: {
     data: DegreeCertificateForBulk[]
     userId: number
+    retryId?: number
   }): Promise<boolean> {
     const result = await AxiosClient.patch(
       API_ROUTES.DEGREE_CERTIFICATES.BULK_LOAD(userId),
       data,
+      {
+        ['retry-id']: retryId,
+      },
     )
 
     if ('error' in result) {
@@ -249,10 +256,8 @@ export class DegreeCertificateDatasourceImpl
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isEnd, isReport, ...rest } = filters
 
-    console.log(filters)
-
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.REPORTS(filters.careerId || 1, 'pdf'),
+      API_ROUTES.DEGREE_CERTIFICATES.REPORTS,
       {
         params: rest,
       },

@@ -77,9 +77,26 @@ export const StudentBulkUploadDialog = ({
       const workbook = XLSX.read(bstr, { type: 'binary' })
       const worksheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[worksheetName]
-      const data = XLSX.utils.sheet_to_json(worksheet)
-      console.log(data)
-      const transformedData = transformData(data, careers, cities)
+
+      // filter out the header row
+
+      const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+      data.forEach((element) => {
+        if (
+          !(element as []).find((item: any) => item === 'Cédula') ||
+          (element as []).length === 0
+        ) {
+          data.shift()
+        }
+      })
+      const dee = data.filter((element) => (element as []).length > 0)
+
+      const sheet = XLSX.utils.json_to_sheet(dee, { skipHeader: true })
+
+      const jsonData = XLSX.utils.sheet_to_json(sheet)
+
+      // const jsonData = XLSX.utils.sheet_to_json(worksheet)
+      const transformedData = transformData(jsonData, careers, cities)
       console.log(transformedData)
       setStudents(transformedData)
     } catch (error) {

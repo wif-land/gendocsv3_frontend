@@ -21,6 +21,7 @@ const DEFAULT_USER: IUser = {
   secondLastName: '',
   secondName: '',
   sub: 0,
+  accessModules: [],
 }
 
 const STORE_NAME = 'user'

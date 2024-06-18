@@ -4,7 +4,10 @@ import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel
 import { IStudent } from '../../../../features/students/domain/entities/IStudent'
 import { IDegreeModality } from '../../../../core/providers/domain/entities/ICertificateProvider'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
-import { ICreateDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
+import {
+  ICreateDegreeCertificate,
+  IUpdateDegreeCertificate,
+} from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
 
 interface StoreState {
@@ -16,7 +19,7 @@ interface StoreState {
     degreeCertificate: ICreateDegreeCertificate,
   ) => Promise<boolean>
   updateDegreeCertificate: (
-    degreeCertificate: Partial<DegreeCertificateModel>,
+    degreeCertificate: IUpdateDegreeCertificate,
   ) => Promise<boolean>
   checkPresentationDate: (
     presentationDate?: Date,
@@ -26,6 +29,7 @@ interface StoreState {
   bulkLoad: (
     data: DegreeCertificateForBulk[],
     userId: number,
+    retryId?: number,
   ) => Promise<boolean>
 }
 
@@ -103,11 +107,12 @@ export const useDegreeCertificatesStore = create<StoreState>(
           },
         )
       },
-      bulkLoad: async (data, userId) => {
+      bulkLoad: async (data, userId, retryId) => {
         const result =
           await DegreeCertificatesUseCasesImpl.getInstance().bulkLoad({
             data,
             userId,
+            retryId,
           })
         return result
       },

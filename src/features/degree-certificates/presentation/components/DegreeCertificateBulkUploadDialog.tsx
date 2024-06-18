@@ -14,6 +14,17 @@ import Iconify from '../../../../core/iconify'
 import { transformData } from '../constants'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
+import { useNotificationStore } from '../../../../features/notifications/store/useNotificationStore'
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+} from '@mui/material'
+import { useBoolean } from '../../../../shared/hooks/use-boolean'
 
 interface Props extends DialogProps {
   title?: string
@@ -51,11 +62,15 @@ export const DegCerBulkUploadDialog = ({
   ...other
 }: Props) => {
   const [files, setFiles] = useState<(File | string)[]>([])
+  const isRetry = useBoolean()
+  const [retryId, setRetryId] = useState<number | undefined>()
   const [degreeCertificates, setDegreeCertificates] = useState<
     DegreeCertificateForBulk[]
   >([])
   const { bulkLoad } = useDegreeCertificatesStore()
   const { user } = useAccountStore()
+  // check box para habilitar un select de notificaciones
+  const { notifications } = useNotificationStore()
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -125,10 +140,18 @@ export const DegCerBulkUploadDialog = ({
       return
     }
 
-    bulkLoad(degreeCertificates, user?.id as number)
+    if (!isRetry.value) {
+      bulkLoad(degreeCertificates, user?.id as number)
+      return
+    }
+
+    if (retryId) {
+      bulkLoad(degreeCertificates, user?.id as number, retryId)
+    }
   }, [degreeCertificates])
 
   useEffect(() => {
+    isRetry.onFalse()
     if (!open) {
       setFiles([])
     }
@@ -150,24 +173,89 @@ export const DegCerBulkUploadDialog = ({
         />
       </DialogContent>
 
-      <DialogActions>
-        <Button
-          variant="contained"
-          startIcon={<Iconify icon="eva:cloud-upload-fill" />}
-          onClick={handleUpload}
+      <DialogActions
+        sx={{
+          p: (theme) => theme.spacing(3, 3, 2, 3),
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: 2,
+          placeItems: 'center',
+        }}
+      >
+        <Stack
+          spacing={2}
+          direction="row"
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flex: 1,
+          }}
         >
-          Subir
-        </Button>
+          {notifications.length > 0 && (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  onChange={() => {
+                    isRetry.onToggle()
+                  }}
+                />
+              }
+              label="Es reintento?"
+            />
+          )}
 
-        {!!files.length && (
+          {isRetry.value && (
+            <FormControl fullWidth>
+              <InputLabel id="notifications">Cargas con error</InputLabel>
+              <Select
+                labelId="notifications"
+                id="notificatoinsSelect"
+                value={retryId}
+                label="Cargas con error"
+                onChange={
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (event: any) => {
+                    setRetryId(event.target.value)
+                  }
+                }
+              >
+                {notifications.map((notification) => (
+                  <MenuItem
+                    value={notification.notification.id}
+                    key={notification.notification.id}
+                  >
+                    {notification.notification.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </Stack>
+        <Stack
+          sx={{
+            display: 'flex',
+            gap: 2,
+            flexDirection: !isRetry.value ? 'row' : 'column',
+          }}
+        >
           <Button
-            variant="outlined"
-            color="inherit"
-            onClick={handleRemoveAllFiles}
+            variant="contained"
+            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+            onClick={handleUpload}
           >
-            Eliminar
+            Subir
           </Button>
-        )}
+
+          {!!files.length && (
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={handleRemoveAllFiles}
+            >
+              Eliminar
+            </Button>
+          )}
+        </Stack>
       </DialogActions>
     </Dialog>
   )

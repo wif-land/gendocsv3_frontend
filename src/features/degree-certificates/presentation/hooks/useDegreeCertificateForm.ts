@@ -19,7 +19,6 @@ import {
   IDegreeCertificate,
 } from '../../domain/entities/IDegreeCertificates'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
-import { StudentModel } from '../../../students/data/models/StudentModel'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -76,8 +75,10 @@ export const useDegreeCertificateForm = (
         )
       } else {
         result = updateDegreeCertificate({
-          ...data,
-          id: currentDegreeCertificate.id,
+          ...formattedData,
+          auxNumber: undefined,
+          number: undefined,
+          id: currentDegreeCertificate.id!,
         })
       }
 
@@ -116,13 +117,16 @@ export const useDegreeCertificateForm = (
     const studentId = methods.watch('selectedValue')?.id
     if (!studentId || studentId === 0) return
 
-    // WTF IS GOING ON HERE?
-    methods.setValue(
-      'student',
-      students.find(
-        (student) => student.id === studentId,
-      ) as unknown as StudentModel,
-    )
+    console.log('studentId', studentId)
+
+    // return
+    // // WTF IS GOING ON HERE?
+    // methods.setValue(
+    //   'student',
+    //   students.find(
+    //     (student) => student.id === studentId,
+    //   ) as unknown as StudentModel,
+    // )
 
     getStudentById(studentId).then((student) => {
       methods.setValue('student', student)
@@ -142,9 +146,9 @@ export const useDegreeCertificateForm = (
       }
     })
 
-    return () => {
-      reset()
-    }
+    // return () => {
+    //   reset()
+    // }
   }, [methods.watch('selectedValue')])
 
   const refreshStudent = async (studentId: number) => {
