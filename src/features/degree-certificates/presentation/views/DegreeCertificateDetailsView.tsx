@@ -2,7 +2,7 @@
 
 import { memo, useEffect } from 'react'
 import Container from '@mui/material/Container'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { Divider } from '@mui/material'
@@ -15,6 +15,7 @@ const DegreeCertificateDetailsView = () => {
   const settings = useSettingsContext()
   const { degreeCertificate, getDegreeCertificate } =
     useDegreeCertificateStore()
+  const pathname = usePathname()
 
   useEffect(() => {
     getDegreeCertificate(Number(id))
@@ -26,7 +27,7 @@ const DegreeCertificateDetailsView = () => {
         heading={'Acta de grado'}
         links={[
           { name: 'Dashboard', href: '/' },
-          { name: 'Acta de grado', href: '/' },
+          { name: 'Acta de grado', href: pathname.replace(`/${id}`, '') },
           { name: 'Detalle' },
         ]}
         sx={{
