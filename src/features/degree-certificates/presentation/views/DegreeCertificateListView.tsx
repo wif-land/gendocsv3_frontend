@@ -52,7 +52,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const settings = useSettingsContext()
   const confirm = useBoolean()
   const popover = usePopover()
-  const addStudentPopover = usePopover()
+  const addDegreeCertificatePopover = usePopover()
   const upload = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
@@ -76,6 +76,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     handleGenerateNumeration,
     handleSearch,
     handleDownload,
+    searchParams,
     filters,
     setFilters,
   } = useDegreeCertificateView({
@@ -89,7 +90,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     {
       value: 'single',
       label: 'Individual',
-      action: () => router.push(`${pathname}/new`),
+      action: () => router.push(`${pathname}/new?${searchParams.toString()}`),
     },
     {
       value: 'multiple',
@@ -105,13 +106,18 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
         ...prevState,
         [name]: value,
       }))
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, `${value}`)
+
+      router.push(`${pathname}?${params.toString()}`)
     },
     [table],
   )
 
   const handleEditRow = useCallback(
     (id: string) => {
-      router.push(`${pathname}/${id}/edit`)
+      console.log(searchParams.toString())
+      router.replace(`${pathname}/${id}/edit?${searchParams.toString()}`)
     },
     [router],
   )
@@ -147,6 +153,14 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     setVisitedPages([])
     setIsDataFiltered(false)
     setTableData([])
+
+    if (!searchParams.has('careerId')) {
+      const params = new URLSearchParams('careerId=1')
+      router.push(`${pathname}?${params.toString()}`)
+    }
+
+    handleFilters('careerId', searchParams.get('careerId')?.toString() || '1')
+    router.push(`${pathname}?careerId=${searchParams.get('careerId')}`)
   }
 
   const reportOptions = [
@@ -169,7 +183,6 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     {
       value: 'template',
       label: 'Plantilla',
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       action: () => {
         onShowReportTemplate()
       },
@@ -206,7 +219,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       <Button
         variant="contained"
         startIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-        onClick={addStudentPopover.onOpen}
+        onClick={addDegreeCertificatePopover.onOpen}
       >
         Actas de grado
       </Button>
@@ -247,7 +260,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     (!loader.length && tableData.length === 0 && isDataFiltered)
 
   const openDegreeCertificateDetail = (id: number) => {
-    router.push(`${pathname}/${id}`)
+    router.push(`${pathname}/${id}?${searchParams.toString()}`)
   }
 
   return (
@@ -263,7 +276,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           }
           links={[
             { name: 'Dashboard', href: '/dashboard' },
-            { name: 'Actas de grado' },
+            {
+              name: 'Actas de grado',
+            },
           ]}
           action={filters.isReport === false ? degreeActions : reportActions}
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -416,8 +431,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       <DegCerBulkUploadDialog open={upload.value} onClose={upload.onFalse} />
 
       <CustomPopover
-        open={addStudentPopover.open}
-        onClose={addStudentPopover.onClose}
+        open={addDegreeCertificatePopover.open}
+        onClose={addDegreeCertificatePopover.onClose}
         arrow="top-right"
         sx={{ width: 140 }}
       >
@@ -425,7 +440,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           <MenuItem
             key={option.value}
             onClick={() => {
-              addStudentPopover.onClose()
+              addDegreeCertificatePopover.onClose()
               option.action()
             }}
           >

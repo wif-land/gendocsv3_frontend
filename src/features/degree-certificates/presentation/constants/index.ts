@@ -135,7 +135,7 @@ export const defaultFilters: IDegreeCertificateTableFilters = {
   careerId: 1,
   isEnd: false,
   isReport: false,
-  startDate: new Date(),
+  startDate: new Date(`${new Date().getFullYear()}-01-01`),
   endDate: new Date(),
   dateType: DateType.CREATION as any,
 }

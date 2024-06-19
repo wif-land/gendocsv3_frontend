@@ -5,9 +5,15 @@ import { TableProps } from '../../../../shared/sdk/table'
 import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
-import { usePathname, useRouter } from 'next/navigation'
-import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
-import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {
+  IDegreeCertificateTableFilters,
+  IDegreeCertificateTableFilterValue,
+} from '../components/DegreeCertificateTableToolbar'
+import {
+  DATE_TYPES,
+  IDegreeCertificateFilters,
+} from '../../domain/entities/IDegreeCertificateFilters'
 import { defaultFilters } from '../constants'
 
 interface Props {
@@ -24,6 +30,7 @@ export const useDegreeCertificateView = ({
 }: Props) => {
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const [filters, setFilters] =
     useState<IDegreeCertificateTableFilters>(defaultFilters)
@@ -44,7 +51,92 @@ export const useDegreeCertificateView = ({
   } = useDegreeCertificateMethods()
 
   useEffect(() => {
+    if (searchParams.has('careerId')) {
+      setFilters({
+        ...filters,
+        careerId: parseInt(searchParams.get('careerId') as string),
+      })
+    }
+
+    if (searchParams.has('isEnd')) {
+      setFilters({
+        ...filters,
+        isEnd: searchParams.get('isEnd') === 'true',
+      })
+    }
+
+    if (searchParams.has('isReport')) {
+      setFilters({
+        ...filters,
+        isReport: searchParams.get('isReport') === 'true',
+      })
+    }
+
+    if (searchParams.has('startDate')) {
+      setFilters({
+        ...filters,
+        startDate: new Date(searchParams.get('startDate') as string),
+      })
+    }
+
+    if (searchParams.has('endDate')) {
+      setFilters({
+        ...filters,
+        endDate: new Date(searchParams.get('endDate') as string),
+      })
+    }
+
+    if (searchParams.has('dateType')) {
+      setFilters({
+        ...filters,
+        dateType: searchParams.get(
+          'dateType',
+        ) as IDegreeCertificateTableFilterValue as typeof DATE_TYPES,
+      })
+    }
+
+    if (searchParams.has('field')) {
+      setFilters({
+        ...filters,
+        field: searchParams.get('field') as string,
+      })
+    }
+  }, [])
+
+  useEffect(() => {
     let isMounted = true
+    const params = new URLSearchParams(searchParams)
+
+    if (filters.careerId) {
+      params.set('careerId', filters.careerId.toString())
+    }
+
+    if (filters.isEnd) {
+      params.set('isEnd', filters.isEnd.toString())
+    }
+
+    if (filters.isReport) {
+      params.set('isReport', filters.isReport.toString())
+    }
+
+    if (filters.startDate) {
+      params.set('startDate', filters.startDate.toISOString())
+    }
+
+    if (filters.endDate) {
+      params.set('endDate', filters.endDate.toISOString())
+    }
+
+    if (filters.dateType) {
+      params.set('dateType', filters.dateType.toString())
+    }
+
+    if (filters.field) {
+      params.set('field', filters.field)
+    }
+
+    router.push(`${pathname}?${params.toString()}`)
+    console.log(searchParams.toString())
 
     const loadData = async () => {
       try {
@@ -326,6 +418,7 @@ export const useDegreeCertificateView = ({
     handleGenerateDocument,
     handleGenerateNumeration,
     handleSearch,
+    searchParams,
     handleDownload,
     filters,
     setFilters,
