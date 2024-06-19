@@ -35,7 +35,6 @@ import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
 import {
   DegreeCertificatesTableToolbar,
   IDegreeCertificateTableFilterValue,
-  IDegreeCertificateTableFilters,
 } from '../components/DegreeCertificateTableToolbar'
 import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
 import CustomPopover, {
@@ -57,8 +56,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const upload = useBoolean()
   const [visitedPages, setVisitedPages] = useState<number[]>([0])
   const [isDataFiltered, setIsDataFiltered] = useState(false)
-  const [filters, setFilters] =
-    useState<IDegreeCertificateTableFilters>(defaultFilters)
+
   const { modules } = useModulesStore()
   const { codeModule } = useParams()
 
@@ -78,12 +76,13 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     handleGenerateNumeration,
     handleSearch,
     handleDownload,
+    filters,
+    setFilters,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
     visitedPages,
     setVisitedPages,
-    filters,
   })
 
   const createActions = [

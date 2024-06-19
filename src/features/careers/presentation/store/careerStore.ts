@@ -2,14 +2,13 @@ import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { ICareer, IUpdateCareer } from '../../domain/entities/ICareer'
 import { CareersUseCasesImpl } from '../../domain/usecases/CareerServices'
-import { enqueueSnackbar } from 'notistack'
 
 interface StoreState {
   careers: ICareer[]
   setCareers: (careers?: ICareer[]) => void
   addCareer: (career: ICareer) => void
   updateCareer: (career: IUpdateCareer) => void
-  get: () => void
+  get: () => Promise<ICareer[]>
 }
 
 const STORE_NAME = 'careers-store'
@@ -40,11 +39,9 @@ export const useCareersStore = create<StoreState>(
         })),
       get: async () => {
         const result = await CareersUseCasesImpl.getInstance().getAll()
-        if (!result) {
-          enqueueSnackbar('Error al obtener las carreras', { variant: 'error' })
-          return
-        }
-        set({ careers: result })
+        set({ careers: result || [] })
+
+        return result
       },
     }),
     {

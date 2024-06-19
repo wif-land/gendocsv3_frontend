@@ -8,23 +8,25 @@ import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { usePathname, useRouter } from 'next/navigation'
 import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
+import { defaultFilters } from '../constants'
 
 interface Props {
   table: TableProps
   isDataFiltered: boolean
   visitedPages: number[]
   setVisitedPages: (value: number[]) => void
-  filters: IDegreeCertificateTableFilters
 }
 
 export const useDegreeCertificateView = ({
   table,
   visitedPages,
   setVisitedPages,
-  filters,
 }: Props) => {
   const router = useRouter()
   const pathname = usePathname()
+
+  const [filters, setFilters] =
+    useState<IDegreeCertificateTableFilters>(defaultFilters)
   const [tableData, setTableData] = useState<DegreeCertificateModel[]>([])
   const [firstCharge, setFirstCharge] = useState<boolean>(true)
   const [prevCareer, setPrevCareer] = useState<number>(1)
@@ -40,6 +42,7 @@ export const useDegreeCertificateView = ({
     getReports,
     downloadReport,
   } = useDegreeCertificateMethods()
+
   useEffect(() => {
     let isMounted = true
 
@@ -272,5 +275,7 @@ export const useDegreeCertificateView = ({
     handleGenerateNumeration,
     handleSearch,
     handleDownload,
+    filters,
+    setFilters,
   }
 }

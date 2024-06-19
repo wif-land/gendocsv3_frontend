@@ -149,8 +149,8 @@ export const DegreeCertificatesTableToolbar = ({
           sx={{ width: 1, display: 'flex', flexDirection: 'row' }}
         >
           <CareerFilter
-            filters={filters}
             onChange={handleChange}
+            filters={filters}
             sx={{ width: 700 }}
           />
           <TextField
