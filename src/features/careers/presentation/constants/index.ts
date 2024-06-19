@@ -24,7 +24,10 @@ export const defaultFilters: ICareerTableFilters = {
 
 export const NewCareerSchema = Yup.object().shape({
   name: Yup.string().required('Campo requerido'),
-  credits: Yup.number().required('Campo requerido').max(140).min(130),
+  credits: Yup.number()
+    .required('Campo requerido')
+    .max(650, 'El número máximo permitido es 650')
+    .min(130, 'El número mínimo permitido es 130'),
   coordinator: Yup.object()
     .shape({
       id: Yup.number().required('Campo requerido'),
@@ -33,8 +36,14 @@ export const NewCareerSchema = Yup.object().shape({
     .required('Campo requerido'),
   menDegree: Yup.string().required('Campo requerido'),
   womenDegree: Yup.string().required('Campo requerido'),
-  internshipHours: Yup.number().required('Campo requerido').max(250).min(230),
-  vinculationHours: Yup.number().required('Campo requerido').max(95).min(80),
+  internshipHours: Yup.number()
+    .required('Campo requerido')
+    .max(650, 'El número máximo permitido es 650')
+    .min(230, 'El número mínimo permitido es 230'),
+  vinculationHours: Yup.number()
+    .required('Campo requerido')
+    .max(650, 'El número máximo permitido es 650')
+    .min(80, 'El número mínimo permitido es 80'),
 })
 
 export const resolveDefaultValues = (

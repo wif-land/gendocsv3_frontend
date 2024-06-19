@@ -70,7 +70,7 @@ export const useDegreeCertificatesStore = create<StoreState>(
             degreeCertificate,
           )
 
-        if (result.id !== 0) {
+        if (result.id) {
           set((state) => ({
             degreeCertificates: [...state.degreeCertificates, result],
           }))
