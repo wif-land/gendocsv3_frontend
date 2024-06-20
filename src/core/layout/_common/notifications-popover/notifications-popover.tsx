@@ -3,13 +3,11 @@
 import { m } from 'framer-motion'
 import { useState, useCallback } from 'react'
 import Tab from '@mui/material/Tab'
-import Box from '@mui/material/Box'
 import Tabs from '@mui/material/Tabs'
 import List from '@mui/material/List'
 import Stack from '@mui/material/Stack'
 import Badge from '@mui/material/Badge'
 import Drawer from '@mui/material/Drawer'
-import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
@@ -21,12 +19,8 @@ import Iconify from '../../../iconify'
 import Label from '../../../../shared/sdk/label'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { varHover } from '../../../../shared/sdk/animate'
-import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
-import {
-  NotificationStatus,
-  notificationStatusColor,
-} from '@/features/notifications/utils/notification-status'
-import { IRootNotification } from '@/features/notifications/data/entities/IRootNotification'
+import { useNotificationStore } from '../../../../features/notifications/store/useNotificationStore'
+import { NotificationStatus, notificationStatusColor } from '../../../../features/notifications/utils/notification-status'
 
 //iterar en los elementos de un enum
 const TABS = Object.values(NotificationStatus).map((value) => ({
