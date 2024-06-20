@@ -19,7 +19,10 @@ export const ModulesProvider = ({
 
       const modules = await fetchModules()
 
-      if (!modules.length) return
+      if (!modules.length) {
+        setModules([])
+        return
+      }
 
       if (isMounted) {
         setModules(modules)
@@ -29,7 +32,7 @@ export const ModulesProvider = ({
     return () => {
       isMounted = false
     }
-  }, [setModules])
+  }, [])
 
   return <>{children}</>
 }

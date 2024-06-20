@@ -6,7 +6,7 @@ import { LoginUseCase } from '../../domain/usecases/loginUseCase'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { VALIDATION_MESSAGES } from '../../../../shared/utils/FormUtil'
-import { LogoutnUseCase } from '../../domain/usecases/logoutUseCase'
+import { LogoutUseCase } from '../../domain/usecases/logoutUseCase'
 
 interface FormValuesProps {
   email: string
@@ -34,7 +34,7 @@ export const useAuth = () => {
   }
 
   const handleLogout = async () => {
-    await new LogoutnUseCase().call()
+    await new LogoutUseCase().call()
     setUser(undefined)
     router.push('/login')
     enqueueSnackbar('Hasta pronto!')

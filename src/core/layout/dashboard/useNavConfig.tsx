@@ -3,8 +3,7 @@ import useModulesStore from '../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 import Iconify from '../../iconify'
 import { useRouter } from 'next/navigation'
-import { fetchModules } from '../../../features/modules/api/modules'
-import { LogoutnUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
+import {  LogoutUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
 
 interface IRoute {
   title: string
@@ -37,21 +36,17 @@ const ICONS: {
 
 export const useNavConfig = () => {
   const { user, retreiveFromCookie } = useAccountStore()
-  const { accessModules, setAccessModules, modules, setModules } = useModulesStore()
+  const { accessModules, setAccessModules, modules } = useModulesStore()
 
   useEffect(() => {
-    if (modules.length === 0) {
-      fetchModules().then((data) => {
-        setModules(data)
-      })
-
+    if(!modules.length) {
       return
     }
 
     if (user && user.id === 0) {
       retreiveFromCookie().then(async (isLogged) => {
         if (!isLogged) {
-          new LogoutnUseCase().call().then(() => {
+          new LogoutUseCase().call().then(() => {
             const router = useRouter()
             router.push('/login')
           })
