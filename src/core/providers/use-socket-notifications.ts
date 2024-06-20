@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { socketClient } from '../clients/socket-client'
-import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
-import { useAccountStore } from '@/features/auth/presentation/state/useAccountStore'
-import { IRootNotification } from '@/features/notifications/data/entities/IRootNotification'
-import { filterByScope } from '@/features/notifications/utils/filter-by-scope'
+import { useNotificationStore } from '../../features/notifications/store/useNotificationStore'
+import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
+import { IRootNotification } from '../../features/notifications/data/entities/IRootNotification'
+import { filterByScope } from '../../features/notifications/utils/filter-by-scope'
 import { enqueueSnackbar } from 'notistack'
-import { notificationStatusColor } from '@/features/notifications/utils/notification-status'
+import { notificationStatusColor } from '../../features/notifications/utils/notification-status'
+
 
 export const useSocketListeners = () => {
   const [firstLoad, setFirstLoad] = useState(true)
@@ -29,7 +30,6 @@ export const useSocketListeners = () => {
       addNotification(data, user)
 
       if (filterByScope(data, user)) {
-        // show notification
         enqueueSnackbar(
           `${data.notification.name} ${data.notification.status}`,
           {
