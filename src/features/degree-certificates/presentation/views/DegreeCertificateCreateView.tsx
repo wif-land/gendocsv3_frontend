@@ -7,7 +7,7 @@ import { paths } from '../../../../core/routes/paths'
 import { memo } from 'react'
 import { DegreeCertificateNewEditForm } from '../components/DegreeCertificateNewEditForm'
 
-const CouncilCreateView = () => {
+const DegreeCertificateCreateView = () => {
   const settings = useSettingsContext()
 
   return (
@@ -35,4 +35,4 @@ const CouncilCreateView = () => {
   )
 }
 
-export default memo(CouncilCreateView)
+export default memo(DegreeCertificateCreateView)

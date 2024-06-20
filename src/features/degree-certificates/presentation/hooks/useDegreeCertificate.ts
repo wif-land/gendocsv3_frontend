@@ -41,7 +41,7 @@ export const useDegreeCertificateView = ({
   const [count, setCount] = useState(0)
   const { degreeCertificates, setDegreeCertificates } =
     useDegreeCertificatesStore()
-  const { loader } = useLoaderStore()
+  const { loader, addLoaderItem, removeLoaderItem } = useLoaderStore()
   const {
     fetchData,
     toggleIsClosed,
@@ -140,6 +140,7 @@ export const useDegreeCertificateView = ({
     router.replace(`${pathname}?${params.toString()}`)
 
     const loadData = async () => {
+      addLoaderItem('degree-certificates')
       try {
         const data = await fetchData(
           table.rowsPerPage,
@@ -152,12 +153,14 @@ export const useDegreeCertificateView = ({
           setCount(data.count)
           setFirstCharge(false)
           setPrevCareer(filters.careerId || 1)
+          removeLoaderItem('degree-certificates')
         }
       } catch (error) {}
     }
 
     const loadReportData = async () => {
       try {
+        addLoaderItem('degree-certificates')
         const data = await getReports(
           filters.isEnd || false,
           filters as IDegreeCertificateFilters,
@@ -168,6 +171,7 @@ export const useDegreeCertificateView = ({
           setCount(data.count)
           setFirstCharge(false)
           setPrevCareer(filters.careerId || 1)
+          removeLoaderItem('degree-certificates')
         }
       } catch (error) {}
     }
@@ -299,6 +303,7 @@ export const useDegreeCertificateView = ({
   }
 
   const handleGenerateDocument = async (row: DegreeCertificateModel) => {
+    addLoaderItem('degree-certificates')
     await generateDocument(row.id as number).then((data) => {
       if (data) {
         setDegreeCertificates(
@@ -316,6 +321,7 @@ export const useDegreeCertificateView = ({
         }
       }
     })
+    removeLoaderItem('degree-certificates')
   }
 
   const handleGenerateNumeration = async () => {
