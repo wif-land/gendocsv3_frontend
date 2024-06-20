@@ -17,6 +17,7 @@ import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUpl
 import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
 import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
 import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
+import { ReadonlyURLSearchParams } from 'next/navigation'
 
 export interface FormValuesProps
   extends Omit<
@@ -130,15 +131,31 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         label: '',
       } as IStudent)
 
-export const defaultFilters: IDegreeCertificateTableFilters = {
-  field: undefined,
-  careerId: 1,
-  isEnd: false,
-  isReport: false,
-  startDate: new Date(`${new Date().getFullYear()}-01-01`),
-  endDate: new Date(),
-  dateType: DateType.CREATION as any,
-}
+export const defaultFilters = (
+  searchParams: ReadonlyURLSearchParams,
+): IDegreeCertificateTableFilters => ({
+  field: searchParams.has('field')
+    ? (searchParams.get('field') as string)
+    : undefined,
+  careerId: searchParams.has('careerId')
+    ? +parseInt(searchParams.get('careerId') as string)
+    : 1,
+  isEnd: searchParams.has('isEnd')
+    ? searchParams.get('isEnd') === 'true'
+    : false,
+  isReport: searchParams.has('isReport')
+    ? searchParams.get('isReport') === 'true'
+    : false,
+  startDate: searchParams.has('startDate')
+    ? new Date(searchParams.get('startDate') as string)
+    : new Date(`${new Date().getFullYear()}-01-01`),
+  endDate: searchParams.has('endDate')
+    ? new Date(searchParams.get('endDate') as string)
+    : new Date(),
+  dateType: searchParams.has('dateType')
+    ? (searchParams.get('dateType') as DateType)
+    : (DateType.CREATION as any),
+})
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
   topic: Yup.string().required('El tema es requerido'),

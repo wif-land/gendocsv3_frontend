@@ -138,354 +138,336 @@ export const DegreeCertificateNewEditForm = ({
     </>
   )
 
-  const renderProperties = useCallback(
-    () => (
-      <>
-        {mdUp && (
-          <Grid md={4}>
-            <Typography variant="h6" sx={{ mb: 0.5 }}>
-              Estudiante
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Información relevante del estudiante
-            </Typography>
-          </Grid>
-        )}
-        <Grid xs={12} md={8}>
-          <Card>
-            {!mdUp && <CardHeader title="Details" />}
-
-            <Stack spacing={3} sx={{ p: 3 }}>
-              <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
-                <RHFAutocomplete
-                  name="selectedValue"
-                  label="Estudiante"
-                  sx={{
-                    flexGrow: 1,
-                  }}
-                  open={isOpen.value}
-                  onOpen={isOpen.onTrue}
-                  onClose={() => {
-                    setInputValue('')
-                    isOpen.onFalse()
-                  }}
-                  loading={loading}
-                  noOptionsText="No hay resultados"
-                  isOptionEqualToValue={(option, value) =>
-                    option.id === value.id
-                  }
-                  options={students?.map((student) => ({
-                    label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
-                    id: student.id,
-                  }))}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValue(newInputValue)
-                  }}
-                  getOptionLabel={(option) =>
-                    (option as { label: string }).label
-                  }
-                />
-                {methods.watch('selectedValue')?.id !== 0 && (
-                  <>
-                    <IconButton onClick={popover.onOpen}>
-                      <Iconify icon="eva:more-vertical-fill" />
-                    </IconButton>
-                  </>
-                )}
-              </Stack>
-              <CustomPopover
-                open={popover.open}
-                onClose={popover.onClose}
-                arrow="right-top"
-                sx={{ width: 160 }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    isStudentModalOpen.onTrue()
-                  }}
-                >
-                  <Iconify icon="ic:round-edit" />
-                  Editar
-                </MenuItem>
-
-                <MenuItem
-                  onClick={() => {
-                    isDocumentModalOpen.onTrue()
-                  }}
-                >
-                  <Iconify icon="solar:documents-bold-duotone" />
-                  Documentos
-                </MenuItem>
-              </CustomPopover>
-            </Stack>
-            <Stack
-              spacing={3}
-              sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
-            >
-              <TextField
-                label="Fecha de inicio de estudios"
-                value={getValues('student')?.startStudiesDate || ''}
-                disabled
-                sx={{ flexGrow: 1 }}
-              />
-              <TextField
-                name="student.endStudiesDate"
-                label="Fecha de finalización de estudios"
-                value={getValues('student')?.endStudiesDate || ''}
-                sx={{ flexGrow: 1 }}
-              />
-            </Stack>
-            <Stack
-              spacing={3}
-              sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
-            >
-              <TextField
-                label="Créditos aprobados"
-                value={getValues('student')?.approvedCredits || ''}
-                disabled
-                sx={{ flexGrow: 1 }}
-              />
-              <TextField
-                label="Horas de práctica"
-                value={getValues('student')?.internshipHours || ''}
-                disabled
-                sx={{ flexGrow: 1 }}
-              />
-            </Stack>
-            <Stack
-              spacing={3}
-              sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
-            >
-              <TextField
-                label="Horas de vinculación/Servicio comunitario"
-                value={getValues('student')?.vinculationHours || ''}
-                disabled
-                sx={{ flexGrow: 1 }}
-              />
-              <TextField
-                label="Titulo de bachiller"
-                value={getValues('student')?.bachelorDegree || ''}
-                disabled
-                sx={{ flexGrow: 1 }}
-              />
-            </Stack>
-            <Stack
-              spacing={3}
-              sx={{
-                p: 3,
-                pt: 0,
-                display: 'flex',
-                flexDirection: 'row',
-                width: '100%',
-              }}
-            >
-              <FormControl sx={{ flexGrow: 1 }}>
-                <InputLabel id="provincia">Provincia de residencia</InputLabel>
-                <Select
-                  labelId="provincia"
-                  label="Provincia de residencia"
-                  value={
-                    (watch('student').canton as ICanton)?.province.id ||
-                    (currentDegreeCertificate?.student.canton as ICanton)
-                      ?.province.id ||
-                    0
-                  }
-                  disabled
-                >
-                  {provinces.map((province) => (
-                    <MenuItem key={province.id} value={province.id}>
-                      {province.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl sx={{ flexGrow: 1 }}>
-                <InputLabel id="ciudad">Ciudad de residencia</InputLabel>
-                <Select
-                  labelId="ciudad"
-                  label="Ciudad de residencia"
-                  value={
-                    (watch('student').canton as ICanton)?.id ||
-                    (currentDegreeCertificate?.student.canton as ICanton)?.id ||
-                    0
-                  }
-                  disabled
-                >
-                  {cities.map((city) => (
-                    <MenuItem key={city.id} value={city.id}>
-                      {city.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Stack>
-          </Card>
+  const renderProperties = (
+    <>
+      {mdUp && (
+        <Grid md={4}>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Estudiante
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Información relevante del estudiante
+          </Typography>
         </Grid>
-        {methods.watch('student').id! > 0 && (
-          <>
-            {mdUp && (
-              <Grid md={4}>
-                <Typography variant="h6" sx={{ mb: 0.5 }}>
-                  Acta de Grado
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Información relevante del acta de grado
-                </Typography>
-              </Grid>
-            )}
-            <Grid xs={12} md={8}>
-              <Card>
-                {!mdUp && <CardHeader title="Details" />}
+      )}
+      <Grid xs={12} md={8}>
+        <Card>
+          {!mdUp && <CardHeader title="Details" />}
 
-                <Stack spacing={3} sx={{ p: 3 }}>
-                  <RHFTextField
-                    name="topic"
-                    label="Tema"
-                    required
-                    sx={{ flexGrow: 1 }}
-                  />
-                  {methods.watch('student').id! > 0 && (
-                    <RHFSelect
-                      id="certificateTypeId"
-                      label="Tipo de grado"
-                      name="certificateTypeId"
-                    >
-                      {degCerTemplates
-                        .filter(
-                          (type) =>
-                            type.certificateTypeCareers.find(
-                              (certificateTypeCareer) =>
-                                certificateTypeCareer.career.id ===
-                                (methods.watch('student').career as ICareer)
-                                  ?.id,
-                            ) !== undefined,
-                        )
-                        .map((certificateType) => (
-                          <MenuItem
-                            key={certificateType.id}
-                            value={certificateType.id}
-                          >
-                            {certificateType.name}
-                          </MenuItem>
-                        ))}
-                    </RHFSelect>
-                  )}
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
+              <RHFAutocomplete
+                name="selectedValue"
+                label="Estudiante"
+                sx={{
+                  flexGrow: 1,
+                }}
+                open={isOpen.value}
+                onOpen={isOpen.onTrue}
+                onClose={() => {
+                  setInputValue('')
+                  isOpen.onFalse()
+                }}
+                loading={loading}
+                noOptionsText="No hay resultados"
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                options={students?.map((student) => ({
+                  label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
+                  id: student.id,
+                }))}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue)
+                }}
+                getOptionLabel={(option) => (option as { label: string }).label}
+              />
+              {methods.watch('selectedValue')?.id !== 0 && (
+                <>
+                  <IconButton onClick={popover.onOpen}>
+                    <Iconify icon="eva:more-vertical-fill" />
+                  </IconButton>
+                </>
+              )}
+            </Stack>
+            <CustomPopover
+              open={popover.open}
+              onClose={popover.onClose}
+              arrow="right-top"
+              sx={{ width: 160 }}
+            >
+              <MenuItem
+                onClick={() => {
+                  isStudentModalOpen.onTrue()
+                }}
+              >
+                <Iconify icon="ic:round-edit" />
+                Editar
+              </MenuItem>
 
-                  <Stack
-                    spacing={3}
-                    sx={{ display: 'flex', flexDirection: 'row' }}
+              <MenuItem
+                onClick={() => {
+                  isDocumentModalOpen.onTrue()
+                }}
+              >
+                <Iconify icon="solar:documents-bold-duotone" />
+                Documentos
+              </MenuItem>
+            </CustomPopover>
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <TextField
+              label="Fecha de inicio de estudios"
+              value={getValues('student')?.startStudiesDate || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+            <TextField
+              name="student.endStudiesDate"
+              label="Fecha de finalización de estudios"
+              value={getValues('student')?.endStudiesDate || ''}
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <TextField
+              label="Créditos aprobados"
+              value={getValues('student')?.approvedCredits || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+            <TextField
+              label="Horas de práctica"
+              value={getValues('student')?.internshipHours || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <TextField
+              label="Horas de vinculación/Servicio comunitario"
+              value={getValues('student')?.vinculationHours || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+            <TextField
+              label="Titulo de bachiller"
+              value={getValues('student')?.bachelorDegree || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+          <Stack
+            spacing={3}
+            sx={{
+              p: 3,
+              pt: 0,
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+            }}
+          >
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel id="provincia">Provincia de residencia</InputLabel>
+              <Select
+                labelId="provincia"
+                label="Provincia de residencia"
+                value={
+                  (watch('student').canton as ICanton)?.province.id ||
+                  (currentDegreeCertificate?.student.canton as ICanton)
+                    ?.province.id ||
+                  0
+                }
+                disabled
+              >
+                {provinces.map((province) => (
+                  <MenuItem key={province.id} value={province.id}>
+                    {province.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel id="ciudad">Ciudad de residencia</InputLabel>
+              <Select
+                labelId="ciudad"
+                label="Ciudad de residencia"
+                value={
+                  (watch('student').canton as ICanton)?.id ||
+                  (currentDegreeCertificate?.student.canton as ICanton)?.id ||
+                  0
+                }
+                disabled
+              >
+                {cities.map((city) => (
+                  <MenuItem key={city.id} value={city.id}>
+                    {city.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Stack>
+        </Card>
+      </Grid>
+      {methods.watch('student').id! > 0 && (
+        <>
+          {mdUp && (
+            <Grid md={4}>
+              <Typography variant="h6" sx={{ mb: 0.5 }}>
+                Acta de Grado
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                Información relevante del acta de grado
+              </Typography>
+            </Grid>
+          )}
+          <Grid xs={12} md={8}>
+            <Card>
+              {!mdUp && <CardHeader title="Details" />}
+
+              <Stack spacing={3} sx={{ p: 3 }}>
+                <RHFTextField
+                  name="topic"
+                  label="Tema"
+                  required
+                  sx={{ flexGrow: 1 }}
+                />
+                {methods.watch('student').id! > 0 && (
+                  <RHFSelect
+                    id="certificateTypeId"
+                    label="Tipo de grado"
+                    name="certificateTypeId"
                   >
-                    <RHFSelect
-                      id="degreeModalityId"
-                      label="Modalidad"
-                      name="degreeModalityId"
-                    >
-                      {degreeModalities.map((modality) => (
-                        <MenuItem key={modality.id} value={modality.id}>
-                          {modality.name}
+                    {degCerTemplates
+                      .filter(
+                        (type) =>
+                          type.certificateTypeCareers.find(
+                            (certificateTypeCareer) =>
+                              certificateTypeCareer.career.id ===
+                              (methods.watch('student').career as ICareer)?.id,
+                          ) !== undefined,
+                      )
+                      .map((certificateType) => (
+                        <MenuItem
+                          key={certificateType.id}
+                          value={certificateType.id}
+                        >
+                          {certificateType.name}
+                        </MenuItem>
+                      ))}
+                  </RHFSelect>
+                )}
+
+                <Stack
+                  spacing={3}
+                  sx={{ display: 'flex', flexDirection: 'row' }}
+                >
+                  <RHFSelect
+                    id="degreeModalityId"
+                    label="Modalidad"
+                    name="degreeModalityId"
+                  >
+                    {degreeModalities.map((modality) => (
+                      <MenuItem key={modality.id} value={modality.id}>
+                        {modality.name}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
+                  {methods.watch('degreeModalityId') &&
+                    Number(methods.watch('degreeModalityId')) === 1 && (
+                      <RHFTextField
+                        name="link"
+                        label="Link"
+                        sx={{ flexGrow: 1 }}
+                      />
+                    )}
+                </Stack>
+
+                {methods.watch('degreeModalityId') &&
+                  Number(methods.watch('degreeModalityId')) === 2 && (
+                    <RHFSelect id="roomId" label="Aula" name="roomId">
+                      {rooms.map((room) => (
+                        <MenuItem key={room.id} value={room.id}>
+                          {room.name}
                         </MenuItem>
                       ))}
                     </RHFSelect>
-                    {methods.watch('degreeModalityId') &&
-                      Number(methods.watch('degreeModalityId')) === 1 && (
-                        <RHFTextField
-                          name="link"
-                          label="Link"
-                          sx={{ flexGrow: 1 }}
-                        />
-                      )}
-                  </Stack>
-
-                  {methods.watch('degreeModalityId') &&
-                    Number(methods.watch('degreeModalityId')) === 2 && (
-                      <RHFSelect id="roomId" label="Aula" name="roomId">
-                        {rooms.map((room) => (
-                          <MenuItem key={room.id} value={room.id}>
-                            {room.name}
-                          </MenuItem>
-                        ))}
-                      </RHFSelect>
-                    )}
-
-                  <RHFTextField
-                    name="duration"
-                    label="Duración (min)"
-                    type="number"
-                    sx={{ flexGrow: 1 }}
-                  />
-
-                  <Controller
-                    name="presentationDate"
-                    control={control}
-                    render={({ field }) => (
-                      <DateTimePicker
-                        {...field}
-                        value={
-                          field.value !== undefined ? dayjs(field.value) : null
-                        }
-                        onChange={(newValue) => {
-                          if (newValue) {
-                            field.onChange(newValue.toDate())
-                          } else {
-                            field.value = undefined
-                          }
-                        }}
-                        label="Fecha y hora de ejecución"
-                        format="dddd/MM/YYYY hh:mm a"
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                          },
-                        }}
-                        disablePast
-                      />
-                    )}
-                  />
-
-                  {methods.watch('certificateTypeId') && (
-                    <RHFSelect
-                      id="certificateStatusId"
-                      label="Estado de acta"
-                      name="certificateStatusId"
-                    >
-                      {degCerTemplates
-                        .find(
-                          (type) =>
-                            type.id === methods.watch('certificateTypeId') &&
-                            type.certificateTypeCareers.find(
-                              (certificateTypeCareer) =>
-                                certificateTypeCareer.career.id ===
-                                (methods.watch('student').career as ICareer)
-                                  ?.id,
-                            ) !== undefined,
-                        )
-                        ?.certificateTypeStatuses.map((certificateStatus) => (
-                          <MenuItem
-                            key={certificateStatus.certificateStatus.id}
-                            value={certificateStatus.certificateStatus.id}
-                          >
-                            {certificateStatus.certificateStatus.maleName}
-                          </MenuItem>
-                        )) ?? []}
-                    </RHFSelect>
                   )}
-                </Stack>
-              </Card>
-            </Grid>
-          </>
-        )}
-      </>
-    ),
-    [
-      methods,
-      mdUp,
-      degCerTemplates,
-      rooms,
-      degreeModalities,
-      cities,
-      provinces,
-      currentDegreeCertificate,
-    ],
+
+                <RHFTextField
+                  name="duration"
+                  label="Duración (min)"
+                  type="number"
+                  sx={{ flexGrow: 1 }}
+                />
+
+                <Controller
+                  name="presentationDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DateTimePicker
+                      {...field}
+                      value={
+                        field.value !== undefined ? dayjs(field.value) : null
+                      }
+                      onChange={(newValue) => {
+                        if (newValue) {
+                          field.onChange(newValue.toDate())
+                        } else {
+                          field.value = undefined
+                        }
+                      }}
+                      label="Fecha y hora de ejecución"
+                      format="dddd/MM/YYYY hh:mm a"
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                        },
+                      }}
+                      disablePast
+                    />
+                  )}
+                />
+
+                {methods.watch('certificateTypeId') && (
+                  <RHFSelect
+                    id="certificateStatusId"
+                    label="Estado de acta"
+                    name="certificateStatusId"
+                  >
+                    {degCerTemplates
+                      .find(
+                        (type) =>
+                          type.id === methods.watch('certificateTypeId') &&
+                          type.certificateTypeCareers.find(
+                            (certificateTypeCareer) =>
+                              certificateTypeCareer.career.id ===
+                              (methods.watch('student').career as ICareer)?.id,
+                          ) !== undefined,
+                      )
+                      ?.certificateTypeStatuses.map((certificateStatus) => (
+                        <MenuItem
+                          key={certificateStatus.certificateStatus.id}
+                          value={certificateStatus.certificateStatus.id}
+                        >
+                          {certificateStatus.certificateStatus.maleName}
+                        </MenuItem>
+                      )) ?? []}
+                  </RHFSelect>
+                )}
+              </Stack>
+            </Card>
+          </Grid>
+        </>
+      )}
+    </>
   )
 
   const renderActions = (
@@ -616,7 +598,7 @@ export const DegreeCertificateNewEditForm = ({
         <Grid container spacing={3}>
           {renderDetails}
 
-          {renderProperties()}
+          {renderProperties}
 
           {renderActions}
         </Grid>

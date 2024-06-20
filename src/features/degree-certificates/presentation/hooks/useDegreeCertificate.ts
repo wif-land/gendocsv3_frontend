@@ -32,8 +32,9 @@ export const useDegreeCertificateView = ({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const [filters, setFilters] =
-    useState<IDegreeCertificateTableFilters>(defaultFilters)
+  const [filters, setFilters] = useState<IDegreeCertificateTableFilters>(
+    defaultFilters(searchParams),
+  )
   const [tableData, setTableData] = useState<DegreeCertificateModel[]>([])
   const [firstCharge, setFirstCharge] = useState<boolean>(true)
   const [prevCareer, setPrevCareer] = useState<number>(1)

@@ -4,13 +4,11 @@ import Container from '@mui/material/Container'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import { usePathname } from 'next/navigation'
 import { memo } from 'react'
 import { DegreeCertificateNewEditForm } from '../components/DegreeCertificateNewEditForm'
 
 const CouncilCreateView = () => {
   const settings = useSettingsContext()
-  const pathname = usePathname()
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -23,7 +21,7 @@ const CouncilCreateView = () => {
           },
           {
             name: 'Actas de Grado',
-            href: pathname.replace('/new', ''),
+            href: window.location.href.replace('/new', ''),
           },
           { name: 'Nueva acta' },
         ]}
