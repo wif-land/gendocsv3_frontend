@@ -35,6 +35,8 @@ export interface IDegreeCertificateDatasource {
     degreeCertificate: ICreateDegreeCertificate,
   ): Promise<DegreeCertificateModel>
 
+  delete(id: number): Promise<boolean>
+
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number
     lastGenerated: number
@@ -169,6 +171,18 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as DegreeCertificateModel
+  }
+
+  delete = async (id: number) => {
+    const result = await AxiosClient.delete({
+      path: API_ROUTES.DEGREE_CERTIFICATES.DELETE(id),
+    })
+
+    if ('error' in result) {
+      return false
+    }
+
+    return true
   }
 
   generateNumeration = async (careerId: number) => {

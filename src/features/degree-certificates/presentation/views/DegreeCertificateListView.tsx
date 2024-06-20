@@ -30,7 +30,7 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
-import { getTableHead, defaultFilters } from '../constants'
+import { getTableHead } from '../constants'
 import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
 import {
   DegreeCertificatesTableToolbar,
@@ -73,6 +73,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
+    handleDeleteRow,
     handleGenerateDocument,
     handleGenerateNumeration,
     handleSearch,
@@ -176,24 +177,24 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     )
   }, [router, pathname])
 
-  const handleResetFilters = () => {
-    setFilters(defaultFilters(searchParams))
-    setVisitedPages([])
-    setIsDataFiltered(false)
-    setTableData([])
+  // const handleResetFilters = () => {
+  //   setFilters(defaultFilters(searchParams))
+  //   setVisitedPages([])
+  //   setIsDataFiltered(false)
+  //   setTableData([])
 
-    if (!searchParams.has('careerId')) {
-      const params = new URLSearchParams('careerId=1')
-      router.replace(`${pathname}?${params.toString()}`)
-    }
+  //   if (!searchParams.has('careerId')) {
+  //     const params = new URLSearchParams('careerId=1')
+  //     router.replace(`${pathname}?${params.toString()}`)
+  //   }
 
-    handleFilters('careerId', searchParams.get('careerId')?.toString() || '1')
-    handleFilters('isReport', false)
-    handleFilters('isEnd', false)
-    handleFilters('startDate', new Date(new Date().setMonth(0, 1)))
-    handleFilters('endDate', new Date())
-    router.replace(`${pathname}?careerId=${searchParams.get('careerId')}`)
-  }
+  //   handleFilters('careerId', searchParams.get('careerId')?.toString() || '1')
+  //   handleFilters('isReport', false)
+  //   handleFilters('isEnd', false)
+  //   handleFilters('startDate', new Date(new Date().setMonth(0, 1)))
+  //   handleFilters('endDate', new Date())
+  //   router.replace(`${pathname}?careerId=${searchParams.get('careerId')}`)
+  // }
 
   const reportOptions = [
     {
@@ -401,6 +402,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onGenerateDocument={() => onGenerateDocument(row)}
+                            onDeleteDegreeCertificate={() =>
+                              handleDeleteRow(row)
+                            }
                             onRegenerateDocument={() => {
                               handleGenerateDocument(row)
                             }}

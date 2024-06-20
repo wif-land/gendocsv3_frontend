@@ -49,6 +49,8 @@ export class DegreeCertificateRepositoryImpl
   create = async (degreeCertificate: ICreateDegreeCertificate) =>
     await this.datasource.create(degreeCertificate)
 
+  delete = async (id: number) => await this.datasource.delete(id)
+
   generateNumeration = async (careerId: number) =>
     await this.datasource.generateNumeration(careerId)
 

@@ -47,6 +47,7 @@ export const useDegreeCertificateView = ({
     toggleIsClosed,
     generateDocument,
     generateNumeration,
+    deleteDegreeCertificate,
     getReports,
     downloadReport,
   } = useDegreeCertificateMethods()
@@ -136,8 +137,7 @@ export const useDegreeCertificateView = ({
       params.set('field', filters.field)
     }
 
-    router.push(`${pathname}?${params.toString()}`)
-    console.log(searchParams.toString())
+    router.replace(`${pathname}?${params.toString()}`)
 
     const loadData = async () => {
       try {
@@ -285,6 +285,19 @@ export const useDegreeCertificateView = ({
     })
   }
 
+  const handleDeleteRow = (row: IDegreeCertificate) => {
+    deleteDegreeCertificate(row.id as number).then((data) => {
+      if (data) {
+        setDegreeCertificates(
+          degreeCertificates.filter((degree) => degree.id !== row.id),
+        )
+        setTableData(
+          degreeCertificates.filter((degree) => degree.id !== row.id),
+        )
+      }
+    })
+  }
+
   const handleGenerateDocument = async (row: DegreeCertificateModel) => {
     await generateDocument(row.id as number).then((data) => {
       if (data) {
@@ -418,6 +431,7 @@ export const useDegreeCertificateView = ({
     handleUpdateRow,
     handleGenerateDocument,
     handleGenerateNumeration,
+    handleDeleteRow,
     handleSearch,
     searchParams,
     handleDownload,

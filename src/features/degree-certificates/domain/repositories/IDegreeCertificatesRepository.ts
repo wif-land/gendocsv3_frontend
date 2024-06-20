@@ -33,6 +33,8 @@ export interface IDegreeCertificatesRepository {
     degreeCertificate: ICreateDegreeCertificate,
   ): Promise<DegreeCertificateModel>
 
+  delete(id: number): Promise<boolean>
+
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number
     lastGenerated: number

@@ -116,7 +116,10 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
               ))}
             </RHFSelect>
 
-            <RHFTextField name="details" label="Documento de asignación" />
+            {methods.watch('role') &&
+              methods.watch('role') !== DEGREE_ATTENDANCE_ROLES.MENTOR && (
+                <RHFTextField name="details" label="Documento de asignación" />
+              )}
 
             <Controller
               name="assignationDate"

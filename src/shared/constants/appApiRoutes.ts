@@ -113,11 +113,11 @@ export const API_ROUTES = {
   },
   DEGREE_CERTIFICATES: {
     GET_BY_FILTERS: `/degree-certificates/filter`,
-    DELETE: '/degree-certificates/:id',
     CREATE: '/degree-certificates',
     CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
     GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
     UPDATE: (id: number) => `/degree-certificates/${id}`,
+    DELETE: (id: number) => `/degree-certificates/${id}`,
     GENERATE_NUMERATION: (careerId: number) =>
       `/degree-certificates/numeration/generate/${careerId}`,
     GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>

@@ -29,6 +29,9 @@ export const useDegreeCertificateMethods = () => {
   const resolveStudentById = async (id: number): Promise<IStudent> =>
     students.find((student) => student.id === id) as unknown as IStudent
 
+  const deleteDegreeCertificate = async (id: number) =>
+    await DegreeCertificatesUseCasesImpl.getInstance().delete(id)
+
   const generateDocument = async (degreeCertificateId: number) =>
     await DegreeCertificatesUseCasesImpl.getInstance().generateDocument(
       degreeCertificateId,
@@ -85,6 +88,7 @@ export const useDegreeCertificateMethods = () => {
     resolveStudentById,
     generateDocument,
     generateNumeration,
+    deleteDegreeCertificate,
     getReports,
     downloadReport,
   }

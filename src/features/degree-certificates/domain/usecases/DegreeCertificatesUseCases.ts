@@ -38,6 +38,8 @@ interface CertificateDegreeUseCases {
     degreeCertificate: ICreateDegreeCertificate,
   ): Promise<DegreeCertificateModel>
 
+  delete(id: number): Promise<boolean>
+
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number
     lastGenerated: number
@@ -138,6 +140,8 @@ export class DegreeCertificatesUseCasesImpl
 
   create = async (degreeCertificate: ICreateDegreeCertificate) =>
     await this.repository.create(degreeCertificate)
+
+  delete = async (id: number) => await this.repository.delete(id)
 
   generateNumeration = async (careerId: number) =>
     await this.repository.generateNumeration(careerId)

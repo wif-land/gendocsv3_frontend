@@ -173,7 +173,12 @@ export const NewDegreeCertificateSchema = Yup.object().shape({
 
 export const NewDegreeCertificateAttendanceSchema = Yup.object().shape({
   role: Yup.string().required('El rol es requerido'),
-  details: Yup.string().required('El documento de asignación es requerido'),
+  details: Yup.string().when('role', (role, schema) => {
+    if ((role[0] as unknown as string) === DEGREE_ATTENDANCE_ROLES.MENTOR) {
+      return schema.notRequired()
+    }
+    return schema.required('El documento de asignación es requerido')
+  }),
   assignationDate: Yup.date().required('La fecha de asignación es requerida'),
 })
 
