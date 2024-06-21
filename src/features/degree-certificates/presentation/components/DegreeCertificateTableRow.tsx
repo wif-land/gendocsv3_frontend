@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { format } from 'date-fns'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
@@ -19,6 +18,7 @@ import {
   IDegreeModality,
   IRoom,
 } from '../../../../core/providers/domain/entities/ICertificateProvider'
+import dayjs from 'dayjs'
 
 type Props = {
   row: DegreeCertificateModel
@@ -107,8 +107,11 @@ export const DegreeCertificateTableRow = ({
           <ListItemText
             primary={
               presentationDate
-                ? format(new Date(presentationDate), 'dd MMM yyyy')
-                : ''
+                ? dayjs(presentationDate)
+                    .tz('America/Bogota')
+                    .format('DD/MM/YYYY HH:MM')
+                : // format(new Date(presentationDate), 'dd/MM/yyyy HH:MM')
+                  ''
             }
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />

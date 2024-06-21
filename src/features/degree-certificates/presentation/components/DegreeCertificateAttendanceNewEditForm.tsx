@@ -132,7 +132,7 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
                     field.onChange(newValue?.toDate())
                   }}
                   label="Fecha de asignación"
-                  format="dddd/MM/YYYY"
+                  format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
                       fullWidth: true,
