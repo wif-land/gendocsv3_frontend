@@ -1,8 +1,9 @@
 import { fToNow } from '../../../core/utils/format-time'
-import { ListItemText, Stack, Box, ListItemButton } from '@mui/material'
+import { ListItemText, Stack, Box } from '@mui/material'
 import { INotification } from '../data/entities/INotification'
 import { NotificationStatus } from '../utils/notification-status'
 import Label from '../../../shared/sdk/label'
+import uuidv4 from '../../../core/utils/uuidv4'
 
 type NotificationItemProps = {
   notification: INotification
@@ -13,6 +14,7 @@ export const NotificationListItem = ({
 }: NotificationItemProps) => {
   const renderText = (
     <ListItemText
+      key={notification.id + notification.name}
       disableTypography
       primary={reader(notification.name)}
       secondary={
@@ -80,7 +82,8 @@ export const NotificationListItem = ({
 
   return (
     <>
-      <ListItemButton
+      <Stack
+        key={uuidv4()}
         sx={{
           p: 2.5,
           width: '100%',
@@ -94,12 +97,17 @@ export const NotificationListItem = ({
           {renderText}
           {statusAction(notification.status)}
           {notification.messages?.map((message, index) => (
-            <Box key={index} sx={{ mt: 1 }}>
-              {<ListItemText disableTypography primary={<li>{message}</li>} />}
+            <Box key={uuidv4()} sx={{ mt: 1 }}>
+              <ListItemText
+                key={index + notification.id}
+                disableTypography
+                inset
+                primary={`- ${message} `}
+              />
             </Box>
           ))}
         </Stack>
-      </ListItemButton>
+      </Stack>
     </>
   )
 }

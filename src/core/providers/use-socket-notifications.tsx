@@ -4,9 +4,13 @@ import { useNotificationStore } from '../../features/notifications/store/useNoti
 import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
 import { IRootNotification } from '../../features/notifications/data/entities/IRootNotification'
 import { filterByScope } from '../../features/notifications/utils/filter-by-scope'
-import { enqueueSnackbar } from 'notistack'
-import { notificationStatusColor } from '../../features/notifications/utils/notification-status'
-
+import { enqueueSnackbar, closeSnackbar } from 'notistack'
+import {
+  NotificationStatus,
+  notificationStatusColor,
+} from '../../features/notifications/utils/notification-status'
+import { NotificationDetailsDialog } from '../../features/notifications/presentation/Dialog'
+import { Button } from '@mui/material'
 
 export const useSocketListeners = () => {
   const [firstLoad, setFirstLoad] = useState(true)
@@ -33,15 +37,34 @@ export const useSocketListeners = () => {
         enqueueSnackbar(
           `${data.notification.name} ${data.notification.status}`,
           {
+            key: data.notification.id,
             variant: notificationStatusColor(data.notification.status),
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
             },
-            transitionDuration: 800,
-            autoHideDuration: 2500,
+            persist:
+              data.notification.status === NotificationStatus.IN_PROGRESS,
+            preventDuplicate: true,
           },
         )
+
+        if (data.notification.status !== NotificationStatus.IN_PROGRESS) {
+          closeSnackbar(data.notification.id)
+
+          enqueueSnackbar(
+            `${data.notification.name} ${data.notification.status}`,
+            {
+              key: data.notification.id + 1,
+              variant: notificationStatusColor(data.notification.status),
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              autoHideDuration: 5000,
+            },
+          )
+        }
       }
     })
 

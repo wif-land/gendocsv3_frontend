@@ -20,7 +20,10 @@ import Label from '../../../../shared/sdk/label'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { varHover } from '../../../../shared/sdk/animate'
 import { useNotificationStore } from '../../../../features/notifications/store/useNotificationStore'
-import { NotificationStatus, notificationStatusColor } from '../../../../features/notifications/utils/notification-status'
+import {
+  NotificationStatus,
+  notificationStatusColor,
+} from '../../../../features/notifications/utils/notification-status'
 
 //iterar en los elementos de un enum
 const TABS = Object.values(NotificationStatus).map((value) => ({
@@ -32,28 +35,14 @@ const TABS = Object.values(NotificationStatus).map((value) => ({
 export default function NotificationsPopover() {
   const drawer = useBoolean()
 
-  const smUp = useResponsive('up', 'sm')
-
-  const [currentTab, setCurrentTab] = useState('all')
+  const [currentTab, setCurrentTab] = useState(NotificationStatus.COMPLETED)
 
   const handleChangeTab = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
-      setCurrentTab(newValue)
+      setCurrentTab(newValue as NotificationStatus)
     },
     [],
   )
-
-  // const [notifications, setNotifications] = useState([
-  //   {
-  //     id: '',
-  //     title: 'Leninsin',
-  //     category: 'jaja',
-  //     createdAt: new Date(),
-  //     isUnRead: false,
-  //     type: 'some',
-  //     avatarUrl: null,
-  //   },
-  // ])
 
   const { notifications } = useNotificationStore()
 
@@ -87,20 +76,6 @@ export default function NotificationsPopover() {
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
         Notificaciones
       </Typography>
-
-      {!!totalCompleted && (
-        <Tooltip title="Mark all as read">
-          <IconButton color="primary" onClick={() => {}}>
-            <Iconify icon="eva:done-all-fill" />
-          </IconButton>
-        </Tooltip>
-      )}
-
-      {!smUp && (
-        <IconButton onClick={drawer.onFalse}>
-          <Iconify icon="mingcute:close-line" />
-        </IconButton>
-      )}
     </Stack>
   )
 
@@ -189,9 +164,9 @@ export default function NotificationsPopover() {
           sx={{ pl: 2.5, pr: 1 }}
         >
           {renderTabs}
-          <IconButton onClick={() => {}}>
+          {/* <IconButton onClick={() => {}}>
             <Iconify icon="solar:settings-bold-duotone" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
 
         <Divider />
