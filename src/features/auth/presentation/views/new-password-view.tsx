@@ -11,15 +11,15 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import InputAdornment from '@mui/material/InputAdornment'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { RHFCode, RHFTextField } from '../../../../shared/sdk/hook-form'
+import { RHFTextField } from '../../../../shared/sdk/hook-form'
 import Iconify from '../../../../core/iconify'
 import SentIcon from '../../../../shared/assets/icons/sent-icon'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { useRouter } from 'next/navigation'
 import { Box } from '@mui/material'
+import { NewPasswordUseCase } from '../../domain/usecases/newPasswordUseCase'
 
 type FormValuesProps = {
-  code: string
   email: string
   password: string
   confirmPassword: string
@@ -30,22 +30,19 @@ export default () => {
   const router = useRouter()
 
   const NewPasswordSchema = Yup.object().shape({
-    code: Yup.string()
-      .min(6, 'Code must be at least 6 characters')
-      .required('Code is required'),
     email: Yup.string()
-      .required('Email is required')
-      .email('Email must be a valid email address'),
+      .required('Correo electrónico es requerido')
+      .matches(/^[A-Z0-9._%+-]+@uta\.edu\.ec$/i, `Debe contener (uta.edu.ec)`)
+      .email('Correo electrónico debe ser una dirección de correo válida'),
     password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required'),
+      .min(6, 'La contraseña debe tener al menos 6 caracteres')
+      .required('Contraseña es requerida'),
     confirmPassword: Yup.string()
-      .required('Confirm password is required')
-      .oneOf([Yup.ref('password')], 'Passwords must match'),
+      .required('Confirmar contraseña es requerida')
+      .oneOf([Yup.ref('password')], 'Las contraseñas no coinciden'),
   })
 
   const defaultValues = {
-    code: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -63,12 +60,12 @@ export default () => {
   } = methods
 
   const onSubmit = useCallback(async (data: FormValuesProps) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      console.info('DATA', data)
-    } catch (error) {
-      console.error(error)
-    }
+    await new NewPasswordUseCase().call({
+      email: data.email,
+      password: data.password,
+    })
+
+    router.push('/login')
   }, [])
 
   const renderForm = (
@@ -82,8 +79,6 @@ export default () => {
       }}
     >
       <RHFTextField name="email" label="Correo Electrónico" />
-
-      <RHFCode name="code" />
 
       <RHFTextField
         name="password"
@@ -133,18 +128,6 @@ export default () => {
         Cambiar Contraseña
       </LoadingButton>
 
-      <Typography variant="body2">
-        ¿No recibiste el código de verificación? &nbsp;
-        <Link
-          variant="subtitle2"
-          sx={{
-            cursor: 'pointer',
-          }}
-        >
-          Reenviar código
-        </Link>
-      </Typography>
-
       <Link
         onClick={() => {
           router.push('/login')
@@ -168,12 +151,10 @@ export default () => {
       <SentIcon sx={{ height: 96 }} />
 
       <Stack spacing={1} sx={{ my: 5 }}>
-        <Typography variant="h3">Petición enviada correctamente!</Typography>
+        <Typography variant="h3">¡Petición enviada correctamente!</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Hemos enviado un código de verificación a tu correo electrónico.
-          <br />
-          Por favor, ingresa el código y tu nueva contraseña para continuar.
+          Ingresa tu nueva contraseña para continuar
         </Typography>
       </Stack>
     </>

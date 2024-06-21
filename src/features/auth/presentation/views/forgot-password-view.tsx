@@ -14,16 +14,18 @@ import { RouterLink } from '../../../../core/routes/components'
 import PasswordIcon from '../../../../shared/assets/icons/password-icon'
 import FormProvider from '../../../../shared/sdk/hook-form/form-provider'
 import { Box } from '@mui/material'
+import { RecoverPasswordUseCase } from '../../domain/usecases/recoverPasswordUseCase'
 
 type FormValuesProps = {
   email: string
 }
 
-export const ModernForgotPasswordView = () => {
+export const ForgotPasswordView = () => {
   const ResetPasswordSchema = Yup.object().shape({
     email: Yup.string()
-      .required('Email is required')
-      .email('Email must be a valid email address'),
+      .required('Correo electrónico es requerido')
+      .matches(/^[A-Z0-9._%+-]+@uta\.edu\.ec$/i, `Debe contener (uta.edu.ec)`)
+      .email('Correo electrónico debe ser una dirección de correo válida'),
   })
 
   const methods = useForm<FormValuesProps>({
@@ -39,12 +41,7 @@ export const ModernForgotPasswordView = () => {
   } = methods
 
   const onSubmit = useCallback(async (data: FormValuesProps) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      console.info('DATA', data)
-    } catch (error) {
-      console.error(error)
-    }
+    await new RecoverPasswordUseCase().call(data)
   }, [])
 
   const renderForm = (

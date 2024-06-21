@@ -20,6 +20,12 @@ export interface AuthDataSource {
     status: number
     message?: string
   }>
+
+  recoverPassword: (email: string) => Promise<boolean>
+
+  newPassword: (email: string, password: string) => Promise<boolean>
+
+  resendEmail: (email: string) => Promise<boolean>
 }
 
 export class AuthDataSourceImpl implements AuthDataSource {
@@ -60,5 +66,42 @@ export class AuthDataSourceImpl implements AuthDataSource {
       status: HTTP_STATUS_CODES.OK,
       message: 'Sesión cerrada',
     }
+  }
+
+  recoverPassword = async (email: string) => {
+    const result = await AxiosClient.post(API_ROUTES.AUTH.RECOVER_PASSWORD, {
+      email,
+    })
+
+    if ('error' in result) {
+      return false
+    }
+
+    return true
+  }
+
+  newPassword = async (email: string, password: string) => {
+    const result = await AxiosClient.post(API_ROUTES.AUTH.NEW_PASSWORD, {
+      email,
+      password,
+    })
+
+    if ('error' in result) {
+      return false
+    }
+
+    return true
+  }
+
+  resendEmail = async (email: string) => {
+    const result = await AxiosClient.post(API_ROUTES.AUTH.RESEND_EMAIL, {
+      email,
+    })
+
+    if ('error' in result) {
+      return false
+    }
+
+    return true
   }
 }

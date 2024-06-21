@@ -1,3 +1,3 @@
-import { ModernForgotPasswordView } from '../../../features/auth/presentation/views/forgot-password-view'
+import { ForgotPasswordView } from '../../../features/auth/presentation/views/forgot-password-view'
 
-export default () => <ModernForgotPasswordView />
+export default () => <ForgotPasswordView />

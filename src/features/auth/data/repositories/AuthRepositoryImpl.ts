@@ -24,4 +24,22 @@ export class AuthRepositoryImpl implements AuthRepository {
   }
 
   logout = () => this.dataSource.logout()
+
+  recoverPassword = async (email: string) => {
+    const result = await this.dataSource.recoverPassword(email)
+
+    return result
+  }
+
+  newPassword = async (email: string, password: string) => {
+    const result = await this.dataSource.newPassword(email, password)
+
+    return result
+  }
+
+  resendEmail = (email: string) => {
+    const result = this.dataSource.resendEmail(email)
+
+    return result
+  }
 }

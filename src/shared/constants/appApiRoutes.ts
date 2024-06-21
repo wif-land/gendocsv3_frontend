@@ -6,6 +6,9 @@ export const API_ROUTES = {
   AUTH: {
     LOGIN: '/auth/login',
     LOGOUT: '/auth/logout',
+    RECOVER_PASSWORD: '/auth/forgot-password',
+    NEW_PASSWORD: '/auth/new-password',
+    RESEND_EMAIL: '/auth/resend-activation-email',
   },
   USERS: {
     GET_ALL: '/users',
