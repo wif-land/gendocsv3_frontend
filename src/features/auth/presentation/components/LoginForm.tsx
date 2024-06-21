@@ -6,10 +6,13 @@ import { RHFTextField } from '../../../../shared/sdk/hook-form'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import Iconify from '../../../../core/iconify'
+import Link from '@mui/material/Link'
+import { useRouter } from 'next/navigation'
 
 export const LoginForm = () => {
   const { methods, onSubmit } = useAuth()
   const password = useBoolean()
+  const router = useRouter()
 
   const { handleSubmit } = methods
 
@@ -54,6 +57,20 @@ export const LoginForm = () => {
           >
             Ingresar
           </LoadingButton>
+
+          <Link
+            variant="body2"
+            align="center"
+            mt={2}
+            onClick={() => {
+              router.push('/auth/forgot-password')
+            }}
+            color="inherit"
+            underline="always"
+            sx={{ alignSelf: 'flex-end', cursor: 'pointer' }}
+          >
+            Reestablecer contraseña
+          </Link>
         </Grid>
       </Grid>
     </FormProvider>

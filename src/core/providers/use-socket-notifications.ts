@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { socketClient } from '../clients/socket-client'
+import { socketClient } from '../integrations/socket-client'
 import { useNotificationStore } from '../../features/notifications/store/useNotificationStore'
 import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
 import { IRootNotification } from '../../features/notifications/data/entities/IRootNotification'
