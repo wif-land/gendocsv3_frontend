@@ -10,12 +10,12 @@ export const useDegreeCertificateMethods = () => {
   const fetchData = async (
     rowsPerPage: number,
     currentPage: number,
-    carrerId: number,
+    filters: IDegreeCertificateFilters,
   ) =>
     await DegreeCertificatesUseCasesImpl.getInstance().getAll(
       rowsPerPage,
       currentPage,
-      carrerId,
+      filters,
     )
 
   const toggleIsClosed = async (
@@ -37,9 +37,9 @@ export const useDegreeCertificateMethods = () => {
       degreeCertificateId,
     )
 
-  const generateNumeration = async (carrerId: number) =>
+  const generateNumeration = async (careerId: number) =>
     await DegreeCertificatesUseCasesImpl.getInstance().generateNumeration(
-      carrerId,
+      careerId,
     )
 
   const getReports = async (

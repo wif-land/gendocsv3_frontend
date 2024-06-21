@@ -47,7 +47,7 @@ import { StudentNewEditForm } from '../../../../features/students/presentation/c
 import DocsByStudentListView from '../../../../features/documents/presentation/view/DocsByStudentListView'
 import { useDegreeCertificatesStore } from '../../../../features/degcer-templates/presentation/store/degCerTemplatesStore'
 import { ICareer } from '../../../../features/careers/domain/entities/ICareer'
-import { useCallback } from 'react'
+import DegreesByStudentListView from '../../../../features/documents/presentation/view/DegreesByStudentListView'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -60,6 +60,7 @@ export const DegreeCertificateNewEditForm = ({
   const router = useRouter()
   const isStudentModalOpen = useBoolean(false)
   const isDocumentModalOpen = useBoolean(false)
+  const isDegreeModalOpen = useBoolean(false)
   const popover = usePopover()
 
   const { degCerTemplates } = useDegreeCertificatesStore()
@@ -210,6 +211,15 @@ export const DegreeCertificateNewEditForm = ({
               >
                 <Iconify icon="solar:documents-bold-duotone" />
                 Documentos
+              </MenuItem>
+
+              <MenuItem
+                onClick={() => {
+                  isDegreeModalOpen.onTrue()
+                }}
+              >
+                <Iconify icon="solar:documents-bold-duotone" />
+                Actas de grado
               </MenuItem>
             </CustomPopover>
           </Stack>
@@ -590,8 +600,46 @@ export const DegreeCertificateNewEditForm = ({
     </Dialog>
   )
 
+  const renderDegreeModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isDegreeModalOpen.value}
+      onClose={isDegreeModalOpen.onFalse}
+      sx={{
+        overflow: 'hidden',
+        padding: 10,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Actas de grado del estudiante</DialogTitle>
+
+      <DialogContent
+        sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
+      >
+        <DegreesByStudentListView
+          studentDni={
+            methods.watch('selectedValue' as any)?.label.split(' - ')[0]
+          }
+        />
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            isDegreeModalOpen.onFalse()
+          }}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
   return (
     <>
+      {renderDegreeModal}
       {renderStudentModal}
       {renderDocumentsModal}
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit as any)}>

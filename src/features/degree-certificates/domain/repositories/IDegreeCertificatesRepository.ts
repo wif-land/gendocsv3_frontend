@@ -10,7 +10,7 @@ export interface IDegreeCertificatesRepository {
   getAll(
     limit: number,
     offset: number,
-    carrerId: number,
+    filters: IDegreeCertificateFilters,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]

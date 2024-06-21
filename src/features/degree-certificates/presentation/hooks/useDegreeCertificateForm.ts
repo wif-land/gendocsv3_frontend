@@ -82,8 +82,6 @@ export const useDegreeCertificateForm = (
         })
       }
 
-      console.log('result', result)
-
       if (!!result && !currentDegreeCertificate) {
         router.push(pathname.replace('/new', ''))
         reset()
@@ -118,8 +116,6 @@ export const useDegreeCertificateForm = (
   useEffect(() => {
     const studentId = methods.watch('selectedValue')?.id
     if (!studentId || studentId === 0) return
-
-    console.log('studentId', studentId)
 
     // return
     // // WTF IS GOING ON HERE?

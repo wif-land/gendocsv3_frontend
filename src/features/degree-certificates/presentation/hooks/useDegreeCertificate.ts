@@ -145,7 +145,7 @@ export const useDegreeCertificateView = ({
         const data = await fetchData(
           table.rowsPerPage,
           table.page,
-          filters.careerId || 1,
+          filters as IDegreeCertificateFilters,
         )
         if (isMounted && data?.degreeCertificates) {
           setDegreeCertificates(data.degreeCertificates)
@@ -216,17 +216,19 @@ export const useDegreeCertificateView = ({
           }
         })
       } else {
-        fetchData(table.rowsPerPage, newPage, filters.careerId || 1).then(
-          (data) => {
-            if (data?.degreeCertificates) {
-              setDegreeCertificates([
-                ...degreeCertificates,
-                ...data.degreeCertificates,
-              ])
-              setTableData([...degreeCertificates, ...data.degreeCertificates])
-            }
-          },
-        )
+        fetchData(
+          table.rowsPerPage,
+          newPage,
+          filters as IDegreeCertificateFilters,
+        ).then((data) => {
+          if (data?.degreeCertificates) {
+            setDegreeCertificates([
+              ...degreeCertificates,
+              ...data.degreeCertificates,
+            ])
+            setTableData([...degreeCertificates, ...data.degreeCertificates])
+          }
+        })
       }
     }
   }
@@ -258,17 +260,19 @@ export const useDegreeCertificateView = ({
         setCount(0)
       })
     } else {
-      fetchData(newRowsPerPage, table.page, filters.careerId || 1).then(
-        (data) => {
-          if (data?.degreeCertificates) {
-            setDegreeCertificates(data.degreeCertificates)
-            setTableData(data.degreeCertificates)
-          }
-          if (data?.count) {
-            setCount(data.count)
-          }
-        },
-      )
+      fetchData(
+        newRowsPerPage,
+        table.page,
+        filters as IDegreeCertificateFilters,
+      ).then((data) => {
+        if (data?.degreeCertificates) {
+          setDegreeCertificates(data.degreeCertificates)
+          setTableData(data.degreeCertificates)
+        }
+        if (data?.count) {
+          setCount(data.count)
+        }
+      })
     }
   }
 
@@ -330,7 +334,21 @@ export const useDegreeCertificateView = ({
   }
 
   const handleSearch = (filters: IDegreeCertificateFilters) => {
-    if (filters.isReport === false) return
+    if (filters.isReport === false) {
+      fetchData(table.rowsPerPage, table.page, filters).then((data) => {
+        if (data?.degreeCertificates) {
+          setDegreeCertificates(data.degreeCertificates)
+          setTableData(data.degreeCertificates)
+          setCount(data.count)
+          return
+        }
+        setDegreeCertificates([])
+        setTableData([])
+        setCount(0)
+        return
+      })
+      return
+    }
     getReports(
       filters.isEnd || false,
       filters as IDegreeCertificateFilters,
@@ -378,7 +396,7 @@ export const useDegreeCertificateView = ({
       const data = await fetchData(
         table.rowsPerPage,
         table.page,
-        filters.careerId || 1,
+        filters as IDegreeCertificateFilters,
       )
       if (data?.degreeCertificates) {
         setDegreeCertificates(data.degreeCertificates)

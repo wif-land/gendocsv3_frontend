@@ -15,7 +15,7 @@ interface CertificateDegreeUseCases {
   getAll(
     limit: number,
     offset: number,
-    carrerId: number,
+    filters: IDegreeCertificateFilters,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -126,8 +126,11 @@ export class DegreeCertificatesUseCasesImpl
     return this.repository.getById(id)
   }
 
-  getAll = async (limit: number, offset: number, carrerId: number) =>
-    await this.repository.getAll(limit, offset, carrerId)
+  getAll = async (
+    limit: number,
+    offset: number,
+    filters: IDegreeCertificateFilters,
+  ) => await this.repository.getAll(limit, offset, filters)
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,

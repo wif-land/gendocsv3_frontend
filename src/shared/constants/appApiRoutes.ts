@@ -118,7 +118,7 @@ export const API_ROUTES = {
     GET_BY_FILTERS: `/degree-certificates/filter`,
     CREATE: '/degree-certificates',
     CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
-    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
+    GET_ALL: `/degree-certificates`,
     UPDATE: (id: number) => `/degree-certificates/${id}`,
     DELETE: (id: number) => `/degree-certificates/${id}`,
     GENERATE_NUMERATION: (careerId: number) =>

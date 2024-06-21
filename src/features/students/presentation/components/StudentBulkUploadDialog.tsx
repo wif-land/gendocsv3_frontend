@@ -97,7 +97,6 @@ export const StudentBulkUploadDialog = ({
 
       // const jsonData = XLSX.utils.sheet_to_json(worksheet)
       const transformedData = transformData(jsonData, careers, cities)
-      console.log(transformedData)
       setStudents(transformedData)
     } catch (error) {
       console.error(error)
