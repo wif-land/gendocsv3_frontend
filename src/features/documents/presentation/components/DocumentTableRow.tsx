@@ -15,6 +15,11 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { DocumentModel } from '../../data/models/DocumentsModel'
+import Stack from '@mui/material/Stack'
+import { useUsersStore } from '../../../../features/users/presentation/state/usersStore'
+import { fUserNames } from '../../../../shared/utils/format-names'
+import { useProcessStore } from '../../../../features/processes/presentation/state/useProcessStore'
+import { useCouncilsStore } from '../../../../features/council/presentation/store/councilsStore'
 
 type Props = {
   row: DocumentModel
@@ -32,6 +37,9 @@ export const DocumentTableRow = ({
   onViewRow,
 }: Props) => {
   const { number, description, createdAt } = row
+  const { users } = useUsersStore()
+  const { processes } = useProcessStore()
+  const { councils } = useCouncilsStore()
 
   const confirm = useBoolean()
 
@@ -53,7 +61,7 @@ export const DocumentTableRow = ({
                 color="inherit"
                 variant="subtitle2"
                 onClick={onViewRow}
-                sx={{ cursor: 'pointer' }}
+                sx={{ cursor: 'pointer', alignItems: 'center' }}
               >
                 {number}
               </Link>
@@ -71,12 +79,79 @@ export const DocumentTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(createdAt || Date.now()), 'p')}
+            primary={format(
+              new Date(createdAt || Date.now()),
+              'dd/mm/yyyy hh:mm',
+            )}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
 
-        <TableCell align="right">
+        <TableCell sx={{ alignItems: 'center' }}>
+          <ListItemText
+            disableTypography
+            primary={
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                justifyContent="start"
+              >
+                {users?.find((user) => user.id === row.userId) !== undefined
+                  ? fUserNames(users.find((user) => user.id === row.userId)!)
+                  : 'N/A'}
+              </Stack>
+            }
+          />
+        </TableCell>
+
+        <TableCell sx={{ alignItems: 'center' }}>
+          <ListItemText
+            disableTypography
+            primary={
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                justifyContent="start"
+              >
+                {councils?.map((council) => {
+                  if (council.id === row.councilId) {
+                    return council.name
+                  }
+                })[0] || 'N/A'}
+              </Stack>
+            }
+          />
+        </TableCell>
+
+        <TableCell sx={{ alignItems: 'center' }}>
+          <ListItemText
+            disableTypography
+            primary={
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                justifyContent="start"
+              >
+                {processes
+                  ?.map((process) => {
+                    const template = process.templateProcesses?.find(
+                      (template) => template.id === row.templateId,
+                    )
+
+                    if (template !== undefined) {
+                      return template.name
+                    }
+                  })
+                  .filter((value) => value !== undefined)[0] || 'N/A'}
+              </Stack>
+            }
+          />
+        </TableCell>
+
+        <TableCell align="center">
           <IconButton
             color={popover.open ? 'primary' : 'default'}
             onClick={popover.onOpen}

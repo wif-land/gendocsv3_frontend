@@ -1,10 +1,12 @@
-"use client"
+'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { CertificateTypeModel } from './data/models/certificateTypeModel'
 import { CertificateStatusModel } from './data/models/certificateStatusModel'
 import { DegreeModalityModel } from './data/models/degreeModalityModel'
 import { RoomModel } from './data/models/roomModel'
 import { ProvidersUseCasesImpl } from './domain/usecases/ProvidersService'
+import { useDegreeCertificatesStore } from '@/features/degcer-templates/presentation/store/degCerTemplatesStore'
+import { useDegreeCertificateMethods } from '@/features/degcer-templates/presentation/hooks/useDegCerTemplatesMethods'
 
 export interface CertificateContextData {
   certificateTypes: CertificateTypeModel[]
@@ -27,31 +29,53 @@ export const CertificateProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-
-  const [certificateTypes, setCertificateTypes] = useState<CertificateTypeModel[]>([])
-  const [certificateStatuses, setCertificateStatuses] = useState<CertificateStatusModel[]>([])
-  const [degreeModalities, setDegreeModalities] = useState<DegreeModalityModel[]>([])
+  const [certificateTypes, setCertificateTypes] = useState<
+    CertificateTypeModel[]
+  >([])
+  const [certificateStatuses, setCertificateStatuses] = useState<
+    CertificateStatusModel[]
+  >([])
+  const [degreeModalities, setDegreeModalities] = useState<
+    DegreeModalityModel[]
+  >([])
   const [rooms, setRooms] = useState<RoomModel[]>([])
 
+  const { fetchData } = useDegreeCertificateMethods()
+
   useEffect(() => {
-    if (certificateTypes.length > 0 && certificateStatuses.length > 0 && degreeModalities.length > 0 && rooms.length > 0) return
+    if (
+      certificateTypes.length > 0 &&
+      certificateStatuses.length > 0 &&
+      degreeModalities.length > 0 &&
+      rooms.length > 0
+    )
+      return
 
-    ProvidersUseCasesImpl.getInstance().getAllCertificateTypes().then((data) => {
-      setCertificateTypes(data)
-    })
+    ProvidersUseCasesImpl.getInstance()
+      .getAllCertificateTypes()
+      .then((data) => {
+        setCertificateTypes(data)
+      })
 
-    ProvidersUseCasesImpl.getInstance().getAllCertificateStatus().then((data) => {
-      setCertificateStatuses(data)
-    })
+    ProvidersUseCasesImpl.getInstance()
+      .getAllCertificateStatus()
+      .then((data) => {
+        setCertificateStatuses(data)
+      })
 
-    ProvidersUseCasesImpl.getInstance().getAllDegreeModalities().then((data) => {
-      setDegreeModalities(data)
-    })
+    ProvidersUseCasesImpl.getInstance()
+      .getAllDegreeModalities()
+      .then((data) => {
+        setDegreeModalities(data)
+      })
 
-    ProvidersUseCasesImpl.getInstance().getAllRooms().then((data) => {
-      setRooms(data)
-    })
+    ProvidersUseCasesImpl.getInstance()
+      .getAllRooms()
+      .then((data) => {
+        setRooms(data)
+      })
 
+    fetchData()
   }, [])
 
   return (

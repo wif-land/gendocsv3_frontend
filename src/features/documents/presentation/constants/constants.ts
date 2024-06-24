@@ -7,8 +7,20 @@ export const TABLE_HEAD = [
     label: 'Número',
   },
   {
-    key: 'description',
-    label: 'Descripción',
+    key: 'createdAt',
+    label: 'Fecha de creación',
+  },
+  {
+    key: 'userId',
+    label: 'Creado Por',
+  },
+  {
+    key: 'councilId',
+    label: 'Consejo',
+  },
+  {
+    key: 'templateId',
+    label: 'Plantilla',
   },
   {
     key: 'actions',

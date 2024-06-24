@@ -89,7 +89,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                     }
                   }}
                   label="Fecha y hora de ejecución"
-                  format="dddd/MM/YYYY hh:mm a"
+                  format="DD/MM/YYYY hh:mm a"
                   slotProps={{
                     textField: {
                       fullWidth: true,

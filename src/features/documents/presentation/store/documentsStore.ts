@@ -10,6 +10,7 @@ interface StoreState {
   generateRecord: (id: number) => void
   downloadDocument: (id: number) => void
   isLoading: boolean
+  isProcessing: boolean
 }
 
 const STORE_NAME = 'documents-store'
@@ -19,6 +20,7 @@ export const useDocumentStore = create<StoreState>(
   persist(
     (set) => ({
       isLoading: false,
+      isProcessing: false,
       documents: DEFAULT_DOCUMENTS,
       setDocuments: (documents) => {
         set({ isLoading: true })
@@ -26,14 +28,21 @@ export const useDocumentStore = create<StoreState>(
         set({ isLoading: false })
       },
       processDocuments: async (id) => {
+        set({ isProcessing: true })
         const { processDocuments } = DocumentsDataSourceImpl.getInstance()
         await processDocuments(id)
+
+        set({ isProcessing: false })
       },
       generateRecord: async (id: number) => {
+        set({ isLoading: true })
         const { generateRecord } = DocumentsDataSourceImpl.getInstance()
         await generateRecord(id)
+
+        set({ isLoading: false })
       },
       downloadDocument: async (id) => {
+        set({ isLoading: true })
         const { downloadDocument } = DocumentsDataSourceImpl.getInstance()
         await downloadDocument(id).then((data) => {
           const { file, fileName } = data
@@ -53,6 +62,8 @@ export const useDocumentStore = create<StoreState>(
           link.click()
           document.body.removeChild(link)
         })
+
+        set({ isLoading: false })
       },
     }),
     {

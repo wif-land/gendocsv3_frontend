@@ -109,7 +109,7 @@ export const DegreeCertificateTableRow = ({
               presentationDate
                 ? dayjs(presentationDate)
                     .tz('America/Bogota')
-                    .format('DD/MM/YYYY HH:MM')
+                    .format('DD/MM/YYYY HH:mm')
                 : // format(new Date(presentationDate), 'dd/MM/yyyy HH:MM')
                   ''
             }

@@ -191,85 +191,103 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
-              <RHFAutocomplete
-                name="student"
-                label="Estudiante"
-                placeholder="Estudiante"
-                sx={{
-                  flexGrow: 1,
-                }}
-                freeSolo
-                options={students?.map((student) => ({
-                  id: student.id,
-                  label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
-                }))}
-                value={getSelectedStudent()}
-                onSelect={() => {
-                  methods.setValue('student', getSelectedStudent())
-                }}
-              />
-              {methods.watch('student') && (
-                <>
-                  <IconButton onClick={popover.onOpen}>
-                    <Iconify icon="eva:more-vertical-fill" />
-                  </IconButton>
-                </>
+            {isProcessSelected &&
+              processes?.find(
+                (process) =>
+                  process.templateProcesses?.find(
+                    (template) => template.id === getValues('templateId'),
+                  )?.hasStudent,
+              ) && (
+                <Stack
+                  spacing={3}
+                  sx={{ display: 'flex', flexDirection: 'row' }}
+                >
+                  <RHFAutocomplete
+                    name="student"
+                    label="Estudiante"
+                    placeholder="Estudiante"
+                    sx={{
+                      flexGrow: 1,
+                    }}
+                    freeSolo
+                    options={students?.map((student) => ({
+                      id: student.id,
+                      label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
+                    }))}
+                    value={getSelectedStudent()}
+                    onSelect={() => {
+                      methods.setValue('student', getSelectedStudent())
+                    }}
+                  />
+                  {methods.watch('student') && (
+                    <>
+                      <IconButton onClick={popover.onOpen}>
+                        <Iconify icon="eva:more-vertical-fill" />
+                      </IconButton>
+                    </>
+                  )}
+                  <CustomPopover
+                    open={popover.open}
+                    onClose={popover.onClose}
+                    arrow="right-top"
+                    sx={{ width: 160 }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        isStudentModalOpen.onTrue()
+                      }}
+                    >
+                      <Iconify icon="ic:round-edit" />
+                      Editar
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        isDocumentModalOpen.onTrue()
+                      }}
+                    >
+                      <Iconify icon="solar:documents-bold-duotone" />
+                      Documentos
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        isDegreeModalOpen.onTrue()
+                      }}
+                    >
+                      <Iconify icon="solar:documents-bold-duotone" />
+                      Actas de grado
+                    </MenuItem>
+                  </CustomPopover>
+                </Stack>
               )}
-              <CustomPopover
-                open={popover.open}
-                onClose={popover.onClose}
-                arrow="right-top"
-                sx={{ width: 160 }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    isStudentModalOpen.onTrue()
-                  }}
-                >
-                  <Iconify icon="ic:round-edit" />
-                  Editar
-                </MenuItem>
-
-                <MenuItem
-                  onClick={() => {
-                    isDocumentModalOpen.onTrue()
-                  }}
-                >
-                  <Iconify icon="solar:documents-bold-duotone" />
-                  Documentos
-                </MenuItem>
-
-                <MenuItem
-                  onClick={() => {
-                    isDegreeModalOpen.onTrue()
-                  }}
-                >
-                  <Iconify icon="solar:documents-bold-duotone" />
-                  Actas de grado
-                </MenuItem>
-              </CustomPopover>
-            </Stack>
-
-            <RHFAutocomplete
-              name="functionariesIds"
-              label="Funcionarios"
-              className="w-full"
-              placeholder="Funcionarios"
-              freeSolo
-              multiple
-              options={functionaries
-                ?.map((functionary) => ({
-                  id: functionary.id,
-                  label: `${functionary.dni} - ${functionary.firstLastName} ${functionary.firstName}`,
-                }))
-                .filter(
-                  (student) =>
-                    getValues('functionariesIds')?.some(
-                      (value: any) => value.id === student.id,
-                    ) === false,
-                )}
-            />
+            {isProcessSelected &&
+              processes?.find(
+                (process) =>
+                  process.templateProcesses?.find(
+                    (template) => template.id === getValues('templateId'),
+                  )?.hasFunctionary,
+              ) && (
+                <RHFAutocomplete
+                  name="functionariesIds"
+                  label="Funcionarios"
+                  className="w-full"
+                  placeholder="Funcionarios"
+                  freeSolo
+                  multiple
+                  options={functionaries
+                    ?.map((functionary) => ({
+                      id: functionary.id,
+                      label: `${functionary.dni} - ${functionary.firstLastName} ${functionary.firstName}`,
+                    }))
+                    .filter(
+                      (student) =>
+                        getValues('functionariesIds')?.some(
+                          (value: any) => value.id === student.id,
+                        ) === false,
+                    )}
+                />
+              )}
 
             <RHFTextField
               name="description"

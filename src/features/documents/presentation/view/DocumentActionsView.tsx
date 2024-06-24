@@ -1,17 +1,24 @@
 'use client'
-import { Button, Container, Stack } from '@mui/material'
+import { Button, Container, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useDocumentStore } from '../store/documentsStore'
 import { useParams, useRouter } from 'next/navigation'
 
 import { useCouncilsStore } from '../../../../features/council/presentation/store/councilsStore'
 import { CouncilModel } from '../../../../features/council/data/models/CouncilModel'
+import Iconify from '../../../../core/iconify'
+import LoadingButton from '@mui/lab/LoadingButton'
 
 export const DocumentActionsView = () => {
   const { id } = useParams()
   const router = useRouter()
-  const { downloadDocument, generateRecord, processDocuments } =
-    useDocumentStore()
+  const {
+    downloadDocument,
+    generateRecord,
+    processDocuments,
+    isLoading,
+    isProcessing,
+  } = useDocumentStore()
   const { getById } = useCouncilsStore()
 
   const [currentCouncil, setCurrentCouncil] = useState<CouncilModel>()
@@ -27,6 +34,12 @@ export const DocumentActionsView = () => {
 
   return (
     <Container>
+      <Button variant="outlined" onClick={() => router.back()}>
+        <Stack direction="row" spacing={1}>
+          <Iconify icon="solar:arrow-left-bold-duotone" />
+          <Typography variant="body1">Regresar</Typography>
+        </Stack>
+      </Button>
       <Stack spacing={2}>
         <h1>Acta</h1>
         <Stack
@@ -38,30 +51,32 @@ export const DocumentActionsView = () => {
             width: '100%',
           }}
         >
-          <Button
+          <LoadingButton
             variant="outlined"
             sx={{
               height: '80px',
             }}
+            loading={isProcessing}
             onClick={async () => {
               await processDocuments(Number(id))
               await fetchCurrentCouncil()
             }}
           >
             1. Procesar documentos
-          </Button>
-          <Button
+          </LoadingButton>
+          <LoadingButton
             variant="outlined"
             sx={{
               height: '80px',
             }}
+            loading={isLoading}
             onClick={async () => {
               await generateRecord(Number(id))
               await fetchCurrentCouncil()
             }}
           >
             2. Generar plantilla acta
-          </Button>
+          </LoadingButton>
           <Button
             variant="outlined"
             sx={{

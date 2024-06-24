@@ -46,6 +46,16 @@ export default function NotificationsPopover() {
 
   const { notifications } = useNotificationStore()
 
+  if (!notifications || !notifications.length) {
+    return (
+      <Tooltip title="No hay notificaciones">
+        <IconButton>
+          <Iconify icon="solar:bell-bing-bold-duotone" width={24} />
+        </IconButton>
+      </Tooltip>
+    )
+  }
+
   const totalCompleted = notifications.filter(
     (item) => item.notification.status === NotificationStatus.COMPLETED,
   ).length
