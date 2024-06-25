@@ -5,8 +5,7 @@ import { CertificateStatusModel } from './data/models/certificateStatusModel'
 import { DegreeModalityModel } from './data/models/degreeModalityModel'
 import { RoomModel } from './data/models/roomModel'
 import { ProvidersUseCasesImpl } from './domain/usecases/ProvidersService'
-import { useDegreeCertificatesStore } from '@/features/degcer-templates/presentation/store/degCerTemplatesStore'
-import { useDegreeCertificateMethods } from '@/features/degcer-templates/presentation/hooks/useDegCerTemplatesMethods'
+import { useDegreeCertificateMethods } from '../../features/degcer-templates/presentation/hooks/useDegCerTemplatesMethods'
 
 export interface CertificateContextData {
   certificateTypes: CertificateTypeModel[]
