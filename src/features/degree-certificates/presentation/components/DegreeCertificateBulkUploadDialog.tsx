@@ -217,14 +217,20 @@ export const DegCerBulkUploadDialog = ({
                   }
                 }
               >
-                {notifications.map((notification) => (
-                  <MenuItem
-                    value={notification.notification.id}
-                    key={notification.notification.id}
-                  >
-                    {notification.notification.name}
-                  </MenuItem>
-                ))}
+                {notifications
+                  .filter(
+                    (rootNotification) =>
+                      rootNotification.notification.type ===
+                      'createBulkCertificates',
+                  )
+                  .map((notification) => (
+                    <MenuItem
+                      value={notification.notification.id}
+                      key={notification.notification.id}
+                    >
+                      {notification.notification.name}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           )}
