@@ -12,6 +12,7 @@ export const transformData = (
 ): IStudent[] =>
   data.map((item: any) => {
     if (!item['Cédula']) {
+      console.log(item)
       enqueueSnackbar(
         'Por favor, asegúrate de que todos los campos estén completos',
         { variant: 'warning' },
@@ -30,6 +31,7 @@ export const transformData = (
     let firstLastName = ''
     let secondLastName = ''
 
+    console.log(item)
     if (item['Nombres']) {
       const names = safeToString(item['Nombres']).split(' ')
       firstName = names[0]
@@ -92,7 +94,7 @@ export const transformData = (
         dni: item['Cédula'].toString(),
         startStudiesDate: item['Inicio clases'] || new Date(),
         endStudiesDate: item['Fin clases'] || new Date(),
-        approvedCredits: parseInt(item['Créditos Aprobados'], 10) || 0,
+        approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
         bachelorDegree: item['Título'] || '',
       } as StudentModel
     }

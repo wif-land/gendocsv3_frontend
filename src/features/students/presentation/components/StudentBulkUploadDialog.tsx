@@ -35,6 +35,7 @@ export const StudentBulkUploadDialog = ({
 }: Props) => {
   const [files, setFiles] = useState<(File | string)[]>([])
   const [students, setStudents] = useState<IStudent[]>([])
+  const [fileFormat, setFileFormat] = useState<string>('default')
   const { careers, get: getCareers } = useCareersStore()
   const { cities } = useLocations()
   const { bulkCreate } = useStudentCommands()
@@ -78,24 +79,39 @@ export const StudentBulkUploadDialog = ({
       const worksheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[worksheetName]
 
-      // filter out the header row
+      let data = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
 
-      const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
-      data.forEach((element) => {
-        if (
-          !(element as []).find((item: any) => item === 'Cédula') ||
-          (element as []).length === 0
-        ) {
-          data.shift()
+      const headerRowIndex = data.findIndex((row: any) =>
+        row.includes('Cédula'),
+      )
+      if (headerRowIndex > -1) {
+        const headers = data[headerRowIndex]
+        data = data.slice(headerRowIndex + 1)
+        data.unshift(headers) // Add headers back as the first row
+      }
+
+      let filteredData = data
+      if (fileFormat === 'formatWithHeader') {
+        filteredData = data.filter((element, index) => {
+          if (index === 0) return true
+          return !(
+            (element as any[]).find((item: any) => item === 'Cédula') ||
+            (element as any[]).length === 0
+          )
+        })
+      } else if (fileFormat === 'formatWithSpecialColumns') {
+        const headers = data[0] as string[]
+        const hasSpecialColumns =
+          headers.includes('Horas de vinculación') ||
+          headers.includes('Créditos carrera')
+        if (hasSpecialColumns) {
+          filteredData = data.slice(1)
         }
-      })
-      const dee = data.filter((element) => (element as []).length > 0)
+      }
 
-      const sheet = XLSX.utils.json_to_sheet(dee, { skipHeader: true })
-
+      const sheet = XLSX.utils.json_to_sheet(filteredData, { skipHeader: true })
       const jsonData = XLSX.utils.sheet_to_json(sheet)
 
-      // const jsonData = XLSX.utils.sheet_to_json(worksheet)
       const transformedData = transformData(jsonData, careers, cities)
       setStudents(transformedData)
     } catch (error) {
@@ -116,6 +132,10 @@ export const StudentBulkUploadDialog = ({
 
   const handleRemoveAllFiles = () => {
     setFiles([])
+  }
+
+  const handleFormatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setFileFormat(event.target.value)
   }
 
   useEffect(() => {
@@ -141,8 +161,7 @@ export const StudentBulkUploadDialog = ({
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other}>
       <DialogTitle sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}>
-        {' '}
-        {title}{' '}
+        {title}
       </DialogTitle>
 
       <DialogContent dividers sx={{ pt: 1, pb: 0, border: 'none' }}>
@@ -152,6 +171,16 @@ export const StudentBulkUploadDialog = ({
           onDrop={handleDrop}
           onRemove={handleRemoveFile}
         />
+        <div style={{ marginTop: '16px' }}>
+          <label htmlFor="fileFormat">Formato del archivo: </label>
+          <select id="fileFormat" onChange={handleFormatChange}>
+            <option value="default">Seleccione el formato</option>
+            <option value="formatWithHeader">Formato con encabezado</option>
+            <option value="formatWithSpecialColumns">
+              Formato sin encabezado
+            </option>
+          </select>
+        </div>
       </DialogContent>
 
       <DialogActions>
