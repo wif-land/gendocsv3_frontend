@@ -11,7 +11,7 @@ const STORE_NAME = 'degree-certificates-templates-store'
 
 const DEFAULT_DEGREE_CERTIFICATES_TEMPLATES: DegCerTemplateModel[] = []
 
-export const useDegreeCertificatesStore = create<StoreState>(
+export const degreeTemplatesStore = create<StoreState>(
   persist(
     (set) => ({
       degCerTemplates: DEFAULT_DEGREE_CERTIFICATES_TEMPLATES,

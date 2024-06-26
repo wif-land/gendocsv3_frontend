@@ -1,4 +1,4 @@
-import { useDegreeCertificatesStore } from '../store/degCerTemplatesStore'
+import { degreeTemplatesStore } from '../store/degCerTemplatesStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { useEffect, useState } from 'react'
 import { TableProps } from '../../../../shared/sdk/table'
@@ -12,7 +12,7 @@ interface Props {
 
 export const useDegCerTemplatesView = ({ table }: Props) => {
   const [tableData, setTableData] = useState<DegCerTemplateModel[]>([])
-  const { degCerTemplates, setDegCerTemplates } = useDegreeCertificatesStore()
+  const { degCerTemplates, setDegCerTemplates } = degreeTemplatesStore()
 
   const { loader } = useLoaderStore()
   const { fetchData } = useDegreeCertificateMethods()

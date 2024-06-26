@@ -45,7 +45,7 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import { StudentNewEditForm } from '../../../../features/students/presentation/components/StudentNewEditForm'
 import DocsByStudentListView from '../../../../features/documents/presentation/view/DocsByStudentListView'
-import { useDegreeCertificatesStore } from '../../../../features/degcer-templates/presentation/store/degCerTemplatesStore'
+import { degreeTemplatesStore } from '../../../../features/degcer-templates/presentation/store/degCerTemplatesStore'
 import { ICareer } from '../../../../features/careers/domain/entities/ICareer'
 import DegreesByStudentListView from '../../../../features/documents/presentation/view/DegreesByStudentListView'
 
@@ -63,7 +63,7 @@ export const DegreeCertificateNewEditForm = ({
   const isDegreeModalOpen = useBoolean(false)
   const popover = usePopover()
 
-  const { degCerTemplates } = useDegreeCertificatesStore()
+  const { degCerTemplates } = degreeTemplatesStore()
   const {
     methods,
     onSubmit,

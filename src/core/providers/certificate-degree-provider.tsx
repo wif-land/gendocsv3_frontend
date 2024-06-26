@@ -6,6 +6,8 @@ import { DegreeModalityModel } from './data/models/degreeModalityModel'
 import { RoomModel } from './data/models/roomModel'
 import { ProvidersUseCasesImpl } from './domain/usecases/ProvidersService'
 import { useDegreeCertificateMethods } from '../../features/degcer-templates/presentation/hooks/useDegCerTemplatesMethods'
+import { DegCerTemplateUseCasesImpl } from '@/features/degcer-templates/domain/usecases/DegCerTemplatesUseCases'
+import { degreeTemplatesStore } from '@/features/degcer-templates/presentation/store/degCerTemplatesStore'
 
 export interface CertificateContextData {
   certificateTypes: CertificateTypeModel[]
@@ -38,15 +40,15 @@ export const CertificateProvider = ({
     DegreeModalityModel[]
   >([])
   const [rooms, setRooms] = useState<RoomModel[]>([])
+  const {degCerTemplates, setDegCerTemplates} = degreeTemplatesStore()
 
-  const { fetchData } = useDegreeCertificateMethods()
 
   useEffect(() => {
     if (
       certificateTypes.length > 0 &&
       certificateStatuses.length > 0 &&
       degreeModalities.length > 0 &&
-      rooms.length > 0
+      rooms.length > 0 
     )
       return
 
@@ -74,8 +76,21 @@ export const CertificateProvider = ({
         setRooms(data)
       })
 
-    fetchData()
   }, [])
+
+  useEffect(() => {
+    let isMounted = true
+    if (isMounted && degCerTemplates.length === 0) {
+      DegCerTemplateUseCasesImpl.getInstance()
+        .getAll()
+        .then((data) => {
+          setDegCerTemplates(data)
+        })
+    }
+    return () => {
+      isMounted = false
+    }
+  }, [degCerTemplates])
 
   return (
     <CertificateContext.Provider
