@@ -91,14 +91,14 @@ export const DegreeCertificateTableRow = ({
         <TableCell>
           <ListItemText
             primary={row.topic}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            primaryTypographyProps={{ typography: 'body2', noWrap: false }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
             primary={studentName}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            primaryTypographyProps={{ typography: 'body2', noWrap: false }}
             secondary={(row.student as IStudent).dni}
           />
         </TableCell>
