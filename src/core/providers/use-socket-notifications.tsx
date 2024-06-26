@@ -19,7 +19,7 @@ export const useSocketListeners = () => {
 
   const loadUserNotifications = () => {
     if (!user) return
-    socketClient.emit('user-notifications', { userId: user.id })
+    socketClient.emit('user-notifications', { userId: user.id, limit: 15 })
   }
 
   useEffect(() => {
