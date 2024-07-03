@@ -189,7 +189,7 @@ export const DegCerBulkUploadDialog = ({
             flex: 1,
           }}
         >
-          {notifications.length > 0 && (
+          {notifications?.length > 0 && (
             <FormControlLabel
               control={
                 <Checkbox
