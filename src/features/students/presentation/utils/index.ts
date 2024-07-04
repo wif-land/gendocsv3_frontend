@@ -51,6 +51,17 @@ export const transformData = (
     }
 
     if (item['Correo'] && item['Fecha Nacimiento']) {
+      let career = careers.find(
+        (career: ICareer) => career.name === item['Carrera'],
+      )?.id as number
+
+      if (item['Carrera'] === 'ING. EN SISTEMAS COMPUTAC.E INFORMATICOS') {
+        career = careers.find(
+          (career: ICareer) =>
+            career.name ===
+            'Ingeniería en Sistemas Computacionales e Informáticos',
+        )?.id as number
+      }
       return {
         firstName,
         secondName,
@@ -70,9 +81,7 @@ export const transformData = (
           (city: ICanton) => city.name.toUpperCase() === item['Cantón'],
         )?.id as number,
         isActive: true,
-        career: careers.find(
-          (career: ICareer) => career.name === item['Carrera'],
-        )?.id as number,
+        career,
       } as StudentModel
     } else if (item['Horas Vinculación'] && item['Horas Prácticas']) {
       return {
