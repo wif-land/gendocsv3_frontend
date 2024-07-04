@@ -62,8 +62,9 @@ export const useNavConfig = () => {
     if (user && user.accessModules) {
       setAccessModules(user.accessModules)
       setFirstUni(
-        accessModules?.find((module) => module.code.includes('UNI')) ||
-          undefined,
+        accessModules?.find((module) =>
+          module.code.toUpperCase().includes('UNI'),
+        ) || undefined,
       )
       return
     }
