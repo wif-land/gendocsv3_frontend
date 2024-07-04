@@ -203,9 +203,6 @@ export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
 
     acc.push({
       topic: safeToString(item['Tema']),
-      presentationDate: item['Fin clases']
-        ? new Date(item['Fin clases'])
-        : undefined,
       studentDni: safeToString(item['Cédula']),
       certificateType: safeToString(item['Modalidad Titulación']),
       certificateStatus: safeToString(item['Estado Acta']),

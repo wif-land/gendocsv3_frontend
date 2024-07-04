@@ -60,7 +60,6 @@ export const transformData = (
         personalEmail: item['Correo'],
         phoneNumber: item['Celular'],
         regularPhoneNumber: item['Teléfono'],
-        startStudiesDate: item['Fecha Matícula'] || new Date(),
         dni: item['Cédula'].toString(),
         folio: item['Folio'],
         gender: item['Género'],
