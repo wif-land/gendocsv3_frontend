@@ -6,32 +6,17 @@ This is the version 3 of GenDocs, a simple documentation manager for Universidad
 
 Requirements:
 
-- NodeJS version >= 20
-- NVM (Node Version Manager)
+| Requirement | Description |
+|-------------|-------------|
+| NodeJS | NodeJS version >= 20 |
+| NVM | Node Version Manager |
 
 To use this project, you need to install the dependencies first:
 
-```bash
-nvm use
-npm install
-```
-
-Then, you can run the project with:
-
-```bash
-npm run dev
-```
-
-You can also build the project with:
-
-```bash
-npm run build
-```
-
-And the run the production optimized version with:
-
-```bash
-npm run start
-```
-
-## License
+| Command | Description |
+|---------|-------------|
+| `nvm use` | Use the NodeJS version specified in the `.nvmrc` file |
+| `npm install` | Install the dependencies |
+| `npm run dev` | Run the project in development mode |
+| `npm run build` | Build the project |
+| `npm run start` | Run the project in production mode |
