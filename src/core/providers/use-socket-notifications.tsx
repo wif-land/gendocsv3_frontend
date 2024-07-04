@@ -15,7 +15,7 @@ import { Button } from '@mui/material'
 export const useSocketListeners = () => {
   const [firstLoad, setFirstLoad] = useState(true)
   const { addNotification, setNotifications } = useNotificationStore()
-  const { user } = useAccountStore()
+  const { user, setUser } = useAccountStore()
 
   const loadUserNotifications = () => {
     if (!user) return
@@ -68,13 +68,31 @@ export const useSocketListeners = () => {
       }
     })
 
+    socketClient.off('user-notifications')
     socketClient.on('user-notifications', (data: IRootNotification[]) => {
       if (!user) return
       setNotifications(data)
     })
 
+    socketClient.off('change-access-modules')
+    socketClient.on(
+      'change-access-modules',
+      (data: { id: number; accessModules: number[] }) => {
+        console.log(data)
+        if (!user) return
+        if (user.id == data.id) {
+          setUser({
+            ...user,
+            accessModules: data.accessModules,
+          })
+        }
+      },
+    )
+
     return () => {
       socketClient.off('notification')
+      socketClient.off('user-notifications')
+      socketClient.off('change-access-modules')
     }
   }, [])
 }

@@ -42,6 +42,7 @@ export const useNavConfig = () => {
   const [firstUni, setFirstUni] = useState<IModule | undefined>()
 
   useEffect(() => {
+    console.log('modules', modules)
     if (!modules.length) {
       return
     }
