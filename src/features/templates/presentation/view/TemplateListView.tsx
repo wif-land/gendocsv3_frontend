@@ -28,7 +28,6 @@ import {
   useTable,
 } from '../../../../shared/sdk/table'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
-import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
@@ -44,6 +43,7 @@ import { TemplateTableRow } from '../components/TemplateTableRow'
 import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 import { TemplatesTableFiltersResult } from '../components/TemplateTableFiltersResult'
 import { TemplateModel } from '../../data/models/TemplatesModel'
+import ConfirmMigrationDialog from '../components/ConfirmMigrationDialog'
 
 const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const table = useTable()
@@ -148,7 +148,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
               }
               action={
                 <Button color="primary" onClick={confirm.onTrue}>
-                  Cambiar estado
+                  Migrar a proceso
                 </Button>
               }
             />
@@ -230,28 +230,13 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
         </Card>
       </Container>
 
-      <ConfirmDialog
+      <ConfirmMigrationDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Cambiar estado de la plantilla"
-        content={
-          <>
-            Estás seguro de que quieres cambiar el estado de
-            <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              // handleDeleteRows()
-              confirm.onFalse()
-            }}
-          >
-            Cambiar
-          </Button>
-        }
+        onConfirm={() => {
+          console.log('confirm')
+        }}
+        selectedItems={table.selected}
       />
     </div>
   )

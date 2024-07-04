@@ -158,11 +158,13 @@ export const StudentNewEditForm = ({
             >
               {!!careers?.length && (
                 <RHFSelect name="career" label="Carrera">
-                  {careers.map((career) => (
-                    <MenuItem key={career.id} value={career.id}>
-                      {career.name}
-                    </MenuItem>
-                  ))}
+                  {careers
+                    ?.filter((carrer) => carrer.isActive)
+                    ?.map((career) => (
+                      <MenuItem key={career.id} value={career.id}>
+                        {career.name}
+                      </MenuItem>
+                    ))}
                 </RHFSelect>
               )}
 

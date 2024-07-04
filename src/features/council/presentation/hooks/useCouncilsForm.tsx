@@ -12,7 +12,6 @@ import { NewCouncilSchema, resolveDefaultValues } from '../constants'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { useDefaultMembersStore } from '../../../default-members/presentation/store/defaultMembersStore'
-import { DefaultMembersUseCasesImpl } from '../../../default-members/domain/usecases/DefaultMemberServices'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
 
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
@@ -23,7 +22,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const { councils, setCouncils, createCouncil, updateCouncil } =
     useCouncilsStore()
 
-  const { defaultMembers, setDefaultMembers } = useDefaultMembersStore()
+  const { defaultMembers } = useDefaultMembersStore()
   const moduleIdentifier = resolveModuleId(
     useModulesStore().modules,
     codeModule as string,
@@ -138,14 +137,6 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
       isMounted = false
     }
   }, [searchDebounced])
-
-  useEffect(() => {
-    DefaultMembersUseCasesImpl.getInstance()
-      .getByModuleId(moduleIdentifier!)
-      .then((result) => {
-        setDefaultMembers(result)
-      })
-  }, [])
 
   return {
     councils,

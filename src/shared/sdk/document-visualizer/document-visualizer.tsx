@@ -2,9 +2,9 @@
 import { Button, Stack, Typography } from '@mui/material'
 import React from 'react'
 import Iconify from '../iconify'
-import Link from 'next/link'
 import { VariablesAccordion } from '../variables-accordion/varibles-accordion'
 import { VariableProvider } from '../../../core/providers/variables-provider'
+import { useRouter } from 'next/navigation'
 
 const DocumentVisualizer = ({
   driveId,
@@ -16,6 +16,7 @@ const DocumentVisualizer = ({
   shouldLoadVariables?: boolean
 }) => {
   const isSpreadsheet = driveId.includes('**spreadsheet**')
+  const router = useRouter()
 
   const documentURL = !isSpreadsheet
     ? `https://docs.google.com/document/d/${driveId}`
@@ -27,18 +28,12 @@ const DocumentVisualizer = ({
   return (
     <div>
       <VariableProvider>
-        <Link
-          href={returnLink}
-          passHref
-          style={{ textDecoration: 'none', color: 'inherit' }}
-        >
-          <Button variant="outlined">
-            <Stack direction="row" spacing={1}>
-              <Iconify icon="solar:arrow-left-bold-duotone" />
-              <Typography variant="body1">Regresar</Typography>
-            </Stack>
-          </Button>
-        </Link>
+        <Button variant="outlined" onClick={() => router.back()}>
+          <Stack direction="row" spacing={1}>
+            <Iconify icon="solar:arrow-left-bold-duotone" />
+            <Typography variant="body1">Regresar</Typography>
+          </Stack>
+        </Button>
         <Stack
           sx={{
             display: 'flex',

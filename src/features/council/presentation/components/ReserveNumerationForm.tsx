@@ -24,11 +24,16 @@ export const ReserveNumerationForm = () => {
           placeholder="Consejo"
         >
           {councils &&
-            councils.map((council: ICouncil) => (
-              <MenuItem key={council.id as number} value={council.id as number}>
-                {council.name}
-              </MenuItem>
-            ))}
+            councils
+              .filter((council) => council.isActive)
+              ?.map((council: ICouncil) => (
+                <MenuItem
+                  key={council.id as number}
+                  value={council.id as number}
+                >
+                  {council.name}
+                </MenuItem>
+              ))}
         </RHFSelect>
         <Stack
           sx={{

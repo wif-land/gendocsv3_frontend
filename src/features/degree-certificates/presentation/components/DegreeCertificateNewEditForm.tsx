@@ -172,10 +172,12 @@ export const DegreeCertificateNewEditForm = ({
                 loading={loading}
                 noOptionsText="No hay resultados"
                 isOptionEqualToValue={(option, value) => option.id === value.id}
-                options={students?.map((student) => ({
-                  label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
-                  id: student.id,
-                }))}
+                options={students
+                  ?.filter((student) => student.isActive)
+                  ?.map((student) => ({
+                    label: `${student.firstName} ${student.secondName} ${student.firstLastName} ${student.secondLastName} - ${student.dni}`,
+                    id: student.id,
+                  }))}
                 onInputChange={(event, newInputValue) => {
                   setInputValue(newInputValue)
                 }}

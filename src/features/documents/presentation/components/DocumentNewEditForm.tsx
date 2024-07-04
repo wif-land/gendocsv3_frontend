@@ -93,14 +93,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               placeholder="Consejo"
             >
               {councils &&
-                councils.map((council: any) => (
-                  <MenuItem
-                    key={council.id as number}
-                    value={council.id as number}
-                  >
-                    {council.name}
-                  </MenuItem>
-                ))}
+                councils
+                  ?.filter((council) => council.isActive)
+                  ?.map((council: any) => (
+                    <MenuItem
+                      key={council.id as number}
+                      value={council.id as number}
+                    >
+                      {council.name}
+                    </MenuItem>
+                  ))}
             </RHFSelect>
 
             {isCouncilSelected.value && (
@@ -120,14 +122,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   }}
                 >
                   {processes! &&
-                    processes.map((process) => (
-                      <MenuItem
-                        key={process.id as number}
-                        value={process.id as number}
-                      >
-                        {process.name}
-                      </MenuItem>
-                    ))}
+                    processes
+                      ?.filter((process) => process.isActive)
+                      ?.map((process) => (
+                        <MenuItem
+                          key={process.id as number}
+                          value={process.id as number}
+                        >
+                          {process.name}
+                        </MenuItem>
+                      ))}
                 </RHFSelect>
               </>
             )}
@@ -140,14 +144,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                 placeholder="Plantilla"
               >
                 {selectedProcess! &&
-                  selectedProcess.templateProcesses?.map((template) => (
-                    <MenuItem
-                      key={template.id as number}
-                      value={template.id as number}
-                    >
-                      {template.name}
-                    </MenuItem>
-                  ))}
+                  selectedProcess.templateProcesses
+                    ?.filter((template) => template.isActive)
+                    ?.map((template) => (
+                      <MenuItem
+                        key={template.id as number}
+                        value={template.id as number}
+                      >
+                        {template.name}
+                      </MenuItem>
+                    ))}
               </RHFSelect>
             )}
 

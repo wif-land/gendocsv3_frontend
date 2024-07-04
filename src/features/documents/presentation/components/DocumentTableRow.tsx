@@ -115,11 +115,8 @@ export const DocumentTableRow = ({
                 alignItems="center"
                 justifyContent="start"
               >
-                {councils?.map((council) => {
-                  if (council.id === row.councilId) {
-                    return council.name
-                  }
-                })[0] || 'N/A'}
+                {councils?.find((council) => council.id === row.councilId)
+                  ?.name || 'N/A'}
               </Stack>
             }
           />

@@ -54,6 +54,9 @@ export const LoginForm = () => {
             type="submit"
             variant="contained"
             loading={methods.formState.isSubmitting}
+            sx={{
+              marginBottom: 2,
+            }}
           >
             Ingresar
           </LoadingButton>
@@ -67,9 +70,12 @@ export const LoginForm = () => {
             }}
             color="inherit"
             underline="always"
-            sx={{ alignSelf: 'flex-end', cursor: 'pointer' }}
+            sx={{
+              alignSelf: 'flex-end',
+              cursor: 'pointer',
+            }}
           >
-            Reestablecer contraseña
+            Restablecer contraseña
           </Link>
         </Grid>
       </Grid>
