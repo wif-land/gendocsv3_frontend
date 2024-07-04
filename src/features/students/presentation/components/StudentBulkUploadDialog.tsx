@@ -16,6 +16,7 @@ import { IStudent } from '../../domain/entities/IStudent'
 import { transformData } from '../utils'
 import { useStudentCommands } from '../hooks/useStudentCommands'
 import { useLocations } from '../../../../core/providers/locations-provider'
+import { enqueueSnackbar } from 'notistack'
 
 interface Props extends DialogProps {
   title?: string
@@ -113,6 +114,21 @@ export const StudentBulkUploadDialog = ({
       const jsonData = XLSX.utils.sheet_to_json(sheet)
 
       const transformedData = transformData(jsonData, careers, cities)
+
+      if (
+        transformedData == null ||
+        transformedData.length < jsonData.length - 1
+      ) {
+        enqueueSnackbar(
+          'Existen errores en la información del formato de estudiantes',
+          {
+            variant: 'error',
+          },
+        )
+
+        return
+      }
+
       setStudents(transformedData)
     } catch (error) {
       console.error(error)
@@ -149,7 +165,18 @@ export const StudentBulkUploadDialog = ({
       return
     }
 
-    bulkCreate(students)
+    const fetchBulk = async () => {
+      const studentsBulk = await bulkCreate(students)
+      if (studentsBulk.length === 0) {
+        return
+      }
+
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000)
+    }
+
+    fetchBulk()
   }, [students])
 
   useEffect(() => {

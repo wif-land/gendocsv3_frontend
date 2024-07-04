@@ -185,7 +185,7 @@ export const useStudentView = ({
     return () => {
       isMounted = false
     }
-  }, [tableData, isDataFiltered])
+  }, [tableData, isDataFiltered, students])
 
   return {
     loader,
