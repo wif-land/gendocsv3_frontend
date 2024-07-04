@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack'
 import Collapse from '@mui/material/Collapse'
 import { NavSectionProps, NavListProps, NavConfigProps } from '../types'
 import { navVerticalConfig } from '../config'
-import { StyledSubheader } from './styles'
+import { StyledHeader, StyledSubheader } from './styles'
 
 import NavList from './nav-list'
 
@@ -17,6 +17,7 @@ const NavSectionVertical = ({
   <Stack sx={sx} {...other}>
     {data.map((group, index) => (
       <Group
+        header={group.header}
         key={group.subheader || index}
         subheader={group.subheader}
         items={group.items}
@@ -29,12 +30,13 @@ const NavSectionVertical = ({
 export default memo(NavSectionVertical)
 
 type GroupProps = {
+  header?: string
   subheader: string
   items: NavListProps[]
   config: NavConfigProps
 }
 
-const Group = ({ subheader, items, config }: GroupProps) => {
+const Group = ({ subheader, items, config, header }: GroupProps) => {
   const [open, setOpen] = useState(true)
 
   const handleToggle = useCallback(() => {
@@ -53,6 +55,7 @@ const Group = ({ subheader, items, config }: GroupProps) => {
 
   return (
     <List disablePadding sx={{ px: 2 }}>
+      {header && <StyledHeader>{header}</StyledHeader>}
       {subheader ? (
         <>
           <StyledSubheader
