@@ -8,19 +8,19 @@ export interface ICreateStudent {
   firstLastName: string
   secondLastName: string
   gender: string
-  birthdate: string
+  birthdate?: string
   canton: ICanton | number
   regularPhoneNumber?: string
   cellphone?: string
-  folio: string
+  folio?: string
   isActive: boolean
-  registration: string
+  registration?: string
   career: ICareer | number
   personalEmail: string
   outlookEmail: string
   phoneNumber: string
-  startStudiesDate: string
-  endStudiesDate?: string | undefined
+  startStudiesDate?: string
+  endStudiesDate?: string
   bachelorDegree: string
   approvedCredits?: number
   vinculationHours?: number

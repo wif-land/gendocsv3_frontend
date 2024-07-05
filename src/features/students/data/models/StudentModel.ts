@@ -11,13 +11,13 @@ export class StudentModel implements IStudent {
   firstLastName: string
   secondLastName: string
   gender: string
-  birthdate: string
+  birthdate?: string
   canton: number | ICanton
   regularPhoneNumber?: string | undefined
   cellphone?: string | undefined
-  folio: string
+  folio?: string
   isActive: boolean
-  registration: string
+  registration?: string
   approvedCredits?: number
   career: ICareer | number
   updatedAt: string
@@ -28,9 +28,9 @@ export class StudentModel implements IStudent {
   bachelorDegree: string
   vinculationHours?: number | undefined
   internshipHours?: number
-  endStudiesDate?: string | undefined
+  endStudiesDate?: string
   label?: string | undefined
-  startStudiesDate: string
+  startStudiesDate?: string
 
   constructor(props: IStudent) {
     this.id = props.id

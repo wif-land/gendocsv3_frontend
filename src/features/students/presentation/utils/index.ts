@@ -1,7 +1,6 @@
 import { enqueueSnackbar } from 'notistack'
 import { ICareer } from '../../../careers/domain/entities/ICareer'
 import { StudentModel } from '../../data/models/StudentModel'
-import { IStudent } from '../../domain/entities/IStudent'
 import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
 
 const alternativeCities = {
@@ -17,7 +16,7 @@ export const transformData = (
   data: any[],
   careers: ICareer[],
   canton: ICanton[],
-): IStudent[] =>
+): any =>
   data
     .map((item: any) => {
       if (!item['Cédula']) {
@@ -29,13 +28,53 @@ export const transformData = (
         return
       }
 
-      if (String(item['Cédula']).length !== 10) {
+      if (String(item['Cédula']).trim().length !== 10) {
         enqueueSnackbar(
           `Por favor, asegúrate de que la cédula ${item['Cédula']} tenga 10 dígitos`,
           { variant: 'warning' },
         )
 
         return
+      }
+
+      if (item['Correo'] && !item['Correo'].trim().includes('@')) {
+        enqueueSnackbar(
+          `Por favor, asegúrate de que el correo ${item['Correo']} sea válido`,
+          { variant: 'warning' },
+        )
+
+        return
+      }
+
+      if (item['Correo UTA'] && !item['Correo UTA'].trim().includes('@')) {
+        enqueueSnackbar(
+          `Por favor, asegúrate de que el correo ${item['Correo UTA']} sea válido`,
+          { variant: 'warning' },
+        )
+
+        return
+      }
+
+      if (item['Celular'] && String(item['Celular']).trim().length !== 10) {
+        enqueueSnackbar(
+          `Por favor, asegúrate de que el número de celular ${item['Celular']} tenga 10 dígitos`,
+          { variant: 'warning' },
+        )
+
+        return
+      }
+
+      if (item['Teléfono'] && String(item['Teléfono']).trim().length > 15) {
+        enqueueSnackbar(
+          `Por favor, asegúrate de que el número de teléfono ${item['Teléfono']} sea válido`,
+          { variant: 'warning' },
+        )
+
+        return
+      }
+
+      if (item['Cédula']) {
+        console.log('item', item)
       }
 
       const safeToString = (value: any): string => {
@@ -97,7 +136,20 @@ export const transformData = (
           .join(' ')
       }
 
-      if (item['Correo'] && item['Fecha Nacimiento']) {
+      if (item['Correo'] && item['Valor'] != null) {
+        // if (!item['Fecha Nacimiento']) {
+        //   enqueueSnackbar(
+        //     `Por favor, asegúrate de que la fecha de nacimiento para ${item['Cédula']} sea válida`,
+        //     { variant: 'warning' },
+        //   )
+
+        //   return
+        // }
+
+        const birthdate = item['Fecha Nacimiento']
+          ? new Date(item['Fecha Nacimiento'])
+          : undefined
+
         let career = careers.find(
           (career: ICareer) => career.name === item['Carrera'],
         )?.id as number
@@ -110,7 +162,7 @@ export const transformData = (
           )?.id as number
         }
 
-        let cityString: string = item['Cantón'].toUpperCase().trim()
+        let cityString: string = String(item['Cantón']).toUpperCase().trim()
         if (
           Object.keys(alternativeCities).find((city) => city === cityString)
         ) {
@@ -142,17 +194,21 @@ export const transformData = (
           secondName,
           firstLastName,
           secondLastName,
-          outlookEmail: item['Correo UTA']?.toString().trim(),
-          personalEmail: item['Correo']?.toString().trim(),
-          phoneNumber: item['Celular']?.toString().trim(),
-          regularPhoneNumber: item['Teléfono']?.toString().trim(),
-          dni: item['Cédula'].toString().trim(),
-          folio: item['Folio']?.toString().trim(),
-          gender: item['Género']?.toString().trim(),
+          outlookEmail: item['Correo UTA']
+            ? String(item['Correo UTA']).trim()
+            : '',
+          personalEmail: String(item['Correo']).trim(),
+          phoneNumber: String(item['Celular']).trim(),
+          regularPhoneNumber: String(item['Teléfono']).trim(),
+          dni: String(item['Cédula']).trim(),
+          folio: item['Folio'] ? String(item['Folio']).trim() : undefined,
+          gender: String(item['Género']).trim(),
           bachelorDegree: capitalizeSentence(getBachelorDegree()),
-          registration: item['Matrícula']?.toString()?.trim() || '',
-          birthdate: item['Fecha Nacimiento'],
-          canton: city?.id as number,
+          registration: item['Matrícula']
+            ? String(item['Matrícula']).trim()
+            : undefined,
+          birthdate,
+          canton: city!.id as number,
           isActive: true,
           career,
         } as StudentModel
@@ -173,8 +229,12 @@ export const transformData = (
           firstLastName,
           secondLastName,
           dni: item['Cédula'].toString(),
-          startStudiesDate: item['Inicio clases'] || new Date(),
-          endStudiesDate: item['Fin clases'] || new Date(),
+          startStudiesDate: item['Inicio clases']
+            ? new Date(item['Inicio clases'])
+            : undefined,
+          endStudiesDate: item['Fin clases']
+            ? new Date(item['Fin clases'])
+            : undefined,
           approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
           bachelorDegree: capitalizeSentence(getBachelorDegree()),
         } as StudentModel
