@@ -10,10 +10,10 @@ export interface DefaultPersonSchemaProps {
   id?: number
   dni: string
   firstName: string
-  secondName: string
+  secondName?: string | null
   firstLastName: string
-  secondLastName: string
-  personalEmail: string
+  secondLastName?: string | null
+  personalEmail?: string | null
   outlookEmail: string
   phoneNumber: string
 }
@@ -84,16 +84,14 @@ export const resolveFormSelectOptions = <T extends DefaultPersonSchemaProps>(
 export const DEFAULT_PERSON_SCHEMA = yup.object().shape({
   dni: yup.string().required(VALIDATION_MESSAGES.required),
   firstName: yup.string().required(VALIDATION_MESSAGES.required),
-  secondName: yup.string().required(VALIDATION_MESSAGES.required),
   firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
-  secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
   personalEmail: yup
     .string()
-    .required(VALIDATION_MESSAGES.required)
     .matches(
-      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
+      /^$|^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/,
       VALIDATION_MESSAGES.invalidFormat,
-    ),
+    )
+    .nullable(),
   outlookEmail: yup
     .string()
     .required(VALIDATION_MESSAGES.required)
@@ -118,10 +116,10 @@ export const resolveDefaultSchema = (
   id: props?.id || 0,
   dni: props?.dni || '',
   firstName: props?.firstName || '',
-  secondName: props?.secondName || '',
+  secondName: props?.secondName || null,
   firstLastName: props?.firstLastName || '',
-  secondLastName: props?.secondLastName || '',
-  personalEmail: props?.personalEmail || '',
+  secondLastName: props?.secondLastName || null,
+  personalEmail: props?.personalEmail || null,
   outlookEmail: props?.outlookEmail || '',
   phoneNumber: props?.phoneNumber || '',
 })

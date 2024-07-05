@@ -36,17 +36,15 @@ export const TABLE_HEAD = [
   },
 ]
 
-const MAX_CREDITS_TO_APPROVE = 140
+const MAX_CREDITS_TO_APPROVE = 246
 
 export const NewStudentSchema = yup.object().shape({
   ...DEFAULT_PERSON_SCHEMA.fields,
-  registration: yup.string().required(VALIDATION_MESSAGES.required),
   approvedCredits: yup
     .number()
     .required(VALIDATION_MESSAGES.required)
-    .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 140')
-    .min(0, 'Debe ser entre 0 y 140'),
-  folio: yup.string().required(VALIDATION_MESSAGES.required),
+    .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 246')
+    .min(0, 'Debe ser entre 0 y 246'),
   career: yup.number().required(VALIDATION_MESSAGES.required),
   vinculationHours: yup.number(),
   internshipHours: yup.number(),
@@ -99,5 +97,20 @@ export const GENDERS = [
   {
     value: 'F',
     label: 'Femenino',
+  },
+]
+
+export const FILE_FORMATS_TO_UPLOAD = [
+  {
+    value: 'studentsByCareer',
+    label: 'Estudiantes por carrera',
+  },
+  {
+    value: 'vinculationAndPractices',
+    label: 'Vinculación y prácticas',
+  },
+  {
+    value: 'qualifiers',
+    label: 'Calificadores',
   },
 ]

@@ -19,6 +19,7 @@ import {
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 import { useEffect, useState } from 'react'
+import { DATE_FORMAT } from '../../../../core/utils/format-time'
 
 interface Props {
   onClose: VoidFunction
@@ -132,7 +133,7 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
                     field.onChange(newValue?.toDate())
                   }}
                   label="Fecha de asignación"
-                  format="DD/MM/YYYY"
+                  format={DATE_FORMAT}
                   slotProps={{
                     textField: {
                       fullWidth: true,

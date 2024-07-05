@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
+  Tooltip,
 } from '@mui/material'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { DegCerGradesForm } from './DegCerGradesForm'
@@ -34,19 +35,27 @@ export const DegCerTableRow = ({ row, selected, onViewRow }: Props) => {
     switch (code) {
       case 'NO_RESENTACION':
         return (
-          <Iconify icon="solar:document-bold" style={{ color: '#e8ec0e' }} />
+          <Tooltip title="No presentación">
+            <Iconify icon="solar:document-bold" style={{ color: '#e8ec0e' }} />
+          </Tooltip>
         )
       case 'APRO':
         return (
-          <Iconify icon="solar:document-bold" style={{ color: '#10d150' }} />
+          <Tooltip title="Aprobado">
+            <Iconify icon="solar:document-bold" style={{ color: '#10d150' }} />
+          </Tooltip>
         )
       case 'REPR':
         return (
-          <Iconify icon="solar:document-bold" style={{ color: '#f44336' }} />
+          <Tooltip title="Reprobado">
+            <Iconify icon="solar:document-bold" style={{ color: '#f44336' }} />
+          </Tooltip>
         )
       default:
         return (
-          <Iconify icon="solar:document-bold" style={{ color: '#8f8f8f' }} />
+          <Tooltip title="Pendiente">
+            <Iconify icon="solar:document-bold" style={{ color: '#8f8f8f' }} />
+          </Tooltip>
         )
     }
   }
@@ -95,12 +104,14 @@ export const DegCerTableRow = ({ row, selected, onViewRow }: Props) => {
           <Stack direction="row">
             <ListItemText
               primary={
-                <Iconify
-                  icon="solar:document-bold"
-                  style={{ color: ' #00d8f5' }}
-                  onClick={() => onViewRow(`${row.driveId}**spreadsheet**`)}
-                  sx={{ cursor: 'pointer' }}
-                />
+                <Tooltip title="Calificaciones">
+                  <Iconify
+                    icon="solar:document-bold"
+                    style={{ color: ' #00d8f5' }}
+                    onClick={() => onViewRow(`${row.driveId}**spreadsheet**`)}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                </Tooltip>
               }
               primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             />

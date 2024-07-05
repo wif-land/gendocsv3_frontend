@@ -17,6 +17,8 @@ import { transformData } from '../utils'
 import { useStudentCommands } from '../hooks/useStudentCommands'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { enqueueSnackbar } from 'notistack'
+import { MenuItem, Select } from '@mui/material'
+import { FILE_FORMATS_TO_UPLOAD } from '../constants'
 
 interface Props extends DialogProps {
   title?: string
@@ -198,8 +200,22 @@ export const StudentBulkUploadDialog = ({
           onDrop={handleDrop}
           onRemove={handleRemoveFile}
         />
+
+        <br />
+
+        <label>Formato del archivo: </label>
+
+        <Select defaultValue={FILE_FORMATS_TO_UPLOAD[0].value}>
+          {FILE_FORMATS_TO_UPLOAD.map((format) => (
+            <MenuItem key={format.value} value={format.value}>
+              {format.label}
+            </MenuItem>
+          ))}
+        </Select>
+
+        {/* TODO: La parte de formatos como debe quedar? */}
         <div style={{ marginTop: '16px' }}>
-          <label htmlFor="fileFormat">Formato del archivo: </label>
+          <label htmlFor="fileFormat">Formato del archivoddd: </label>
           <select id="fileFormat" onChange={handleFormatChange}>
             <option value="default">Seleccione el formato</option>
             <option value="formatWithHeader">Formato con encabezado</option>

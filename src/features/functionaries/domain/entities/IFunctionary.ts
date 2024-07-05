@@ -3,7 +3,7 @@ import { IMember } from '../../../default-members/domain/entities/IDefaultMember
 
 export interface IFunctionary extends Omit<IMember, 'isStudent'> {
   outlookEmail: string
-  personalEmail: string
+  personalEmail?: string | null
   phoneNumber: string
   regularPhoneNumber: string
   thirdLevelDegree: number | IDegree

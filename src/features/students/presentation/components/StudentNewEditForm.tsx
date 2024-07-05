@@ -22,6 +22,7 @@ import { useLocations } from '../../../../core/providers/locations-provider'
 import { GENDERS } from '../constants'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
+import { DATE_FORMAT } from '../../../../core/utils/format-time'
 
 type Props = {
   currentStudent?: IStudent
@@ -99,7 +100,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="secondName"
                 label="Segundo nombre"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -117,7 +117,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="secondLastName"
                 label="Segundo apellido"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -190,7 +189,7 @@ export const StudentNewEditForm = ({
               <DatePicker
                 name="startStudiesDate"
                 label="Fecha de inicio de estudios"
-                format="dddd/MM/YYYY"
+                format={DATE_FORMAT}
                 sx={{ width: 260 }}
                 slotProps={{
                   field: { clearable: true },
@@ -206,7 +205,7 @@ export const StudentNewEditForm = ({
               <DatePicker
                 name="endStudiesDate"
                 label="Fecha de fin de estudios"
-                format="dddd/MM/YYYY"
+                format={DATE_FORMAT}
                 sx={{ width: 260 }}
                 slotProps={{
                   field: { clearable: true },
@@ -231,7 +230,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="folio"
                 label="Folio"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -240,7 +238,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="registration"
                 label="Matrícula"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -289,7 +286,6 @@ export const StudentNewEditForm = ({
                 name="personalEmail"
                 label="Correo personal"
                 type="email"
-                required
               />
 
               <RHFTextField
@@ -364,11 +360,12 @@ export const StudentNewEditForm = ({
               <DatePicker
                 name="birthdate"
                 label="Fecha de nacimiento"
-                format="dddd/MM/YYYY"
+                format={DATE_FORMAT}
                 sx={{ width: 260 }}
                 slotProps={{
                   field: { clearable: true },
                 }}
+                disableFuture
                 onChange={(newValue: any) => {
                   if (newValue) {
                     methods.setValue('birthdate', newValue)

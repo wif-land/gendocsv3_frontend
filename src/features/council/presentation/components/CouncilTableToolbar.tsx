@@ -26,6 +26,7 @@ import {
 } from '../../domain/entities/ICouncilFilters'
 import { COUNCIL_TYPES } from '../../domain/entities/ICouncil'
 import dayjs, { Dayjs } from 'dayjs'
+import { DATE_FORMAT } from '../../../../core/utils/format-time'
 
 export type ICouncilTableFilterValue =
   | string
@@ -262,7 +263,7 @@ export const CouncilTableToolbar = ({
             <DatePicker
               disabled={!filters.dateType}
               value={dayjs(filters.startDate) || null}
-              format="YYYY-MM-DD"
+              format={DATE_FORMAT}
               onAccept={(e) => {
                 e && onFilters('startDate', (e as unknown as Dayjs).toDate())
                 if (!filters.endDate) {
@@ -283,7 +284,7 @@ export const CouncilTableToolbar = ({
               disabled={!filters.dateType || !filters.startDate}
               value={dayjs(filters.endDate) || null}
               minDate={filters.startDate ? dayjs(filters.startDate) : null}
-              format="YYYY-MM-DD"
+              format={DATE_FORMAT}
               onAccept={(e) => {
                 onFilters('endDate', (e as unknown as Dayjs).toDate())
               }}

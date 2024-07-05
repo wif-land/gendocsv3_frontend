@@ -54,7 +54,9 @@ export const StudentTableRow = ({
                 onClick={onEditRow}
                 sx={{ cursor: 'pointer' }}
               >
-                {`${row.firstName} ${row.secondName} ${row.firstLastName} ${row.secondLastName}`}
+                {`${row.firstName} ${row.secondName || ''} ${
+                  row.firstLastName
+                } ${row.secondLastName || ''}`}
               </Link>
             }
             secondary={

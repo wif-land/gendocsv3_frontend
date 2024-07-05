@@ -31,7 +31,7 @@ import {
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { Controller } from 'react-hook-form'
-import { DatePicker, DateTimePicker } from '@mui/x-date-pickers'
+import { DateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
@@ -48,6 +48,7 @@ import DocsByStudentListView from '../../../../features/documents/presentation/v
 import { degreeTemplatesStore } from '../../../../features/degcer-templates/presentation/store/degCerTemplatesStore'
 import { ICareer } from '../../../../features/careers/domain/entities/ICareer'
 import DegreesByStudentListView from '../../../../features/documents/presentation/view/DegreesByStudentListView'
+import { DATE_TIME_FORMAT } from '../../../../core/utils/format-time'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -225,6 +226,19 @@ export const DegreeCertificateNewEditForm = ({
               </MenuItem>
             </CustomPopover>
           </Stack>
+
+          <Stack
+            spacing={3}
+            sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+          >
+            <TextField
+              label="Carrera"
+              value={(getValues('student')?.career as ICareer)?.name || ''}
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+          </Stack>
+
           <Stack
             spacing={3}
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
@@ -242,6 +256,7 @@ export const DegreeCertificateNewEditForm = ({
               sx={{ flexGrow: 1 }}
             />
           </Stack>
+
           <Stack
             spacing={3}
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
@@ -437,7 +452,7 @@ export const DegreeCertificateNewEditForm = ({
                         }
                       }}
                       label="Fecha y hora de ejecución"
-                      format="DD/MM/YYYY hh:mm a"
+                      format={DATE_TIME_FORMAT}
                       slotProps={{
                         textField: {
                           fullWidth: true,

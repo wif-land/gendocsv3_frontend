@@ -10,6 +10,7 @@ import DialogContent from '@mui/material/DialogContent'
 import FormHelperText from '@mui/material/FormHelperText'
 import { DateRangePickerProps } from './types'
 import { useResponsive } from '../../hooks/use-responsive'
+import { DATE_FORMAT } from '../../../core/utils/format-time'
 
 export default function CustomDateRangePicker({
   title = 'Select date range',
@@ -86,11 +87,13 @@ export default function CustomDateRangePicker({
                 label="Start date"
                 value={startDate}
                 onChange={onChangeStartDate}
+                format={DATE_FORMAT}
               />
 
               <DatePicker
                 label="End date"
                 value={endDate}
+                format={DATE_FORMAT}
                 onChange={onChangeEndDate}
               />
             </>
