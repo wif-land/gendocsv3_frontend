@@ -85,7 +85,7 @@ export const resolveDefaultValuesDegreeCertificate = (
     (currentDegreeCertificate?.degreeModality as IDegreeModality)?.id ||
     (undefined as any),
   roomId: (currentDegreeCertificate?.room as IRoom)?.id || (undefined as any),
-  duration: currentDegreeCertificate?.duration || (null as any),
+  duration: currentDegreeCertificate?.duration || 60,
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',
   certificateDriveId: currentDegreeCertificate?.certificateDriveId || '',

@@ -69,7 +69,6 @@ export const DegCerBulkUploadDialog = ({
   >([])
   const { bulkLoad } = useDegreeCertificatesStore()
   const { user } = useAccountStore()
-  // check box para habilitar un select de notificaciones
   const { notifications } = useNotificationStore()
 
   const handleDrop = useCallback(

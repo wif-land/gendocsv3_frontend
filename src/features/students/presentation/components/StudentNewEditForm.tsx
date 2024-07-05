@@ -190,9 +190,9 @@ export const StudentNewEditForm = ({
                 name="startStudiesDate"
                 label="Fecha de inicio de estudios"
                 format={DATE_FORMAT}
-                sx={{ width: 260 }}
                 slotProps={{
                   field: { clearable: true },
+                  textField: { variant: 'outlined' },
                 }}
                 onChange={(newValue: any) => {
                   if (newValue) {
@@ -206,9 +206,9 @@ export const StudentNewEditForm = ({
                 name="endStudiesDate"
                 label="Fecha de fin de estudios"
                 format={DATE_FORMAT}
-                sx={{ width: 260 }}
                 slotProps={{
                   field: { clearable: true },
+                  textField: { variant: 'outlined' },
                 }}
                 onChange={(newValue: any) => {
                   if (newValue) {
@@ -361,9 +361,9 @@ export const StudentNewEditForm = ({
                 name="birthdate"
                 label="Fecha de nacimiento"
                 format={DATE_FORMAT}
-                sx={{ width: 260 }}
                 slotProps={{
                   field: { clearable: true },
+                  textField: { variant: 'outlined' },
                 }}
                 disableFuture
                 onChange={(newValue: any) => {

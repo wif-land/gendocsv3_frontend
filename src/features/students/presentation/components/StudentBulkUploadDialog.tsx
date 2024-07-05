@@ -17,7 +17,7 @@ import { transformData } from '../utils'
 import { useStudentCommands } from '../hooks/useStudentCommands'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { enqueueSnackbar } from 'notistack'
-import { MenuItem, Select } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import { FILE_FORMATS_TO_UPLOAD } from '../constants'
 
 interface Props extends DialogProps {
@@ -90,7 +90,7 @@ export const StudentBulkUploadDialog = ({
       if (headerRowIndex > -1) {
         const headers = data[headerRowIndex]
         data = data.slice(headerRowIndex + 1)
-        data.unshift(headers) // Add headers back as the first row
+        data.unshift(headers)
       }
 
       let filteredData = data
@@ -152,7 +152,7 @@ export const StudentBulkUploadDialog = ({
     setFiles([])
   }
 
-  const handleFormatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFormatChange = (event: SelectChangeEvent<string>) => {
     setFileFormat(event.target.value)
   }
 
@@ -215,14 +215,18 @@ export const StudentBulkUploadDialog = ({
 
         {/* TODO: La parte de formatos como debe quedar? */}
         <div style={{ marginTop: '16px' }}>
-          <label htmlFor="fileFormat">Formato del archivoddd: </label>
-          <select id="fileFormat" onChange={handleFormatChange}>
-            <option value="default">Seleccione el formato</option>
-            <option value="formatWithHeader">Formato con encabezado</option>
-            <option value="formatWithSpecialColumns">
+          <label htmlFor="fileFormat">Formato del archivo: </label>
+          <Select
+            id="fileFormat"
+            onChange={handleFormatChange}
+            defaultValue="default"
+          >
+            <MenuItem value="default">Seleccione el formato</MenuItem>
+            <MenuItem value="formatWithHeader">Formato con encabezado</MenuItem>
+            <MenuItem value="formatWithSpecialColumns">
               Formato sin encabezado
-            </option>
-          </select>
+            </MenuItem>
+          </Select>
         </div>
       </DialogContent>
 

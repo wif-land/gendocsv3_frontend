@@ -251,6 +251,7 @@ export const DegreeCertificateNewEditForm = ({
             />
             <TextField
               name="student.endStudiesDate"
+              disabled
               label="Fecha de finalización de estudios"
               value={getValues('student')?.endStudiesDate || ''}
               sx={{ flexGrow: 1 }}
@@ -454,9 +455,8 @@ export const DegreeCertificateNewEditForm = ({
                       label="Fecha y hora de ejecución"
                       format={DATE_TIME_FORMAT}
                       slotProps={{
-                        textField: {
-                          fullWidth: true,
-                        },
+                        field: { clearable: true },
+                        textField: { variant: 'outlined' },
                       }}
                       disablePast
                     />

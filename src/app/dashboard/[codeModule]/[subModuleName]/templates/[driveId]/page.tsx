@@ -8,7 +8,11 @@ const Page = () => {
   const returnLink = usePathname().substring(0, usePathname().lastIndexOf('/'))
 
   return (
-    <DocumentVisualizer driveId={driveId as string} returnLink={returnLink} />
+    <DocumentVisualizer
+      driveId={driveId as string}
+      returnLink={returnLink}
+      shouldLoadVariables={!usePathname().includes('**spreadsheet**')}
+    />
   )
 }
 

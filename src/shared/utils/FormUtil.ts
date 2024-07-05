@@ -87,10 +87,7 @@ export const DEFAULT_PERSON_SCHEMA = yup.object().shape({
   firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
   personalEmail: yup
     .string()
-    .matches(
-      /^$|^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/,
-      VALIDATION_MESSAGES.invalidFormat,
-    )
+    .email(VALIDATION_MESSAGES.invalidFormat)
     .nullable(),
   outlookEmail: yup
     .string()

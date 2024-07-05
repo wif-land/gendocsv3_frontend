@@ -117,12 +117,14 @@ export const DegCerTableRow = ({ row, selected, onViewRow }: Props) => {
             />
             <ListItemText
               primary={
-                <Iconify
-                  icon="eva:more-vertical-fill"
-                  style={{ color: ' #00d8f5' }}
-                  onClick={areGradesOpen.onTrue}
-                  sx={{ cursor: 'pointer' }}
-                />
+                <Tooltip title="Celdas">
+                  <Iconify
+                    icon="eva:more-vertical-fill"
+                    style={{ color: ' #00d8f5' }}
+                    onClick={areGradesOpen.onTrue}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                </Tooltip>
               }
               primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             />

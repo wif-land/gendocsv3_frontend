@@ -13,7 +13,6 @@ export const transformData = (
   data
     .map((item: any) => {
       if (!item['Cédula']) {
-        console.log(item)
         // enqueueSnackbar(
         //   'Por favor, asegúrate de que el estudiante tenga una cédula válida',
         //   { variant: 'warning' },
@@ -41,7 +40,6 @@ export const transformData = (
       let firstLastName = ''
       let secondLastName = ''
 
-      console.log(item)
       if (item['Nombres']) {
         const names = safeToString(item['Nombres']).split(' ')
         firstName = names[0]
@@ -58,6 +56,33 @@ export const transformData = (
       } else {
         firstLastName = safeToString(item['Primer Apellido'])
         secondLastName = safeToString(item['Segundo Apellido'])
+      }
+
+      const getBachelorDegree = () => {
+        if (item['Título']) {
+          if (item['Especialidad']) {
+            return `Bachiller ${item['Título']} Especialidad En ${item['Especialidad']}`
+          }
+          return `Bachiller ${item['Título']}`
+        } else {
+          if (item['Especialidad']) {
+            return `Especialidad en ${item['Especialidad']}`
+          }
+        }
+        return ''
+      }
+
+      const capitalizeFirstLetter = (str: string): string => {
+        if (!str) return str
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+      }
+
+      const capitalizeSentence = (str: string): string => {
+        if (!str) return str
+        return str
+          .split(' ')
+          .map((word) => capitalizeFirstLetter(word))
+          .join(' ')
       }
 
       if (item['Correo'] && item['Fecha Nacimiento']) {
@@ -84,7 +109,7 @@ export const transformData = (
           dni: item['Cédula'].toString(),
           folio: item['Folio'],
           gender: item['Género'],
-          bachelorDegree: item['Título'] || '',
+          bachelorDegree: capitalizeSentence(getBachelorDegree()),
           registration: item['Matrícula'],
           birthdate: item['Fecha Nacimiento'],
           canton: canton.find(
@@ -113,7 +138,7 @@ export const transformData = (
           startStudiesDate: item['Inicio clases'] || new Date(),
           endStudiesDate: item['Fin clases'] || new Date(),
           approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
-          bachelorDegree: item['Título'] || '',
+          bachelorDegree: capitalizeSentence(getBachelorDegree()),
         } as StudentModel
       }
     })
