@@ -18,7 +18,7 @@ import { useStudentCommands } from '../hooks/useStudentCommands'
 import { useLocations } from '../../../../core/providers/locations-provider'
 import { enqueueSnackbar } from 'notistack'
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import { FILE_FORMATS_TO_UPLOAD } from '../constants'
+import { FILE_FORMATS_TO_UPLOAD, FileFormat } from '../constants'
 
 interface Props extends DialogProps {
   title?: string
@@ -38,7 +38,7 @@ export const StudentBulkUploadDialog = ({
 }: Props) => {
   const [files, setFiles] = useState<(File | string)[]>([])
   const [students, setStudents] = useState<IStudent[]>([])
-  const [fileFormat, setFileFormat] = useState<string>('default')
+  const [fileFormat, setFileFormat] = useState<FileFormat>('studentsByCareer')
   const { careers, get: getCareers } = useCareersStore()
   const { cities } = useLocations()
   const { bulkCreate } = useStudentCommands()
@@ -94,7 +94,7 @@ export const StudentBulkUploadDialog = ({
       }
 
       let filteredData = data
-      if (fileFormat === 'formatWithHeader') {
+      if (fileFormat !== 'vinculationAndPractices') {
         filteredData = data.filter((element, index) => {
           if (index === 0) return true
           return !(
@@ -102,7 +102,7 @@ export const StudentBulkUploadDialog = ({
             (element as any[]).length === 0
           )
         })
-      } else if (fileFormat === 'formatWithSpecialColumns') {
+      } else if (fileFormat === 'vinculationAndPractices') {
         const headers = data[0] as string[]
         const hasSpecialColumns =
           headers.includes('Horas de vinculación') ||
@@ -110,6 +110,11 @@ export const StudentBulkUploadDialog = ({
         if (hasSpecialColumns) {
           filteredData = data.slice(1)
         }
+      } else {
+        enqueueSnackbar('Formato de archivo no soportado', {
+          variant: 'error',
+        })
+        return
       }
 
       const sheet = XLSX.utils.json_to_sheet(filteredData, { skipHeader: true })
@@ -134,6 +139,7 @@ export const StudentBulkUploadDialog = ({
       setStudents(transformedData)
     } catch (error) {
       console.error(error)
+      enqueueSnackbar('Error al procesar el archivo', { variant: 'error' })
     }
   }
 
@@ -153,7 +159,7 @@ export const StudentBulkUploadDialog = ({
   }
 
   const handleFormatChange = (event: SelectChangeEvent<string>) => {
-    setFileFormat(event.target.value)
+    setFileFormat(event.target.value as FileFormat)
   }
 
   useEffect(() => {
@@ -205,29 +211,16 @@ export const StudentBulkUploadDialog = ({
 
         <label>Formato del archivo: </label>
 
-        <Select defaultValue={FILE_FORMATS_TO_UPLOAD[0].value}>
+        <Select
+          defaultValue={FILE_FORMATS_TO_UPLOAD[0].value}
+          onChange={handleFormatChange}
+        >
           {FILE_FORMATS_TO_UPLOAD.map((format) => (
             <MenuItem key={format.value} value={format.value}>
               {format.label}
             </MenuItem>
           ))}
         </Select>
-
-        {/* TODO: La parte de formatos como debe quedar? */}
-        <div style={{ marginTop: '16px' }}>
-          <label htmlFor="fileFormat">Formato del archivo: </label>
-          <Select
-            id="fileFormat"
-            onChange={handleFormatChange}
-            defaultValue="default"
-          >
-            <MenuItem value="default">Seleccione el formato</MenuItem>
-            <MenuItem value="formatWithHeader">Formato con encabezado</MenuItem>
-            <MenuItem value="formatWithSpecialColumns">
-              Formato sin encabezado
-            </MenuItem>
-          </Select>
-        </div>
       </DialogContent>
 
       <DialogActions>

@@ -4,6 +4,14 @@ import { StudentModel } from '../../data/models/StudentModel'
 import { IStudent } from '../../domain/entities/IStudent'
 import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
 
+const alternativeCities = {
+  'SANTIAGO DE PILLARO': 'SANTIAGO DE PÍLLARO',
+  'EL CÁRMEN': 'EL CARMEN',
+  TULCAN: 'TULCÁN',
+  TRUJILLO: 'LA LIBERTAD',
+  'LA JOYA D LOS SACHAS': 'LA JOYA DE LOS SACHAS',
+  '': 'AMBATO',
+}
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const transformData = (
   data: any[],
@@ -21,16 +29,16 @@ export const transformData = (
         return
       }
 
-      if (String(item['Cédula']).length < 10) {
+      if (String(item['Cédula']).length !== 10) {
         enqueueSnackbar(
-          'Por favor, asegúrate de que la cédula tenga al menos 10 dígitos',
+          `Por favor, asegúrate de que la cédula ${item['Cédula']} tenga 10 dígitos`,
           { variant: 'warning' },
         )
 
         return
       }
 
-      const safeToString = (value: any) => {
+      const safeToString = (value: any): string => {
         if (value === null || value === undefined) return ''
         return value.toString()
       }
@@ -42,31 +50,35 @@ export const transformData = (
 
       if (item['Nombres']) {
         const names = safeToString(item['Nombres']).split(' ')
-        firstName = names[0]
-        secondName = names[1] || ''
+        firstName = names[0] && names[0].trim()
+        secondName = names[1] ? names[1].trim() : ''
       } else {
-        firstName = safeToString(item['Primer Nombre'])
-        secondName = safeToString(item['Segundo Nombre'])
+        firstName = safeToString(item['Primer Nombre']).trim()
+        secondName = safeToString(item['Segundo Nombre']).trim()
       }
 
       if (item['Apellidos']) {
         const lastNames = safeToString(item['Apellidos']).split(' ')
-        firstLastName = lastNames[0]
-        secondLastName = lastNames[1] || ''
+        firstLastName = lastNames[0] && lastNames[0].trim()
+        secondLastName = lastNames[1] ? lastNames[1].trim() : ''
       } else {
-        firstLastName = safeToString(item['Primer Apellido'])
-        secondLastName = safeToString(item['Segundo Apellido'])
+        firstLastName = safeToString(item['Primer Apellido']).trim()
+        secondLastName = safeToString(item['Segundo Apellido']).trim()
       }
 
       const getBachelorDegree = () => {
         if (item['Título']) {
           if (item['Especialidad']) {
-            return `Bachiller ${item['Título']} Especialidad En ${item['Especialidad']}`
+            return `Bachiller ${item['Título']
+              ?.toString()
+              .trim()} Especialidad En ${item['Especialidad']
+              ?.toString()
+              .trim()}`
           }
-          return `Bachiller ${item['Título']}`
+          return `Bachiller ${item['Título']?.toString().trim()}`
         } else {
           if (item['Especialidad']) {
-            return `Especialidad en ${item['Especialidad']}`
+            return `Especialidad en ${item['Especialidad'].toString().trim()}`
           }
         }
         return ''
@@ -97,24 +109,50 @@ export const transformData = (
               'Ingeniería en Sistemas Computacionales e Informáticos',
           )?.id as number
         }
+
+        let cityString: string = item['Cantón'].toUpperCase().trim()
+        if (
+          Object.keys(alternativeCities).find((city) => city === cityString)
+        ) {
+          cityString =
+            alternativeCities[cityString as keyof typeof alternativeCities]
+        }
+
+        let city = canton.find(
+          (city: ICanton) => city.name.toUpperCase() === cityString,
+        )
+
+        if (city == null) {
+          // enqueueSnackbar(
+          //   `Cantón ${item['Cantón']} no encontrado para ${item['Cédula']}`,
+          //   {
+          //     variant: 'warning',
+          //   },
+          // )
+          // return
+
+          cityString = 'AMBATO'
+
+          city = canton.find(
+            (city: ICanton) => city.name.toUpperCase() === cityString,
+          )
+        }
         return {
           firstName,
           secondName,
           firstLastName,
           secondLastName,
-          outlookEmail: item['Correo UTA'],
-          personalEmail: item['Correo'],
-          phoneNumber: item['Celular'],
-          regularPhoneNumber: item['Teléfono'],
-          dni: item['Cédula'].toString(),
-          folio: item['Folio'],
-          gender: item['Género'],
+          outlookEmail: item['Correo UTA']?.toString().trim(),
+          personalEmail: item['Correo']?.toString().trim(),
+          phoneNumber: item['Celular']?.toString().trim(),
+          regularPhoneNumber: item['Teléfono']?.toString().trim(),
+          dni: item['Cédula'].toString().trim(),
+          folio: item['Folio']?.toString().trim(),
+          gender: item['Género']?.toString().trim(),
           bachelorDegree: capitalizeSentence(getBachelorDegree()),
-          registration: item['Matrícula'],
+          registration: item['Matrícula']?.toString()?.trim() || '',
           birthdate: item['Fecha Nacimiento'],
-          canton: canton.find(
-            (city: ICanton) => city.name.toUpperCase() === item['Cantón'],
-          )?.id as number,
+          canton: city?.id as number,
           isActive: true,
           career,
         } as StudentModel
@@ -124,7 +162,7 @@ export const transformData = (
           secondName,
           firstLastName,
           secondLastName,
-          dni: item['Cédula'].toString(),
+          dni: item['Cédula'].toString().trim(),
           vinculationHours: parseInt(item['Horas Vinculación'], 10) || 0,
           internshipHours: parseInt(item['Horas Prácticas'], 10) || 0,
         } as StudentModel

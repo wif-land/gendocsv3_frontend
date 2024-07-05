@@ -100,6 +100,11 @@ export const GENDERS = [
   },
 ]
 
+export type FileFormat =
+  | 'studentsByCareer'
+  | 'vinculationAndPractices'
+  | 'qualifiers'
+
 export const FILE_FORMATS_TO_UPLOAD = [
   {
     value: 'studentsByCareer',
