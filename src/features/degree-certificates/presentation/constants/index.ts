@@ -107,7 +107,7 @@ export const resolveDefaultValuesDegreeCertificateAttendee = (
   functionary: currentAttendee?.functionary
     ? ({
         id: currentAttendee?.functionary.id,
-        label: `${currentAttendee?.functionary.firstName} ${currentAttendee?.functionary.firstLastName} ${currentAttendee?.functionary.secondLastName} - ${currentAttendee?.functionary.dni}`,
+        label: `${currentAttendee?.functionary.firstName} ${currentAttendee?.functionary.firstLastName} - ${currentAttendee?.functionary.dni}`,
       } as any as IFunctionaryFormValues)
     : ({
         id: 0,
@@ -115,6 +115,7 @@ export const resolveDefaultValuesDegreeCertificateAttendee = (
       } as any as IFunctionaryFormValues),
   role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
   id: currentAttendee?.id || undefined,
+  createdAt: currentAttendee?.createdAt || new Date(),
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
@@ -123,7 +124,9 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         ...currentStudent,
         id: currentStudent.id || 0,
         label:
-          `${currentStudent.firstName} ${currentStudent.secondName} ${currentStudent.firstLastName} ${currentStudent.secondLastName} - ${currentStudent.dni}` ||
+          `${currentStudent.firstName} ${currentStudent.secondName || ''} ${
+            currentStudent.firstLastName
+          } ${currentStudent.secondLastName || ''} - ${currentStudent.dni}` ||
           '',
       }
     : ({

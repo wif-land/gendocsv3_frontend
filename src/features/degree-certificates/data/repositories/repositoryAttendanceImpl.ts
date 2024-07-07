@@ -39,6 +39,7 @@ export class DegreeCertificateAttendanceRepositoryImpl
   setAttendance = async (id: number) => await this.datasource.setAttendance(id)
 
   update = async (data: Partial<IDegreeCertificatesAttendee>) => {
+    delete data.createdAt
     await this.datasource.update(data)
   }
 }

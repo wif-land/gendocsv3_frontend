@@ -114,8 +114,11 @@ export class DegreeCertificatesUseCasesImpl
     return this.attendanceRepository.deleteAttendance(id)
   }
 
-  getAttendees(id: number) {
-    return this.attendanceRepository.getAttendance(id)
+  async getAttendees(id: number) {
+    const data = await this.attendanceRepository.getAttendance(id)
+    return data.sort((a, b) =>
+      a.createdAt > b.createdAt ? 1 : a.createdAt < b.createdAt ? -1 : 0,
+    )
   }
 
   setAttendance(id: number): Promise<void> {
