@@ -165,7 +165,7 @@ export const useDegreeCertificateForm = (
 
     if (!methods.watch('duration') || !methods.watch('roomId')) {
       enqueueSnackbar(
-        'Asegurate de asignar una duración y un aula para verificar la disponibilidad ',
+        'Asegurate de asignar una duración y un aula para verificar la disponibilidad de la fecha de presentación',
         {
           variant: 'info',
         },

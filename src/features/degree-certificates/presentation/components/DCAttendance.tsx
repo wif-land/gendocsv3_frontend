@@ -17,7 +17,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { DegreeCertificateAttendeeNewEditForm } from './DegreeCertificateAttendanceNewEditForm'
+import { DegreeCertificateAttendeeNewEditForm } from './DegreeAttendanceNewEditForm'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Iconify from '../../../../core/iconify'
 
@@ -26,12 +26,11 @@ const Description = (props: {
   degreeClosed: boolean
   handleSetAttendance: (member: IDegreeCertificatesAttendee) => void
   onEdit: (member: IDegreeCertificatesAttendee) => void
-  onDelete: (memberId: number) => void
 }) => (
   <Stack spacing={3}>
     <Typography variant="body1">
       En esta sección podrás ver el detalle de los miembros del acta de grado.
-      Puedes añadir 4 miembros obligatorios y 2 suplentes.
+      Se debe añadir 3 miembros.
     </Typography>
 
     <Stack
@@ -106,18 +105,6 @@ const Description = (props: {
                       <Iconify icon="solar:pen-bold" />
                       Editar
                     </LoadingButton>
-
-                    <LoadingButton
-                      onClick={() => props.onDelete(member.id as number)}
-                      disabled={props.degreeClosed}
-                      sx={
-                        props.degreeClosed
-                          ? { color: 'gray' }
-                          : { color: 'error.main' }
-                      }
-                    >
-                      <Iconify icon="ic:baseline-delete" />
-                    </LoadingButton>
                   </Grid>
 
                   {!isLast && <Divider style={{ width: '100%' }} />}
@@ -149,12 +136,6 @@ export const Attendance = (props: {
   }
 
   const isAttendanceModalOpen = useBoolean()
-
-  const onDelete = async (memberId: number) => {
-    await DegreeCertificatesUseCasesImpl.getInstance().deleteAttendee(memberId)
-
-    await getDegreeCertificate(props.degreeCertificateId)
-  }
 
   const attendanceModal = (
     <Dialog
@@ -200,7 +181,6 @@ export const Attendance = (props: {
           setCurrentMember(member)
           isAttendanceModalOpen.onTrue()
         }}
-        onDelete={onDelete}
         degreeClosed={degreeCertificate.isClosed}
       />
       <Button
