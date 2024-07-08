@@ -275,6 +275,7 @@ export const DegreeCertificateNewEditForm = ({
               sx={{ flexGrow: 1 }}
             />
           </Stack>
+
           <Stack
             spacing={3}
             sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
@@ -292,6 +293,7 @@ export const DegreeCertificateNewEditForm = ({
               sx={{ flexGrow: 1 }}
             />
           </Stack>
+
           <Stack
             spacing={3}
             sx={{
@@ -302,45 +304,28 @@ export const DegreeCertificateNewEditForm = ({
               width: '100%',
             }}
           >
-            <FormControl sx={{ flexGrow: 1 }}>
-              <InputLabel id="provincia">Provincia de residencia</InputLabel>
-              <Select
-                labelId="provincia"
-                label="Provincia de residencia"
-                value={
-                  (watch('student').canton as ICanton)?.province.id ||
-                  (currentDegreeCertificate?.student.canton as ICanton)
-                    ?.province.id ||
-                  0
-                }
-                disabled
-              >
-                {provinces.map((province) => (
-                  <MenuItem key={province.id} value={province.id}>
-                    {province.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ flexGrow: 1 }}>
-              <InputLabel id="ciudad">Ciudad de residencia</InputLabel>
-              <Select
-                labelId="ciudad"
-                label="Ciudad de residencia"
-                value={
-                  (watch('student').canton as ICanton)?.id ||
-                  (currentDegreeCertificate?.student.canton as ICanton)?.id ||
-                  0
-                }
-                disabled
-              >
-                {cities.map((city) => (
-                  <MenuItem key={city.id} value={city.id}>
-                    {city.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <TextField
+              label="Provincia de residencia"
+              value={
+                (watch('student').canton as ICanton)?.province.name ||
+                (currentDegreeCertificate?.student.canton as ICanton)?.province
+                  .name ||
+                ''
+              }
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
+
+            <TextField
+              label="Ciudad de residencia"
+              value={
+                (watch('student').canton as ICanton)?.name ||
+                (currentDegreeCertificate?.student.canton as ICanton)?.name ||
+                ''
+              }
+              disabled
+              sx={{ flexGrow: 1 }}
+            />
           </Stack>
         </Card>
       </Grid>

@@ -30,7 +30,7 @@ export interface IDegreeCertificatesAttendee {
   functionary: IFunctionary
   id?: number
   degreeCertificateId?: number
-  createdAt: Date
+  createdAt?: Date
 }
 
 export interface ICreateDegreeCertificatesAttendee

@@ -36,15 +36,15 @@ export const TABLE_HEAD = [
   },
 ]
 
-const MAX_CREDITS_TO_APPROVE = 246
+const MAX_CREDITS_TO_APPROVE = 247
 
 export const NewStudentSchema = yup.object().shape({
   ...DEFAULT_PERSON_SCHEMA.fields,
   approvedCredits: yup
     .number()
     .required(VALIDATION_MESSAGES.required)
-    .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 246')
-    .min(0, 'Debe ser entre 0 y 246'),
+    .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 247')
+    .min(0, 'Debe ser entre 0 y 247'),
   career: yup.number().required(VALIDATION_MESSAGES.required),
   vinculationHours: yup.number(),
   internshipHours: yup.number(),

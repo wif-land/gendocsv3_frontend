@@ -115,7 +115,7 @@ export const resolveDefaultValuesDegreeCertificateAttendee = (
       } as any as IFunctionaryFormValues),
   role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
   id: currentAttendee?.id || undefined,
-  createdAt: currentAttendee?.createdAt || new Date(),
+  createdAt: currentAttendee?.createdAt || undefined,
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
