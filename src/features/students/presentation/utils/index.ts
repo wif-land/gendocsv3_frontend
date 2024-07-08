@@ -20,11 +20,6 @@ export const transformData = (
   data
     .map((item: any) => {
       if (!item['Cédula']) {
-        // enqueueSnackbar(
-        //   'Por favor, asegúrate de que el estudiante tenga una cédula válida',
-        //   { variant: 'warning' },
-        // )
-
         return
       }
 
@@ -137,15 +132,6 @@ export const transformData = (
       }
 
       if (item['Correo'] && item['Valor'] != null) {
-        // if (!item['Fecha Nacimiento']) {
-        //   enqueueSnackbar(
-        //     `Por favor, asegúrate de que la fecha de nacimiento para ${item['Cédula']} sea válida`,
-        //     { variant: 'warning' },
-        //   )
-
-        //   return
-        // }
-
         const birthdate = item['Fecha Nacimiento']
           ? new Date(item['Fecha Nacimiento'])
           : undefined
@@ -175,14 +161,6 @@ export const transformData = (
         )
 
         if (city == null) {
-          // enqueueSnackbar(
-          //   `Cantón ${item['Cantón']} no encontrado para ${item['Cédula']}`,
-          //   {
-          //     variant: 'warning',
-          //   },
-          // )
-          // return
-
           cityString = 'AMBATO'
 
           city = canton.find(
