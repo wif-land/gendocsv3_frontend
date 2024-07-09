@@ -13,8 +13,8 @@ import { Upload } from '../../../../shared/sdk/upload'
 import Iconify from '../../../../core/iconify'
 import { transformData } from '../constants'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
-import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
-import { useNotificationStore } from '../../../../features/notifications/store/useNotificationStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
+import { useNotificationStore } from '../../../notifications/store/useNotificationStore'
 import {
   Checkbox,
   FormControl,

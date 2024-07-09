@@ -15,7 +15,7 @@ type Props = {
   disabledActions?: boolean
 }
 
-export const DegreeCertificateDetailsSummary = ({
+export const DegreeDetailsSummary = ({
   degreeCertificate,
   degreeCertificateId,
   ...other

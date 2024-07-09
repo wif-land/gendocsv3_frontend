@@ -13,7 +13,7 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { IStudent } from '../../../../features/students/domain/entities/IStudent'
+import { IStudent } from '../../../students/domain/entities/IStudent'
 import {
   IDegreeModality,
   IRoom,

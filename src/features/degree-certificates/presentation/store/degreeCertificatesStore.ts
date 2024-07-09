@@ -8,7 +8,7 @@ import {
   ICreateDegreeCertificate,
   IUpdateDegreeCertificate,
 } from '../../domain/entities/IDegreeCertificates'
-import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../components/DegreeBulkUploadDialog'
 
 interface StoreState {
   degreeCertificate: DegreeCertificateModel

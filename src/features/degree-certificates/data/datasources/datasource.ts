@@ -6,7 +6,7 @@ import {
   IDegreeCertificate,
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
-import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 
 export interface IDegreeCertificateDatasource {
   getAll(

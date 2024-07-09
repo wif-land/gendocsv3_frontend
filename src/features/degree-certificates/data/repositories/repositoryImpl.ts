@@ -8,7 +8,7 @@ import {
   IDegreeCertificateDatasource,
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
-import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository

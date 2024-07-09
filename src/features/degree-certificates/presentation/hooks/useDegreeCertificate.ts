@@ -9,7 +9,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   IDegreeCertificateTableFilters,
   IDegreeCertificateTableFilterValue,
-} from '../components/DegreeCertificateTableToolbar'
+} from '../components/DegreeTableToolbar'
 import {
   DATE_TYPES,
   IDegreeCertificateFilters,

@@ -5,7 +5,7 @@ import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
 import { memo } from 'react'
-import { DegreeCertificateNewEditForm } from '../components/DegreeCertificateNewEditForm'
+import { DegreeCertificateNewEditForm } from '../components/DegreeNewEditForm'
 
 const DegreeCertificateCreateView = () => {
   const settings = useSettingsContext()

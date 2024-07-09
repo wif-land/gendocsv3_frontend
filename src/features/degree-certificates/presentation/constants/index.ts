@@ -13,8 +13,8 @@ import {
   IDegreeCertificatesAttendee,
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { enqueueSnackbar } from 'notistack'
-import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
-import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
+import { DegreeCertificateForBulk } from '../components/DegreeBulkUploadDialog'
+import { IDegreeCertificateTableFilters } from '../components/DegreeTableToolbar'
 import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
 import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
 import { ReadonlyURLSearchParams } from 'next/navigation'

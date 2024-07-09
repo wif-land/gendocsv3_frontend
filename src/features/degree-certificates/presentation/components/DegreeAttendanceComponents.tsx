@@ -17,105 +17,109 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { DegreeCertificateAttendeeNewEditForm } from './DegreeAttendanceNewEditForm'
+import { DegreeAttendeeNewEditForm } from './DegreeAttendanceNewEditForm'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Iconify from '../../../../core/iconify'
+import useLoaderStore from '../../../../shared/store/useLoaderStore'
 
 const Description = (props: {
   members: IDegreeCertificatesAttendee[]
   degreeClosed: boolean
   handleSetAttendance: (member: IDegreeCertificatesAttendee) => void
   onEdit: (member: IDegreeCertificatesAttendee) => void
-}) => (
-  <Stack spacing={3}>
-    <Typography variant="body1">
-      En esta sección podrás ver el detalle de los miembros del acta de grado.
-      Se debe añadir 3 miembros.
-    </Typography>
+}) => {
+  const loader = useLoaderStore((state) => state.loader)
 
-    <Stack
-      spacing={3}
-      sx={{
-        m: 3,
-      }}
-    >
-      {!props.members || props.members.length === 0 ? (
-        <Typography variant="body1">No hay miembros asignados</Typography>
-      ) : (
-        <>
-          {props.members
-            ?.sort((a, b) => a?.role.length - b?.role.length)
-            .map((member, index) => {
-              const isLast = index === props.members.length - 1
+  return (
+    <Stack spacing={3}>
+      <Typography variant="body1">
+        En esta sección podrás ver el detalle de los miembros del acta de grado.
+        Se debe añadir 3 miembros.
+      </Typography>
 
-              return (
-                <Grid
-                  key={index + member.role}
-                  container
-                  spacing={3}
-                  sx={{
-                    py: 1,
-                  }}
-                >
+      <Stack
+        spacing={3}
+        sx={{
+          m: 3,
+        }}
+      >
+        {!props.members || props.members.length === 0 ? (
+          <Typography variant="body1">No hay miembros asignados</Typography>
+        ) : (
+          <>
+            {props.members
+              ?.sort((a, b) => a?.role.length - b?.role.length)
+              .map((member, index) => {
+                const isLast = index === props.members.length - 1
+
+                return (
                   <Grid
-                    xs={12}
+                    key={index + member.role}
+                    container
+                    spacing={3}
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      gap: 2,
+                      py: 1,
                     }}
                   >
-                    <ListItemText
-                      primary={
-                        `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
-                        'No asignado'
-                      }
-                      secondary={
-                        DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
-                          (role) => role.value === member.role,
-                        )?.label
-                      }
-                      primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
-                      secondaryTypographyProps={{ component: 'span' }}
-                    />
-
-                    <LoadingButton
-                      variant="contained"
-                      onClick={() => props.handleSetAttendance(member)}
-                      disabled={
-                        props.members.length === 0 ||
-                        member.hasAttended ||
-                        props.degreeClosed
-                      }
-                    >
-                      {!member.hasAttended
-                        ? 'Marcar asistencia'
-                        : 'Ha asistido '}
-                    </LoadingButton>
-
-                    <LoadingButton
-                      variant="contained"
-                      onClick={() => props.onEdit(member)}
-                      disabled={props.degreeClosed}
+                    <Grid
+                      xs={12}
                       sx={{
-                        gap: 1,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: 2,
                       }}
                     >
-                      <Iconify icon="solar:pen-bold" />
-                      Editar
-                    </LoadingButton>
-                  </Grid>
+                      <ListItemText
+                        primary={
+                          `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
+                          'No asignado'
+                        }
+                        secondary={
+                          DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
+                            (role) => role.value === member.role,
+                          )?.label
+                        }
+                        primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
+                        secondaryTypographyProps={{ component: 'span' }}
+                      />
 
-                  {!isLast && <Divider style={{ width: '100%' }} />}
-                </Grid>
-              )
-            })}
-        </>
-      )}
+                      <LoadingButton
+                        variant="contained"
+                        onClick={() => props.handleSetAttendance(member)}
+                        disabled={
+                          props.members.length === 0 || props.degreeClosed
+                        }
+                        loading={loader.length > 0}
+                      >
+                        {!member.hasAttended
+                          ? 'Marcar asistencia'
+                          : 'Ha asistido '}
+                      </LoadingButton>
+
+                      <LoadingButton
+                        variant="contained"
+                        onClick={() => props.onEdit(member)}
+                        disabled={props.degreeClosed}
+                        sx={{
+                          gap: 1,
+                        }}
+                      >
+                        <Iconify icon="solar:pen-bold" />
+                        Editar
+                      </LoadingButton>
+                    </Grid>
+
+                    {!isLast && <Divider style={{ width: '100%' }} />}
+                  </Grid>
+                )
+              })}
+          </>
+        )}
+      </Stack>
     </Stack>
-  </Stack>
-)
+  )
+}
 
 export const Attendance = (props: {
   isLoading: boolean
@@ -130,6 +134,7 @@ export const Attendance = (props: {
   const handleSetAttendance = async (member: IDegreeCertificatesAttendee) => {
     await DegreeCertificatesUseCasesImpl.getInstance().setAttendance(
       member.id as number,
+      !member.hasAttended,
     )
 
     await getDegreeCertificate(props.degreeCertificateId)
@@ -156,7 +161,7 @@ export const Attendance = (props: {
       <DialogContent
         sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
       >
-        <DegreeCertificateAttendeeNewEditForm
+        <DegreeAttendeeNewEditForm
           onClose={() => {
             isAttendanceModalOpen.onFalse()
             setCurrentMember(undefined)

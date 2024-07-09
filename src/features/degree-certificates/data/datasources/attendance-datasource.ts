@@ -31,11 +31,11 @@ export class DegreeCertificateAttendanceDatasource {
     return Promise.resolve()
   }
 
-  setAttendance = async (id: number) => {
+  setAttendance = async (id: number, hasAttended: boolean) => {
     const result = await AxiosClient.patch(
       API_ROUTES.DEGREE_CERTIFICATES.UPDATE_ATTENDANCE(id),
       {
-        hasAttended: true,
+        hasAttended,
       },
     )
 

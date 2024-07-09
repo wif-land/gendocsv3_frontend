@@ -1,5 +1,5 @@
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import {
   ICreateDegreeCertificate,

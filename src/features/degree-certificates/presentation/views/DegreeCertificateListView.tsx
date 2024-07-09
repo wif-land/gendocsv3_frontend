@@ -36,13 +36,13 @@ import {
   DegreeCertificatesTableToolbar,
   IDegreeCertificateTableFilters,
   IDegreeCertificateTableFilterValue,
-} from '../components/DegreeCertificateTableToolbar'
-import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
+} from '../components/DegreeTableToolbar'
+import { DegreeCertificateTableRow } from '../components/DegreeTableRow'
 import CustomPopover, {
   usePopover,
 } from '../../../../shared/sdk/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { DegCerBulkUploadDialog } from '../components/DegreeCertificateBulkUploadDialog'
+import { DegCerBulkUploadDialog } from '../components/DegreeBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useParams } from 'next/navigation'

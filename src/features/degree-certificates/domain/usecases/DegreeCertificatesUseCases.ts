@@ -5,7 +5,7 @@ import {
 } from '../entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
-import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 import { IDegreeCertificatesAttendee } from '../entities/IDegreeCertificateAttendee'
 import { IDegreeCertificatesRepository } from '../repositories/IDegreeCertificatesRepository'
 import { IDegreeCertificatesAttendancesRepository } from '../repositories/IDegreeCertificatesAttendanceRepository'
@@ -61,7 +61,7 @@ interface CertificateDegreeUseCases {
 
   getById(id: number): Promise<DegreeCertificateModel>
 
-  setAttendance(id: number): Promise<void>
+  setAttendance(id: number, hasAttended: boolean): Promise<void>
 
   bulkLoad({
     data,
@@ -116,13 +116,21 @@ export class DegreeCertificatesUseCasesImpl
 
   async getAttendees(id: number) {
     const data = await this.attendanceRepository.getAttendance(id)
-    return data.sort((a, b) =>
-      a.createdAt > b.createdAt ? 1 : a.createdAt < b.createdAt ? -1 : 0,
-    )
+    return data.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return a.createdAt > b.createdAt
+          ? 1
+          : a.createdAt < b.createdAt
+            ? -1
+            : 0
+      }
+
+      return 0
+    })
   }
 
-  setAttendance(id: number): Promise<void> {
-    return this.attendanceRepository.setAttendance(id)
+  setAttendance(id: number, hasAttended: boolean): Promise<void> {
+    return this.attendanceRepository.setAttendance(id, hasAttended)
   }
 
   getById(id: number) {

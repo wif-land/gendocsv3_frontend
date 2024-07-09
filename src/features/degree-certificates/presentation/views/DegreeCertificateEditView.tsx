@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import { DegreeCertificateNewEditForm } from '../components/DegreeCertificateNewEditForm'
 import { memo } from 'react'
+import { DegreeCertificateNewEditForm } from '../components/DegreeNewEditForm'
 
 const DegreeCertificateEditView = () => {
   const settings = useSettingsContext()

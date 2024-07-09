@@ -26,7 +26,7 @@ interface Props {
   currentAttendee?: IDegreeCertificatesAttendee
   degreeCertificateId: number
 }
-export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
+export const DegreeAttendeeNewEditForm = (props: Props) => {
   const loader = useLoaderStore((state) => state.loader)
   const {
     handleSubmit,
