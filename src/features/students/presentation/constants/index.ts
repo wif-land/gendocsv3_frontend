@@ -42,13 +42,27 @@ export const NewStudentSchema = yup.object().shape({
   ...DEFAULT_PERSON_SCHEMA.fields,
   approvedCredits: yup
     .number()
+    .positive()
     .required(VALIDATION_MESSAGES.required)
     .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 247')
     .min(0, 'Debe ser entre 0 y 247'),
   career: yup.number().required(VALIDATION_MESSAGES.required),
-  vinculationHours: yup.number(),
-  internshipHours: yup.number(),
-  bachelorDegree: yup.string(),
+  vinculationHours: yup
+    .number()
+    .positive()
+    .test({
+      name: 'max',
+      message: 'Debe ser entre 0 y 600',
+      test: (value = 0) => value === null || (value >= 0 && value <= 600),
+    })
+    .nullable(),
+  internshipHours: yup
+    .number()
+    .positive()
+    .min(0, 'Debe ser entre 0 y 500')
+    .max(500, 'Debe ser entre 0 y 500')
+    .nullable(),
+  bachelorDegree: yup.string().required(VALIDATION_MESSAGES.required),
 })
 
 export const resolveDefaultValues = (
@@ -60,7 +74,7 @@ export const resolveDefaultValues = (
   registration: currentStudent?.registration || '',
   folio: currentStudent?.folio || '',
   gender: currentStudent?.gender || '',
-  birthdate: currentStudent?.birthdate || '',
+  birthdate: currentStudent?.birthdate || null,
   canton: (currentStudent?.canton as ICanton)?.id || null,
   career: (currentStudent?.career as ICareer)?.id || null,
   approvedCredits: currentStudent?.approvedCredits || null,

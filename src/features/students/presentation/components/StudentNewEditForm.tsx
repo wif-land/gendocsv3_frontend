@@ -156,7 +156,7 @@ export const StudentNewEditForm = ({
               }}
             >
               {!!careers?.length && (
-                <RHFSelect name="career" label="Carrera">
+                <RHFSelect name="career" label="Carrera" required>
                   {careers
                     ?.filter((carrer) => carrer.isActive)
                     ?.map((career) => (
@@ -341,7 +341,7 @@ export const StudentNewEditForm = ({
                 },
               }}
             >
-              <RHFSelect name="gender" label="Género">
+              <RHFSelect name="gender" label="Género" required>
                 {GENDERS.map((option) => (
                   <MenuItem key={option.value} value={option.label}>
                     {option.label}
