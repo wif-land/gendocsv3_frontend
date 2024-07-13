@@ -161,15 +161,18 @@ export const defaultFilters = (
 })
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
-  topic: Yup.string().required('El tema es requerido'),
+  topic: Yup.string()
+    .required('El tema es requerido')
+    .min(5, 'Entre 5 y 255 carácteres')
+    .max(255, 'Entre 5 y 255 carácteres'),
   // selectedValue: Yup.object().shape({
   //   id: Yup.number().min(1).required('El estudiante es requerido'),
   //   label: Yup.string().required('El estudiante es requerido'),
   // }),
   // career: Yup.number().required('La carrera es requerida'),
-  // certificateType: Yup.mixed().required('El tipo de acta es requerido'),
+  certificateTypeId: Yup.mixed().required('El tipo de acta es requerido'),
   // certificateStatus: Yup.mixed().required('El estado de acta es requerido'),
-  // degreeModality: Yup.mixed().required('La modalidad es requerida'),
+  degreeModalityId: Yup.mixed().required('La modalidad es requerida'),
   // room: Yup.mixed().required('El aula es requerida'),
   // duration: Yup.number().required('La duración es requerida'),
 })

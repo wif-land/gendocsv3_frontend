@@ -21,11 +21,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   IconButton,
-  InputLabel,
   MenuItem,
-  Select,
   TextField,
 } from '@mui/material'
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
@@ -37,7 +34,6 @@ import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
 import { useCertificateData } from '../../../../core/providers/certificate-degree-provider'
 import { ICanton } from '../../../../core/providers/domain/entities/ILocationProvider'
-import { useLocations } from '../../../../core/providers/locations-provider'
 import { useRouter } from 'next/navigation'
 import Iconify from '../../../../core/iconify'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
@@ -83,7 +79,6 @@ export const DegreeCertificateNewEditForm = ({
     getValues,
   } = methods
 
-  const { cities, provinces } = useLocations()
   const { degreeModalities, rooms } = useCertificateData()
 
   const renderDetails = (
@@ -357,6 +352,7 @@ export const DegreeCertificateNewEditForm = ({
                     id="certificateTypeId"
                     label="Tipo de grado"
                     name="certificateTypeId"
+                    required
                   >
                     {degCerTemplates
                       .filter(
@@ -386,6 +382,7 @@ export const DegreeCertificateNewEditForm = ({
                     id="degreeModalityId"
                     label="Modalidad"
                     name="degreeModalityId"
+                    required
                   >
                     {degreeModalities.map((modality) => (
                       <MenuItem key={modality.id} value={modality.id}>
@@ -443,7 +440,6 @@ export const DegreeCertificateNewEditForm = ({
                         field: { clearable: true },
                         textField: { variant: 'outlined' },
                       }}
-                      disablePast
                     />
                   )}
                 />
