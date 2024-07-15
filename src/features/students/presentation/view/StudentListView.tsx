@@ -46,6 +46,7 @@ import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 const defaultFilters: IStudentTableFilters = {
   field: undefined,
   state: undefined,
+  careerId: undefined,
 }
 
 const StudentListView = () => {

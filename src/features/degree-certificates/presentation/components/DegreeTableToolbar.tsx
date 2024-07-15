@@ -81,8 +81,6 @@ export const DegreeCertificatesTableToolbar = ({
   useEffect(() => {
     let isMounted = true
 
-    console.log('filters', filters)
-
     if (!isMounted) return
 
     table.setPage(0)

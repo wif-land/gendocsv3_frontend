@@ -35,8 +35,6 @@ export const useDegreeCertificateForm = (
   } = useStudentStore()
   const { user } = useAccountStore()
 
-  console.log({ user })
-
   const defaultValues = useMemo(
     () => resolveDefaultValuesDegreeCertificate(currentDegreeCertificate),
     [currentDegreeCertificate],
