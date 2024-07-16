@@ -345,6 +345,9 @@ export const DegreeCertificateNewEditForm = ({
                   name="topic"
                   label="Tema"
                   required
+                  inputProps={{
+                    maxLength: 255,
+                  }}
                   sx={{ flexGrow: 1 }}
                 />
                 {methods.watch('student').id! > 0 && (
@@ -395,6 +398,7 @@ export const DegreeCertificateNewEditForm = ({
                       <RHFTextField
                         name="link"
                         label="Link"
+                        inputProps={{ maxLength: 255 }}
                         sx={{ flexGrow: 1 }}
                       />
                     )}
