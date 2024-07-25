@@ -137,15 +137,6 @@ const FunctionaryListView = () => {
             { name: 'Funcionarios' },
           ]}
           action={
-            // <Button
-            //   component={RouterLink}
-            //   href={`${pathname}/new`}
-            //   variant="contained"
-            //   startIcon={<Iconify icon="mingcute:add-line" />}
-            // >
-            //   Nuevo funcionario
-            // </Button>
-
             <LoadingButton
               color="inherit"
               variant="contained"

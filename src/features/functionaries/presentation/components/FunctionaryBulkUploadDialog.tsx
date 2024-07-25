@@ -12,11 +12,10 @@ import Dialog, { DialogProps } from '@mui/material/Dialog'
 import { Upload } from '../../../../shared/sdk/upload'
 import Iconify from '../../../../core/iconify'
 import { useCareersStore } from '../../../careers/presentation/store/careerStore'
-import { useLocations } from '../../../../core/providers/locations-provider'
 import { enqueueSnackbar } from 'notistack'
-import { MenuItem, Select } from '@mui/material'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
-import { useFunctionaryMethods } from '../hooks/useFunctionaryMethods'
+import { BulkCreateUseCase } from '../../domain/usecases/BulkCreateUseCase'
+import { RawFunctionary, transformData } from '../utils'
 
 interface Props extends DialogProps {
   title?: string
@@ -35,10 +34,8 @@ export const FuntionaryBulkUploadDialog = ({
   ...other
 }: Props) => {
   const [files, setFiles] = useState<(File | string)[]>([])
-  const [students, setStudents] = useState<IFunctionary[]>([])
+  const [functionaries, setStudents] = useState<IFunctionary[]>([])
   const { careers, get: getCareers } = useCareersStore()
-  const { cities } = useLocations()
-  const { fetchData } = useFunctionaryMethods()
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -95,13 +92,7 @@ export const FuntionaryBulkUploadDialog = ({
       const sheet = XLSX.utils.json_to_sheet(filteredData, { skipHeader: true })
       const jsonData = XLSX.utils.sheet_to_json(sheet)
 
-      const transformData = (data: any[], careers: any[], cities: any[]) => {
-        console.log(data, careers, cities)
-
-        return []
-      }
-
-      const transformedData = transformData(jsonData, careers, cities)
+      const transformedData = transformData(jsonData as RawFunctionary[])
 
       if (
         transformedData == null ||
@@ -146,13 +137,16 @@ export const FuntionaryBulkUploadDialog = ({
   }, [careers])
 
   useEffect(() => {
-    if (students.length === 0) {
+    if (functionaries.length === 0) {
       return
     }
 
     const fetchBulk = async () => {
-      const studentsBulk = await bulkCreate(students)
-      if (studentsBulk.length === 0) {
+      const functionariesBulk = await new BulkCreateUseCase().call(
+        functionaries,
+      )
+
+      if (functionariesBulk.length === 0) {
         return
       }
 
@@ -162,7 +156,7 @@ export const FuntionaryBulkUploadDialog = ({
     }
 
     fetchBulk()
-  }, [students])
+  }, [functionaries])
 
   useEffect(() => {
     if (!open) {
@@ -183,21 +177,6 @@ export const FuntionaryBulkUploadDialog = ({
           onDrop={handleDrop}
           onRemove={handleRemoveFile}
         />
-
-        <br />
-
-        <label>Formato del archivo: </label>
-
-        <Select
-          defaultValue={FILE_FORMATS_TO_UPLOAD[0].value}
-          onChange={handleFormatChange}
-        >
-          {FILE_FORMATS_TO_UPLOAD.map((format) => (
-            <MenuItem key={format.value} value={format.value}>
-              {format.label}
-            </MenuItem>
-          ))}
-        </Select>
       </DialogContent>
 
       <DialogActions>
