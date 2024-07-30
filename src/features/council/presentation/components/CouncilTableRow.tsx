@@ -94,7 +94,7 @@ export const CouncilTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(date), 'dd MMM yyyy')}
+            primary={format(new Date(date), 'dd/MM/yyyy')}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
@@ -155,10 +155,7 @@ export const CouncilTableRow = ({
             onDocumentAction(row.id!)
           }}
         >
-          <Iconify
-            icon="
-            solar:document-outline"
-          />
+          <Iconify icon="solar:document-outline" />
           Documentos
         </MenuItem>
 

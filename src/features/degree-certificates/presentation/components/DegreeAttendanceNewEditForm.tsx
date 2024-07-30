@@ -19,13 +19,14 @@ import {
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 import { useEffect, useState } from 'react'
+import { DATE_FORMAT } from '../../../../core/utils/format-time'
 
 interface Props {
   onClose: VoidFunction
   currentAttendee?: IDegreeCertificatesAttendee
   degreeCertificateId: number
 }
-export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
+export const DegreeAttendeeNewEditForm = (props: Props) => {
   const loader = useLoaderStore((state) => state.loader)
   const {
     handleSubmit,
@@ -116,7 +117,10 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
               ))}
             </RHFSelect>
 
-            <RHFTextField name="details" label="Documento de asignación" />
+            {methods.watch('role') &&
+              methods.watch('role') !== DEGREE_ATTENDANCE_ROLES.MENTOR && (
+                <RHFTextField name="details" label="Documento de asignación" />
+              )}
 
             <Controller
               name="assignationDate"
@@ -129,7 +133,7 @@ export const DegreeCertificateAttendeeNewEditForm = (props: Props) => {
                     field.onChange(newValue?.toDate())
                   }}
                   label="Fecha de asignación"
-                  format="dddd/MM/YYYY"
+                  format={DATE_FORMAT}
                   slotProps={{
                     textField: {
                       fullWidth: true,

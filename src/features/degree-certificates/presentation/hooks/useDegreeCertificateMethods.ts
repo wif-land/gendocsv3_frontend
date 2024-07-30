@@ -10,12 +10,12 @@ export const useDegreeCertificateMethods = () => {
   const fetchData = async (
     rowsPerPage: number,
     currentPage: number,
-    carrerId: number,
+    filters: IDegreeCertificateFilters,
   ) =>
     await DegreeCertificatesUseCasesImpl.getInstance().getAll(
       rowsPerPage,
       currentPage,
-      carrerId,
+      filters,
     )
 
   const toggleIsClosed = async (
@@ -29,14 +29,17 @@ export const useDegreeCertificateMethods = () => {
   const resolveStudentById = async (id: number): Promise<IStudent> =>
     students.find((student) => student.id === id) as unknown as IStudent
 
+  const deleteDegreeCertificate = async (id: number) =>
+    await DegreeCertificatesUseCasesImpl.getInstance().delete(id)
+
   const generateDocument = async (degreeCertificateId: number) =>
     await DegreeCertificatesUseCasesImpl.getInstance().generateDocument(
       degreeCertificateId,
     )
 
-  const generateNumeration = async (carrerId: number) =>
+  const generateNumeration = async (careerId: number) =>
     await DegreeCertificatesUseCasesImpl.getInstance().generateNumeration(
-      carrerId,
+      careerId,
     )
 
   const getReports = async (
@@ -85,6 +88,7 @@ export const useDegreeCertificateMethods = () => {
     resolveStudentById,
     generateDocument,
     generateNumeration,
+    deleteDegreeCertificate,
     getReports,
     downloadReport,
   }

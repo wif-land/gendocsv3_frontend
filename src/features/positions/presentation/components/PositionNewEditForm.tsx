@@ -100,10 +100,12 @@ export const PositionNewEditForm = ({ currentPosition }: Props) => {
               }}
               loading={loading}
               noOptionsText="No hay resultados"
-              options={functionaries?.map(
-                (functionary) =>
-                  `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
-              )}
+              options={functionaries
+                ?.filter((functionary) => functionary.isActive)
+                ?.map(
+                  (functionary) =>
+                    `${functionary.firstName} ${functionary.secondName} ${functionary.firstLastName} ${functionary.secondLastName} - ${functionary.dni}`,
+                )}
               onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue)
               }}

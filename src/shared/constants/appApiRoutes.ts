@@ -6,6 +6,9 @@ export const API_ROUTES = {
   AUTH: {
     LOGIN: '/auth/login',
     LOGOUT: '/auth/logout',
+    RECOVER_PASSWORD: '/auth/forgot-password',
+    NEW_PASSWORD: '/auth/new-password',
+    RESEND_EMAIL: '/auth/resend-activation-email',
   },
   USERS: {
     GET_ALL: '/users',
@@ -113,11 +116,11 @@ export const API_ROUTES = {
   },
   DEGREE_CERTIFICATES: {
     GET_BY_FILTERS: `/degree-certificates/filter`,
-    DELETE: '/degree-certificates/:id',
     CREATE: '/degree-certificates',
     CHECK_PRESENTATION_DATE: `/degree-certificates/check-presentation-date`,
-    GET_ALL: (carrerId: number) => `/degree-certificates/carrer/${carrerId}`,
+    GET_ALL: `/degree-certificates`,
     UPDATE: (id: number) => `/degree-certificates/${id}`,
+    DELETE: (id: number) => `/degree-certificates/${id}`,
     GENERATE_NUMERATION: (careerId: number) =>
       `/degree-certificates/numeration/generate/${careerId}`,
     GET_LAST_NUMBER_TO_REGISTER: (careerId: number) =>

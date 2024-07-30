@@ -95,7 +95,6 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
               <RHFTextField
                 name="secondName"
                 label="Segundo nombre"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -113,7 +112,6 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
               <RHFTextField
                 name="secondLastName"
                 label="Segundo apellido"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -144,7 +142,6 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
                 name="personalEmail"
                 label="Correo personal"
                 type="email"
-                required
               />
 
               <RHFTextField
@@ -162,7 +159,6 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
                 name="regularPhoneNumber"
                 type="tel"
                 label="Teléfono fijo"
-                required
                 inputMode="tel"
                 inputProps={{
                   maxLength: 10,

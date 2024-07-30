@@ -25,11 +25,12 @@ export interface IDegreeCertificatesAttendee {
   hasAttended: boolean
   hasBeenNotified: boolean
   role: DEGREE_ATTENDANCE_ROLES
-  details: string
+  details?: string
   assignationDate: Date
   functionary: IFunctionary
   id?: number
   degreeCertificateId?: number
+  createdAt?: Date
 }
 
 export interface ICreateDegreeCertificatesAttendee

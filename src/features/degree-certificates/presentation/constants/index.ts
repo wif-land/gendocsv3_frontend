@@ -13,10 +13,11 @@ import {
   IDegreeCertificatesAttendee,
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { enqueueSnackbar } from 'notistack'
-import { DegreeCertificateForBulk } from '../components/DegreeCertificateBulkUploadDialog'
-import { IDegreeCertificateTableFilters } from '../components/DegreeCertificateTableToolbar'
+import { DegreeCertificateForBulk } from '../components/DegreeBulkUploadDialog'
+import { IDegreeCertificateTableFilters } from '../components/DegreeTableToolbar'
 import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
 import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
+import { ReadonlyURLSearchParams } from 'next/navigation'
 
 export interface FormValuesProps
   extends Omit<
@@ -84,7 +85,7 @@ export const resolveDefaultValuesDegreeCertificate = (
     (currentDegreeCertificate?.degreeModality as IDegreeModality)?.id ||
     (undefined as any),
   roomId: (currentDegreeCertificate?.room as IRoom)?.id || (undefined as any),
-  duration: currentDegreeCertificate?.duration || (null as any),
+  duration: currentDegreeCertificate?.duration || 60,
   link: currentDegreeCertificate?.link || '',
   gradesSheetDriveId: currentDegreeCertificate?.gradesSheetDriveId || '',
   certificateDriveId: currentDegreeCertificate?.certificateDriveId || '',
@@ -106,7 +107,7 @@ export const resolveDefaultValuesDegreeCertificateAttendee = (
   functionary: currentAttendee?.functionary
     ? ({
         id: currentAttendee?.functionary.id,
-        label: `${currentAttendee?.functionary.firstName} ${currentAttendee?.functionary.firstLastName} ${currentAttendee?.functionary.secondLastName} - ${currentAttendee?.functionary.dni}`,
+        label: `${currentAttendee?.functionary.firstName} ${currentAttendee?.functionary.firstLastName} - ${currentAttendee?.functionary.dni}`,
       } as any as IFunctionaryFormValues)
     : ({
         id: 0,
@@ -114,6 +115,7 @@ export const resolveDefaultValuesDegreeCertificateAttendee = (
       } as any as IFunctionaryFormValues),
   role: currentAttendee?.role || DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
   id: currentAttendee?.id || undefined,
+  createdAt: currentAttendee?.createdAt || undefined,
 })
 
 export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
@@ -122,7 +124,9 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         ...currentStudent,
         id: currentStudent.id || 0,
         label:
-          `${currentStudent.firstName} ${currentStudent.secondName} ${currentStudent.firstLastName} ${currentStudent.secondLastName} - ${currentStudent.dni}` ||
+          `${currentStudent.firstName} ${currentStudent.secondName || ''} ${
+            currentStudent.firstLastName
+          } ${currentStudent.secondLastName || ''} - ${currentStudent.dni}` ||
           '',
       }
     : ({
@@ -130,33 +134,57 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
         label: '',
       } as IStudent)
 
-export const defaultFilters: IDegreeCertificateTableFilters = {
-  field: undefined,
-  careerId: 1,
-  isEnd: false,
-  isReport: false,
-  startDate: new Date(`${new Date().getFullYear()}-01-01`),
-  endDate: new Date(),
-  dateType: DateType.CREATION as any,
-}
+export const defaultFilters = (
+  searchParams: ReadonlyURLSearchParams,
+): IDegreeCertificateTableFilters => ({
+  field: searchParams.has('field')
+    ? (searchParams.get('field') as string)
+    : undefined,
+  careerId: searchParams.has('careerId')
+    ? +parseInt(searchParams.get('careerId') as string)
+    : 1,
+  isEnd: searchParams.has('isEnd')
+    ? searchParams.get('isEnd') === 'true'
+    : false,
+  isReport: searchParams.has('isReport')
+    ? searchParams.get('isReport') === 'true'
+    : false,
+  startDate: searchParams.has('startDate')
+    ? new Date(searchParams.get('startDate') as string)
+    : new Date(`${new Date().getFullYear()}-01-01`),
+  endDate: searchParams.has('endDate')
+    ? new Date(searchParams.get('endDate') as string)
+    : new Date(),
+  dateType: searchParams.has('dateType')
+    ? (searchParams.get('dateType') as DateType)
+    : (DateType.CREATION as any),
+})
 
 export const NewDegreeCertificateSchema = Yup.object().shape({
-  topic: Yup.string().required('El tema es requerido'),
+  topic: Yup.string()
+    .required('El tema es requerido')
+    .min(5, 'Entre 5 y 255 carácteres')
+    .max(255, 'Entre 5 y 255 carácteres'),
   // selectedValue: Yup.object().shape({
   //   id: Yup.number().min(1).required('El estudiante es requerido'),
   //   label: Yup.string().required('El estudiante es requerido'),
   // }),
   // career: Yup.number().required('La carrera es requerida'),
-  // certificateType: Yup.mixed().required('El tipo de acta es requerido'),
+  certificateTypeId: Yup.mixed().required('El tipo de acta es requerido'),
   // certificateStatus: Yup.mixed().required('El estado de acta es requerido'),
-  // degreeModality: Yup.mixed().required('La modalidad es requerida'),
+  degreeModalityId: Yup.mixed().required('La modalidad es requerida'),
   // room: Yup.mixed().required('El aula es requerida'),
   // duration: Yup.number().required('La duración es requerida'),
 })
 
 export const NewDegreeCertificateAttendanceSchema = Yup.object().shape({
   role: Yup.string().required('El rol es requerido'),
-  details: Yup.string().required('El documento de asignación es requerido'),
+  details: Yup.string().when('role', (role, schema) => {
+    if ((role[0] as unknown as string) === DEGREE_ATTENDANCE_ROLES.MENTOR) {
+      return schema.notRequired()
+    }
+    return schema.required('El documento de asignación es requerido')
+  }),
   assignationDate: Yup.date().required('La fecha de asignación es requerida'),
 })
 
@@ -181,9 +209,6 @@ export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
 
     acc.push({
       topic: safeToString(item['Tema']),
-      presentationDate: item['Fin clases']
-        ? new Date(item['Fin clases'])
-        : undefined,
       studentDni: safeToString(item['Cédula']),
       certificateType: safeToString(item['Modalidad Titulación']),
       certificateStatus: safeToString(item['Estado Acta']),

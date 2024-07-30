@@ -4,7 +4,7 @@ import {
 } from '../entities/IDegreeCertificateAttendee'
 
 export interface IDegreeCertificatesAttendancesRepository {
-  setAttendance(id: number): Promise<void>
+  setAttendance(id: number, hasAttended: boolean): Promise<void>
 
   createAttendance(data: ICreateDegreeCertificatesAttendee): Promise<void>
 

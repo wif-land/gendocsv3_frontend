@@ -8,7 +8,7 @@ import {
   resolveDefaultValuesDegreeCertificate,
 } from '../constants'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -23,7 +23,6 @@ import { useAccountStore } from '../../../../features/auth/presentation/state/us
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
 ) => {
-  const pathname = usePathname()
   const [inputValue, setInputValue] = useState('' as string)
   const debouncedValue = useDebounce(inputValue)
   const isOpen = useBoolean()
@@ -82,17 +81,13 @@ export const useDegreeCertificateForm = (
         })
       }
 
-      console.log('result', result)
-
       if (!!result && !currentDegreeCertificate) {
-        router.push(pathname.replace('/new', ''))
+        router.back()
         reset()
       }
 
       if (!!result && currentDegreeCertificate) {
-        router.push(
-          pathname.replace(`/${currentDegreeCertificate.id}/edit`, ''),
-        )
+        router.back()
         reset()
       }
     },
@@ -118,8 +113,6 @@ export const useDegreeCertificateForm = (
   useEffect(() => {
     const studentId = methods.watch('selectedValue')?.id
     if (!studentId || studentId === 0) return
-
-    console.log('studentId', studentId)
 
     // return
     // // WTF IS GOING ON HERE?
@@ -169,7 +162,7 @@ export const useDegreeCertificateForm = (
 
     if (!methods.watch('duration') || !methods.watch('roomId')) {
       enqueueSnackbar(
-        'Asegurate de asignar una duración y un aula para verificar la disponibilidad ',
+        'Asegurate de asignar una duración y un aula para verificar la disponibilidad de la fecha de presentación',
         {
           variant: 'info',
         },

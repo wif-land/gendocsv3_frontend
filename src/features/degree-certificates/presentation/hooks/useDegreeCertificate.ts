@@ -9,7 +9,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   IDegreeCertificateTableFilters,
   IDegreeCertificateTableFilterValue,
-} from '../components/DegreeCertificateTableToolbar'
+} from '../components/DegreeTableToolbar'
 import {
   DATE_TYPES,
   IDegreeCertificateFilters,
@@ -32,20 +32,22 @@ export const useDegreeCertificateView = ({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const [filters, setFilters] =
-    useState<IDegreeCertificateTableFilters>(defaultFilters)
+  const [filters, setFilters] = useState<IDegreeCertificateTableFilters>(
+    defaultFilters(searchParams),
+  )
   const [tableData, setTableData] = useState<DegreeCertificateModel[]>([])
   const [firstCharge, setFirstCharge] = useState<boolean>(true)
   const [prevCareer, setPrevCareer] = useState<number>(1)
   const [count, setCount] = useState(0)
   const { degreeCertificates, setDegreeCertificates } =
     useDegreeCertificatesStore()
-  const { loader } = useLoaderStore()
+  const { loader, addLoaderItem, removeLoaderItem } = useLoaderStore()
   const {
     fetchData,
     toggleIsClosed,
     generateDocument,
     generateNumeration,
+    deleteDegreeCertificate,
     getReports,
     downloadReport,
   } = useDegreeCertificateMethods()
@@ -135,15 +137,15 @@ export const useDegreeCertificateView = ({
       params.set('field', filters.field)
     }
 
-    router.push(`${pathname}?${params.toString()}`)
-    console.log(searchParams.toString())
+    router.replace(`${pathname}?${params.toString()}`)
 
     const loadData = async () => {
+      addLoaderItem('degree-certificates')
       try {
         const data = await fetchData(
           table.rowsPerPage,
           table.page,
-          filters.careerId || 1,
+          filters as IDegreeCertificateFilters,
         )
         if (isMounted && data?.degreeCertificates) {
           setDegreeCertificates(data.degreeCertificates)
@@ -151,12 +153,14 @@ export const useDegreeCertificateView = ({
           setCount(data.count)
           setFirstCharge(false)
           setPrevCareer(filters.careerId || 1)
+          removeLoaderItem('degree-certificates')
         }
       } catch (error) {}
     }
 
     const loadReportData = async () => {
       try {
+        addLoaderItem('degree-certificates')
         const data = await getReports(
           filters.isEnd || false,
           filters as IDegreeCertificateFilters,
@@ -167,6 +171,7 @@ export const useDegreeCertificateView = ({
           setCount(data.count)
           setFirstCharge(false)
           setPrevCareer(filters.careerId || 1)
+          removeLoaderItem('degree-certificates')
         }
       } catch (error) {}
     }
@@ -211,17 +216,19 @@ export const useDegreeCertificateView = ({
           }
         })
       } else {
-        fetchData(table.rowsPerPage, newPage, filters.careerId || 1).then(
-          (data) => {
-            if (data?.degreeCertificates) {
-              setDegreeCertificates([
-                ...degreeCertificates,
-                ...data.degreeCertificates,
-              ])
-              setTableData([...degreeCertificates, ...data.degreeCertificates])
-            }
-          },
-        )
+        fetchData(
+          table.rowsPerPage,
+          newPage,
+          filters as IDegreeCertificateFilters,
+        ).then((data) => {
+          if (data?.degreeCertificates) {
+            setDegreeCertificates([
+              ...degreeCertificates,
+              ...data.degreeCertificates,
+            ])
+            setTableData([...degreeCertificates, ...data.degreeCertificates])
+          }
+        })
       }
     }
   }
@@ -253,17 +260,19 @@ export const useDegreeCertificateView = ({
         setCount(0)
       })
     } else {
-      fetchData(newRowsPerPage, table.page, filters.careerId || 1).then(
-        (data) => {
-          if (data?.degreeCertificates) {
-            setDegreeCertificates(data.degreeCertificates)
-            setTableData(data.degreeCertificates)
-          }
-          if (data?.count) {
-            setCount(data.count)
-          }
-        },
-      )
+      fetchData(
+        newRowsPerPage,
+        table.page,
+        filters as IDegreeCertificateFilters,
+      ).then((data) => {
+        if (data?.degreeCertificates) {
+          setDegreeCertificates(data.degreeCertificates)
+          setTableData(data.degreeCertificates)
+        }
+        if (data?.count) {
+          setCount(data.count)
+        }
+      })
     }
   }
 
@@ -284,7 +293,21 @@ export const useDegreeCertificateView = ({
     })
   }
 
+  const handleDeleteRow = (row: IDegreeCertificate) => {
+    deleteDegreeCertificate(row.id as number).then((data) => {
+      if (data) {
+        setDegreeCertificates(
+          degreeCertificates.filter((degree) => degree.id !== row.id),
+        )
+        setTableData(
+          degreeCertificates.filter((degree) => degree.id !== row.id),
+        )
+      }
+    })
+  }
+
   const handleGenerateDocument = async (row: DegreeCertificateModel) => {
+    addLoaderItem('degree-certificates')
     await generateDocument(row.id as number).then((data) => {
       if (data) {
         setDegreeCertificates(
@@ -302,6 +325,7 @@ export const useDegreeCertificateView = ({
         }
       }
     })
+    removeLoaderItem('degree-certificates')
   }
 
   const handleGenerateNumeration = async () => {
@@ -310,7 +334,21 @@ export const useDegreeCertificateView = ({
   }
 
   const handleSearch = (filters: IDegreeCertificateFilters) => {
-    if (filters.isReport === false) return
+    if (filters.isReport === false) {
+      fetchData(table.rowsPerPage, table.page, filters).then((data) => {
+        if (data?.degreeCertificates) {
+          setDegreeCertificates(data.degreeCertificates)
+          setTableData(data.degreeCertificates)
+          setCount(data.count)
+          return
+        }
+        setDegreeCertificates([])
+        setTableData([])
+        setCount(0)
+        return
+      })
+      return
+    }
     getReports(
       filters.isEnd || false,
       filters as IDegreeCertificateFilters,
@@ -358,7 +396,7 @@ export const useDegreeCertificateView = ({
       const data = await fetchData(
         table.rowsPerPage,
         table.page,
-        filters.careerId || 1,
+        filters as IDegreeCertificateFilters,
       )
       if (data?.degreeCertificates) {
         setDegreeCertificates(data.degreeCertificates)
@@ -417,6 +455,7 @@ export const useDegreeCertificateView = ({
     handleUpdateRow,
     handleGenerateDocument,
     handleGenerateNumeration,
+    handleDeleteRow,
     handleSearch,
     searchParams,
     handleDownload,

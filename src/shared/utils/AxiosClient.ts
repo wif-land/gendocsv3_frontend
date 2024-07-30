@@ -5,7 +5,7 @@ import { HTTP_STATUS_CODES } from './app-enums'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants/appApiRoutes'
 import useLoaderStore from '../store/useLoaderStore'
 import { enqueueSnackbar } from 'notistack'
-import { LogoutnUseCase } from '../../features/auth/domain/usecases/logoutUseCase'
+import { LogoutUseCase } from '../../features/auth/domain/usecases/logoutUseCase'
 
 type HTTP_METHODS = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
@@ -46,7 +46,7 @@ export class AxiosClient {
         }
 
         if (!this.accessToken) {
-          await new LogoutnUseCase().call()
+          await new LogoutUseCase().call()
         }
 
         if (this.accessToken && config.headers) {
@@ -65,7 +65,7 @@ export class AxiosClient {
       (response) => response,
       (error) => {
         if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-          new LogoutnUseCase().call()
+          new LogoutUseCase().call()
         }
 
         return Promise.reject(error)
@@ -303,6 +303,8 @@ const handleApiError = (
     enqueueSnackbar('No se ha podido establecer conexión con el servidor', {
       variant: 'error',
     })
+
+    new LogoutUseCase().call()
 
     return {
       error: 'error',

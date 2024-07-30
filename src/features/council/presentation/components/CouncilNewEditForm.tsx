@@ -22,6 +22,7 @@ import { Box, Button, Link, MenuItem } from '@mui/material'
 import { useCouncilsForm } from '../hooks/useCouncilsForm'
 import { useRouter } from 'next/navigation'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
+import { DATE_TIME_FORMAT } from '../../../../core/utils/format-time'
 
 type Props = {
   currentCouncil?: ICouncil
@@ -89,7 +90,7 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                     }
                   }}
                   label="Fecha y hora de ejecución"
-                  format="dddd/MM/YYYY hh:mm a"
+                  format={DATE_TIME_FORMAT}
                   slotProps={{
                     textField: {
                       fullWidth: true,

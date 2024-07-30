@@ -12,13 +12,11 @@ import { useCareersStore } from '../../../features/careers/presentation/store/ca
 interface IStatusFilterProps {
   onChange: (event: SelectChangeEvent) => void
   filters: any
-  sx? : any
+  sx?: any
 }
 
-
 export const CareerFilter = ({ onChange, filters, sx }: IStatusFilterProps) => {
-  
-  const {careers, get} = useCareersStore()
+  const { careers, get } = useCareersStore()
 
   useEffect(() => {
     if (careers.length === 0) {
@@ -33,12 +31,15 @@ export const CareerFilter = ({ onChange, filters, sx }: IStatusFilterProps) => {
         labelId="council-type-label"
         id="council-simple-select"
         label="Carrera"
-        value={filters.careerId ? filters.careerId : 1}
+        value={filters.careerId ? filters.careerId : ''}
         input={<OutlinedInput label="Estado" />}
         onChange={onChange}
       >
         {careers.map((career) => (
-          <MenuItem key={career.id} value={career.id as number}> {career.name}</MenuItem>
+          <MenuItem key={career.id} value={career.id as number}>
+            {' '}
+            {career.name}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>

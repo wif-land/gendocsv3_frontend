@@ -7,6 +7,7 @@ import { Box, Button, Grid } from '@mui/material'
 import Iconify from '../../../../core/iconify'
 import { useRouter } from 'next/navigation'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { CertificateStatus } from '../../../degcer-templates/domain/entities/IDegCerTemplates'
 
 type Props = {
   degreeCertificate: DegreeCertificateModel
@@ -14,7 +15,7 @@ type Props = {
   disabledActions?: boolean
 }
 
-export const DegreeCertificateDetailsSummary = ({
+export const DegreeDetailsSummary = ({
   degreeCertificate,
   degreeCertificateId,
   ...other
@@ -26,6 +27,11 @@ export const DegreeCertificateDetailsSummary = ({
     value: string
     icon: string
   }[] = [
+    {
+      title: 'Tema',
+      value: degreeCertificate.topic || 'No especificado',
+      icon: 'ion:book',
+    },
     {
       title: 'Fecha de presentación',
       value: degreeCertificate?.presentationDate
@@ -49,7 +55,10 @@ export const DegreeCertificateDetailsSummary = ({
     {
       title: 'Estado',
       value:
-        degreeCertificate?.certificateStatus?.toString() || 'No especificado',
+        `${(degreeCertificate?.certificateStatus as CertificateStatus)
+          ?.femaleName} / ${(
+          degreeCertificate?.certificateStatus as CertificateStatus
+        )?.maleName}` || 'No especificado',
       icon: 'fe:activity',
     },
     {

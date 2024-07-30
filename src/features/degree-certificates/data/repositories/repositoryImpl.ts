@@ -8,7 +8,7 @@ import {
   IDegreeCertificateDatasource,
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
-import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
@@ -34,8 +34,11 @@ export class DegreeCertificateRepositoryImpl
     return this.datasource.getById(id)
   }
 
-  getAll = async (limit: number, offset: number, carrerId: number) =>
-    await this.datasource.getAll(limit, offset, carrerId)
+  getAll = async (
+    limit: number,
+    offset: number,
+    filters: IDegreeCertificateFilters,
+  ) => await this.datasource.getAll(limit, offset, filters)
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,
@@ -48,6 +51,8 @@ export class DegreeCertificateRepositoryImpl
 
   create = async (degreeCertificate: ICreateDegreeCertificate) =>
     await this.datasource.create(degreeCertificate)
+
+  delete = async (id: number) => await this.datasource.delete(id)
 
   generateNumeration = async (careerId: number) =>
     await this.datasource.generateNumeration(careerId)

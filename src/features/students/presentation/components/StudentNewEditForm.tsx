@@ -22,6 +22,7 @@ import { useLocations } from '../../../../core/providers/locations-provider'
 import { GENDERS } from '../constants'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
+import { DATE_FORMAT } from '../../../../core/utils/format-time'
 
 type Props = {
   currentStudent?: IStudent
@@ -99,7 +100,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="secondName"
                 label="Segundo nombre"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -117,7 +117,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="secondLastName"
                 label="Segundo apellido"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -157,12 +156,14 @@ export const StudentNewEditForm = ({
               }}
             >
               {!!careers?.length && (
-                <RHFSelect name="career" label="Carrera">
-                  {careers.map((career) => (
-                    <MenuItem key={career.id} value={career.id}>
-                      {career.name}
-                    </MenuItem>
-                  ))}
+                <RHFSelect name="career" label="Carrera" required>
+                  {careers
+                    ?.filter((carrer) => carrer.isActive)
+                    ?.map((career) => (
+                      <MenuItem key={career.id} value={career.id}>
+                        {career.name}
+                      </MenuItem>
+                    ))}
                 </RHFSelect>
               )}
 
@@ -188,10 +189,10 @@ export const StudentNewEditForm = ({
               <DatePicker
                 name="startStudiesDate"
                 label="Fecha de inicio de estudios"
-                format="dddd/MM/YYYY"
-                sx={{ width: 260 }}
+                format={DATE_FORMAT}
                 slotProps={{
                   field: { clearable: true },
+                  textField: { variant: 'outlined' },
                 }}
                 onChange={(newValue: any) => {
                   if (newValue) {
@@ -204,10 +205,10 @@ export const StudentNewEditForm = ({
               <DatePicker
                 name="endStudiesDate"
                 label="Fecha de fin de estudios"
-                format="dddd/MM/YYYY"
-                sx={{ width: 260 }}
+                format={DATE_FORMAT}
                 slotProps={{
                   field: { clearable: true },
+                  textField: { variant: 'outlined' },
                 }}
                 onChange={(newValue: any) => {
                   if (newValue) {
@@ -229,7 +230,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="folio"
                 label="Folio"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -238,7 +238,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="registration"
                 label="Matrícula"
-                required
                 inputProps={{
                   maxLength: 50,
                 }}
@@ -287,7 +286,6 @@ export const StudentNewEditForm = ({
                 name="personalEmail"
                 label="Correo personal"
                 type="email"
-                required
               />
 
               <RHFTextField
@@ -343,7 +341,7 @@ export const StudentNewEditForm = ({
                 },
               }}
             >
-              <RHFSelect name="gender" label="Género">
+              <RHFSelect name="gender" label="Género" required>
                 {GENDERS.map((option) => (
                   <MenuItem key={option.value} value={option.label}>
                     {option.label}
@@ -362,11 +360,12 @@ export const StudentNewEditForm = ({
               <DatePicker
                 name="birthdate"
                 label="Fecha de nacimiento"
-                format="dddd/MM/YYYY"
-                sx={{ width: 260 }}
+                format={DATE_FORMAT}
                 slotProps={{
                   field: { clearable: true },
+                  textField: { variant: 'outlined' },
                 }}
+                disableFuture
                 onChange={(newValue: any) => {
                   if (newValue) {
                     methods.setValue('birthdate', newValue)

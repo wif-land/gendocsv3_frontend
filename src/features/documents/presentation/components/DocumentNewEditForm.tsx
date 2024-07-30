@@ -35,6 +35,7 @@ import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import { StudentNewEditForm } from '../../../../features/students/presentation/components/StudentNewEditForm'
 import DocsByStudentListView from '../view/DocsByStudentListView'
+import DegreesByStudentListView from '../view/DegreesByStudentListView'
 
 type Props = {
   currentDocument?: DocumentModel
@@ -65,6 +66,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
   const seeNumeration = useBoolean(false)
   const isStudentModalOpen = useBoolean(false)
   const isDocumentModalOpen = useBoolean(false)
+  const isDegreeModalOpen = useBoolean(false)
 
   const renderDetails = (
     <>
@@ -91,14 +93,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
               placeholder="Consejo"
             >
               {councils &&
-                councils.map((council: any) => (
-                  <MenuItem
-                    key={council.id as number}
-                    value={council.id as number}
-                  >
-                    {council.name}
-                  </MenuItem>
-                ))}
+                councils
+                  ?.filter((council) => council.isActive)
+                  ?.map((council: any) => (
+                    <MenuItem
+                      key={council.id as number}
+                      value={council.id as number}
+                    >
+                      {council.name}
+                    </MenuItem>
+                  ))}
             </RHFSelect>
 
             {isCouncilSelected.value && (
@@ -118,14 +122,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   }}
                 >
                   {processes! &&
-                    processes.map((process) => (
-                      <MenuItem
-                        key={process.id as number}
-                        value={process.id as number}
-                      >
-                        {process.name}
-                      </MenuItem>
-                    ))}
+                    processes
+                      ?.filter((process) => process.isActive)
+                      ?.map((process) => (
+                        <MenuItem
+                          key={process.id as number}
+                          value={process.id as number}
+                        >
+                          {process.name}
+                        </MenuItem>
+                      ))}
                 </RHFSelect>
               </>
             )}
@@ -138,14 +144,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                 placeholder="Plantilla"
               >
                 {selectedProcess! &&
-                  selectedProcess.templateProcesses?.map((template) => (
-                    <MenuItem
-                      key={template.id as number}
-                      value={template.id as number}
-                    >
-                      {template.name}
-                    </MenuItem>
-                  ))}
+                  selectedProcess.templateProcesses
+                    ?.filter((template) => template.isActive)
+                    ?.map((template) => (
+                      <MenuItem
+                        key={template.id as number}
+                        value={template.id as number}
+                      >
+                        {template.name}
+                      </MenuItem>
+                    ))}
               </RHFSelect>
             )}
 
@@ -189,76 +197,103 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           {!mdUp && <CardHeader title="Properties" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <Stack spacing={3} sx={{ display: 'flex', flexDirection: 'row' }}>
-              <RHFAutocomplete
-                name="student"
-                label="Estudiante"
-                placeholder="Estudiante"
-                sx={{
-                  flexGrow: 1,
-                }}
-                freeSolo
-                options={students?.map((student) => ({
-                  id: student.id,
-                  label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
-                }))}
-                value={getSelectedStudent()}
-                onSelect={() => {
-                  methods.setValue('student', getSelectedStudent())
-                }}
-              />
-              {methods.watch('student') && (
-                <>
-                  <IconButton onClick={popover.onOpen}>
-                    <Iconify icon="eva:more-vertical-fill" />
-                  </IconButton>
-                </>
+            {isProcessSelected &&
+              processes?.find(
+                (process) =>
+                  process.templateProcesses?.find(
+                    (template) => template.id === getValues('templateId'),
+                  )?.hasStudent,
+              ) && (
+                <Stack
+                  spacing={3}
+                  sx={{ display: 'flex', flexDirection: 'row' }}
+                >
+                  <RHFAutocomplete
+                    name="student"
+                    label="Estudiante"
+                    placeholder="Estudiante"
+                    sx={{
+                      flexGrow: 1,
+                    }}
+                    freeSolo
+                    options={students?.map((student) => ({
+                      id: student.id,
+                      label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
+                    }))}
+                    value={getSelectedStudent()}
+                    onSelect={() => {
+                      methods.setValue('student', getSelectedStudent())
+                    }}
+                  />
+                  {methods.watch('student') && (
+                    <>
+                      <IconButton onClick={popover.onOpen}>
+                        <Iconify icon="eva:more-vertical-fill" />
+                      </IconButton>
+                    </>
+                  )}
+                  <CustomPopover
+                    open={popover.open}
+                    onClose={popover.onClose}
+                    arrow="right-top"
+                    sx={{ width: 160 }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        isStudentModalOpen.onTrue()
+                      }}
+                    >
+                      <Iconify icon="ic:round-edit" />
+                      Editar
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        isDocumentModalOpen.onTrue()
+                      }}
+                    >
+                      <Iconify icon="solar:documents-bold-duotone" />
+                      Documentos
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        isDegreeModalOpen.onTrue()
+                      }}
+                    >
+                      <Iconify icon="solar:documents-bold-duotone" />
+                      Actas de grado
+                    </MenuItem>
+                  </CustomPopover>
+                </Stack>
               )}
-              <CustomPopover
-                open={popover.open}
-                onClose={popover.onClose}
-                arrow="right-top"
-                sx={{ width: 160 }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    isStudentModalOpen.onTrue()
-                  }}
-                >
-                  <Iconify icon="ic:round-edit" />
-                  Editar
-                </MenuItem>
-
-                <MenuItem
-                  onClick={() => {
-                    isDocumentModalOpen.onTrue()
-                  }}
-                >
-                  <Iconify icon="solar:documents-bold-duotone" />
-                  Documentos
-                </MenuItem>
-              </CustomPopover>
-            </Stack>
-
-            <RHFAutocomplete
-              name="functionariesIds"
-              label="Funcionarios"
-              className="w-full"
-              placeholder="Funcionarios"
-              freeSolo
-              multiple
-              options={functionaries
-                ?.map((functionary) => ({
-                  id: functionary.id,
-                  label: `${functionary.dni} - ${functionary.firstLastName} ${functionary.firstName}`,
-                }))
-                .filter(
-                  (student) =>
-                    getValues('functionariesIds')?.some(
-                      (value: any) => value.id === student.id,
-                    ) === false,
-                )}
-            />
+            {isProcessSelected &&
+              processes?.find(
+                (process) =>
+                  process.templateProcesses?.find(
+                    (template) => template.id === getValues('templateId'),
+                  )?.hasFunctionary,
+              ) && (
+                <RHFAutocomplete
+                  name="functionariesIds"
+                  label="Funcionarios"
+                  className="w-full"
+                  placeholder="Funcionarios"
+                  freeSolo
+                  multiple
+                  options={functionaries
+                    ?.map((functionary) => ({
+                      id: functionary.id,
+                      label: `${functionary.dni} - ${functionary.firstLastName} ${functionary.firstName}`,
+                    }))
+                    .filter(
+                      (student) =>
+                        getValues('functionariesIds')?.some(
+                          (value: any) => value.id === student.id,
+                        ) === false,
+                    )}
+                />
+              )}
 
             <RHFTextField
               name="description"
@@ -383,8 +418,44 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     </Dialog>
   )
 
+  const renderDegreeModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isDegreeModalOpen.value}
+      onClose={isDegreeModalOpen.onFalse}
+      sx={{
+        overflow: 'hidden',
+        padding: 10,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Actas de grado del estudiante</DialogTitle>
+
+      <DialogContent
+        sx={{ typography: 'body2', overflowY: 'auto', paddingX: 10 }}
+      >
+        <DegreesByStudentListView
+          studentDni={methods.watch('student' as any)?.label.split(' - ')[0]}
+        />
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            isDegreeModalOpen.onFalse()
+          }}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
   return (
     <>
+      {renderDegreeModal}
       {renderStudentModal}
       {renderDocumentsModal}
       <DocumentSeeNumerationDialog

@@ -7,6 +7,7 @@ import useModulesStore from '../../../../shared/store/modulesStore'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 import { IUpdateCouncil } from '../../domain/entities/ICouncil'
+import { useDefaultMembersStore } from '../../../../features/default-members/presentation/store/defaultMembersStore'
 
 interface Props {
   table: TableProps
@@ -31,6 +32,7 @@ export const useCouncilView = ({
   const { loader } = useLoaderStore()
   const { fetchData, updateRow, fetchDataByField } = useCouncilsMethods()
   const { modules } = useModulesStore()
+  const { getByModuleId } = useDefaultMembersStore()
 
   const currentModule = modules?.find(
     (module) => module.code === moduleId.toLocaleUpperCase(),
@@ -60,6 +62,10 @@ export const useCouncilView = ({
       isMounted = false
     }
   }, [tableData, isDataFiltered])
+
+  useEffect(() => {
+    getByModuleId(moduleIdentifier)
+  }, [])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
@@ -145,8 +151,8 @@ export const useCouncilView = ({
           ),
         )
         setTableData(
-          councils.map((functionary) =>
-            functionary.id === data.id ? (data as CouncilModel) : functionary,
+          councils.map((council) =>
+            council.id === data.id ? (data as CouncilModel) : council,
           ),
         )
       }

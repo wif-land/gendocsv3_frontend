@@ -4,6 +4,7 @@ export type BreadcrumbsLinkProps = {
   name?: string
   href?: string
   icon?: React.ReactElement
+  onClick?: () => void
 }
 
 export interface CustomBreadcrumbsProps extends BreadcrumbsProps {

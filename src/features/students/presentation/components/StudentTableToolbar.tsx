@@ -9,12 +9,14 @@ import { useDebounce } from '../../../../shared/hooks/use-debounce'
 
 import { StatusFilter } from '../../../../shared/sdk/filters/status-filter'
 import { SelectChangeEvent } from '@mui/material'
+import { CareerFilter } from '../../.././../shared/sdk/filters/career-filter'
 
 export type IStudentTableFilterValue = string | boolean | undefined
 
 export type IStudentTableFilters = {
   field: string | undefined
   state: boolean | undefined
+  careerId: number | undefined
 }
 
 type Props = {
@@ -69,11 +71,12 @@ export const StudentTableToolbar = ({
     return () => {
       isMounted = false
     }
-  }, [debouncedValue, filters.state])
+  }, [debouncedValue, filters.state, filters.careerId])
 
   const areFiltersAdded = () =>
     (inputValue !== undefined && inputValue !== '') ||
-    filters.state !== undefined
+    filters.state !== undefined ||
+    filters.careerId !== undefined
 
   const handleChange = (event: SelectChangeEvent) => {
     const {
@@ -83,6 +86,16 @@ export const StudentTableToolbar = ({
     !isDataFiltered && setIsDataFiltered(true)
 
     onFilters('state', value)
+  }
+
+  const handleCareerChange = (event: SelectChangeEvent) => {
+    const {
+      target: { value },
+    } = event
+
+    !isDataFiltered && setIsDataFiltered(true)
+
+    onFilters('careerId', value)
   }
 
   return (
@@ -99,7 +112,12 @@ export const StudentTableToolbar = ({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1}>
+        <Stack direction="row" alignItems="center" spacing={1} flexGrow={1}>
+          <CareerFilter
+            onChange={handleCareerChange}
+            filters={filters}
+            sx={{ width: 500, px: 0 }}
+          />
           <StatusFilter filters={filters} onChange={handleChange} />
 
           <TextField

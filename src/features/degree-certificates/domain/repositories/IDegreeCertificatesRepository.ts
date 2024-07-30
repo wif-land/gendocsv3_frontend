@@ -1,5 +1,5 @@
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
 import {
   ICreateDegreeCertificate,
@@ -10,7 +10,7 @@ export interface IDegreeCertificatesRepository {
   getAll(
     limit: number,
     offset: number,
-    carrerId: number,
+    filters: IDegreeCertificateFilters,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -32,6 +32,8 @@ export interface IDegreeCertificatesRepository {
   create(
     degreeCertificate: ICreateDegreeCertificate,
   ): Promise<DegreeCertificateModel>
+
+  delete(id: number): Promise<boolean>
 
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number

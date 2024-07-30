@@ -7,8 +7,20 @@ export const TABLE_HEAD = [
     label: 'Número',
   },
   {
-    key: 'description',
-    label: 'Descripción',
+    key: 'createdAt',
+    label: 'Fecha de creación',
+  },
+  {
+    key: 'userId',
+    label: 'Creado Por',
+  },
+  {
+    key: 'councilId',
+    label: 'Consejo',
+  },
+  {
+    key: 'templateId',
+    label: 'Plantilla',
   },
   {
     key: 'actions',
@@ -24,6 +36,29 @@ export const STUDENT_DOCUMENTS_TABLE_HEAD = [
   {
     key: 'description',
     label: 'Descripción',
+  },
+]
+
+export const STUDENT_DEGREE_CERTIFICATES_TABLE_HEAD = [
+  {
+    key: 'number',
+    label: 'Número',
+  },
+  {
+    key: 'certificateStatus',
+    label: 'Estado',
+  },
+  {
+    key: 'certificateType',
+    label: 'Tipo',
+  },
+  {
+    key: 'topic',
+    label: 'Tema',
+  },
+  {
+    key: 'presentationDate',
+    label: 'Fecha de presentación',
   },
 ]
 

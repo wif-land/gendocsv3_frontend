@@ -5,11 +5,11 @@ export class FunctionaryModel implements IFunctionary {
   id?: number
   dni: string
   firstName: string
-  secondName: string
+  secondName?: string | null
   firstLastName: string
-  secondLastName: string
+  secondLastName?: string | null
   outlookEmail: string
-  personalEmail: string
+  personalEmail?: string | null
   phoneNumber: string
   regularPhoneNumber: string
   thirdLevelDegree: number

@@ -13,8 +13,8 @@ import { Upload } from '../../../../shared/sdk/upload'
 import Iconify from '../../../../core/iconify'
 import { transformData } from '../constants'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
-import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
-import { useNotificationStore } from '../../../../features/notifications/store/useNotificationStore'
+import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
+import { useNotificationStore } from '../../../notifications/store/useNotificationStore'
 import {
   Checkbox,
   FormControl,
@@ -69,7 +69,6 @@ export const DegCerBulkUploadDialog = ({
   >([])
   const { bulkLoad } = useDegreeCertificatesStore()
   const { user } = useAccountStore()
-  // check box para habilitar un select de notificaciones
   const { notifications } = useNotificationStore()
 
   const handleDrop = useCallback(
@@ -111,9 +110,7 @@ export const DegCerBulkUploadDialog = ({
       const worksheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[worksheetName]
       const data = XLSX.utils.sheet_to_json(worksheet)
-      console.log(data)
       const transformedData = transformData(data)
-      console.log(transformedData)
       setDegreeCertificates(transformedData)
     } catch (error) {
       console.error(error)
@@ -191,7 +188,7 @@ export const DegCerBulkUploadDialog = ({
             flex: 1,
           }}
         >
-          {notifications.length > 0 && (
+          {notifications?.length > 0 && (
             <FormControlLabel
               control={
                 <Checkbox
@@ -219,14 +216,20 @@ export const DegCerBulkUploadDialog = ({
                   }
                 }
               >
-                {notifications.map((notification) => (
-                  <MenuItem
-                    value={notification.notification.id}
-                    key={notification.notification.id}
-                  >
-                    {notification.notification.name}
-                  </MenuItem>
-                ))}
+                {notifications
+                  .filter(
+                    (rootNotification) =>
+                      rootNotification.notification.type ===
+                      'createBulkCertificates',
+                  )
+                  .map((notification) => (
+                    <MenuItem
+                      value={notification.notification.id}
+                      key={notification.notification.id}
+                    >
+                      {notification.notification.name}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           )}

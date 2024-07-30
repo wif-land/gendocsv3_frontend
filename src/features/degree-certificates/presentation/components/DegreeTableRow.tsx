@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { format } from 'date-fns'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
@@ -14,11 +13,12 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { IStudent } from '../../../../features/students/domain/entities/IStudent'
+import { IStudent } from '../../../students/domain/entities/IStudent'
 import {
   IDegreeModality,
   IRoom,
 } from '../../../../core/providers/domain/entities/ICertificateProvider'
+import dayjs from 'dayjs'
 
 type Props = {
   row: DegreeCertificateModel
@@ -30,6 +30,7 @@ type Props = {
   onShowSheetsGrade: VoidFunction
   onRegenerateDocument: VoidFunction
   onOpenAttendance: VoidFunction
+  onDeleteDegreeCertificate: VoidFunction
   activeState?: boolean | null
   isOnTable?: boolean
   isReport?: boolean
@@ -47,6 +48,7 @@ export const DegreeCertificateTableRow = ({
   onOpenAttendance,
   onShowSheetsGrade,
   onRegenerateDocument,
+  onDeleteDegreeCertificate,
   isReport = false,
 }: Props) => {
   const { isClosed, presentationDate } = row
@@ -89,14 +91,14 @@ export const DegreeCertificateTableRow = ({
         <TableCell>
           <ListItemText
             primary={row.topic}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            primaryTypographyProps={{ typography: 'body2', noWrap: false }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
             primary={studentName}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            primaryTypographyProps={{ typography: 'body2', noWrap: false }}
             secondary={(row.student as IStudent).dni}
           />
         </TableCell>
@@ -105,8 +107,11 @@ export const DegreeCertificateTableRow = ({
           <ListItemText
             primary={
               presentationDate
-                ? format(new Date(presentationDate), 'dd MMM yyyy')
-                : ''
+                ? dayjs(presentationDate)
+                    .tz('America/Bogota')
+                    .format('DD/MM/YYYY HH:mm')
+                : // format(new Date(presentationDate), 'dd/MM/yyyy HH:MM')
+                  ''
             }
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
@@ -161,49 +166,10 @@ export const DegreeCertificateTableRow = ({
       >
         <MenuItem
           onClick={() => {
-            onEditRow()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-          Editar
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            onOpenAttendance()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="formkit:people" />
-          Asistencia
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            onShowSheetsGrade()
-          }}
-        >
-          <Iconify icon="solar:document-bold-duotone" />
-          Notas
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            onGenerateDocument()
-            popover.onClose()
-          }}
-        >
-          <Iconify icon="solar:document-bold-duotone" />
-          Documento
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             confirm.onTrue()
             popover.onClose()
           }}
-          sx={row.isClosed ? { color: 'green' } : { color: 'error.main' }}
+          sx={row.isClosed ? { color: 'green' } : { color: 'orange' }}
         >
           {row.isClosed ? (
             <>
@@ -212,22 +178,74 @@ export const DegreeCertificateTableRow = ({
             </>
           ) : (
             <>
-              <Iconify icon="simple-line-icons:close" width="48" height="48" />
+              <Iconify icon="simple-line-icons:lock" width="48" height="48" />
               Cerrar
             </>
           )}
         </MenuItem>
+        {!row.isClosed && (
+          <>
+            <MenuItem
+              onClick={() => {
+                onEditRow()
+                popover.onClose()
+              }}
+            >
+              <Iconify icon="solar:pen-bold" />
+              Editar
+            </MenuItem>
 
-        {row.certificateDriveId && (
-          <MenuItem
-            onClick={() => {
-              onRegenerateDocument()
-              popover.onClose()
-            }}
-          >
-            <Iconify icon="ph:repeat" />
-            Regenerar
-          </MenuItem>
+            <MenuItem
+              onClick={() => {
+                onOpenAttendance()
+                popover.onClose()
+              }}
+            >
+              <Iconify icon="formkit:people" />
+              Asistencia
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                onShowSheetsGrade()
+              }}
+            >
+              <Iconify icon="solar:document-bold-duotone" />
+              Notas
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                onGenerateDocument()
+                popover.onClose()
+              }}
+            >
+              <Iconify icon="solar:document-bold-duotone" />
+              Documento
+            </MenuItem>
+            {row.certificateDriveId && (
+              <MenuItem
+                onClick={() => {
+                  onRegenerateDocument()
+                  popover.onClose()
+                }}
+              >
+                <Iconify icon="ph:repeat" />
+                Regenerar
+              </MenuItem>
+            )}
+
+            <MenuItem
+              onClick={() => {
+                onDeleteDegreeCertificate()
+                popover.onClose()
+              }}
+              sx={{ color: 'error.main' }}
+            >
+              <Iconify icon="simple-line-icons:close" width="48" height="48" />
+              Eliminar
+            </MenuItem>
+          </>
         )}
       </CustomPopover>
 

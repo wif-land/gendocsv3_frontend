@@ -3,7 +3,7 @@ import { AuthRepositoryImpl } from '../../data/repositories/AuthRepositoryImpl'
 import { IUser } from '../entities/IUser'
 import { AuthRepository } from '../repositories/AuthRepository'
 
-export class LogoutnUseCase extends UseCase<
+export class LogoutUseCase extends UseCase<
   {
     status: number
     message?: string

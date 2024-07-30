@@ -6,8 +6,8 @@ import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { Divider } from '@mui/material'
-import { DegreeCertificateDetailsSummary } from '../components/DegreeCertificateDetailSummary'
-import { DegreeCertificateDetailAttendance } from '../components/DegreeCertificateDetailAttendance'
+import { DegreeDetailsSummary } from '../components/DegreeDetailSummary'
+import { DegreeAttendanceDetails } from '../components/DegreeAttendanceDetails'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 
 const DegreeCertificateDetailsView = () => {
@@ -39,14 +39,14 @@ const DegreeCertificateDetailsView = () => {
         }}
       />
 
-      <DegreeCertificateDetailsSummary
+      <DegreeDetailsSummary
         degreeCertificate={degreeCertificate}
         degreeCertificateId={Number(id)}
       />
 
       <Divider sx={{ my: 3 }} />
 
-      <DegreeCertificateDetailAttendance />
+      <DegreeAttendanceDetails />
     </Container>
   )
 }

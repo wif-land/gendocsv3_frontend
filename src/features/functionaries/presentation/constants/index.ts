@@ -23,12 +23,12 @@ export const TABLE_HEAD = [
     label: 'Funcionario',
   },
   {
-    id: 'personalEmail',
-    label: 'Email personal',
-  },
-  {
     id: 'outlookEmail',
     label: 'Email universitario',
+  },
+  {
+    id: 'personalEmail',
+    label: 'Email personal',
   },
   {
     id: 'isActive',
@@ -42,7 +42,6 @@ export const TABLE_HEAD = [
 
 export const NewFunctionarySchema = Yup.object().shape({
   ...DEFAULT_PERSON_SCHEMA.fields,
-  regularPhoneNumber: Yup.string().required(VALIDATION_MESSAGES.required),
   thirdLevelDegree: Yup.number().required(VALIDATION_MESSAGES.required),
   fourthLevelDegree: Yup.number().required(VALIDATION_MESSAGES.required),
 })
@@ -70,6 +69,7 @@ export const handleUpdate = async (
     enqueueSnackbar('No se han encontrado valores para actualizar', {
       variant: 'warning',
     })
+
     return FunctionaryModel.fromJson({})
   }
 

@@ -2,18 +2,16 @@
 
 import Container from '@mui/material/Container'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
-import { useParams, usePathname, useSearchParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useDegreeCertificatesStore } from '../store/degreeCertificatesStore'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { paths } from '../../../../core/routes/paths'
-import { DegreeCertificateNewEditForm } from '../components/DegreeCertificateNewEditForm'
 import { memo } from 'react'
+import { DegreeCertificateNewEditForm } from '../components/DegreeNewEditForm'
 
 const DegreeCertificateEditView = () => {
   const settings = useSettingsContext()
   const { id } = useParams()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
   const { degreeCertificates } = useDegreeCertificatesStore()
 
   const currentDegreeCertificate = degreeCertificates.find(
@@ -28,10 +26,7 @@ const DegreeCertificateEditView = () => {
           { name: 'Dashboard', href: paths.dashboard.root },
           {
             name: 'Actas de grado',
-            href: `${pathname.replace(
-              /\/\d+\/edit/,
-              '',
-            )}?${searchParams.toString()}`,
+            href: `${window.location.href.replace(/\/\d+\/edit/, '')}`,
           },
           { name: currentDegreeCertificate?.topic || 'Editar' },
         ]}

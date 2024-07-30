@@ -10,10 +10,10 @@ export interface DefaultPersonSchemaProps {
   id?: number
   dni: string
   firstName: string
-  secondName: string
+  secondName?: string | null
   firstLastName: string
-  secondLastName: string
-  personalEmail: string
+  secondLastName?: string | null
+  personalEmail?: string | null
   outlookEmail: string
   phoneNumber: string
 }
@@ -82,18 +82,45 @@ export const resolveFormSelectOptions = <T extends DefaultPersonSchemaProps>(
  * Default schema for a person. Intended to be used in forms where a person is required.
  */
 export const DEFAULT_PERSON_SCHEMA = yup.object().shape({
-  dni: yup.string().required(VALIDATION_MESSAGES.required),
-  firstName: yup.string().required(VALIDATION_MESSAGES.required),
-  secondName: yup.string().required(VALIDATION_MESSAGES.required),
-  firstLastName: yup.string().required(VALIDATION_MESSAGES.required),
-  secondLastName: yup.string().required(VALIDATION_MESSAGES.required),
-  personalEmail: yup
+  dni: yup
     .string()
     .required(VALIDATION_MESSAGES.required)
-    .matches(
-      /^[A-Z0-9._%+-]+@+[A-Z0-9._%+-]+\.com$/i,
-      VALIDATION_MESSAGES.invalidFormat,
-    ),
+    .matches(/^\d{10}$/, 'Cédula inválida. Ejemplo: 1234567890'),
+  firstName: yup
+    .string()
+    .matches(/^\S+$/, VALIDATION_MESSAGES.noSpaces)
+    .matches(/^[a-zA-Z]+$/, 'Solo se permiten letras.')
+    .required(VALIDATION_MESSAGES.required)
+    .min(2, VALIDATION_MESSAGES.minLength(2))
+    .max(50, VALIDATION_MESSAGES.maxLength(50)),
+  firstLastName: yup
+    .string()
+    .matches(/^\S+$/, VALIDATION_MESSAGES.noSpaces)
+    .matches(/^[a-zA-Z]+$/, 'Solo se permiten letras.')
+    .required(VALIDATION_MESSAGES.required)
+    .min(2, VALIDATION_MESSAGES.minLength(2))
+    .max(50, VALIDATION_MESSAGES.maxLength(50)),
+  secondName: yup
+    .string()
+    .test({
+      name: 'secondName',
+      message: 'Entre 2 y 50 caracteres.',
+      test: (value = '') =>
+        value === '' ||
+        (value !== null && value?.length >= 2 && value?.length <= 50),
+    })
+    .nullable(),
+  secondLastName: yup.string().test({
+    name: 'secondLastName',
+    message: 'Entre 2 y 50 caracteres.',
+    test: (value = '') =>
+      value === '' ||
+      (value !== null && value?.length >= 2 && value?.length <= 50),
+  }),
+  personalEmail: yup
+    .string()
+    .email(VALIDATION_MESSAGES.invalidFormat)
+    .nullable(),
   outlookEmail: yup
     .string()
     .required(VALIDATION_MESSAGES.required)
@@ -118,10 +145,10 @@ export const resolveDefaultSchema = (
   id: props?.id || 0,
   dni: props?.dni || '',
   firstName: props?.firstName || '',
-  secondName: props?.secondName || '',
+  secondName: props?.secondName || null,
   firstLastName: props?.firstLastName || '',
-  secondLastName: props?.secondLastName || '',
-  personalEmail: props?.personalEmail || '',
+  secondLastName: props?.secondLastName || null,
+  personalEmail: props?.personalEmail || null,
   outlookEmail: props?.outlookEmail || '',
   phoneNumber: props?.phoneNumber || '',
 })

@@ -6,13 +6,13 @@ import {
   IDegreeCertificate,
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
-import { DegreeCertificateForBulk } from '../../presentation/components/DegreeCertificateBulkUploadDialog'
+import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 
 export interface IDegreeCertificateDatasource {
   getAll(
     limit: number,
     offset: number,
-    carrerId: number,
+    filters: IDegreeCertificateFilters,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -34,6 +34,8 @@ export interface IDegreeCertificateDatasource {
   create(
     degreeCertificate: ICreateDegreeCertificate,
   ): Promise<DegreeCertificateModel>
+
+  delete(id: number): Promise<boolean>
 
   generateNumeration(careerId: number): Promise<{
     firstGenerated: number
@@ -101,11 +103,15 @@ export class DegreeCertificateDatasourceImpl
     return result.data as DegreeCertificateModel
   }
 
-  getAll = async (limit: number, offset: number, carrerId: number) => {
+  getAll = async (
+    limit: number,
+    offset: number,
+    filters: IDegreeCertificateFilters,
+  ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(carrerId),
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
       {
-        params: { limit, offset },
+        params: { limit, offset, ...filters },
       },
     )
 
@@ -128,7 +134,7 @@ export class DegreeCertificateDatasourceImpl
     offset: number,
   ) => {
     const result = await AxiosClient.get(
-      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL(filters.careerId || 1),
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
       {
         params: { ...filters, limit, offset },
       },
@@ -169,6 +175,18 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as DegreeCertificateModel
+  }
+
+  delete = async (id: number) => {
+    const result = await AxiosClient.delete({
+      path: API_ROUTES.DEGREE_CERTIFICATES.DELETE(id),
+    })
+
+    if ('error' in result) {
+      return false
+    }
+
+    return true
   }
 
   generateNumeration = async (careerId: number) => {

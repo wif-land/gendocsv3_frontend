@@ -52,7 +52,9 @@ export const FunctionaryTableRow = ({
                 onClick={onEditRow}
                 sx={{ cursor: 'pointer' }}
               >
-                {`${row.firstName} ${row.secondName} ${row.firstLastName} ${row.secondLastName}`}
+                {`${row.firstName} ${row.secondName || ''} ${
+                  row.firstLastName
+                } ${row.secondLastName || ''}`}
               </Link>
             }
             secondary={
@@ -68,14 +70,14 @@ export const FunctionaryTableRow = ({
 
         <TableCell>
           <ListItemText
-            primary={row.personalEmail}
+            primary={row.outlookEmail}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
-            primary={row.outlookEmail}
+            primary={row.personalEmail}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>

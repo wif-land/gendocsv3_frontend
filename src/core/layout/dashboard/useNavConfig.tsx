@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import useModulesStore from '../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 import Iconify from '../../iconify'
 import { useRouter } from 'next/navigation'
-import { fetchModules } from '../../../features/modules/api/modules'
-import { LogoutnUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
+import { LogoutUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
+import { IModule } from '@/features/modules/types/IModule'
 
 interface IRoute {
   title: string
@@ -14,6 +14,7 @@ interface IRoute {
 }
 
 interface INavItem {
+  header?: string
   subheader: string
   items: IRoute[]
 }
@@ -37,21 +38,19 @@ const ICONS: {
 
 export const useNavConfig = () => {
   const { user, retreiveFromCookie } = useAccountStore()
-  const { accessModules, setAccessModules, modules, setModules } = useModulesStore()
+  const { accessModules, setAccessModules, modules } = useModulesStore()
+  const [firstUni, setFirstUni] = useState<IModule | undefined>()
 
   useEffect(() => {
-    if (modules.length === 0) {
-      fetchModules().then((data) => {
-        setModules(data)
-      })
-
+    console.log('modules', modules)
+    if (!modules.length) {
       return
     }
 
     if (user && user.id === 0) {
       retreiveFromCookie().then(async (isLogged) => {
         if (!isLogged) {
-          new LogoutnUseCase().call().then(() => {
+          new LogoutUseCase().call().then(() => {
             const router = useRouter()
             router.push('/login')
           })
@@ -62,42 +61,48 @@ export const useNavConfig = () => {
 
     if (user && user.accessModules) {
       setAccessModules(user.accessModules)
+      setFirstUni(
+        accessModules?.find((module) =>
+          module.code.toUpperCase().includes('UNI'),
+        ) || undefined,
+      )
       return
     }
   }, [user, modules])
 
   const actualModules = accessModules?.map<INavItem>((module) => ({
+    header: firstUni?.code === module.code ? 'Unidad de titulación' : undefined,
     subheader: module.name,
     items: module.submodules.map<IRoute>((submodule) => {
       const mainPath = `/dashboard/${module.code
         .toLowerCase()
         .replaceAll(' ', '_')}/${submodule.name
-          .toLowerCase()
-          .replaceAll(' ', '_')}`
+        .toLowerCase()
+        .replaceAll(' ', '_')}`
       const listPath = `${mainPath}`
       const createPath = `${mainPath}/new`
 
-      return  submodule.id !== 10 ? {
-        title: submodule.name,
-        path: mainPath,
-        icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
-        children: [
-          {
-            title: 'Listar',
-            path: listPath,
-          },
-          {
-            title: 'Crear',
-            path: createPath,
-          },
-        ],
-      } : { 
-        title: submodule.name,
-        path: mainPath,
-        icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
-      }
-
-
+      return submodule.id !== 10
+        ? {
+            title: submodule.name,
+            path: mainPath,
+            icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
+            children: [
+              {
+                title: 'Listar',
+                path: listPath,
+              },
+              {
+                title: 'Crear',
+                path: createPath,
+              },
+            ],
+          }
+        : {
+            title: submodule.name,
+            path: mainPath,
+            icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
+          }
     }),
   }))
 

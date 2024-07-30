@@ -113,3 +113,11 @@ export const StyledSubheader = styled(ListSubheader)<StyledSubheaderProps>(
     },
   }),
 )
+
+export const StyledHeader = styled('div')(({ theme }) => ({
+  ...theme.typography.overline,
+  fontSize: 18,
+  color: theme.palette.text.primary,
+  padding: theme.spacing(1),
+  marginTop: theme.spacing(1),
+}))

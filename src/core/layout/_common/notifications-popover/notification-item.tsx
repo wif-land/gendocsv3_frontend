@@ -4,9 +4,10 @@ import ListItemText from '@mui/material/ListItemText'
 import ListItemButton from '@mui/material/ListItemButton'
 import { fToNow } from '../../../utils/format-time'
 import { useState } from 'react'
-import { NotificationDetailsDialog } from '@/features/notifications/presentation/Dialog'
-import { IRootNotification } from '@/features/notifications/data/entities/IRootNotification'
-import { NotificationStatus } from '@/features/notifications/utils/notification-status'
+import { IRootNotification } from '../../../../features/notifications/data/entities/IRootNotification'
+import { NotificationStatus } from '../../../../features/notifications/utils/notification-status'
+import { NotificationDetailsDialog } from '../../../../features/notifications/presentation/Dialog'
+
 
 type NotificationItemProps = {
   rootNotification: IRootNotification

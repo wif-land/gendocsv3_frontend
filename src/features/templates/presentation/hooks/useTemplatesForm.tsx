@@ -55,8 +55,6 @@ export const useTemplatesForm = (currentTemplate?: ITemplate) => {
   const handleCreate = useCallback(async (values: ITemplate) => {
     const result = await TemplatesUseCasesImpl.getInstance().create(values)
 
-    console.log('result', result)
-
     addTemplateToProcess(result.template, values.processId as number)
     reset()
   }, [])

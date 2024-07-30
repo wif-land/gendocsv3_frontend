@@ -30,18 +30,19 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import { RouterLink } from '../../../../core/routes/components'
-import { getTableHead, defaultFilters } from '../constants'
+import { getTableHead } from '../constants'
 import { useDegreeCertificateView } from '../hooks/useDegreeCertificate'
 import {
   DegreeCertificatesTableToolbar,
+  IDegreeCertificateTableFilters,
   IDegreeCertificateTableFilterValue,
-} from '../components/DegreeCertificateTableToolbar'
-import { DegreeCertificateTableRow } from '../components/DegreeCertificateTableRow'
+} from '../components/DegreeTableToolbar'
+import { DegreeCertificateTableRow } from '../components/DegreeTableRow'
 import CustomPopover, {
   usePopover,
 } from '../../../../shared/sdk/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
-import { DegCerBulkUploadDialog } from '../components/DegreeCertificateBulkUploadDialog'
+import { DegCerBulkUploadDialog } from '../components/DegreeBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useParams } from 'next/navigation'
@@ -72,6 +73,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     handleUpdateRow,
+    handleDeleteRow,
     handleGenerateDocument,
     handleGenerateNumeration,
     handleSearch,
@@ -90,7 +92,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     {
       value: 'single',
       label: 'Individual',
-      action: () => router.push(`${pathname}/new?${searchParams.toString()}`),
+      action: () => {
+        const params = filtersToSearch(filters)
+        return router.push(`${pathname}/new?${params.toString()}`)
+      },
     },
     {
       value: 'multiple',
@@ -98,6 +103,19 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       action: upload.onTrue,
     },
   ]
+
+  const filtersToSearch = useCallback(
+    (filters: IDegreeCertificateTableFilters) => {
+      const params = new URLSearchParams()
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) {
+          params.set(key, `${value}`)
+        }
+      })
+      return params
+    },
+    [],
+  )
 
   const handleFilters = useCallback(
     (name: string, value: IDegreeCertificateTableFilterValue) => {
@@ -109,15 +127,15 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       const params = new URLSearchParams(searchParams.toString())
       params.set(name, `${value}`)
 
-      router.push(`${pathname}?${params.toString()}`)
+      router.replace(`${pathname}?${params.toString()}`)
     },
     [table],
   )
 
   const handleEditRow = useCallback(
     (id: string) => {
-      console.log(searchParams.toString())
-      router.replace(`${pathname}/${id}/edit?${searchParams.toString()}`)
+      const params = filtersToSearch(filters)
+      router.push(`${pathname}/${id}/edit?${params.toString()}`)
     },
     [router],
   )
@@ -125,7 +143,12 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const onGenerateDocument = useCallback(
     async (row: DegreeCertificateModel) => {
       if (row.certificateDriveId) {
-        router.push(`${pathname}/${row.id}/view/${row.certificateDriveId}`)
+        const params = filtersToSearch(filters)
+        router.push(
+          `${pathname}/${row.id}/view/${
+            row.certificateDriveId
+          }?${params.toString()}`,
+        )
         return
       }
       await handleGenerateDocument(row)
@@ -135,33 +158,43 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
 
   const onShowGradesSheet = useCallback(
     (row: DegreeCertificateModel) => {
+      const params = filtersToSearch(filters)
       router.push(
-        `${pathname}/${row.id}/view/${row.gradesSheetDriveId}**spreadsheet**`,
+        `${pathname}/${row.id}/view/${
+          row.gradesSheetDriveId
+        }**spreadsheet**?${params.toString()}`,
       )
     },
     [router, pathname],
   )
 
   const onShowReportTemplate = useCallback(() => {
+    const params = filtersToSearch(filters)
     router.push(
-      `${pathname}/view/${module.reportTemplateDriveId}**spreadsheet**`,
+      `${pathname}/view/${
+        module.reportTemplateDriveId
+      }**spreadsheet**?${params.toString()}`,
     )
   }, [router, pathname])
 
-  const handleResetFilters = () => {
-    setFilters(defaultFilters)
-    setVisitedPages([])
-    setIsDataFiltered(false)
-    setTableData([])
+  // const handleResetFilters = () => {
+  //   setFilters(defaultFilters(searchParams))
+  //   setVisitedPages([])
+  //   setIsDataFiltered(false)
+  //   setTableData([])
 
-    if (!searchParams.has('careerId')) {
-      const params = new URLSearchParams('careerId=1')
-      router.push(`${pathname}?${params.toString()}`)
-    }
+  //   if (!searchParams.has('careerId')) {
+  //     const params = new URLSearchParams('careerId=1')
+  //     router.replace(`${pathname}?${params.toString()}`)
+  //   }
 
-    handleFilters('careerId', searchParams.get('careerId')?.toString() || '1')
-    router.push(`${pathname}?careerId=${searchParams.get('careerId')}`)
-  }
+  //   handleFilters('careerId', searchParams.get('careerId')?.toString() || '1')
+  //   handleFilters('isReport', false)
+  //   handleFilters('isEnd', false)
+  //   handleFilters('startDate', new Date(new Date().setMonth(0, 1)))
+  //   handleFilters('endDate', new Date())
+  //   router.replace(`${pathname}?careerId=${searchParams.get('careerId')}`)
+  // }
 
   const reportOptions = [
     {
@@ -234,7 +267,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
         onClick={() => {
           handleFilters('isReport', false)
           handleFilters('isEnd', false)
-          handleResetFilters()
+          handleFilters('startDate', new Date(new Date().setMonth(0, 1)))
+          handleFilters('endDate', new Date())
         }}
         sx={{ mr: 1.5 }}
       >
@@ -260,7 +294,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     (!loader.length && tableData.length === 0 && isDataFiltered)
 
   const openDegreeCertificateDetail = (id: number) => {
-    router.push(`${pathname}/${id}?${searchParams.toString()}`)
+    const params = filtersToSearch(filters)
+    router.push(`${pathname}/${id}?${params.toString()}`)
   }
 
   return (
@@ -367,6 +402,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                             onDeleteRow={() => handleUpdateRow(row)}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onGenerateDocument={() => onGenerateDocument(row)}
+                            onDeleteDegreeCertificate={() =>
+                              handleDeleteRow(row)
+                            }
                             onRegenerateDocument={() => {
                               handleGenerateDocument(row)
                             }}

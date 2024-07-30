@@ -126,8 +126,10 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
               <RHFTextField name="password" label="Contraseña" type="text" />
 
               <RHFSelect name="role" label="Rol" required>
-                {Object.values(UserRole).map((role) => (
-                  <MenuItem value={role}>{UserTypeLabels[role]}</MenuItem>
+                {Object.values(UserRole).map((role, index) => (
+                  <MenuItem key={index + role} value={role}>
+                    {UserTypeLabels[role]}
+                  </MenuItem>
                 ))}
               </RHFSelect>
             </Box>
