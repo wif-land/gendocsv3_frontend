@@ -1,6 +1,5 @@
 import { StudentModel } from '../../data/models/StudentModel'
 import { StudentRepositoryImpl } from '../../data/repositories/StudentRepositoryImpl'
-import { ICreateStudent } from '../entities/ICreateStudent'
 import { IStudent } from '../entities/IStudent'
 import { IStudentFilters } from '../entities/IStudentFilters'
 import { StudentRepository } from '../repositories/StudentRepository'
@@ -27,9 +26,11 @@ interface StudentUseCases {
 
   update(id: number, data: Partial<StudentModel>): Promise<StudentModel>
 
-  bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
-
-  bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
+  bulkUpdate(
+    students: Partial<IStudent>[],
+    isUpdate: boolean,
+    userId: number,
+  ): Promise<boolean>
 
   getById(id: number): Promise<StudentModel>
 }
@@ -61,9 +62,9 @@ export class StudentUseCasesImpl implements StudentUseCases {
   update = async (id: number, data: Partial<StudentModel>) =>
     await this.repository.update({ ...data, id })
 
-  bulkUpdate = async (students: Partial<IStudent>[]) =>
-    await this.repository.bulkUpdate(students)
-
-  bulkCreate = async (students: ICreateStudent[]) =>
-    await this.repository.bulkCreate(students)
+  bulkUpdate = async (
+    students: Partial<IStudent>[],
+    isUpdate: boolean,
+    userId: number,
+  ) => await this.repository.bulkUpdate(students, isUpdate, userId)
 }

@@ -21,7 +21,7 @@ export const useStudentCommands = () => {
     })
 
   const updateRows = async (students: Partial<StudentModel>[]) =>
-    await StudentUseCasesImpl.getInstance().bulkUpdate(students)
+    await StudentUseCasesImpl.getInstance().bulkUpdate(students, true, 1)
 
   const fetchDataByField = async (
     filters: IStudentFilters,
@@ -34,8 +34,16 @@ export const useStudentCommands = () => {
       currentPage * rowsPerPage,
     )
 
-  const bulkCreate = async (students: IStudent[]) =>
-    await StudentUseCasesImpl.getInstance().bulkUpdate(students)
+  const bulkCreate = async (
+    students: IStudent[],
+    isUpdate: boolean,
+    userId: number,
+  ) =>
+    await StudentUseCasesImpl.getInstance().bulkUpdate(
+      students,
+      isUpdate,
+      userId,
+    )
 
   return {
     loader,
