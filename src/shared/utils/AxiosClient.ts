@@ -304,6 +304,8 @@ const handleApiError = (
       variant: 'error',
     })
 
+    new LogoutUseCase().call()
+
     return {
       error: 'error',
     }

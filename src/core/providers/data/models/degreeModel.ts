@@ -1,5 +1,4 @@
-import { IDegree } from "../../domain/entities/IDegreeProvider"
-import { accordionSummaryClasses } from '@mui/material/AccordionSummary';
+import { IDegree } from '../../domain/entities/IDegreeProvider'
 
 export class DegreeModel implements IDegree {
   id?: number
@@ -26,9 +25,9 @@ export class DegreeModel implements IDegree {
         maleTitle: json.maleTitle,
         femaleTitle: json.femaleTitle,
         degreeLevel: json.degreeLevel,
-        })
+      })
 
-        return degree
+      return degree
     }
   }
 
@@ -42,7 +41,7 @@ export class DegreeModel implements IDegree {
       abbreviation: this.abbreviation,
       maleTitle: this.maleTitle,
       femaleTitle: this.femaleTitle,
-      degreeLevel: this.degreeLevel
+      degreeLevel: this.degreeLevel,
     }
   }
 }

@@ -21,6 +21,7 @@ import {
   Button,
   Card,
   Container,
+  MenuItem,
   Table,
   TableBody,
   TableContainer,
@@ -29,7 +30,6 @@ import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-
 import Iconify from '../../../../core/iconify'
 import Scrollbar from '../../../../shared/sdk/scrollbar'
 import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
-import { RouterLink } from '../../../../core/routes/components'
 import { FunctionaryTableRow } from '../components/FunctionaryTableRow'
 import {
   FunctionaryTableToolbar,
@@ -38,6 +38,10 @@ import {
 } from '../components/FunctionaryTableToolbar'
 import { TABLE_HEAD } from '../constants'
 import { FunctionaryTableResult } from '../components/FunctionaryTableFiltersResult'
+import { usePopover } from '../../../../shared/sdk/custom-popover'
+import LoadingButton from '@mui/lab/LoadingButton'
+import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
+import { FuntionaryBulkUploadDialog } from '../components/FunctionaryBulkUploadDialog'
 
 const defaultFilters: IFunctionaryTableFilters = {
   field: undefined,
@@ -56,6 +60,8 @@ const FunctionaryListView = () => {
   const [tableData, setTableData] = useState<FunctionaryModel[]>([])
   const [filters, setFilters] =
     useState<IFunctionaryTableFilters>(defaultFilters)
+  const popover = usePopover()
+  const bulk = useBoolean()
 
   const handleFilters = useCallback(
     (name: string, value: IFunctionaryTableFilterValue) => {
@@ -108,6 +114,19 @@ const FunctionaryListView = () => {
     (count === 0 && isDataFiltered) ||
     (!loader.length && count === 0 && isDataFiltered)
 
+  const createActions = [
+    {
+      value: 'single',
+      label: 'Individual',
+      action: () => router.push(`${pathname}/new`),
+    },
+    {
+      value: 'multiple',
+      label: 'Varios',
+      action: bulk.onTrue,
+    },
+  ]
+
   return (
     <div>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -118,14 +137,15 @@ const FunctionaryListView = () => {
             { name: 'Funcionarios' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={`${pathname}/new`}
+            <LoadingButton
+              color="inherit"
               variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
+              endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+              onClick={popover.onOpen}
+              sx={{ textTransform: 'capitalize' }}
             >
-              Nuevo funcionario
-            </Button>
+              Agregar
+            </LoadingButton>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -239,6 +259,33 @@ const FunctionaryListView = () => {
           />
         </Card>
       </Container>
+
+      <FuntionaryBulkUploadDialog open={bulk.value} onClose={bulk.onFalse} />
+
+      <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="top-right"
+        sx={{ width: 140 }}
+      >
+        {createActions.map((option) => (
+          <MenuItem
+            key={option.value}
+            onClick={() => {
+              popover.onClose()
+              option.action()
+            }}
+          >
+            {option.value === 'multiple' && (
+              <Iconify icon="eva:cloud-upload-fill" />
+            )}
+            {option.value === 'single' && (
+              <Iconify icon="solar:file-text-bold" />
+            )}
+            {option.label}
+          </MenuItem>
+        ))}
+      </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}

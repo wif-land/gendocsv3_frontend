@@ -47,73 +47,71 @@ const Description = (props: {
           <Typography variant="body1">No hay miembros asignados</Typography>
         ) : (
           <>
-            {props.members
-              ?.sort((a, b) => a?.role.length - b?.role.length)
-              .map((member, index) => {
-                const isLast = index === props.members.length - 1
+            {props.members?.map((member, index) => {
+              const isLast = index === props.members.length - 1
 
-                return (
+              return (
+                <Grid
+                  key={index + member.role}
+                  container
+                  spacing={3}
+                  sx={{
+                    py: 1,
+                  }}
+                >
                   <Grid
-                    key={index + member.role}
-                    container
-                    spacing={3}
+                    xs={12}
                     sx={{
-                      py: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 2,
                     }}
                   >
-                    <Grid
-                      xs={12}
+                    <ListItemText
+                      primary={
+                        `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
+                        'No asignado'
+                      }
+                      secondary={
+                        DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
+                          (role) => role.value === member.role,
+                        )?.label
+                      }
+                      primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
+                      secondaryTypographyProps={{ component: 'span' }}
+                    />
+
+                    <LoadingButton
+                      variant="contained"
+                      onClick={() => props.handleSetAttendance(member)}
+                      disabled={
+                        props.members.length === 0 || props.degreeClosed
+                      }
+                      loading={loader.length > 0}
+                    >
+                      {!member.hasAttended
+                        ? 'Marcar asistencia'
+                        : 'Ha asistido '}
+                    </LoadingButton>
+
+                    <LoadingButton
+                      variant="contained"
+                      onClick={() => props.onEdit(member)}
+                      disabled={props.degreeClosed}
                       sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        gap: 2,
+                        gap: 1,
                       }}
                     >
-                      <ListItemText
-                        primary={
-                          `${`${member.functionary?.firstName} ${member.functionary?.firstLastName}`}` ||
-                          'No asignado'
-                        }
-                        secondary={
-                          DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
-                            (role) => role.value === member.role,
-                          )?.label
-                        }
-                        primaryTypographyProps={{ typography: 'h6', mb: 0.5 }}
-                        secondaryTypographyProps={{ component: 'span' }}
-                      />
-
-                      <LoadingButton
-                        variant="contained"
-                        onClick={() => props.handleSetAttendance(member)}
-                        disabled={
-                          props.members.length === 0 || props.degreeClosed
-                        }
-                        loading={loader.length > 0}
-                      >
-                        {!member.hasAttended
-                          ? 'Marcar asistencia'
-                          : 'Ha asistido '}
-                      </LoadingButton>
-
-                      <LoadingButton
-                        variant="contained"
-                        onClick={() => props.onEdit(member)}
-                        disabled={props.degreeClosed}
-                        sx={{
-                          gap: 1,
-                        }}
-                      >
-                        <Iconify icon="solar:pen-bold" />
-                        Editar
-                      </LoadingButton>
-                    </Grid>
-
-                    {!isLast && <Divider style={{ width: '100%' }} />}
+                      <Iconify icon="solar:pen-bold" />
+                      Editar
+                    </LoadingButton>
                   </Grid>
-                )
-              })}
+
+                  {!isLast && <Divider style={{ width: '100%' }} />}
+                </Grid>
+              )
+            })}
           </>
         )}
       </Stack>

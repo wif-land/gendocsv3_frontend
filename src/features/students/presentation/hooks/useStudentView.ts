@@ -169,6 +169,7 @@ export const useStudentView = ({
 
   useEffect(() => {
     let isMounted = true
+
     if (tableData.length === 0) {
       if (isMounted && !isDataFiltered) {
         fetchData(table.rowsPerPage, table.page).then((data) => {
@@ -176,16 +177,18 @@ export const useStudentView = ({
             setStudents(data.students)
             setTableData(data.students)
           }
+
           if (data?.count) {
             setCount(data.count)
           }
         })
       }
     }
+
     return () => {
       isMounted = false
     }
-  }, [tableData, isDataFiltered, students])
+  }, [tableData, isDataFiltered])
 
   return {
     loader,

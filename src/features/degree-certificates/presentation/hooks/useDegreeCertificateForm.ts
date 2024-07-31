@@ -8,7 +8,7 @@ import {
   resolveDefaultValuesDegreeCertificate,
 } from '../constants'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -23,7 +23,6 @@ import { useAccountStore } from '../../../../features/auth/presentation/state/us
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
 ) => {
-  const pathname = usePathname()
   const [inputValue, setInputValue] = useState('' as string)
   const debouncedValue = useDebounce(inputValue)
   const isOpen = useBoolean()
@@ -83,14 +82,12 @@ export const useDegreeCertificateForm = (
       }
 
       if (!!result && !currentDegreeCertificate) {
-        router.push(pathname.replace('/new', ''))
+        router.back()
         reset()
       }
 
       if (!!result && currentDegreeCertificate) {
-        router.push(
-          pathname.replace(`/${currentDegreeCertificate.id}/edit`, ''),
-        )
+        router.back()
         reset()
       }
     },
