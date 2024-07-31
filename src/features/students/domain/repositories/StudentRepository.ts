@@ -1,5 +1,4 @@
 import { StudentModel } from '../../data/models/StudentModel'
-import { ICreateStudent } from '../entities/ICreateStudent'
 import { IStudent } from '../entities/IStudent'
 import { IStudentFilters } from '../entities/IStudentFilters'
 
@@ -25,9 +24,11 @@ export interface StudentRepository {
 
   update(data: Partial<StudentModel>): Promise<StudentModel>
 
-  bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
-
-  bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
+  bulkUpdate(
+    students: Partial<IStudent>[],
+    isUpdate: boolean,
+    userId: number,
+  ): Promise<boolean>
 
   getById(id: number): Promise<StudentModel>
 }

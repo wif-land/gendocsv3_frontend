@@ -40,7 +40,8 @@ export const API_ROUTES = {
     GET_ALL: '/students',
     GET_BY_FILTERS: `/students/filter`,
     UPDATE: (id: number) => `/students/${id}`,
-    BULK_UPDATE: '/students/bulk',
+    BULK_UPDATE: (update: boolean, createdBy: number) =>
+      `/students/bulk?update=${update}&created_by=${createdBy}`,
     DELETE: (id: number) => `/students/${id}`,
     CREATE: '/students',
     CREATE_MANY: '/students/bulk',

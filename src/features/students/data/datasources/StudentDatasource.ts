@@ -25,11 +25,13 @@ export interface StudentDataSource {
 
   update(student: Partial<IStudent>): Promise<StudentModel>
 
-  bulkUpdate(students: Partial<IStudent>[]): Promise<StudentModel[]>
+  bulkUpdate(
+    students: Partial<IStudent>[],
+    isUpdate: boolean,
+    userId: number,
+  ): Promise<boolean>
 
   create(student: ICreateStudent): Promise<StudentModel>
-
-  bulkCreate(students: ICreateStudent[]): Promise<StudentModel[]>
 
   getById(id: number): Promise<StudentModel>
 }
@@ -88,17 +90,21 @@ export class StudentDataSourceImpl implements StudentDataSource {
     return result.data as StudentModel
   }
 
-  bulkUpdate = async (students: Partial<IStudent>[]) => {
-    const result = await AxiosClient.patch(
-      API_ROUTES.STUDENTS.BULK_UPDATE,
+  bulkUpdate = async (
+    students: Partial<IStudent>[],
+    isUpdate: boolean,
+    userId: number,
+  ) => {
+    const result = await AxiosClient.patch<{ success: boolean }>(
+      API_ROUTES.STUDENTS.BULK_UPDATE(isUpdate, userId),
       students,
     )
 
     if ('error' in result) {
-      return [] as StudentModel[]
+      return false
     }
 
-    return result.data as StudentModel[]
+    return result.data?.success
   }
 
   create = async (student: ICreateStudent) => {
@@ -109,18 +115,6 @@ export class StudentDataSourceImpl implements StudentDataSource {
     }
 
     return result.data as StudentModel
-  }
-
-  bulkCreate = async (students: ICreateStudent[]) => {
-    const result = await AxiosClient.post(API_ROUTES.STUDENTS.CREATE_MANY, {
-      students,
-    })
-
-    if ('error' in result) {
-      return [] as StudentModel[]
-    }
-
-    return result.data as StudentModel[]
   }
 
   getById = async (id: number) => {

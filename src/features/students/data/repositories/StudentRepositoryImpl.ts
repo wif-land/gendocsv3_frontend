@@ -36,11 +36,11 @@ export class StudentRepositoryImpl implements StudentRepository {
   update = async (data: Partial<StudentModel>) =>
     await this.datasource.update(data)
 
-  bulkUpdate = async (students: Partial<StudentModel>[]) =>
-    await this.datasource.bulkUpdate(students)
-
-  bulkCreate = async (students: ICreateStudent[]) =>
-    await this.datasource.bulkCreate(students)
+  bulkUpdate = async (
+    students: Partial<StudentModel>[],
+    isUpdate: boolean,
+    userId: number,
+  ) => await this.datasource.bulkUpdate(students, isUpdate, userId)
 
   getById = async (id: number) => await this.datasource.getById(id)
 }

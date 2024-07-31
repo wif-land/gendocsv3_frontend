@@ -19,6 +19,7 @@ import { useLocations } from '../../../../core/providers/locations-provider'
 import { enqueueSnackbar } from 'notistack'
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import { FILE_FORMATS_TO_UPLOAD, FileFormat } from '../constants'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 
 interface Props extends DialogProps {
   title?: string
@@ -42,6 +43,7 @@ export const StudentBulkUploadDialog = ({
   const { careers, get: getCareers } = useCareersStore()
   const { cities } = useLocations()
   const { bulkCreate } = useStudentCommands()
+  const { user } = useAccountStore()
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -174,13 +176,18 @@ export const StudentBulkUploadDialog = ({
     }
 
     const fetchBulk = async () => {
-      const studentsBulk = await bulkCreate(students)
-      if (studentsBulk.length === 0) {
+      const isUpdate = fileFormat !== 'studentsByCareer'
+
+      if (!user || !user.id) {
         return
       }
 
+      const isComplete = await bulkCreate(students, isUpdate, user.id)
+
       setTimeout(() => {
-        window.location.reload()
+        if (isComplete) {
+          window.location.reload()
+        }
       }, 1000)
     }
 
