@@ -78,7 +78,6 @@ export const useSocketListeners = () => {
     socketClient.on(
       'change-access-modules',
       (data: { id: number; accessModules: number[] }) => {
-        console.log(data)
         if (!user) return
         if (user.id == data.id) {
           setUser({
