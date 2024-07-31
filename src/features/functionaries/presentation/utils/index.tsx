@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { DegreeModel } from '../../../../core/providers/data/models/degreeModel'
 import { enqueueSnackbar } from 'notistack'
 
 export interface RawFunctionary {
@@ -15,7 +16,10 @@ export interface RawFunctionary {
   ['Teléfono Fijo']?: string
 }
 
-export const transformData = (data: RawFunctionary[]): any[] =>
+export const transformData = (
+  data: RawFunctionary[],
+  degrees: DegreeModel[],
+): any[] =>
   data
     .map((item: RawFunctionary) => {
       if (!item['Cédula']) {
@@ -49,6 +53,22 @@ export const transformData = (data: RawFunctionary[]): any[] =>
           .join(' ')
       }
 
+      const thirdLevelDegree = getDegreeFunctionary(
+        safeToString(item['Título Tercer Nivel']),
+        degrees,
+        safeToString(item['Cédula']),
+      )
+
+      const fourthLevelDegree = getDegreeFunctionary(
+        safeToString(item['Título Cuarto Nivel']),
+        degrees,
+        safeToString(item['Cédula']),
+      )
+
+      if (!thirdLevelDegree || !fourthLevelDegree) {
+        return
+      }
+
       return {
         dni: item['Cédula'],
         firstName: capitalizeSentence(item['Primer Nombre'] || ''),
@@ -59,9 +79,32 @@ export const transformData = (data: RawFunctionary[]): any[] =>
         personalEmail: safeToString(item['Correo Personal']),
         phoneNumber: item['Numero de celular'] || '',
         regularPhoneNumber: item['Teléfono Fijo'] || '',
-        thirdLevelDegree: safeToString(item['Título Tercer Nivel']),
-        fourthLevelDegree: safeToString(item['Título Cuarto Nivel']),
+        thirdLevelDegree,
+        fourthLevelDegree,
         isActive: true,
       }
     })
     .filter((item) => item !== undefined)
+
+const getDegreeFunctionary = (
+  inputDegree: string,
+  degrees: DegreeModel[],
+  funtionaryDni: string,
+): number | undefined => {
+  const degree = degrees.find(
+    (degree) =>
+      degree.abbreviation.toUpperCase() === inputDegree.trim().toUpperCase(),
+  )
+
+  if (!degree) {
+    enqueueSnackbar(
+      `No se encontró el título: ${inputDegree} para el funcionario con Cédula ${funtionaryDni}`,
+      {
+        variant: 'error',
+      },
+    )
+    return
+  }
+
+  return degree.id
+}

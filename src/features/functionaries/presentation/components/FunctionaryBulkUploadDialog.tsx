@@ -11,11 +11,11 @@ import Dialog, { DialogProps } from '@mui/material/Dialog'
 
 import { Upload } from '../../../../shared/sdk/upload'
 import Iconify from '../../../../core/iconify'
-import { useCareersStore } from '../../../careers/presentation/store/careerStore'
 import { enqueueSnackbar } from 'notistack'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
-import { BulkCreateUseCase } from '../../domain/usecases/BulkCreateUseCase'
-import { RawFunctionary, transformData } from '../utils'
+import { RawFunctionary, transformData } from '../utils/index'
+import { useDegreeData } from '../../../../core/providers/functionary-degree-provider'
+import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 
 interface Props extends DialogProps {
   title?: string
@@ -33,9 +33,10 @@ export const FuntionaryBulkUploadDialog = ({
   onClose,
   ...other
 }: Props) => {
+  const { degrees } = useDegreeData()
+
   const [files, setFiles] = useState<(File | string)[]>([])
-  const [functionaries, setStudents] = useState<IFunctionary[]>([])
-  const { careers, get: getCareers } = useCareersStore()
+  const [functionaries, setFunctionaries] = useState<IFunctionary[]>([])
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -92,14 +93,17 @@ export const FuntionaryBulkUploadDialog = ({
       const sheet = XLSX.utils.json_to_sheet(filteredData, { skipHeader: true })
       const jsonData = XLSX.utils.sheet_to_json(sheet)
 
-      const transformedData = transformData(jsonData as RawFunctionary[])
+      const transformedData = transformData(
+        jsonData as RawFunctionary[],
+        degrees,
+      )
 
       if (
         transformedData == null ||
         transformedData.length < jsonData.length - 1
       ) {
         enqueueSnackbar(
-          'Existen errores en la información del formato de estudiantes',
+          'Existen errores en la información del formato de funcionarios',
           {
             variant: 'error',
           },
@@ -108,7 +112,7 @@ export const FuntionaryBulkUploadDialog = ({
         return
       }
 
-      setStudents(transformedData)
+      setFunctionaries(transformedData)
     } catch (error) {
       console.error(error)
       enqueueSnackbar('Error al procesar el archivo', { variant: 'error' })
@@ -131,20 +135,13 @@ export const FuntionaryBulkUploadDialog = ({
   }
 
   useEffect(() => {
-    if (careers?.length === 0) {
-      getCareers()
-    }
-  }, [careers])
-
-  useEffect(() => {
     if (functionaries.length === 0) {
       return
     }
 
     const fetchBulk = async () => {
-      const functionariesBulk = await new BulkCreateUseCase().call(
-        functionaries,
-      )
+      const functionariesBulk =
+        await FunctionaryUseCasesImpl.getInstance().bulkUpdate(functionaries)
 
       if (functionariesBulk.length === 0) {
         return
