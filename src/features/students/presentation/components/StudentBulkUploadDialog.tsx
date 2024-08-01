@@ -97,6 +97,44 @@ export const StudentBulkUploadDialog = ({
 
       let filteredData = data
       if (fileFormat !== 'vinculationAndPractices') {
+        const headers = data[0] as string[]
+        const hasSpecialColumns =
+          headers.includes('Horas de vinculación') ||
+          headers.includes('Créditos carrera') ||
+          headers.includes('Inicio clases') ||
+          headers.includes('Fin clases') ||
+          (data[1] as string[]).includes('Horas de vinculación')
+
+        if (hasSpecialColumns && fileFormat === 'studentsByCareer') {
+          enqueueSnackbar(
+            'El archivo seleccionado no corresponde al formato de estudiantes por carrera',
+            {
+              variant: 'error',
+            },
+          )
+
+          setFileFormat('studentsByCareer')
+          return
+        }
+
+        if (fileFormat === 'qualifiers') {
+          if (
+            !headers.includes('Cédula') ||
+            !headers.includes('Inicio clases') ||
+            !headers.includes('Fin clases')
+          ) {
+            enqueueSnackbar(
+              'El archivo seleccionado no corresponde al formato de calificaciones',
+              {
+                variant: 'error',
+              },
+            )
+
+            setFileFormat('studentsByCareer')
+            return
+          }
+        }
+
         filteredData = data.filter((element, index) => {
           if (index === 0) return true
           return !(
@@ -104,19 +142,6 @@ export const StudentBulkUploadDialog = ({
             (element as any[]).length === 0
           )
         })
-      } else if (fileFormat === 'vinculationAndPractices') {
-        const headers = data[0] as string[]
-        const hasSpecialColumns =
-          headers.includes('Horas de vinculación') ||
-          headers.includes('Créditos carrera')
-        if (hasSpecialColumns) {
-          filteredData = data.slice(1)
-        }
-      } else {
-        enqueueSnackbar('Formato de archivo no soportado', {
-          variant: 'error',
-        })
-        return
       }
 
       const sheet = XLSX.utils.json_to_sheet(filteredData, { skipHeader: true })
@@ -170,8 +195,40 @@ export const StudentBulkUploadDialog = ({
     }
   }, [careers])
 
+  const checkFileFormat = (fileFormat: FileFormat, students: IStudent[]) => {
+    if (fileFormat === 'studentsByCareer') {
+      return students.every(
+        (student) => !!student.gender && !!student.outlookEmail,
+      )
+    }
+
+    if (fileFormat === 'qualifiers') {
+      return students.every((student) => !!student.startStudiesDate)
+    }
+
+    if (fileFormat === 'vinculationAndPractices') {
+      return students.every(
+        (student) =>
+          !!student.internshipHours &&
+          !!student.vinculationHours &&
+          !student.outlookEmail,
+      )
+    }
+
+    return false
+  }
+
   useEffect(() => {
     if (students.length === 0) {
+      return
+    }
+
+    if (!checkFileFormat(fileFormat, students)) {
+      enqueueSnackbar('El archivo seleccionado no cumple con el formato', {
+        variant: 'error',
+      })
+
+      setFileFormat('studentsByCareer')
       return
     }
 
@@ -183,6 +240,8 @@ export const StudentBulkUploadDialog = ({
       }
 
       const isComplete = await bulkCreate(students, isUpdate, user.id)
+
+      console.log(students)
 
       setTimeout(() => {
         if (isComplete) {

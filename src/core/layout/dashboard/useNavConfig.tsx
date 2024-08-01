@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import useModulesStore from '../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 import Iconify from '../../iconify'
-import { useRouter } from 'next/navigation'
 import { LogoutUseCase } from '../../../features/auth/domain/usecases/logoutUseCase'
 import { IModule } from '@/features/modules/types/IModule'
 
@@ -73,32 +72,32 @@ export const useNavConfig = () => {
       const mainPath = `/dashboard/${module.code
         .toLowerCase()
         .replaceAll(' ', '_')}/${submodule.name
-          .toLowerCase()
-          .replaceAll(' ', '_')}`
+        .toLowerCase()
+        .replaceAll(' ', '_')}`
       const listPath = `${mainPath}`
       const createPath = `${mainPath}/new`
 
       return submodule.id !== 10
         ? {
-          title: submodule.name,
-          path: mainPath,
-          icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
-          children: [
-            {
-              title: 'Listar',
-              path: listPath,
-            },
-            {
-              title: 'Crear',
-              path: createPath,
-            },
-          ],
-        }
+            title: submodule.name,
+            path: mainPath,
+            icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
+            children: [
+              {
+                title: 'Listar',
+                path: listPath,
+              },
+              {
+                title: 'Crear',
+                path: createPath,
+              },
+            ],
+          }
         : {
-          title: submodule.name,
-          path: mainPath,
-          icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
-        }
+            title: submodule.name,
+            path: mainPath,
+            icon: ICONS[submodule.name.toLowerCase().replaceAll(' ', '')],
+          }
     }),
   }))
 

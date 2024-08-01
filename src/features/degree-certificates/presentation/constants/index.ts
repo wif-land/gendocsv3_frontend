@@ -211,6 +211,15 @@ export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
       return value.toString()
     }
 
+    const changeUniversityDate = item['Inicio clases anterior universidad']
+      ? new Date(
+          item['Inicio clases anterior universidad']
+            .split('/')
+            .reverse()
+            .join('-'),
+        )
+      : undefined
+
     acc.push({
       topic: safeToString(item['Tema']),
       studentDni: safeToString(item['Cédula']),
@@ -224,9 +233,7 @@ export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
       qualifiersResolution: safeToString(item['Resolución calificadores']),
       curriculumGrade: safeToString(item['Nota Malla']),
       gradesDetails: safeToString(item['Detalle Notas']),
-      changeUniversityDate: safeToString(
-        item['Inicio clases anterior universidad'],
-      ),
+      changeUniversityDate,
       changeUniversityName: safeToString(item['Universidad estudios previos']),
       changeUniversityResolution: safeToString(
         item['Nro. Resolución Cambio de'],

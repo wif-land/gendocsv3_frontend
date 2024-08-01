@@ -18,6 +18,8 @@ export interface ICreateCareer
   extends Omit<ICareer, 'id' | 'createdAt' | 'updatedAt' | 'coordinator'> {
   coordinator: number
   id?: number
+  moduleName?: string
+  moduleCode?: string
 }
 
 export interface IUpdateCareer extends Omit<Partial<ICareer>, 'coordinator'> {

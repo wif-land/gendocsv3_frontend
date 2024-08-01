@@ -28,7 +28,7 @@ import {
 import { useDegreeCertificateForm } from '../hooks/useDegreeCertificateForm'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { Controller } from 'react-hook-form'
-import { DateTimePicker } from '@mui/x-date-pickers'
+import { DatePicker, DateTimePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
 
@@ -44,7 +44,10 @@ import DocsByStudentListView from '../../../../features/documents/presentation/v
 import { degreeTemplatesStore } from '../../../../features/degcer-templates/presentation/store/degCerTemplatesStore'
 import { ICareer } from '../../../../features/careers/domain/entities/ICareer'
 import DegreesByStudentListView from '../../../../features/documents/presentation/view/DegreesByStudentListView'
-import { DATE_TIME_FORMAT } from '../../../../core/utils/format-time'
+import {
+  DATE_FORMAT,
+  DATE_TIME_FORMAT,
+} from '../../../../core/utils/format-time'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -482,52 +485,65 @@ export const DegreeCertificateNewEditForm = ({
     </>
   )
 
-  const renderUniverityChange = (
+  const renderUniverityChange = methods.watch('student').id! > 0 && (
     <>
-      <Stack
-        spacing={3}
-        sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
-      >
-        <RHFTextField
-          name="changeUniversityResolution"
-          label="Resolución de cambio de universidad"
-          inputProps={{
-            maxLength: 255,
-          }}
-          sx={{ flexGrow: 1 }}
-        />
-        <RHFTextField
-          name="changeUniversityName"
-          label="Nombre de la universidad"
-          inputProps={{
-            maxLength: 255,
-          }}
-          sx={{ flexGrow: 1 }}
-        />
-        <Controller
-          name="changeUniversityDate"
-          control={control}
-          render={({ field }) => (
-            <DateTimePicker
-              {...field}
-              value={field.value !== undefined ? dayjs(field.value) : null}
-              onChange={(newValue) => {
-                if (newValue) {
-                  field.onChange(newValue.toDate())
-                } else {
-                  field.value = undefined
-                }
+      {mdUp && (
+        <Grid md={4}>
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Cambio de universidad
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Información relevante del cambio de universidad
+          </Typography>
+        </Grid>
+      )}
+      <Grid xs={12} md={8}>
+        <Card>
+          {!mdUp && <CardHeader title="Details" />}
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <RHFTextField
+              name="changeUniversityResolution"
+              label="Resolución de cambio de universidad"
+              inputProps={{
+                maxLength: 255,
               }}
-              label="Fecha de cambio de universidad"
-              format={DATE_TIME_FORMAT}
-              slotProps={{
-                field: { clearable: true },
-                textField: { variant: 'outlined' },
-              }}
+              sx={{ flexGrow: 1 }}
             />
-          )}
-        />
-      </Stack>
+            <RHFTextField
+              name="changeUniversityName"
+              label="Nombre de la universidad"
+              inputProps={{
+                maxLength: 255,
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+            <Controller
+              name="changeUniversityDate"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  {...field}
+                  value={field.value !== undefined ? dayjs(field.value) : null}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      field.onChange(newValue.toDate())
+                    } else {
+                      field.value = undefined
+                    }
+                  }}
+                  label="Fecha de cambio de universidad"
+                  format={DATE_FORMAT}
+                  slotProps={{
+                    field: { clearable: true },
+                    textField: { variant: 'outlined' },
+                  }}
+                  sx={{ flexGrow: 1 }}
+                />
+              )}
+            />
+          </Stack>
+        </Card>
+      </Grid>
     </>
   )
 
@@ -544,9 +560,11 @@ export const DegreeCertificateNewEditForm = ({
           gap: '10px',
         }}
       >
-        <Box sx={{ flexGrow: 1 }}>
-          <RHFSwitch name="isClosed" label="Acta cerrada?" />
-        </Box>
+        {currentDegreeCertificate && (
+          <Box sx={{ flexGrow: 1 }}>
+            <RHFSwitch name="isClosed" label="Acta cerrada?" />
+          </Box>
+        )}
 
         <Button
           variant="outlined"

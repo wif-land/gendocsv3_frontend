@@ -66,7 +66,11 @@ export const useDegreeCertificateForm = (
         link: data.link,
         isClosed: data.isClosed,
         userId: user?.id,
+        changeUniversityResolution: data.changeUniversityResolution,
+        changeUniversityName: data.changeUniversityName,
+        changeUniversityDate: data.changeUniversityDate,
       }
+
       let result
       if (!currentDegreeCertificate) {
         result = await createDegreeCertificate(

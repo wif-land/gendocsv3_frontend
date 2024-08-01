@@ -51,6 +51,9 @@ export interface ICreateDegreeCertificate
   userId: number
   careerId: number
   degreeModalityId: number
+  changeUniversityResolution?: string
+  changeUniversityName?: string
+  changeUniversityDate?: string
 }
 
 export interface IUpdateDegreeCertificate

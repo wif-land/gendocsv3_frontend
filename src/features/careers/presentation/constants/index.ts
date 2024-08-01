@@ -44,6 +44,14 @@ export const NewCareerSchema = Yup.object().shape({
     .required('Campo requerido')
     .max(650, 'El número máximo permitido es 650')
     .min(80, 'El número mínimo permitido es 80'),
+  moduleName: Yup.string()
+    .optional()
+    .max(50, 'Máximo 50 caracteres')
+    .min(3, 'Mínimo 3 caracteres'),
+  moduleCode: Yup.string()
+    .optional()
+    .max(50, 'Máximo 50 caracteres')
+    .min(3, 'Mínimo 3 caracteres'),
 })
 
 export const resolveDefaultValues = (

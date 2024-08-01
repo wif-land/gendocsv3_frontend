@@ -67,11 +67,6 @@ export const transformData = (
 
         return
       }
-
-      if (item['Cédula']) {
-        console.log('item', item)
-      }
-
       const safeToString = (value: any): string => {
         if (value === null || value === undefined) return ''
         return value.toString()
@@ -201,18 +196,22 @@ export const transformData = (
           internshipHours: parseInt(item['Horas Prácticas'], 10) || 0,
         } as StudentModel
       } else {
+        // date format is dd/mm/yyyy
+
+        const startStudiesDate = item['Inicio clases']
+          ? new Date(item['Inicio clases'].split('/').reverse().join('-'))
+          : undefined
+
+        // const endStudiesDate = item['Fin clases']
+        //   ? new Date(item['Fin clases'].split('/').reverse().join('-'))
+        //   : undefined
         return {
           firstName,
           secondName,
           firstLastName,
           secondLastName,
           dni: item['Cédula'].toString(),
-          startStudiesDate: item['Inicio clases']
-            ? new Date(item['Inicio clases'])
-            : undefined,
-          endStudiesDate: item['Fin clases']
-            ? new Date(item['Fin clases'])
-            : undefined,
+          startStudiesDate,
           approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
           bachelorDegree: capitalizeSentence(getBachelorDegree()),
         } as StudentModel
