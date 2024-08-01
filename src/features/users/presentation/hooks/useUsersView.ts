@@ -50,7 +50,7 @@ export const useUserView = ({
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [tableData, isDataFiltered])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)
