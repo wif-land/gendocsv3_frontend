@@ -31,6 +31,7 @@ export class StudentModel implements IStudent {
   endStudiesDate?: string
   label?: string | undefined
   startStudiesDate?: string
+  highSchoolName?: string | undefined
 
   constructor(props: IStudent) {
     this.id = props.id
@@ -59,6 +60,7 @@ export class StudentModel implements IStudent {
     this.vinculationHours = props.vinculationHours
     this.internshipHours = props.internshipHours
     this.endStudiesDate = props.endStudiesDate
+    this.highSchoolName = props.highSchoolName
   }
 
   static fromJson(json: Record<string, any>): StudentModel {
@@ -89,6 +91,7 @@ export class StudentModel implements IStudent {
       vinculationHours: json.vinculationHours,
       internshipHours: json.internshipHours,
       endStudiesDate: json.endStudiesDate,
+      highSchoolName: json.highSchoolName,
     })
   }
 
@@ -105,6 +108,7 @@ export class StudentModel implements IStudent {
       phoneNumber: this.phoneNumber,
       regularPhoneNumber: this.regularPhoneNumber,
       cellphone: this.cellphone,
+      highSchoolName: this.highSchoolName,
     }
   }
 }

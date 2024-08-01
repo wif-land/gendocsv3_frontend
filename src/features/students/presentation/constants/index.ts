@@ -83,6 +83,7 @@ export const resolveDefaultValues = (
   vinculationHours: currentStudent?.vinculationHours || null,
   internshipHours: currentStudent?.internshipHours || null,
   endStudiesDate: currentStudent?.endStudiesDate || null,
+  highSchoolName: currentStudent?.highSchoolName || '',
 })
 
 export const handleCreate = async (values: FormValuesProps) => {

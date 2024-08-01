@@ -25,4 +25,5 @@ export interface ICreateStudent {
   approvedCredits?: number
   vinculationHours?: number
   internshipHours?: number
+  highSchoolName?: string
 }

@@ -306,6 +306,15 @@ export const StudentNewEditForm = ({
                   maxLength: 10,
                 }}
               />
+
+              <RHFTextField
+                name="highSchoolName"
+                label="Nombre del colegio"
+                required
+                inputProps={{
+                  maxLength: 100,
+                }}
+              />
             </Box>
           </Stack>
         </Card>
