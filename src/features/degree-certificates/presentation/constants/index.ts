@@ -224,6 +224,13 @@ export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
       qualifiersResolution: safeToString(item['Resolución calificadores']),
       curriculumGrade: safeToString(item['Nota Malla']),
       gradesDetails: safeToString(item['Detalle Notas']),
+      changeUniversityDate: safeToString(
+        item['Inicio clases anterior universidad'],
+      ),
+      changeUniversityName: safeToString(item['Universidad estudios previos']),
+      changeUniversityResolution: safeToString(
+        item['Nro. Resolución Cambio de'],
+      ),
     } as DegreeCertificateForBulk)
     return acc
   }, [])

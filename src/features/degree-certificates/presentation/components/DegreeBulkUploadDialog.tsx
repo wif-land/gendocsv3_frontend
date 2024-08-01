@@ -53,6 +53,9 @@ export interface DegreeCertificateForBulk {
   qualifiersResolution: string
   curriculumGrade: string
   gradesDetails?: string
+  changeUniversityResolution?: string
+  changeUniversityName?: string
+  changeUniversityDate?: string
 }
 
 export const DegCerBulkUploadDialog = ({
