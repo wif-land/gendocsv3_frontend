@@ -108,7 +108,7 @@ export const transformData = (
           return `Bachiller ${item['Título']?.toString().trim()}`
         } else {
           if (item['Especialidad']) {
-            return `Especialidad en ${item['Especialidad'].toString().trim()}`
+            return `Especialidad ${item['Especialidad'].toString().trim()}`
           }
         }
         return ''
@@ -210,10 +210,6 @@ export const transformData = (
         //   ? new Date(item['Fin clases'].split('/').reverse().join('-'))
         //   : undefined
         return {
-          firstName,
-          secondName,
-          firstLastName,
-          secondLastName,
           dni: item['Cédula'].toString(),
           startStudiesDate,
           approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
