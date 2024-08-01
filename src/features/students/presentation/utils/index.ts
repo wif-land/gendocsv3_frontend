@@ -76,6 +76,7 @@ export const transformData = (
       let secondName = ''
       let firstLastName = ''
       let secondLastName = ''
+      const highSchoolName = String(item['Institución educativa'] || '').trim()
 
       if (item['Nombres']) {
         const names = safeToString(item['Nombres']).split(' ')
@@ -162,6 +163,7 @@ export const transformData = (
             (city: ICanton) => city.name.toUpperCase() === cityString,
           )
         }
+
         return {
           firstName,
           secondName,
@@ -184,6 +186,7 @@ export const transformData = (
           canton: city!.id as number,
           isActive: true,
           career,
+          highSchoolName,
         } as StudentModel
       } else if (item['Horas Vinculación'] && item['Horas Prácticas']) {
         return {
@@ -194,6 +197,7 @@ export const transformData = (
           dni: item['Cédula'].toString().trim(),
           vinculationHours: parseInt(item['Horas Vinculación'], 10) || 0,
           internshipHours: parseInt(item['Horas Prácticas'], 10) || 0,
+          highSchoolName,
         } as StudentModel
       } else {
         // date format is dd/mm/yyyy
@@ -214,6 +218,7 @@ export const transformData = (
           startStudiesDate,
           approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
           bachelorDegree: capitalizeSentence(getBachelorDegree()),
+          highSchoolName,
         } as StudentModel
       }
     })
