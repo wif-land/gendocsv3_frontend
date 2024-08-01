@@ -126,7 +126,7 @@ export const transformData = (
           .join(' ')
       }
 
-      if (item['Correo'] && item['Valor'] != null) {
+      if (item['Correo UTA'] || item['Correo']) {
         const birthdate = item['Fecha Nacimiento']
           ? new Date(item['Fecha Nacimiento'])
           : undefined

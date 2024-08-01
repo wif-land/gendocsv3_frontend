@@ -197,9 +197,24 @@ export const StudentBulkUploadDialog = ({
 
   const checkFileFormat = (fileFormat: FileFormat, students: IStudent[]) => {
     if (fileFormat === 'studentsByCareer') {
-      return students.every(
+      const isValid = students.every(
         (student) => !!student.gender && !!student.outlookEmail,
       )
+
+      console.log(
+        students.find((student) => !student.gender || !student.outlookEmail),
+      )
+
+      if (!isValid) {
+        enqueueSnackbar(
+          'El archivo seleccionado no cumple con el formato de estudiantes por carrera, asegúrate que los campos de género y correo estén completos',
+          {
+            variant: 'error',
+          },
+        )
+      }
+
+      return isValid
     }
 
     if (fileFormat === 'qualifiers') {
