@@ -126,25 +126,13 @@ export const useStudentView = ({
       id: row.id!,
     }))
 
-    updateRows(rowsData).then((data) => {
-      if (data !== undefined) {
-        setStudents(
-          students?.map((functionary) => {
-            const updatedFunctionary = data.find(
-              (updated) => updated.id === functionary.id,
-            )
-            return updatedFunctionary ? updatedFunctionary : functionary
-          }),
-        )
-      }
-      setTableData(
-        (students as StudentModel[]).map((functionary) => {
-          const updatedFunctionary = data?.find(
-            (updated) => updated.id === functionary.id,
-          )
-          return updatedFunctionary ? updatedFunctionary : functionary
-        }),
-      )
+    updateRows(rowsData).then(() => {
+      fetchData(table.rowsPerPage, table.page).then((data) => {
+        if (data !== undefined) {
+          setStudents(data.students)
+        }
+        setTableData(data.students as StudentModel[])
+      })
       table.setSelected([])
     })
   }
