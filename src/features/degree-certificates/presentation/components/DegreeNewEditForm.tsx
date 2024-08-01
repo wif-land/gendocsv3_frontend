@@ -482,6 +482,55 @@ export const DegreeCertificateNewEditForm = ({
     </>
   )
 
+  const renderUniverityChange = (
+    <>
+      <Stack
+        spacing={3}
+        sx={{ p: 3, pt: 0, display: 'flex', flexDirection: 'row' }}
+      >
+        <RHFTextField
+          name="changeUniversityResolution"
+          label="Resolución de cambio de universidad"
+          inputProps={{
+            maxLength: 255,
+          }}
+          sx={{ flexGrow: 1 }}
+        />
+        <RHFTextField
+          name="changeUniversityName"
+          label="Nombre de la universidad"
+          inputProps={{
+            maxLength: 255,
+          }}
+          sx={{ flexGrow: 1 }}
+        />
+        <Controller
+          name="changeUniversityDate"
+          control={control}
+          render={({ field }) => (
+            <DateTimePicker
+              {...field}
+              value={field.value !== undefined ? dayjs(field.value) : null}
+              onChange={(newValue) => {
+                if (newValue) {
+                  field.onChange(newValue.toDate())
+                } else {
+                  field.value = undefined
+                }
+              }}
+              label="Fecha de cambio de universidad"
+              format={DATE_TIME_FORMAT}
+              slotProps={{
+                field: { clearable: true },
+                textField: { variant: 'outlined' },
+              }}
+            />
+          )}
+        />
+      </Stack>
+    </>
+  )
+
   const renderActions = (
     <>
       {mdUp && <Grid md={4} />}
@@ -642,13 +691,18 @@ export const DegreeCertificateNewEditForm = ({
   return (
     <>
       {renderDegreeModal}
+
       {renderStudentModal}
+
       {renderDocumentsModal}
+
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit as any)}>
         <Grid container spacing={3}>
           {renderDetails}
 
           {renderProperties}
+
+          {renderUniverityChange}
 
           {renderActions}
         </Grid>

@@ -29,6 +29,9 @@ export class DegreeCertificateModel implements IDegreeCertificate {
   isClosed: boolean
   user: IUser
   members?: IDegreeCertificatesAttendee[] | undefined
+  changeUniversityDate?: string | undefined
+  changeUniversityName?: string | undefined
+  changeUniversityResolution?: string | undefined
 
   constructor(degreeCertificate: IDegreeCertificate) {
     this.id = degreeCertificate.id

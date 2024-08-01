@@ -27,6 +27,9 @@ export interface IDegreeCertificate {
   isClosed: boolean
   user: IUser
   members?: IDegreeCertificatesAttendee[]
+  changeUniversityResolution?: string
+  changeUniversityName?: string
+  changeUniversityDate?: string
 }
 
 export interface ICreateDegreeCertificate

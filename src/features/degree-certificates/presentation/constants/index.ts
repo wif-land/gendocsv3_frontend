@@ -97,6 +97,10 @@ export const resolveDefaultValuesDegreeCertificate = (
       '',
   } as any,
   user: currentDegreeCertificate?.user || ({} as any),
+  changeUniversityResolution:
+    currentDegreeCertificate?.changeUniversityResolution,
+  changeUniversityDate: currentDegreeCertificate?.changeUniversityDate,
+  changeUniversityName: currentDegreeCertificate?.changeUniversityName,
 })
 
 export const resolveDefaultValuesDegreeCertificateAttendee = (
