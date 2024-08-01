@@ -1,10 +1,6 @@
 import { jwtDecode } from 'jwt-decode'
-import {
-  ACCESS_TOKEN_COOKIE_NAME,
-  API_ROUTES,
-} from '../../../../shared/constants/appApiRoutes'
+import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { AxiosClient } from '../../../../shared/utils/AxiosClient'
-import { setCookie } from '../../../../shared/utils/CookiesUtil'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IUser, IUserPayload } from '../../domain/entities/IUser'
 
@@ -51,8 +47,6 @@ export class AuthDataSourceImpl implements AuthDataSource {
 
     const { data } = result
 
-    await setCookie(ACCESS_TOKEN_COOKIE_NAME, data)
-
     const userData: IUserPayload = jwtDecode(data as string)
 
     const { sub, ...userWithoutSub } = userData
@@ -61,7 +55,8 @@ export class AuthDataSourceImpl implements AuthDataSource {
   }
 
   logout = async () => {
-    await setCookie(ACCESS_TOKEN_COOKIE_NAME, '')
+    await AxiosClient.post(API_ROUTES.AUTH.LOGOUT)
+
     return {
       status: HTTP_STATUS_CODES.OK,
       message: 'Sesión cerrada',

@@ -18,7 +18,10 @@ export class LogoutUseCase extends UseCase<
     this.repository = AuthRepositoryImpl.getInstance()
   }
 
-  call() {
-    return this.repository.logout()
+  async call() {
+    const result = await this.repository.logout()
+
+    window.location.href = '/login'
+    return result
   }
 }

@@ -1,8 +1,6 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { setCookie } from '../../../../shared/utils/CookiesUtil'
 import { IUser } from '../../domain/entities/IUser'
-import { ACCESS_TOKEN_COOKIE_NAME } from '../../../../shared/constants/appApiRoutes'
 import { UserDataSourceImpl } from '../../data/datasources/UserDatasource'
 
 interface StoreState {
@@ -19,10 +17,6 @@ export const useUsersStore = create<StoreState>(
     (set) => ({
       users: DEFAULT_USERS,
       setUsers: (users: IUser[]) => set({ users }),
-      logout: () => {
-        set({ users: DEFAULT_USERS })
-        setCookie(ACCESS_TOKEN_COOKIE_NAME, null)
-      },
       load: async () => {
         const result = await UserDataSourceImpl.getInstance().getAll()
         set({ users: result.users as IUser[] })

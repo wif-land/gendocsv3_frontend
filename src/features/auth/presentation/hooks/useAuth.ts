@@ -1,7 +1,6 @@
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
 import { useAccountStore } from '../state/useAccountStore'
-import { enqueueSnackbar } from 'notistack'
 import { LoginUseCase } from '../../domain/usecases/loginUseCase'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -36,8 +35,6 @@ export const useAuth = () => {
   const handleLogout = async () => {
     await new LogoutUseCase().call()
     setUser(undefined)
-    router.push('/login')
-    enqueueSnackbar('Hasta pronto!')
   }
 
   const methods = useForm<FormValuesProps>({
@@ -53,6 +50,7 @@ export const useAuth = () => {
       email: data.email,
       password: data.password,
     })
+
     decoded && setUser(decoded)
     router.push('/dashboard')
     reset()

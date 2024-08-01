@@ -45,10 +45,6 @@ export class AxiosClient {
           this.accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME)
         }
 
-        if (!this.accessToken) {
-          await new LogoutUseCase().call()
-        }
-
         if (this.accessToken && config.headers) {
           config.headers.Authorization = `Bearer ${this.accessToken.replaceAll(
             '"',
@@ -63,9 +59,9 @@ export class AxiosClient {
 
     this.client.interceptors.response.use(
       (response) => response,
-      (error) => {
+      async (error) => {
         if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-          new LogoutUseCase().call()
+          await new LogoutUseCase().call()
         }
 
         return Promise.reject(error)
@@ -103,7 +99,9 @@ export class AxiosClient {
   > {
     try {
       useLoaderStore.getState().addLoaderItem('axios-post')
-      const response = await this.getInstance().post(path, body)
+      const response = await this.getInstance().post(path, body, {
+        withCredentials: true,
+      })
       useLoaderStore.getState().removeLoaderItem('axios-post')
       return handleApiResponse(response, 'POST')
     } catch (error) {
