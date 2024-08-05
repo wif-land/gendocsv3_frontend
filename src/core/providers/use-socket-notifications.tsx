@@ -9,8 +9,7 @@ import {
   NotificationStatus,
   notificationStatusColor,
 } from '../../features/notifications/utils/notification-status'
-import { NotificationDetailsDialog } from '../../features/notifications/presentation/Dialog'
-import { Button } from '@mui/material'
+import { UserModel } from '@/features/users/data/models/UserModel'
 
 export const useSocketListeners = () => {
   const [firstLoad, setFirstLoad] = useState(true)
@@ -74,19 +73,23 @@ export const useSocketListeners = () => {
       setNotifications(data)
     })
 
-    socketClient.off('change-access-modules')
-    socketClient.on(
-      'change-access-modules',
-      (data: { id: number; accessModules: number[] }) => {
-        if (!user) return
-        if (user.id == data.id) {
-          setUser({
-            ...user,
-            accessModules: data.accessModules,
-          })
-        }
-      },
-    )
+    socketClient.off('change-user')
+    socketClient.on('change-user', (data: { id: number; user: UserModel }) => {
+      if (!user) return
+      if (user.id == data.id) {
+        setUser({
+          ...user,
+          ...data.user,
+          id: user.id,
+        })
+
+        console.log('user updated', data.user)
+
+        enqueueSnackbar('Se ha actualizado su información', {
+          variant: 'success',
+        })
+      }
+    })
 
     return () => {
       socketClient.off('notification')

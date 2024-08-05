@@ -107,7 +107,7 @@ export const useDegreeCertificateView = ({
 
   useEffect(() => {
     let isMounted = true
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams as unknown as string)
 
     if (filters.careerId) {
       params.set('careerId', filters.careerId.toString())

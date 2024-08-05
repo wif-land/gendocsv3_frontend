@@ -48,6 +48,9 @@ import {
   DATE_FORMAT,
   DATE_TIME_FORMAT,
 } from '../../../../core/utils/format-time'
+import { checkUpdateInputPermission } from '../../../../shared/utils/InputUtil'
+import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 
 type Props = {
   currentDegreeCertificate?: IDegreeCertificate
@@ -83,6 +86,8 @@ export const DegreeCertificateNewEditForm = ({
   } = methods
 
   const { degreeModalities, rooms } = useCertificateData()
+
+  const { user } = useAccountStore()
 
   const renderDetails = (
     <>
@@ -159,6 +164,14 @@ export const DegreeCertificateNewEditForm = ({
               <RHFAutocomplete
                 name="selectedValue"
                 label="Estudiante"
+                disabled={
+                  isSubmitting ||
+                  checkUpdateInputPermission(
+                    'studentId',
+                    user!.role!,
+                    DegreeCertificateModel.name,
+                  )
+                }
                 sx={{
                   flexGrow: 1,
                 }}
@@ -200,6 +213,13 @@ export const DegreeCertificateNewEditForm = ({
                 onClick={() => {
                   isStudentModalOpen.onTrue()
                 }}
+                disabled={
+                  checkUpdateInputPermission(
+                    'studentId',
+                    user!.role!,
+                    DegreeCertificateModel.name,
+                  ) || methods.watch('student').id === 0
+                }
               >
                 <Iconify icon="ic:round-edit" />
                 Editar
@@ -348,6 +368,11 @@ export const DegreeCertificateNewEditForm = ({
                   name="topic"
                   label="Tema"
                   required
+                  disabled={checkUpdateInputPermission(
+                    'topic',
+                    user!.role!,
+                    DegreeCertificateModel.name,
+                  )}
                   inputProps={{
                     maxLength: 255,
                   }}
@@ -359,6 +384,11 @@ export const DegreeCertificateNewEditForm = ({
                     label="Tipo de grado"
                     name="certificateTypeId"
                     required
+                    disabled={checkUpdateInputPermission(
+                      'certificateTypeId',
+                      user!.role!,
+                      DegreeCertificateModel.name,
+                    )}
                   >
                     {degCerTemplates
                       .filter(
@@ -388,6 +418,11 @@ export const DegreeCertificateNewEditForm = ({
                     id="degreeModalityId"
                     label="Modalidad"
                     name="degreeModalityId"
+                    disabled={checkUpdateInputPermission(
+                      'degreeModalityId',
+                      user!.role!,
+                      DegreeCertificateModel.name,
+                    )}
                     required
                   >
                     {degreeModalities.map((modality) => (
@@ -401,6 +436,11 @@ export const DegreeCertificateNewEditForm = ({
                       <RHFTextField
                         name="link"
                         label="Link"
+                        disabled={checkUpdateInputPermission(
+                          'link',
+                          user!.role!,
+                          DegreeCertificateModel.name,
+                        )}
                         inputProps={{ maxLength: 255 }}
                         sx={{ flexGrow: 1 }}
                       />
@@ -409,7 +449,18 @@ export const DegreeCertificateNewEditForm = ({
 
                 {methods.watch('degreeModalityId') &&
                   Number(methods.watch('degreeModalityId')) === 2 && (
-                    <RHFSelect id="roomId" label="Aula" name="roomId">
+                    <RHFSelect
+                      id="roomId"
+                      label="Aula"
+                      name="roomId"
+                      disabled={
+                        checkUpdateInputPermission(
+                          'roomId',
+                          user!.role!,
+                          DegreeCertificateModel.name,
+                        ) || !methods.watch('degreeModalityId')
+                      }
+                    >
                       {rooms.map((room) => (
                         <MenuItem key={room.id} value={room.id}>
                           {room.name}
@@ -422,6 +473,11 @@ export const DegreeCertificateNewEditForm = ({
                   name="duration"
                   label="Duración (min)"
                   type="number"
+                  disabled={checkUpdateInputPermission(
+                    'duration',
+                    user!.role!,
+                    DegreeCertificateModel.name,
+                  )}
                   sx={{ flexGrow: 1 }}
                 />
 
@@ -447,6 +503,12 @@ export const DegreeCertificateNewEditForm = ({
                         field: { clearable: true },
                         textField: { variant: 'outlined' },
                       }}
+                      disablePast
+                      disabled={checkUpdateInputPermission(
+                        'presentationDate',
+                        user!.role!,
+                        DegreeCertificateModel.name,
+                      )}
                     />
                   )}
                 />
@@ -456,6 +518,13 @@ export const DegreeCertificateNewEditForm = ({
                     id="certificateStatusId"
                     label="Estado de acta"
                     name="certificateStatusId"
+                    disabled={
+                      checkUpdateInputPermission(
+                        'certificateStatusId',
+                        user!.role!,
+                        DegreeCertificateModel.name,
+                      ) || !methods.watch('certificateTypeId')
+                    }
                   >
                     {degCerTemplates
                       .find(
@@ -504,6 +573,11 @@ export const DegreeCertificateNewEditForm = ({
             <RHFTextField
               name="changeUniversityResolution"
               label="Resolución de cambio de universidad"
+              disabled={checkUpdateInputPermission(
+                'changeUniversityResolution',
+                user!.role!,
+                DegreeCertificateModel.name,
+              )}
               inputProps={{
                 maxLength: 255,
               }}
@@ -515,6 +589,11 @@ export const DegreeCertificateNewEditForm = ({
               inputProps={{
                 maxLength: 255,
               }}
+              disabled={checkUpdateInputPermission(
+                'changeUniversityName',
+                user!.role!,
+                DegreeCertificateModel.name,
+              )}
               sx={{ flexGrow: 1 }}
             />
             <Controller
@@ -532,6 +611,11 @@ export const DegreeCertificateNewEditForm = ({
                     }
                   }}
                   label="Fecha de cambio de universidad"
+                  disabled={checkUpdateInputPermission(
+                    'changeUniversityDate',
+                    user!.role!,
+                    DegreeCertificateModel.name,
+                  )}
                   format={DATE_FORMAT}
                   slotProps={{
                     field: { clearable: true },
@@ -562,7 +646,15 @@ export const DegreeCertificateNewEditForm = ({
       >
         {currentDegreeCertificate && (
           <Box sx={{ flexGrow: 1 }}>
-            <RHFSwitch name="isClosed" label="Acta cerrada?" />
+            <RHFSwitch
+              name="isClosed"
+              label="Acta cerrada?"
+              disabled={checkUpdateInputPermission(
+                'isClosed',
+                user!.role!,
+                DegreeCertificateModel.name,
+              )}
+            />
           </Box>
         )}
 

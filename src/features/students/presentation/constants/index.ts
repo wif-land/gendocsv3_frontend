@@ -43,7 +43,6 @@ export const NewStudentSchema = yup.object().shape({
   approvedCredits: yup
     .number()
     .positive()
-    .required(VALIDATION_MESSAGES.required)
     .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 247')
     .min(0, 'Debe ser entre 0 y 247'),
   career: yup.number().required(VALIDATION_MESSAGES.required),
@@ -62,7 +61,7 @@ export const NewStudentSchema = yup.object().shape({
     .min(0, 'Debe ser entre 0 y 500')
     .max(500, 'Debe ser entre 0 y 500')
     .nullable(),
-  bachelorDegree: yup.string().required(VALIDATION_MESSAGES.required),
+  bachelorDegree: yup.string().nullable(),
 })
 
 export const resolveDefaultValues = (

@@ -4,6 +4,7 @@ export enum UserRole {
   WRITER = 'WRITER',
   READER = 'READER',
   API = 'API',
+  TEMP_ADMIN = 'TEMP_ADMIN',
 }
 
 export const UserTypeLabels = {
@@ -11,6 +12,7 @@ export const UserTypeLabels = {
   [UserRole.WRITER]: 'Escritor',
   [UserRole.READER]: 'Lector',
   [UserRole.API]: 'API',
+  [UserRole.TEMP_ADMIN]: 'Administrador temporal',
 }
 
 export const USER_TYPES = Object.keys(UserRole).map((key) => ({

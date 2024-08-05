@@ -114,7 +114,7 @@ const DefaultMembersView: React.FC = () => {
               />
 
               <RHFTextField
-                label="Posición"
+                label="Cargo"
                 name="positionName"
                 variant="outlined"
               />

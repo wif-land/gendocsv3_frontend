@@ -234,6 +234,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
         open={confirm.value}
         onClose={confirm.onFalse}
         onConfirm={() => {
+          // eslint-disable-next-line no-console
           console.log('confirm')
         }}
         selectedItems={table.selected}

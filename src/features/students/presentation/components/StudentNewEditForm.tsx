@@ -54,7 +54,7 @@ export const StudentNewEditForm = ({
             Información general
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Información general del estudiante como, nombres, apellidos, cédula,
+            Información general del estudiante como nombres, apellidos, cédula,
             carrera, folio, matrícula, etc.
           </Typography>
         </Grid>
@@ -136,7 +136,7 @@ export const StudentNewEditForm = ({
             Información de grado
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Información de grado del estudiante como, carrera, créditos, etc.
+            Información de grado del estudiante como carrera, créditos, etc.
           </Typography>
         </Grid>
       )}
@@ -170,7 +170,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="approvedCredits"
                 label="Créditos aprobados"
-                required
                 type="number"
               />
 
@@ -221,7 +220,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="bachelorDegree"
                 label="Título de Bachillerato"
-                required
                 inputProps={{
                   maxLength: 100,
                 }}
@@ -257,7 +255,7 @@ export const StudentNewEditForm = ({
             Información de contacto
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Información de contacto del estudiante como, correo, teléfono, etc.
+            Información de contacto del estudiante como correo, teléfono, etc.
           </Typography>
         </Grid>
       )}
@@ -310,7 +308,6 @@ export const StudentNewEditForm = ({
               <RHFTextField
                 name="highSchoolName"
                 label="Nombre del colegio"
-                required
                 inputProps={{
                   maxLength: 100,
                 }}
