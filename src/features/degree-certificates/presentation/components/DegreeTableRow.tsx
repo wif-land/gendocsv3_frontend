@@ -2,7 +2,6 @@
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
@@ -39,10 +38,8 @@ type Props = {
 export const DegreeCertificateTableRow = ({
   row,
   selected,
-  onSelectRow,
   onDeleteRow,
   onEditRow,
-  isOnTable = true,
   activeState,
   onGenerateDocument,
   onOpenAttendance,
@@ -68,12 +65,6 @@ export const DegreeCertificateTableRow = ({
   return (
     <>
       <TableRow hover selected={selected}>
-        {isOnTable && (
-          <TableCell padding="checkbox">
-            <Checkbox checked={selected} onClick={onSelectRow} />
-          </TableCell>
-        )}
-
         <TableCell>
           <ListItemText
             primary={row.auxNumber ?? ''}

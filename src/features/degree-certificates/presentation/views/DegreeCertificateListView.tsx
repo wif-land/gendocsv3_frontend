@@ -20,7 +20,6 @@ import {
   TableHeadCustom,
   TableNoData,
   TablePaginationCustom,
-  TableSelectedAction,
   TableSkeleton,
   emptyRows,
   useTable,
@@ -340,23 +339,6 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={count}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id!.toString()),
-                )
-              }
-              action={
-                <Button color="primary" onClick={confirm.onTrue}>
-                  Cambiar estado
-                </Button>
-              }
-            />
-
             <Scrollbar>
               <Table
                 size={table.dense ? 'small' : 'medium'}
