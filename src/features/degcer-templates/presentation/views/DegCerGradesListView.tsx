@@ -54,6 +54,7 @@ const DegCerGradesListView = ({
                   rowCount={degCerGrades.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
+                  isMultiSelect={false}
                 />
 
                 <TableBody>

@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Theme, SxProps } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import TableRow from '@mui/material/TableRow'
+import Checkbox from '@mui/material/Checkbox'
 import TableHead from '@mui/material/TableHead'
 import TableCell from '@mui/material/TableCell'
 import TableSortLabel from '@mui/material/TableSortLabel'
@@ -16,7 +16,6 @@ const visuallyHidden = {
   whiteSpace: 'nowrap',
   clip: 'rect(0 0 0 0)',
 } as const
-
 type Props = {
   order?: 'asc' | 'desc'
   orderBy?: string
@@ -25,19 +24,34 @@ type Props = {
   numSelected?: number
   onSort?: (id: string) => void
   onSelectAllRows?: (checked: boolean) => void
+  isMultiSelect?: boolean
   sx?: SxProps<Theme>
 }
-
 export default function TableHeadCustom({
   order,
   orderBy,
+  rowCount = 0,
   headLabel,
+  numSelected = 0,
   onSort,
+  onSelectAllRows,
+  isMultiSelect = true,
   sx,
 }: Props) {
   return (
     <TableHead sx={sx}>
       <TableRow>
+        {onSelectAllRows && isMultiSelect === true && (
+          <TableCell padding="checkbox">
+            <Checkbox
+              indeterminate={!!numSelected && numSelected < rowCount}
+              checked={!!rowCount && numSelected === rowCount}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                onSelectAllRows(event.target.checked)
+              }
+            />
+          </TableCell>
+        )}
         {headLabel.map((headCell) => (
           <TableCell
             key={headCell.id}
