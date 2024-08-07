@@ -15,6 +15,8 @@ import {
   IDegreeCertificateFilters,
 } from '../../domain/entities/IDegreeCertificateFilters'
 import { defaultFilters } from '../constants'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
+import { UserRole } from '../../../../features/users/domain/entities/IUser'
 
 interface Props {
   table: TableProps
@@ -31,9 +33,18 @@ export const useDegreeCertificateView = ({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const { user } = useAccountStore()
+
+  const getCareerDefaultId = () => {
+    if (user?.accessCareersDegCert && user.accessCareersDegCert.length > 0) {
+      return user.accessCareersDegCert[0]
+    }
+
+    return 1
+  }
 
   const [filters, setFilters] = useState<IDegreeCertificateTableFilters>(
-    defaultFilters(searchParams),
+    defaultFilters(searchParams, getCareerDefaultId()),
   )
   const [tableData, setTableData] = useState<DegreeCertificateModel[]>([])
   const [firstCharge, setFirstCharge] = useState<boolean>(true)
@@ -51,6 +62,19 @@ export const useDegreeCertificateView = ({
     getReports,
     downloadReport,
   } = useDegreeCertificateMethods()
+
+  const getCareerId = () => {
+    if (user?.role === UserRole.ADMIN) {
+      return filters.careerId || 1
+    }
+
+    if (user?.accessCareersDegCert && user.accessCareersDegCert.length > 0) {
+      console.log(user.accessCareersDegCert[0])
+      return filters.careerId || user.accessCareersDegCert[0]
+    }
+
+    return 1
+  }
 
   useEffect(() => {
     if (searchParams.has('careerId')) {
@@ -152,7 +176,7 @@ export const useDegreeCertificateView = ({
           setTableData(data.degreeCertificates)
           setCount(data.count)
           setFirstCharge(false)
-          setPrevCareer(filters.careerId || 1)
+          setPrevCareer(getCareerId())
           removeLoaderItem('degree-certificates')
         }
       } catch (error) {}
@@ -170,7 +194,7 @@ export const useDegreeCertificateView = ({
           setTableData(data.degreeCertificates)
           setCount(data.count)
           setFirstCharge(false)
-          setPrevCareer(filters.careerId || 1)
+          setPrevCareer(getCareerId())
           removeLoaderItem('degree-certificates')
         }
       } catch (error) {}
@@ -329,7 +353,7 @@ export const useDegreeCertificateView = ({
   }
 
   const handleGenerateNumeration = async () => {
-    await generateNumeration(filters.careerId || 1)
+    await generateNumeration(getCareerId())
     await loadData()
   }
 
@@ -403,7 +427,7 @@ export const useDegreeCertificateView = ({
         setTableData(data.degreeCertificates)
         setCount(data.count)
         setFirstCharge(false)
-        setPrevCareer(filters.careerId || 1)
+        setPrevCareer(getCareerId())
       }
     } catch (error) {}
   }, [table.rowsPerPage, table.page, filters.careerId])
@@ -419,7 +443,7 @@ export const useDegreeCertificateView = ({
         setTableData(data.degreeCertificates)
         setCount(data.count)
         setFirstCharge(false)
-        setPrevCareer(filters.careerId || 1)
+        setPrevCareer(getCareerId())
       }
     } catch (error) {}
   }, [filters])

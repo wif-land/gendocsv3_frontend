@@ -8,12 +8,14 @@ import { UsersNewEditForm } from '../components/UsersNewEditForm'
 import { useUsersStore } from '../state/usersStore'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { IUser } from '../../domain/entities/IUser'
+import { useCareersStore } from '../../../../features/careers/presentation/store/careerStore'
 
 const UsersEditView = () => {
   const settings = useSettingsContext()
   const pathname = usePathname()
   const params = useParams()
   const { modules } = useModulesStore()
+  const { careers } = useCareersStore()
 
   const { id } = params
   const { users } = useUsersStore()
@@ -48,6 +50,15 @@ const UsersEditView = () => {
             .map((module) => ({
               id: module.id,
               label: module.name,
+            })),
+          accessCareersDegCert: careers
+            .filter(
+              (career) =>
+                currentUser?.accessCareersDegCert?.includes(career.id),
+            )
+            .map((career) => ({
+              id: career.id,
+              label: career.name,
             })),
         }}
       />

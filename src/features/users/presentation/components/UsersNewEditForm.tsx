@@ -23,6 +23,7 @@ import { Button, MenuItem } from '@mui/material'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { useRouter } from 'next/navigation'
+import { useCareersStore } from '../../../../features/careers/presentation/store/careerStore'
 
 type Props = {
   currentUser?: IUser
@@ -32,6 +33,7 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const { methods, onSubmit } = useUsersForm(currentUser)
   const { modules } = useModulesStore()
+  const { careers } = useCareersStore()
   const { user } = useAccountStore()
   const router = useRouter()
 
@@ -42,6 +44,7 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
   } = methods
 
   const selectedModules = watch('accessModules')
+  const selectedAccessCareers = watch('accessCareersDegCert')
 
   const renderDetails = (
     <>
@@ -150,6 +153,26 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
                   (module) =>
                     selectedModules?.some(
                       (value: any) => value.id === module.id,
+                    ) === false,
+                )}
+            />
+
+            <Divider />
+
+            <RHFAutocomplete
+              name="accessCareersDegCert"
+              label="Acceso a carreras de actas de grado"
+              multiple
+              freeSolo
+              options={careers!
+                .map((career) => ({
+                  id: career.id,
+                  label: career.name,
+                }))
+                .filter(
+                  (career) =>
+                    selectedAccessCareers?.some(
+                      (value: any) => value.id === career.id,
                     ) === false,
                 )}
             />

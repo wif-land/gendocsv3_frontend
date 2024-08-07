@@ -22,6 +22,7 @@ const DEFAULT_USER: IUser = {
   secondName: '',
   sub: 0,
   accessModules: [],
+  accessCareersDegCert: [],
 }
 
 const STORE_NAME = 'user'

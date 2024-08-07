@@ -74,6 +74,12 @@ export class UserDataSourceImpl implements UserDataSource {
       rest.accessModules = user.accessModules.map((module) => module.id)
     }
 
+    if (user.accessCareersDegCert) {
+      rest.accessCareersDegCert = user.accessCareersDegCert.map(
+        (career) => career.id,
+      )
+    }
+
     const result = await AxiosClient.patch(
       API_ROUTES.USERS.UPDATE(id as number),
       rest,

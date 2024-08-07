@@ -94,7 +94,7 @@ export const useSocketListeners = () => {
     return () => {
       socketClient.off('notification')
       socketClient.off('user-notifications')
-      socketClient.off('change-access-modules')
+      socketClient.off('change-user')
     }
   }, [])
 }

@@ -32,4 +32,5 @@ export interface IUser {
   role: UserRole
   isActive: boolean
   accessModules: number[] | any[]
+  accessCareersDegCert?: number[] | any[]
 }

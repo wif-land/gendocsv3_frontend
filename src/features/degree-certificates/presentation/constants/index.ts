@@ -40,7 +40,7 @@ export interface AttendanceFormValuesProps
 export const getTableHead = (isReport: boolean) => {
   const baseHeaders = [
     { id: 'auxNumber', label: '#Reg' },
-    { id: 'number', label: 'Número' },
+    { id: 'number', label: 'Número Acta' },
     { id: 'topic', label: 'Tema' },
     { id: 'student', label: 'Estudiante' },
     { id: 'presentationDate', label: 'Fecha de presentación' },
@@ -140,13 +140,14 @@ export const getSelectedStudent = (currentStudent?: IStudent): IStudent =>
 
 export const defaultFilters = (
   searchParams: ReadonlyURLSearchParams,
+  defaultCareerId: number,
 ): IDegreeCertificateTableFilters => ({
   field: searchParams.has('field')
     ? (searchParams.get('field') as string)
     : undefined,
   careerId: searchParams.has('careerId')
     ? +parseInt(searchParams.get('careerId') as string)
-    : 1,
+    : defaultCareerId,
   isEnd: searchParams.has('isEnd')
     ? searchParams.get('isEnd') === 'true'
     : false,
@@ -224,7 +225,9 @@ export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
       topic: safeToString(item['Tema']),
       studentDni: safeToString(item['Cédula']),
       certificateType: safeToString(item['Modalidad Titulación']),
-      certificateStatus: safeToString(item['Estado Acta']),
+      certificateStatus: item['Estado Acta']
+        ? String(item['Estado Acta']).trim().toUpperCase()
+        : undefined,
       firstMainQualifierDni: safeToString(item['Ced Calif Prino 1']),
       secondMainQualifierDni: safeToString(item['Ced Calif Prino 2']),
       firstSecondaryQualifierDni: safeToString(item['Ced Calf Supl 1']),

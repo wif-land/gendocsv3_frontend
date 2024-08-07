@@ -22,7 +22,6 @@ export const useUsersForm = (currentUser?: IUser) => {
   const router = useRouter()
   const pathname = usePathname()
   const { users } = useUsersStore()
-  const {} = useUsersStore()
   const { enqueueSnackbar } = useSnackbar()
   const { loader } = useLoaderStore()
 

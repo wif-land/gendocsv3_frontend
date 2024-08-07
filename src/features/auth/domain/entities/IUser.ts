@@ -14,6 +14,7 @@ export interface IUser {
   role?: UserRole | null
   isActive: boolean
   accessModules?: number[] | null
+  accessCareersDegCert?: number[]
 }
 
 export interface IUserPayload {

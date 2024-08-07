@@ -13,6 +13,7 @@ export class UserModel implements IUser {
   password?: string
   isActive: boolean
   accessModules: number[]
+  accessCareersDegCert?: any[] | number[]
 
   constructor(props: IUser) {
     this.id = props.id || undefined
@@ -26,6 +27,7 @@ export class UserModel implements IUser {
     this.role = props.role
     this.isActive = props.isActive
     this.accessModules = props.accessModules
+    this.accessCareersDegCert = props.accessCareersDegCert || []
   }
   static fromJson(json: Record<string, any> | string): UserModel {
     if (typeof json === 'string') {
@@ -43,6 +45,7 @@ export class UserModel implements IUser {
         role: json.roles,
         isActive: json.isActive,
         accessModules: json.accessModules,
+        accessCareersDegCert: json.accessCareersDegCert,
       })
 
       return user

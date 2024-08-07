@@ -3,6 +3,7 @@
 
 import { memo, useCallback, useState } from 'react'
 import {
+  Alert,
   Button,
   Card,
   Container,
@@ -337,6 +338,18 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
               sx={{ p: 2.5, pt: 0 }}
             />
           )} */}
+          {filters.isReport && filters.isEnd === true && (
+            <Alert
+              severity="info"
+              variant="outlined"
+              sx={{
+                mb: 3,
+              }}
+            >
+              Las actas deben tener fecha de presentación y asistencia del
+              presidente de acta para formar el reporte final
+            </Alert>
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <Scrollbar>

@@ -61,12 +61,16 @@ export const resolveDefaultValues = (currentUser?: IUser) => ({
   password: '',
   role: currentUser?.role || UserRole.ADMIN,
   accessModules: currentUser?.accessModules || [],
+  accessCareersDegCert: currentUser?.accessCareersDegCert || [],
 })
 
 export const handleCreate = async (values: FormValuesProps) =>
   await UserUseCasesImpl.getInstance().create({
     ...values,
     accessModules: values.accessModules.map((module) => module.id),
+    accessCareersDegCert: values.accessCareersDegCert?.map(
+      (career) => career.id,
+    ),
   })
 
 export const handleUpdate = async (values: Partial<IUser> | null) => {
