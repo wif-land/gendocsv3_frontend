@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { useEffect } from 'react'
 import { useCareersStore } from '../../../features/careers/presentation/store/careerStore'
-import { useAccountStore } from '@/features/auth/presentation/state/useAccountStore'
+import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
 
 interface IStatusFilterProps {
   onChange: (event: SelectChangeEvent) => void
