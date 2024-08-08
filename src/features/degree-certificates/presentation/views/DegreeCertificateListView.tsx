@@ -177,25 +177,6 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     )
   }, [router, pathname])
 
-  // const handleResetFilters = () => {
-  //   setFilters(defaultFilters(searchParams))
-  //   setVisitedPages([])
-  //   setIsDataFiltered(false)
-  //   setTableData([])
-
-  //   if (!searchParams.has('careerId')) {
-  //     const params = new URLSearchParams('careerId=1')
-  //     router.replace(`${pathname}?${params.toString()}`)
-  //   }
-
-  //   handleFilters('careerId', searchParams.get('careerId')?.toString() || '1')
-  //   handleFilters('isReport', false)
-  //   handleFilters('isEnd', false)
-  //   handleFilters('startDate', new Date(new Date().setMonth(0, 1)))
-  //   handleFilters('endDate', new Date())
-  //   router.replace(`${pathname}?careerId=${searchParams.get('careerId')}`)
-  // }
-
   const reportOptions = [
     {
       value: 'start',

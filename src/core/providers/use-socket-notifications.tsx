@@ -97,4 +97,6 @@ export const useSocketListeners = () => {
       socketClient.off('change-user')
     }
   }, [])
+
+  return { loadUserNotifications }
 }

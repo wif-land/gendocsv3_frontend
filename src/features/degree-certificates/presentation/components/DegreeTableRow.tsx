@@ -13,10 +13,7 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IStudent } from '../../../students/domain/entities/IStudent'
-import {
-  IDegreeModality,
-  IRoom,
-} from '../../../../core/providers/domain/entities/ICertificateProvider'
+import { IRoom } from '../../../../core/providers/domain/entities/ICertificateProvider'
 import dayjs from 'dayjs'
 
 type Props = {
@@ -104,13 +101,6 @@ export const DegreeCertificateTableRow = ({
                 : // format(new Date(presentationDate), 'dd/MM/yyyy HH:MM')
                   ''
             }
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          />
-        </TableCell>
-
-        <TableCell>
-          <ListItemText
-            primary={(row.degreeModality as IDegreeModality).name}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>
