@@ -28,7 +28,7 @@ interface Props extends DialogProps {
 }
 
 export const FuntionaryBulkUploadDialog = ({
-  title = 'Sube un excel con los datos de los funcionarios',
+  title = 'Suba un excel con los datos de los funcionarios',
   open,
   onClose,
   ...other

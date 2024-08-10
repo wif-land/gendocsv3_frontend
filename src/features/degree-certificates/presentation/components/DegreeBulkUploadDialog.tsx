@@ -59,7 +59,7 @@ export interface DegreeCertificateForBulk {
 }
 
 export const DegCerBulkUploadDialog = ({
-  title = 'Sube un excel con los el formato para actas de grado',
+  title = 'Suba un excel con el formato para actas de grado',
   open,
   onClose,
   ...other

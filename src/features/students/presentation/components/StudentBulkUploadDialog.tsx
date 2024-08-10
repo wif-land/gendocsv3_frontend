@@ -32,7 +32,7 @@ interface Props extends DialogProps {
 }
 
 export const StudentBulkUploadDialog = ({
-  title = 'Sube un excel con los datos de los estudiantes',
+  title = 'Suba un excel con los datos de los estudiantes',
   open,
   onClose,
   ...other
@@ -167,6 +167,7 @@ export const StudentBulkUploadDialog = ({
     } catch (error) {
       console.error(error)
       enqueueSnackbar('Error al procesar el archivo', { variant: 'error' })
+      setFileFormat('studentsByCareer')
     }
   }
 
@@ -266,6 +267,12 @@ export const StudentBulkUploadDialog = ({
     }
 
     fetchBulk()
+
+    return () => {
+      setStudents([])
+      setFiles([])
+      setFileFormat('studentsByCareer')
+    }
   }, [students])
 
   useEffect(() => {

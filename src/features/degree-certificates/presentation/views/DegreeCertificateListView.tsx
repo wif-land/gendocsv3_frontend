@@ -47,8 +47,10 @@ import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertific
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useParams } from 'next/navigation'
 import { resolveModuleByCode } from '../../../../shared/utils/ModuleUtil'
+import { useSocketListeners } from '../../../../core/providers/use-socket-notifications'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
+  useSocketListeners()
   const table = useTable()
   const settings = useSettingsContext()
   const confirm = useBoolean()

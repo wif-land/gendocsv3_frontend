@@ -88,15 +88,19 @@ export const DegCerTableRow = ({ row, selected, onViewRow }: Props) => {
 
         <TableCell>
           <Stack direction="row" spacing={1}>
-            {row.certificateTypeStatuses.map((status) => (
-              <ListItemText
-                key={status.id}
-                primary={getStatusIcon(status.certificateStatus.code)}
-                primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-                onClick={() => onViewRow(status.driveId)}
-                sx={{ cursor: 'pointer' }}
-              />
-            ))}
+            {row.certificateTypeStatuses
+              .sort((status) =>
+                status.certificateStatus.code === 'APRO' ? -1 : 1,
+              )
+              .map((status) => (
+                <ListItemText
+                  key={status.id}
+                  primary={getStatusIcon(status.certificateStatus.code)}
+                  primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+                  onClick={() => onViewRow(status.driveId)}
+                  sx={{ cursor: 'pointer' }}
+                />
+              ))}
           </Stack>
         </TableCell>
 
