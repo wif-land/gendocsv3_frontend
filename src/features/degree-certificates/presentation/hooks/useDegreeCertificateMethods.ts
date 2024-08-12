@@ -14,7 +14,7 @@ export const useDegreeCertificateMethods = () => {
   ) =>
     await DegreeCertificatesUseCasesImpl.getInstance().getAll(
       rowsPerPage,
-      currentPage,
+      currentPage * rowsPerPage,
       filters,
     )
 

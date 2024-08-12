@@ -69,7 +69,6 @@ export const useDegreeCertificateView = ({
     }
 
     if (user?.accessCareersDegCert && user.accessCareersDegCert.length > 0) {
-      console.log(user.accessCareersDegCert[0])
       return filters.careerId || user.accessCareersDegCert[0]
     }
 
@@ -240,6 +239,7 @@ export const useDegreeCertificateView = ({
           }
         })
       } else {
+        console.log('filters', table.rowsPerPage, newPage, filters)
         fetchData(
           table.rowsPerPage,
           newPage,
@@ -257,11 +257,7 @@ export const useDegreeCertificateView = ({
     }
   }
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newRowsPerPage = parseInt(event.target.value, 10)
-    table.onChangeRowsPerPage(event)
+  const handleChangeRowsPerPage = () => {
     table.setPage(0)
     setTableData([])
     setVisitedPages([])
@@ -285,7 +281,7 @@ export const useDegreeCertificateView = ({
       })
     } else {
       fetchData(
-        newRowsPerPage,
+        table.rowsPerPage,
         table.page,
         filters as IDegreeCertificateFilters,
       ).then((data) => {
@@ -465,6 +461,10 @@ export const useDegreeCertificateView = ({
       isMounted = false
     }
   }, [filters.careerId, filters.isReport, table.page, table.rowsPerPage])
+
+  useEffect(() => {
+    handleChangeRowsPerPage()
+  }, [table.rowsPerPage])
 
   return {
     count,

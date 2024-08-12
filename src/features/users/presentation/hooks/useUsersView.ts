@@ -34,7 +34,7 @@ export const useUserView = ({
 
   useEffect(() => {
     let isMounted = true
-    if (tableData.length === 0) {
+    if (tableData.length === 0 && table.rowsPerPage === 5) {
       if (isMounted && !isDataFiltered) {
         fetchData(table.rowsPerPage, table.page).then((data) => {
           if (data?.users) {
@@ -81,10 +81,7 @@ export const useUserView = ({
     }
   }
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    table.onChangeRowsPerPage(event)
+  const handleChangeRowsPerPage = () => {
     table.setPage(0)
     setTableData([])
     setVisitedPages([])
@@ -147,6 +144,10 @@ export const useUserView = ({
       },
     )
   }
+
+  useEffect(() => {
+    handleChangeRowsPerPage()
+  }, [table.rowsPerPage])
 
   return {
     loader,

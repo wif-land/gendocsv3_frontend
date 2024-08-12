@@ -23,7 +23,7 @@ import { Button, MenuItem } from '@mui/material'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { useRouter } from 'next/navigation'
-import { useCareersStore } from '../../../../features/careers/presentation/store/careerStore'
+import { useCareerData } from '../../../../core/providers/career-provider'
 
 type Props = {
   currentUser?: IUser
@@ -33,7 +33,7 @@ export const UsersNewEditForm = ({ currentUser }: Props) => {
   const mdUp = useResponsive('up', 'md')
   const { methods, onSubmit } = useUsersForm(currentUser)
   const { modules } = useModulesStore()
-  const { careers } = useCareersStore()
+  const { careers } = useCareerData()
   const { user } = useAccountStore()
   const router = useRouter()
 

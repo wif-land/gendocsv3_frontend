@@ -204,10 +204,6 @@ export const transformData = (
           } as StudentModel
         } else if (item['Horas Vinculación'] && item['Horas Prácticas']) {
           return {
-            firstName,
-            secondName,
-            firstLastName,
-            secondLastName,
             dni: item['Cédula'].toString().trim(),
             vinculationHours: parseInt(item['Horas Vinculación'], 10) || 0,
             internshipHours: parseInt(item['Horas Prácticas'], 10) || 0,

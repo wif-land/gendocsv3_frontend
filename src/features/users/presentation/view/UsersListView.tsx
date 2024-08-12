@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePathname, useRouter } from 'next/navigation'
-import { memo, useCallback, useState } from 'react'
+import { ChangeEvent, memo, useCallback, useState } from 'react'
 import {
   DENSE,
   NO_DENSE,
@@ -64,22 +64,17 @@ const UsersListView = () => {
     [table],
   )
 
-  const {
-    loader,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    handleUpdateRow,
-    handleSearch,
-  } = useUserView({
-    tableData,
-    setTableData,
-    table,
-    setCount,
-    isDataFiltered,
-    visitedPages,
-    setVisitedPages,
-    filters,
-  })
+  const { loader, handleChangePage, handleUpdateRow, handleSearch } =
+    useUserView({
+      tableData,
+      setTableData,
+      table,
+      setCount,
+      isDataFiltered,
+      visitedPages,
+      setVisitedPages,
+      filters,
+    })
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
@@ -200,7 +195,9 @@ const UsersListView = () => {
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            onRowsPerPageChange={(e: ChangeEvent<HTMLInputElement>) => {
+              table.onChangeRowsPerPage(e)
+            }}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />

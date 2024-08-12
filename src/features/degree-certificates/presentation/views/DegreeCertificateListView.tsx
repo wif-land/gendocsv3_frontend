@@ -73,7 +73,6 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     pathname,
     setTableData,
     handleChangePage,
-    handleChangeRowsPerPage,
     handleUpdateRow,
     handleDeleteRow,
     handleGenerateDocument,
@@ -406,7 +405,9 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            onRowsPerPageChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              table.onChangeRowsPerPage(e)
+            }}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
