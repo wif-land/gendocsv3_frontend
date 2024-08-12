@@ -28,7 +28,7 @@ export const DegreeCertificateTableFiltersResult = ({
         onClick={() => onResetFilters()}
         startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
       >
-        Clear
+        Limpiar
       </Button>
     </Stack>
   )

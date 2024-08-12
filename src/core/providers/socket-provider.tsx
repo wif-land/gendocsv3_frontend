@@ -1,17 +1,23 @@
 'use client'
 
-import { NextUIProvider } from '@nextui-org/react'
+import { usePathname } from 'next/navigation'
 import { useSocketListeners } from './use-socket-notifications'
 import { useEffect } from 'react'
 
 export function SocketProviders({ children }: { children: React.ReactNode }) {
-  useSocketListeners()
-
+  const pathname = usePathname()
   const { loadUserNotifications } = useSocketListeners()
 
   useEffect(() => {
-    loadUserNotifications()
-  }, [loadUserNotifications])
+    if (
+      pathname === 'login' ||
+      pathname === 'new-password' ||
+      pathname === 'auth'
+    )
+      return
 
-  return <NextUIProvider>{children}</NextUIProvider>
+    loadUserNotifications()
+  }, [pathname, loadUserNotifications])
+
+  return <>{children}</>
 }

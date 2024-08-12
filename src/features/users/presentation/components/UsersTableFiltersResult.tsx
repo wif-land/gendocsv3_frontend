@@ -28,7 +28,7 @@ export const FunctionaryTableResult = ({
         onClick={() => onResetFilters()}
         startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
       >
-        Clear
+        Limpiar
       </Button>
     </Stack>
   )
