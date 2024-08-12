@@ -137,8 +137,8 @@ export const transformData = (
 
           let career = careers.find(
             (career: ICareer) =>
-              career.name.toLocaleLowerCase() ===
-              (item['Carrera'] as string).toLocaleLowerCase(),
+              career.name.toLowerCase() ===
+              (item['Carrera'] as string).toLowerCase(),
           )?.id as number
 
           if (item['Carrera'] === 'ING. EN SISTEMAS COMPUTAC.E INFORMATICOS') {
@@ -147,6 +147,15 @@ export const transformData = (
                 career.name ===
                 'Ingeniería en Sistemas Computacionales e Informáticos',
             )?.id as number
+          }
+
+          if (career == null) {
+            enqueueSnackbar(
+              `Por favor, asegúrate de que la carrera ${item['Carrera']} sea válida, revisa que el nombre de la carrera sea el mismo del nombre registrado en el sistema`,
+              { variant: 'error' },
+            )
+
+            return
           }
 
           let cityString: string = String(item['Cantón']).toUpperCase().trim()
