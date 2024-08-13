@@ -20,6 +20,7 @@ ENV NODE_ENV=production \
 COPY --from=build --chown=node:node /app/.next ./.next
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/package.json ./package.json
+COPY --from=build --chown=node:node /app/.env ./.env
 
 USER node 
 

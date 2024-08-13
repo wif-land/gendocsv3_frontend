@@ -30,13 +30,6 @@ jobs:
         run: |
           echo "$ENV_FILE_CREDENTIALS" > ./.env
 
-      - name: Build Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: false
-          tags: leninner/gendocsv3-frontend:${{ github.ref_name }}
-
       - name: Tag and push Docker image
         uses: docker/build-push-action@v5
         with:
