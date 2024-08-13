@@ -133,7 +133,7 @@ export class DegreeCertificateDatasourceImpl
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
       {
-        params: { ...filters, pagination },
+        params: { ...filters, ...pagination },
       },
     )
 
@@ -269,7 +269,7 @@ export class DegreeCertificateDatasourceImpl
 
   async getReports(filters: IDegreeCertificateFilters) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isEnd, isReport, ...rest } = filters
+    const { isReport, ...rest } = filters
 
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.REPORTS,
