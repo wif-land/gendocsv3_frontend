@@ -148,7 +148,6 @@ export const DegCerBulkUploadDialog = ({
     if (retryId) {
       bulkLoad(degreeCertificates, user?.id as number, retryId)
     }
-    console.log(degreeCertificates)
   }, [degreeCertificates])
 
   useEffect(() => {

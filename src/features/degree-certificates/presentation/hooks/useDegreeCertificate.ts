@@ -220,7 +220,6 @@ export const useDegreeCertificateView = ({
           }
         })
       } else {
-        console.log('filters', table.rowsPerPage, newPage, filters)
         fetchData(
           table.rowsPerPage,
           newPage,

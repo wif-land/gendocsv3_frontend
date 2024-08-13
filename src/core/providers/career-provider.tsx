@@ -16,10 +16,8 @@ export const useCareerData = () => useContext(CareerContext)
 
 export const CareerProvider = ({ children }: { children: React.ReactNode }) => {
   const [careers, setCareers] = useState<CareerModel[]>([])
-  const isLogged = useAccountStore((state) => state.isLogged)
 
   useEffect(() => {
-    if (!isLogged) return
     if (careers.length > 0) return
 
     CareersDataSourceImpl.getInstance()
@@ -27,7 +25,7 @@ export const CareerProvider = ({ children }: { children: React.ReactNode }) => {
       .then((data) => {
         setCareers(data)
       })
-  }, [careers, isLogged])
+  }, [careers])
 
   return (
     <CareerContext.Provider value={{ careers }}>
