@@ -2,3 +2,13 @@ node_modules
 .next
 .vercel
 .vscode
+.github
+.env.example
+.prettierrc
+.eslintrc.json
+.eslintignore
+.gitignore
+README.md
+SECURITY.md
+.git
+Dockerfile

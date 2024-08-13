@@ -9,35 +9,39 @@ jobs:
   deploy-production:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up QEMU
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU for cross-platform builds
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build artifacts
+      - name: Prepare environment
         env:
           ENV_FILE_CREDENTIALS: ${{ secrets.ENV_FILE_CREDENTIALS }}
         run: |
           echo "$ENV_FILE_CREDENTIALS" > ./.env
 
-      - name: Build and push tag to Docker Hub
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.production
-          push: true
+          push: false
           tags: leninner/gendocsv3-frontend:${{ github.ref_name }}
 
-      - name: Build and push latest tag to Docker Hub
+      - name: Tag and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.production
           push: true
-          tags: leninner/gendocsv3-frontend:latest
+          tags: |
+            leninner/gendocsv3-frontend:${{ github.ref_name }}
+            leninner/gendocsv3-frontend:latest
