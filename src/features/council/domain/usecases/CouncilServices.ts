@@ -6,6 +6,7 @@ import { ICouncil, ICouncilFormValues } from '../entities/ICouncil'
 import { ICouncilFilters } from '../entities/ICouncilFilters'
 import { CouncilRepository } from '../repositories/CouncilRepository'
 import { ICouncilAttendee } from '../entities/ICouncilAttendee'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 interface CouncilUseCases {
   create(council: ICouncilFormValues): Promise<CouncilModel>
@@ -15,8 +16,7 @@ interface CouncilUseCases {
   getByFilters(
     filters: ICouncilFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination: PaginationDTO,
   ): Promise<{
     count: number
     councils: CouncilModel[]
@@ -30,8 +30,7 @@ interface CouncilUseCases {
 
   getAllCouncilsByModuleId(
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     councils: CouncilModel[]
     count: number
@@ -118,10 +117,8 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
   getByFilters = async (
     filters: ICouncilFilters,
     moduleId: number,
-    limit = 5,
-    offset = 0,
-  ) =>
-    await this.councilRepository.getByFilters(filters, moduleId, limit, offset)
+    pagination: PaginationDTO,
+  ) => await this.councilRepository.getByFilters(filters, moduleId, pagination)
 
   update = async (
     id: number,
@@ -172,14 +169,9 @@ export class CouncilsUseCasesImpl implements CouncilUseCases {
 
   getAllCouncilsByModuleId = async (
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) =>
-    await this.councilRepository.getAllCouncilsByModuleId(
-      moduleId,
-      limit,
-      offset,
-    )
+    await this.councilRepository.getAllCouncilsByModuleId(moduleId, pagination)
 
   toggleCouncilStatus = async (councils: Partial<ICouncil>[]) =>
     await this.councilRepository.bulkUpdate(councils)

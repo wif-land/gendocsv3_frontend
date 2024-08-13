@@ -8,14 +8,14 @@ import {
 } from '../../domain/entities/ICouncil'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 import { INotifyMembers } from '../../domain/entities/INotifyMembers'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface CouncilsDataSource {
   getAll(): Promise<CouncilModel[]>
 
   getAllCouncilsByModuleId(
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     councils: CouncilModel[]
     count: number
@@ -24,8 +24,7 @@ export interface CouncilsDataSource {
   getByFilters(
     filters: ICouncilFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     councils: CouncilModel[]
     count: number
@@ -101,11 +100,10 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
 
   getAllCouncilsByModuleId = async (
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => {
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL, {
-      params: { moduleId, limit, offset },
+      params: { moduleId, ...pagination },
     })
 
     if ('error' in result) {
@@ -138,15 +136,13 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
   getByFilters = async (
     filters: ICouncilFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => {
     const { startDate, endDate } = filters
 
     const formattedFilters = {
       moduleId,
-      limit,
-      offset,
+      ...pagination,
       ...filters,
       startDate: startDate
         ? (startDate as Date).toISOString().split('T')[0]

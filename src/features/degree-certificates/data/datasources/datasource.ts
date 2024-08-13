@@ -7,12 +7,12 @@ import {
 } from '../../domain/entities/IDegreeCertificates'
 import { DegreeCertificateModel } from '../models/DegreeCertificateModel'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface IDegreeCertificateDatasource {
   getAll(
-    limit: number,
-    offset: number,
     filters: IDegreeCertificateFilters,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -20,8 +20,7 @@ export interface IDegreeCertificateDatasource {
 
   getByFilters(
     filters: IDegreeCertificateFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -104,14 +103,13 @@ export class DegreeCertificateDatasourceImpl
   }
 
   getAll = async (
-    limit: number,
-    offset: number,
     filters: IDegreeCertificateFilters,
+    pagination?: PaginationDTO,
   ) => {
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
       {
-        params: { limit, offset, ...filters },
+        params: { ...pagination, ...filters },
       },
     )
 
@@ -130,13 +128,12 @@ export class DegreeCertificateDatasourceImpl
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => {
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
       {
-        params: { ...filters, limit, offset },
+        params: { ...filters, pagination },
       },
     )
 

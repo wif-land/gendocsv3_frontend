@@ -4,7 +4,7 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IDocument } from '../../domain/entities/IDocument'
 import { NumerationModel } from '../models/NumerationModel'
-import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface DocumentsDataSource {
   getAll(): Promise<{
@@ -13,7 +13,7 @@ export interface DocumentsDataSource {
 
   getAllDocumentsByModuleId(
     moduleId: number,
-    paginationParams: PaginationParams,
+    pagination: PaginationDTO,
   ): Promise<{
     documents: DocumentModel[]
     count: number
@@ -55,12 +55,9 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     return DocumentsDataSourceImpl.instance
   }
 
-  async getAllDocumentsByModuleId(
-    moduleId: number,
-    paginationParams: PaginationParams,
-  ) {
+  async getAllDocumentsByModuleId(moduleId: number, pagination: PaginationDTO) {
     const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.GET_ALL, {
-      params: { moduleId, ...paginationParams },
+      params: { moduleId, ...pagination },
     })
 
     if ('error' in result) {

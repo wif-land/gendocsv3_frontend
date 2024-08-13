@@ -3,6 +3,7 @@ import { UserUseCasesImpl } from '../../domain/usecases/UserService'
 import { IUser } from '../../domain/entities/IUser'
 import { useUsersStore } from '../state/usersStore'
 import { IUserFilters } from '../../domain/entities/IUserFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useUsersMethods = () => {
   const { users, setUsers } = useUsersStore()
@@ -10,8 +11,10 @@ export const useUsersMethods = () => {
 
   const fetchData = async (rowsPerPage: number, currentPage: number) =>
     await UserUseCasesImpl.getInstance().getAll(
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   const updateRow = async (user: Partial<IUser>) =>
@@ -26,9 +29,11 @@ export const useUsersMethods = () => {
     filters: IUserFilters,
   ) =>
     await UserUseCasesImpl.getInstance().getByFiters(
-      rowsPerPage,
-      currentPage * rowsPerPage,
       filters,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   return {

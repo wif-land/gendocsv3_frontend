@@ -4,6 +4,7 @@ import { IUpdateCouncil } from '../../domain/entities/ICouncil'
 import { useCouncilsStore } from '../store/councilsStore'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 import { CouncilRepositoryImpl } from '../../data/repositories/CouncilRepositoryImpl'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useCouncilsMethods = () => {
   const { councils, setCouncils } = useCouncilsStore()
@@ -16,8 +17,10 @@ export const useCouncilsMethods = () => {
   ) =>
     await CouncilsUseCasesImpl.getInstance().getAllCouncilsByModuleId(
       moduleId,
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   const updateRow = async (council: IUpdateCouncil) =>
@@ -35,8 +38,10 @@ export const useCouncilsMethods = () => {
     await CouncilsUseCasesImpl.getInstance().getByFilters(
       filters,
       moduleId,
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   return {

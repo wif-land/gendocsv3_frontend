@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import {
   ICreateFunctionary,
@@ -6,18 +7,14 @@ import {
 import { IFunctionaryFilters } from '../entities/IFunctionaryFilters'
 
 export interface FunctionaryRepository {
-  getAll: (
-    limit: number,
-    offset: number,
-  ) => Promise<{
+  getAll: (pagination?: PaginationDTO) => Promise<{
     count: number
     functionaries: FunctionaryModel[]
   }>
 
   getByFilters: (
     filters: IFunctionaryFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => Promise<{
     count: number
     functionaries: FunctionaryModel[]

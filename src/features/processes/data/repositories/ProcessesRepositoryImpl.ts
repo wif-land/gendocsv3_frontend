@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { IProcess } from '../../domain/entities/IProcess'
 import { IProcessFilters } from '../../domain/entities/IProcessFilters'
 import { ProcessesRepository } from '../../domain/repositories/ProcessesRepository'
@@ -24,18 +25,16 @@ export class ProcessesRepositoryImpl implements ProcessesRepository {
 
   getAllProcessesByModuleId = async (
     moduleId: number,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getAllProcessesByModuleId(moduleId, limit, offset)
+    pagination?: PaginationDTO,
+  ) => await this.datasource.getAllProcessesByModuleId(moduleId, pagination)
 
   getAll = async () => await this.datasource.getAll()
 
   getByFilters = async (
     filters: IProcessFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getByFilter(filters, moduleId, limit, offset)
+    pagination?: PaginationDTO,
+  ) => await this.datasource.getByFilter(filters, moduleId, pagination)
 
   update = async (data: Partial<ProcessModel>) =>
     await this.datasource.update(data)

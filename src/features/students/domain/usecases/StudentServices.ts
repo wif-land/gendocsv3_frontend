@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { StudentModel } from '../../data/models/StudentModel'
 import { StudentRepositoryImpl } from '../../data/repositories/StudentRepositoryImpl'
 import { IStudent } from '../entities/IStudent'
@@ -5,18 +6,14 @@ import { IStudentFilters } from '../entities/IStudentFilters'
 import { StudentRepository } from '../repositories/StudentRepository'
 
 interface StudentUseCases {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     students: StudentModel[]
   }>
 
   getByFilters(
     filters: IStudentFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     students: StudentModel[]
@@ -51,11 +48,11 @@ export class StudentUseCasesImpl implements StudentUseCases {
   getById = async (id: number): Promise<StudentModel> =>
     await this.repository.getById(id)
 
-  getAll = async (limit: number, offset: number) =>
-    await this.repository.getAll(limit, offset)
+  getAll = async (pagination: PaginationDTO) =>
+    await this.repository.getAll(pagination)
 
-  getByFilters = async (filters: IStudentFilters, limit = 5, offset = 0) =>
-    await this.repository.getByFilters(filters, limit, offset)
+  getByFilters = async (filters: IStudentFilters, pagination: PaginationDTO) =>
+    await this.repository.getByFilters(filters, pagination)
 
   create = async (data: IStudent) => await this.repository.create(data)
 

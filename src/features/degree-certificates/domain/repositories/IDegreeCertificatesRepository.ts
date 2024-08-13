@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
 import { IDegreeCertificateFilters } from '../entities/IDegreeCertificateFilters'
@@ -8,9 +9,8 @@ import {
 
 export interface IDegreeCertificatesRepository {
   getAll(
-    limit: number,
-    offset: number,
     filters: IDegreeCertificateFilters,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -18,8 +18,7 @@ export interface IDegreeCertificatesRepository {
 
   getByFilters(
     filters: IDegreeCertificateFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]

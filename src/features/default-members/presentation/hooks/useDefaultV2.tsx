@@ -23,6 +23,7 @@ import { useParams } from 'next/navigation'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
 import useModulesStore from '../../../../shared/store/modulesStore'
 import { useDefaultMembersStore } from '../store/defaultMembersStore'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useDefaultMembersView = () => {
   const { codeModule } = useParams()
@@ -227,7 +228,7 @@ export const useDefaultMembersView = () => {
         : FunctionaryUseCasesImpl
 
       await UseCasesImpl.getInstance()
-        .getByFilters({ field: debouncedValue })
+        .getByFilters({ field: debouncedValue }, new PaginationDTO())
         .then((res) => {
           if (isMounted) {
             const membersData = isStudent

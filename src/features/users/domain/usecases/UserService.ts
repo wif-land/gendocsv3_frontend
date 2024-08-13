@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { UserModel } from '../../data/models/UserModel'
 import { UserRepositoryImpl } from '../../data/repositories/UserRepositoryImpl'
 import { IUser } from '../entities/IUser'
@@ -7,18 +8,14 @@ import { UserRepository } from '../repositories/UserRepository'
 interface UserUseCases {
   create(data: IUser): Promise<UserModel>
 
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     users: UserModel[]
   }>
 
   getByFiters(
-    limit: number,
-    offset: number,
     filters: IUserFilters,
+    pagination: PaginationDTO,
   ): Promise<{
     count: number
     users: UserModel[]
@@ -45,11 +42,11 @@ export class UserUseCasesImpl implements UserUseCases {
 
   create = async (data: IUser) => await this.userRepository.create(data)
 
-  getAll = async (limit: number, offset: number) =>
-    await this.userRepository.getAll(limit, offset)
+  getAll = async (pagination: PaginationDTO) =>
+    await this.userRepository.getAll(pagination)
 
-  getByFiters = async (limit: number, offset: number, filters: IUserFilters) =>
-    await this.userRepository.getByFilters(limit, offset, filters)
+  getByFiters = async (filters: IUserFilters, pagination: PaginationDTO) =>
+    await this.userRepository.getByFilters(filters, pagination)
 
   update = async (data: Partial<IUser>) =>
     await this.userRepository.update(data)

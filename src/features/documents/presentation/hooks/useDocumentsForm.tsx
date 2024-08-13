@@ -22,6 +22,7 @@ import { StudentUseCasesImpl } from '../../../students/domain/usecases/StudentSe
 import { useAccountStore } from '../../../auth/presentation/state/useAccountStore'
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 interface IDocumentsForm extends Omit<Partial<IDocument>, 'studentId' | 'id'> {
   student: {
@@ -145,7 +146,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     }
 
     CouncilsUseCasesImpl.getInstance()
-      .getAllCouncilsByModuleId(moduleId, 10, 0)
+      .getAllCouncilsByModuleId(moduleId, new PaginationDTO())
       .then((result) => {
         if (result.councils) {
           setCouncils(result.councils)
@@ -153,7 +154,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       })
 
     ProcessesUseCasesImpl.getInstance()
-      .getAllProcessesByModuleId(moduleId, 10, 0)
+      .getAllProcessesByModuleId(moduleId, new PaginationDTO())
       .then((result) => {
         if (result.processes) {
           setProcesses(result.processes)
@@ -161,7 +162,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       })
 
     StudentUseCasesImpl.getInstance()
-      .getAll(10, 0)
+      .getAll(new PaginationDTO())
       .then((result) => {
         if (result.students) {
           setStudents(result.students)
@@ -169,7 +170,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       })
 
     FunctionaryUseCasesImpl.getInstance()
-      .getAll(10, 0)
+      .getAll(new PaginationDTO())
       .then((result) => {
         if (result.functionaries) {
           setFunctionaries(result.functionaries)

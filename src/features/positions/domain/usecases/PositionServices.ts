@@ -1,21 +1,18 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { PositionModel } from '../../data/models/PositionModel'
 import { PositionRepositoryImpl } from '../../data/repositories/PositionRepositoryImpl'
 import { IPosition } from '../entities/IPosition'
 import { PositionRepository } from '../repositories/PositionRepository'
 
 interface PositionUseCases {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     positions: PositionModel[]
   }>
 
   getByField(
     field: string,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     positions: PositionModel[]
@@ -44,11 +41,11 @@ export class PositionUseCasesImpl implements PositionUseCases {
   private functionaryRepository: PositionRepository =
     PositionRepositoryImpl.getInstance()
 
-  getAll = async (limit: number, offset: number) =>
-    this.functionaryRepository.getAll(limit, offset)
+  getAll = async (pagination: PaginationDTO) =>
+    this.functionaryRepository.getAll(pagination)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    this.functionaryRepository.getByField(field, limit, offset)
+  getByField = async (field: string, pagination: PaginationDTO) =>
+    this.functionaryRepository.getByField(field, pagination)
 
   update = async (position: Partial<IPosition>) =>
     this.functionaryRepository.update(position)

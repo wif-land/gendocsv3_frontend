@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { IUser } from '../../domain/entities/IUser'
 import { IUserFilters } from '../../domain/entities/IUserFilters'
 import { UserRepository } from '../../domain/repositories/UserRepository'
@@ -21,11 +22,11 @@ export class UserRepositoryImpl implements UserRepository {
 
   private constructor(private readonly datasource: UserDataSource) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.datasource.getAll(limit, offset)
+  getAll = async (pagination?: PaginationDTO) =>
+    await this.datasource.getAll(pagination)
 
-  getByFilters = async (limit: number, offset: number, filters: IUserFilters) =>
-    await this.datasource.getByFilters(limit, offset, filters)
+  getByFilters = async (filters: IUserFilters, pagination?: PaginationDTO) =>
+    await this.datasource.getByFilters(filters, pagination)
 
   update = async (data: Partial<IUser>) => await this.datasource.update(data)
 

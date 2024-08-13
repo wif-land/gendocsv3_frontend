@@ -1,4 +1,4 @@
-import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { NumerationModel } from '../../data/models/NumerationModel'
 import { IDocument } from '../entities/IDocument'
@@ -12,7 +12,7 @@ export interface DocumentsRepository {
 
   getAllDocumentsByModuleId: (
     moduleId: number,
-    params: PaginationParams,
+    params: PaginationDTO,
   ) => Promise<{
     count: number
     documents: DocumentModel[]

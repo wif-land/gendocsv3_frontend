@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { IStudent } from '../../../students/domain/entities/IStudent'
 import { useStudentStore } from '../../../students/presentation/state/studentStore'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
@@ -13,9 +14,11 @@ export const useDegreeCertificateMethods = () => {
     filters: IDegreeCertificateFilters,
   ) =>
     await DegreeCertificatesUseCasesImpl.getInstance().getAll(
-      rowsPerPage,
-      currentPage * rowsPerPage,
       filters,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   const toggleIsClosed = async (

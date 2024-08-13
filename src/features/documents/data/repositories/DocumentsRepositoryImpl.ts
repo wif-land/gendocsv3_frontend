@@ -1,4 +1,4 @@
-import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IDocument } from '../../domain/entities/IDocument'
 import { DocumentsRepository } from '../../domain/repositories/DocumentsRepository'
@@ -22,10 +22,8 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
 
   private constructor(private readonly datasource: DocumentsDataSource) {}
 
-  getAllDocumentsByModuleId = async (
-    moduleId: number,
-    params: PaginationParams,
-  ) => await this.datasource.getAllDocumentsByModuleId(moduleId, params)
+  getAllDocumentsByModuleId = async (moduleId: number, params: PaginationDTO) =>
+    await this.datasource.getAllDocumentsByModuleId(moduleId, params)
 
   getAll = async () => await this.datasource.getAll()
 

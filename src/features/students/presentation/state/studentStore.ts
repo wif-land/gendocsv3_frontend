@@ -2,11 +2,12 @@ import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { StudentUseCasesImpl } from '../../domain/usecases/StudentServices'
 import { StudentModel } from '../../data/models/StudentModel'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 interface StoreState {
   students: StudentModel[]
   setStudents: (students?: StudentModel[] | undefined) => void
-  get: (limit: number, offset: number) => void
+  get: (pagination: PaginationDTO) => void
   getById: (id: number) => Promise<StudentModel>
   getByFilter: (field: string) => Promise<void>
 }
@@ -19,16 +20,14 @@ export const useStudentStore = create<StoreState>(
     (set) => ({
       students: DEFAULT_STUDENTS,
       setStudents: (students) => set({ students }),
-      get: async (limit: number, offset: number) => {
-        const result = await StudentUseCasesImpl.getInstance().getAll(
-          limit,
-          offset,
-        )
+      get: async (pagination: PaginationDTO) => {
+        const result =
+          await StudentUseCasesImpl.getInstance().getAll(pagination)
         set({ students: result.students })
       },
       getByFilter: async (field) => {
         await StudentUseCasesImpl.getInstance()
-          .getByFilters({ field })
+          .getByFilters({ field }, new PaginationDTO())
           .then((res) => {
             set({ students: res.students })
           })

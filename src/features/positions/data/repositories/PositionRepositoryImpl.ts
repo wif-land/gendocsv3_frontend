@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { IPosition } from '../../domain/entities/IPosition'
 import { PositionRepository } from '../../domain/repositories/PositionRepository'
 import {
@@ -20,11 +21,11 @@ export class PositionRepositoryImpl implements PositionRepository {
 
   private constructor(private readonly datasource: PositionDataSource) {}
 
-  getAll = async (limit: number, offset: number) =>
-    this.datasource.getAll(limit, offset)
+  getAll = async (pagination: PaginationDTO) =>
+    this.datasource.getAll(pagination)
 
-  getByField = async (field: string, limit: number, offset: number) =>
-    this.datasource.getByField(field, limit, offset)
+  getByField = async (field: string, pagination: PaginationDTO) =>
+    this.datasource.getByField(field, pagination)
 
   update = async (position: Partial<IPosition>) =>
     this.datasource.update(position)

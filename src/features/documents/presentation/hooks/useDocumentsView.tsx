@@ -19,7 +19,7 @@ import {
 import { defaultFilters } from '../constants/constants'
 import { isEqual } from 'lodash'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
-import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useDocumentView = (moduleName: string) => {
   const { documents, setDocuments } = useDocumentStore()
@@ -127,7 +127,7 @@ export const useDocumentView = (moduleName: string) => {
         DocumentsUseCasesImpl.getInstance()
           .getAllDocumentsByModuleId(
             moduleIdentifier,
-            new PaginationParams(newPage, table.rowsPerPage),
+            new PaginationDTO(newPage, table.rowsPerPage),
           )
           .then((response) => {
             if (response?.count === 0) return
@@ -178,7 +178,7 @@ export const useDocumentView = (moduleName: string) => {
       const result =
         await DocumentsUseCasesImpl.getInstance().getAllDocumentsByModuleId(
           moduleIdentifier,
-          new PaginationParams(table.page + 1, table.rowsPerPage),
+          new PaginationDTO(table.page + 1, table.rowsPerPage),
         )
 
       if (result) {

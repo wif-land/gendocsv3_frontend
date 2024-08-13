@@ -21,6 +21,7 @@ import { IFunctionary } from '../../../../features/functionaries/domain/entities
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { FunctionaryUseCasesImpl } from '../../../../features/functionaries/domain/usecases/FunctionaryServices'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
   const router = useRouter()
@@ -89,7 +90,7 @@ export const useFunctionaryForm = (currentFunctionary?: IPosition) => {
 
     const filteredFunctionaries = async (field: string) => {
       await FunctionaryUseCasesImpl.getInstance()
-        .getByFilters({ field })
+        .getByFilters({ field }, new PaginationDTO())
         .then((res) => {
           if (isMounted) {
             setFunctionaries(res.functionaries)

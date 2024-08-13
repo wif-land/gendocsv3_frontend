@@ -13,6 +13,7 @@ import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { useDefaultMembersStore } from '../../../default-members/presentation/store/defaultMembersStore'
 import { resolveModuleId } from '../../../../shared/utils/ModuleUtil'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useCouncilsForm = (currentCouncil?: ICouncil) => {
   const router = useRouter()
@@ -112,7 +113,7 @@ export const useCouncilsForm = (currentCouncil?: ICouncil) => {
     }
 
     FunctionaryUseCasesImpl.getInstance()
-      .getByFilters({ field: searchDebounced })
+      .getByFilters({ field: searchDebounced }, new PaginationDTO())
       .then((result) => {
         if (!isMounted) return
 

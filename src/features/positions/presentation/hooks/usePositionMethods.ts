@@ -2,6 +2,7 @@ import { usePositionStore } from '../state/usePositionStore'
 import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { PositionUseCasesImpl } from '../../domain/usecases/PositionServices'
 import { PositionModel } from '../../data/models/PositionModel'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useFunctionaryMethods = () => {
   const { positions, setPositions } = usePositionStore()
@@ -9,8 +10,10 @@ export const useFunctionaryMethods = () => {
 
   const fetchData = async (rowsPerPage: number, currentPage: number) => {
     const response = await PositionUseCasesImpl.getInstance().getAll(
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
     return response as {
@@ -32,8 +35,10 @@ export const useFunctionaryMethods = () => {
   ) =>
     await PositionUseCasesImpl.getInstance().getByField(
       searchTerm,
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   return {

@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { FunctionaryRepositoryImpl } from '../../data/repositories/FunctionaryRepositoryImpl'
 import {
@@ -11,18 +12,14 @@ import { FunctionaryRepository } from '../repositories/FunctionaryRepository'
 interface FunctionaryUseCases {
   create(data: IFunctionary): Promise<FunctionaryModel>
 
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     functionaries: FunctionaryModel[]
   }>
 
   getByFilters(
     filters: IFunctionaryFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     functionaries: FunctionaryModel[]
@@ -59,11 +56,13 @@ export class FunctionaryUseCasesImpl implements FunctionaryUseCases {
       thirdLevelDegree: data.thirdLevelDegree,
     })
 
-  getAll = async (limit: number, offset: number) =>
-    await this.functionaryRepository.getAll(limit, offset)
+  getAll = async (pagination: PaginationDTO) =>
+    await this.functionaryRepository.getAll(pagination)
 
-  getByFilters = async (filters: IFunctionaryFilters, limit = 5, offset = 0) =>
-    await this.functionaryRepository.getByFilters(filters, limit, offset)
+  getByFilters = async (
+    filters: IFunctionaryFilters,
+    pagination: PaginationDTO,
+  ) => await this.functionaryRepository.getByFilters(filters, pagination)
 
   update = async (id: number, data: Partial<IFunctionaryFormValues>) => {
     const extraData: Record<string, number> = {}

@@ -9,6 +9,8 @@ interface StoreState {
   user: IUser | undefined
   setUser: (user?: IUser) => void
   retreiveFromCookie: () => Promise<boolean>
+  isLogged: boolean
+  setIsLogged: (isLogged: boolean) => void
 }
 
 const DEFAULT_USER: IUser = {
@@ -44,6 +46,10 @@ export const useAccountStore = create<StoreState>(
 
         set({ user: { ...userWithoutSub, id: sub, sub } })
         return true
+      },
+      isLogged: false,
+      setIsLogged: (isLogged: boolean) => {
+        set({ isLogged })
       },
     }),
     {

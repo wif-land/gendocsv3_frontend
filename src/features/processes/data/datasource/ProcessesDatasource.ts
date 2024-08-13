@@ -4,6 +4,7 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IProcess } from '../../domain/entities/IProcess'
 import { IProcessFilters } from '../../domain/entities/IProcessFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface ProcessesDataSource {
   getAll(): Promise<{
@@ -12,8 +13,7 @@ export interface ProcessesDataSource {
 
   getAllProcessesByModuleId(
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     processes: ProcessModel[]
     count: number
@@ -22,8 +22,7 @@ export interface ProcessesDataSource {
   getByFilter(
     filters: IProcessFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     processes: ProcessModel[]
     count: number
@@ -51,11 +50,10 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
 
   getAllProcessesByModuleId = async (
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => {
     const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_BY_MODULE, {
-      params: { moduleId, limit, offset },
+      params: { moduleId, ...pagination },
     })
 
     if ('error' in result) {
@@ -96,11 +94,10 @@ export class ProcessesDataSourceImpl implements ProcessesDataSource {
   getByFilter = async (
     filters: IProcessFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => {
     const result = await AxiosClient.get(API_ROUTES.PROCESSES.GET_BY_FILTERS, {
-      params: { ...filters, moduleId, limit, offset },
+      params: { ...filters, moduleId, ...pagination },
     })
 
     if ('error' in result) {

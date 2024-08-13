@@ -4,6 +4,7 @@ import { StudentModel } from '../../data/models/StudentModel'
 import { useStudentStore } from '../state/studentStore'
 import { IStudent } from '../../domain/entities/IStudent'
 import { IStudentFilters } from '../../domain/entities/IStudentFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useStudentCommands = () => {
   const { students } = useStudentStore()
@@ -11,8 +12,10 @@ export const useStudentCommands = () => {
 
   const fetchData = async (rowsPerPage: number, currentPage: number) =>
     await StudentUseCasesImpl.getInstance().getAll(
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   const updateRow = async (student: Partial<StudentModel>) =>
@@ -30,8 +33,10 @@ export const useStudentCommands = () => {
   ) =>
     await StudentUseCasesImpl.getInstance().getByFilters(
       filters,
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   const bulkCreate = async (

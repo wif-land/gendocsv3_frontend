@@ -1,19 +1,16 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { PositionModel } from '../../data/models/PositionModel'
 import { IPosition } from '../entities/IPosition'
 
 export interface PositionRepository {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     positions: PositionModel[]
   }>
 
   getByField(
     field: string,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     positions: PositionModel[]

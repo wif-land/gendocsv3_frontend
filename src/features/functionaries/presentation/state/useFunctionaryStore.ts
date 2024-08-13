@@ -2,6 +2,7 @@ import { create, StateCreator } from 'zustand'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 interface StoreState {
   functionaries: IFunctionary[]
@@ -11,7 +12,6 @@ interface StoreState {
 
 const STORE_NAME = 'functionaries-store'
 const DEFAULT_FUNCTIONARIES: IFunctionary[] = []
-const LIMIT = 5
 
 export const useFunctionaryStore = create<StoreState>(
   persist(
@@ -20,8 +20,7 @@ export const useFunctionaryStore = create<StoreState>(
       setFunctionaries: (functionaries) => set({ functionaries }),
       get: async () => {
         const result = await FunctionaryUseCasesImpl.getInstance().getAll(
-          LIMIT,
-          0,
+          new PaginationDTO(1, 5),
         )
         set({ functionaries: result.functionaries })
       },

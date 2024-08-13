@@ -10,6 +10,7 @@ import {
 } from '../datasources/CouncilDatasource'
 import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 import { INotifyMembers } from '../../domain/entities/INotifyMembers'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export class CouncilRepositoryImpl implements CouncilRepository {
   static instance: CouncilRepositoryImpl
@@ -28,18 +29,16 @@ export class CouncilRepositoryImpl implements CouncilRepository {
 
   getAllCouncilsByModuleId = async (
     moduleId: number,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getAllCouncilsByModuleId(moduleId, limit, offset)
+    pagination?: PaginationDTO,
+  ) => await this.datasource.getAllCouncilsByModuleId(moduleId, pagination)
 
   getAll = async () => await this.datasource.getAll()
 
   getByFilters = async (
     filters: ICouncilFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getByFilters(filters, moduleId, limit, offset)
+    pagination?: PaginationDTO,
+  ) => await this.datasource.getByFilters(filters, moduleId, pagination)
 
   update = async (data: IUpdateCouncil) => await this.datasource.update(data)
 

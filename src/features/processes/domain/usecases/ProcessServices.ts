@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { ProcessesRepositoryImpl } from '../../data/repositories/ProcessesRepositoryImpl'
 import { IProcess } from '../entities/IProcess'
@@ -18,8 +19,7 @@ interface ProcessUseCases {
   getByFilters(
     filters: IProcessFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     processes: ProcessModel[]
@@ -33,8 +33,7 @@ interface ProcessUseCases {
 
   getAllProcessesByModuleId(
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     processes: ProcessModel[]
     count: number
@@ -67,10 +66,8 @@ export class ProcessesUseCasesImpl implements ProcessUseCases {
   getByFilters = async (
     filters: IProcessFilters,
     moduleId: number,
-    limit = 5,
-    offset = 0,
-  ) =>
-    await this.processRepository.getByFilters(filters, moduleId, limit, offset)
+    pagination: PaginationDTO,
+  ) => await this.processRepository.getByFilters(filters, moduleId, pagination)
 
   update = async (id: number, process: Partial<ProcessModel>) =>
     await this.processRepository.update({
@@ -80,14 +77,9 @@ export class ProcessesUseCasesImpl implements ProcessUseCases {
 
   getAllProcessesByModuleId = async (
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) =>
-    await this.processRepository.getAllProcessesByModuleId(
-      moduleId,
-      limit,
-      offset,
-    )
+    await this.processRepository.getAllProcessesByModuleId(moduleId, pagination)
 
   toggleProcessStatus = async (processes: Partial<IProcess>[]) =>
     await this.processRepository.bulkUpdate(processes)

@@ -3,20 +3,17 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { UserModel } from '../models/UserModel'
 import { IUser } from '../../domain/entities/IUser'
 import { IUserFilters } from '../../domain/entities/IUserFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface UserDataSource {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     users: UserModel[]
   }>
 
   getByFilters(
-    limit: number,
-    offset: number,
     filters: IUserFilters,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     users: UserModel[]
@@ -41,9 +38,11 @@ export class UserDataSourceImpl implements UserDataSource {
     return UserDataSourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
+  getAll = async (pagination?: PaginationDTO) => {
+    console.log('pagination', pagination)
+
     const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL, {
-      params: { limit, offset },
+      params: { ...pagination },
     })
 
     if ('error' in result) {
@@ -53,13 +52,9 @@ export class UserDataSourceImpl implements UserDataSource {
     return result.data as { count: number; users: UserModel[] }
   }
 
-  getByFilters = async (
-    limit: number,
-    offset: number,
-    filters: IUserFilters,
-  ) => {
+  getByFilters = async (filters: IUserFilters, pagination?: PaginationDTO) => {
     const result = await AxiosClient.get(API_ROUTES.USERS.GET_BY_FILTERS, {
-      params: { limit, offset, ...filters },
+      params: { ...filters, ...pagination },
     })
 
     if ('error' in result) {

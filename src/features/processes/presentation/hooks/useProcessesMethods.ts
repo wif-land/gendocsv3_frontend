@@ -3,6 +3,7 @@ import { useProcessStore } from '../state/useProcessStore'
 import { ProcessesUseCasesImpl } from '../../domain/usecases/ProcessServices'
 import { IProcess } from '../../domain/entities/IProcess'
 import { IProcessFilters } from '../../domain/entities/IProcessFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useProcessesMethods = () => {
   const { processes, setProcesses } = useProcessStore()
@@ -15,8 +16,10 @@ export const useProcessesMethods = () => {
   ) =>
     await ProcessesUseCasesImpl.getInstance().getAllProcessesByModuleId(
       moduleId,
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   const updateRow = async (process: Partial<IProcess>) =>
@@ -33,8 +36,10 @@ export const useProcessesMethods = () => {
     await ProcessesUseCasesImpl.getInstance().getByFilters(
       filters,
       moduleId,
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   return {

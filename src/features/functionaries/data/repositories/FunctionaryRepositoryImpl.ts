@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import {
   ICreateFunctionary,
   IUpdateFunctionary,
@@ -24,14 +25,13 @@ export class FunctionaryRepositoryImpl implements FunctionaryRepository {
 
   private constructor(private readonly datasource: FunctionaryDataSource) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.datasource.getAll(limit, offset)
+  getAll = async (pagination?: PaginationDTO) =>
+    await this.datasource.getAll(pagination)
 
   getByFilters = async (
     filters: IFunctionaryFilters,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getByFilters(filters, limit, offset)
+    pagination?: PaginationDTO,
+  ) => await this.datasource.getByFilters(filters, pagination)
 
   update = async (data: IUpdateFunctionary) =>
     await this.datasource.update(data)

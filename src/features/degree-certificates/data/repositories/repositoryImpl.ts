@@ -9,6 +9,7 @@ import {
 } from '../datasources/datasource'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { DegreeCertificateForBulk } from '../../presentation/components/DegreeBulkUploadDialog'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export class DegreeCertificateRepositoryImpl
   implements IDegreeCertificatesRepository
@@ -35,16 +36,14 @@ export class DegreeCertificateRepositoryImpl
   }
 
   getAll = async (
-    limit: number,
-    offset: number,
     filters: IDegreeCertificateFilters,
-  ) => await this.datasource.getAll(limit, offset, filters)
+    pagination?: PaginationDTO,
+  ) => await this.datasource.getAll(filters, pagination)
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getByFilters(filters, limit, offset)
+    pagination?: PaginationDTO,
+  ) => await this.datasource.getByFilters(filters, pagination)
 
   update = async (degreeCertificate: Partial<IDegreeCertificate>) =>
     await this.datasource.update(degreeCertificate)

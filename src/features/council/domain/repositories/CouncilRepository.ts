@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { ICouncil, ICreateCouncil, IUpdateCouncil } from '../entities/ICouncil'
 import { ICouncilFilters } from '../entities/ICouncilFilters'
@@ -9,8 +10,7 @@ export interface CouncilRepository {
   getByFilters: (
     filters: ICouncilFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => Promise<{
     count: number
     councils: CouncilModel[]
@@ -22,8 +22,7 @@ export interface CouncilRepository {
 
   getAllCouncilsByModuleId: (
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => Promise<{
     councils: CouncilModel[]
     count: number

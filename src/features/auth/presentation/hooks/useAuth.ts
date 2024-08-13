@@ -14,7 +14,7 @@ interface FormValuesProps {
 
 export const useAuth = () => {
   const router = useRouter()
-  const { setUser } = useAccountStore()
+  const { setUser, setIsLogged } = useAccountStore()
 
   const AuthSchema = Yup.object().shape({
     email: Yup.string()
@@ -54,6 +54,7 @@ export const useAuth = () => {
     decoded && setUser(decoded)
     router.push('/dashboard')
     reset()
+    setIsLogged(true)
   }
 
   return { handleLogout, methods, values, onSubmit }

@@ -4,20 +4,17 @@ import { StudentModel } from '../models/StudentModel'
 import { IStudent } from '../../domain/entities/IStudent'
 import { ICreateStudent } from '../../domain/entities/ICreateStudent'
 import { IStudentFilters } from '../../domain/entities/IStudentFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface StudentDataSource {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     students: StudentModel[]
   }>
 
   getByFilter(
     filter: IStudentFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     students: StudentModel[]
@@ -47,9 +44,9 @@ export class StudentDataSourceImpl implements StudentDataSource {
     return StudentDataSourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
+  getAll = async (pagination: PaginationDTO) => {
     const result = await AxiosClient.get(API_ROUTES.STUDENTS.GET_ALL, {
-      params: { limit, offset },
+      params: { ...pagination },
     })
 
     if ('error' in result) {
@@ -61,11 +58,10 @@ export class StudentDataSourceImpl implements StudentDataSource {
 
   getByFilter = async (
     filters: IStudentFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => {
     const result = await AxiosClient.get(API_ROUTES.STUDENTS.GET_BY_FILTERS, {
-      params: { limit, offset, ...filters },
+      params: { ...pagination, ...filters },
     })
 
     if ('error' in result) {

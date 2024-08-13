@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import { CouncilModel } from '../../data/models/CouncilModel'
 import { CouncilsUseCasesImpl } from '../../domain/usecases/CouncilServices'
 import { ICouncil, ICouncilFormValues } from '../../domain/entities/ICouncil'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 interface StoreState {
   councils: CouncilModel[]
@@ -10,8 +11,7 @@ interface StoreState {
   addCouncil: (career: CouncilModel) => void
   getCouncilsByModuleId: (
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => Promise<void>
   getById: (id: number) => Promise<CouncilModel>
   createCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
@@ -31,9 +31,9 @@ export const useCouncilsStore = create<StoreState>(
       setCouncils: (councils) => set({ councils }),
       addCouncil: (council: CouncilModel) =>
         set((state) => ({ councils: [...state.councils, council] })),
-      getCouncilsByModuleId: async (moduleId, limit, offset) => {
+      getCouncilsByModuleId: async (moduleId, pagination) => {
         await CouncilsUseCasesImpl.getInstance()
-          .getAllCouncilsByModuleId(moduleId, limit, offset)
+          .getAllCouncilsByModuleId(moduleId, pagination)
           .then((data) => set({ councils: data.councils }))
       },
       createCouncil: async (council) => {

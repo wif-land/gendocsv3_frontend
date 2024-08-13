@@ -2,20 +2,17 @@ import { AxiosClient } from '../../../../shared/utils/AxiosClient'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { PositionModel } from '../models/PositionModel'
 import { IPosition } from '../../domain/entities/IPosition'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface PositionDataSource {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     positions: PositionModel[]
   }>
 
   getByField(
     field: string,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     positions: PositionModel[]
@@ -41,9 +38,9 @@ export class PositionDataSourceImpl implements PositionDataSource {
     return PositionDataSourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
+  getAll = async (pagination: PaginationDTO) => {
     const result = await AxiosClient.get(API_ROUTES.POSITIONS.GET_ALL, {
-      params: { limit, offset },
+      params: { ...pagination },
     })
 
     if ('error' in result) {
@@ -59,11 +56,11 @@ export class PositionDataSourceImpl implements PositionDataSource {
     }
   }
 
-  getByField = async (field: string, limit: number, offset: number) => {
+  getByField = async (field: string, pagination: PaginationDTO) => {
     const result = await AxiosClient.get(
       API_ROUTES.POSITIONS.GET_BY_FIELD(field),
       {
-        params: { limit, offset },
+        params: { ...pagination },
       },
     )
 

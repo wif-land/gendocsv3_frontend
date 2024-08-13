@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { ICreateStudent } from '../../domain/entities/ICreateStudent'
 import { IStudentFilters } from '../../domain/entities/IStudentFilters'
 import { StudentRepository } from '../../domain/repositories/StudentRepository'
@@ -22,14 +23,11 @@ export class StudentRepositoryImpl implements StudentRepository {
 
   private constructor(private readonly datasource: StudentDataSource) {}
 
-  getAll = async (limit: number, offset: number) =>
-    await this.datasource.getAll(limit, offset)
+  getAll = async (pagination: PaginationDTO) =>
+    await this.datasource.getAll(pagination)
 
-  getByFilters = async (
-    filters: IStudentFilters,
-    limit: number,
-    offset: number,
-  ) => await this.datasource.getByFilter(filters, limit, offset)
+  getByFilters = async (filters: IStudentFilters, pagination?: PaginationDTO) =>
+    await this.datasource.getByFilter(filters, pagination)
 
   create = async (data: ICreateStudent) => await this.datasource.create(data)
 

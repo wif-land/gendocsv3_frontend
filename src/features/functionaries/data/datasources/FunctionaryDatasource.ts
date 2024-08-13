@@ -3,20 +3,17 @@ import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { FunctionaryModel } from '../models/FunctionatyModel'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface FunctionaryDataSource {
-  getAll(
-    limit: number,
-    offset: number,
-  ): Promise<{
+  getAll(pagination?: PaginationDTO): Promise<{
     count: number
     functionaries: FunctionaryModel[]
   }>
 
   getByFilters(
     filters: IFunctionaryFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     functionaries: FunctionaryModel[]
@@ -42,9 +39,9 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
     return FunctionaryDataSourceImpl.instance
   }
 
-  getAll = async (limit: number, offset: number) => {
+  getAll = async (pagination: PaginationDTO) => {
     const result = await AxiosClient.get(API_ROUTES.FUNCTIONARIES.GET_ALL, {
-      params: { limit, offset },
+      params: { ...pagination },
     })
 
     if ('error' in result) {
@@ -59,13 +56,12 @@ export class FunctionaryDataSourceImpl implements FunctionaryDataSource {
 
   getByFilters = async (
     filters: IFunctionaryFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => {
     const result = await AxiosClient.get(
       API_ROUTES.FUNCTIONARIES.GET_BY_FILTERS,
       {
-        params: { limit, offset, ...filters },
+        params: { ...pagination, ...filters },
       },
     )
 

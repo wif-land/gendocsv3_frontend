@@ -18,6 +18,7 @@ import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { NewCareerSchema, resolveDefaultValues } from '../constants'
 import { FunctionaryUseCasesImpl } from '../../../.../../../features/functionaries/domain/usecases/FunctionaryServices'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useCareerForm = (currentCareer?: ICareer) => {
   const [inputValue, setInputValue] = useState('' as string)
@@ -140,7 +141,7 @@ export const useCareerForm = (currentCareer?: ICareer) => {
 
     const filteredFunctionaries = async (field: string) => {
       await FunctionaryUseCasesImpl.getInstance()
-        .getByFilters({ field })
+        .getByFilters({ field }, new PaginationDTO())
         .then((res) => {
           if (isMounted) {
             setFunctionaries(res.functionaries)

@@ -13,6 +13,7 @@ import { CreateDegreeCertificateAttendanceUseCase } from '../../domain/usecases/
 import { IDegreeCertificatesAttendee } from '../../domain/entities/IDegreeCertificateAttendee'
 import { EditDegreeCertificateAttendanceUseCase } from '../../domain/usecases/EditDegreeCertificateAttendance'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useDegreeCertificateAttendanceForm = (
   currentAttendee?: IDegreeCertificatesAttendee,
@@ -64,7 +65,7 @@ export const useDegreeCertificateAttendanceForm = (
     }
 
     FunctionaryUseCasesImpl.getInstance()
-      .getByFilters({ field: searchDebounced })
+      .getByFilters({ field: searchDebounced }, new PaginationDTO())
       .then((result) => {
         if (!isMounted) return
 

@@ -10,12 +10,12 @@ import { IDegreeCertificatesAttendee } from '../entities/IDegreeCertificateAtten
 import { IDegreeCertificatesRepository } from '../repositories/IDegreeCertificatesRepository'
 import { IDegreeCertificatesAttendancesRepository } from '../repositories/IDegreeCertificatesAttendanceRepository'
 import { DegreeCertificateAttendanceRepositoryImpl } from '../../data/repositories/repositoryAttendanceImpl'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 interface CertificateDegreeUseCases {
   getAll(
-    limit: number,
-    offset: number,
     filters: IDegreeCertificateFilters,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -23,8 +23,7 @@ interface CertificateDegreeUseCases {
 
   getByFilters(
     filters: IDegreeCertificateFilters,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     count: number
     degreeCertificates: DegreeCertificateModel[]
@@ -138,16 +137,14 @@ export class DegreeCertificatesUseCasesImpl
   }
 
   getAll = async (
-    limit: number,
-    offset: number,
     filters: IDegreeCertificateFilters,
-  ) => await this.repository.getAll(limit, offset, filters)
+    pagination?: PaginationDTO,
+  ) => await this.repository.getAll(filters, pagination)
 
   getByFilters = async (
     filters: IDegreeCertificateFilters,
-    limit: number,
-    offset: number,
-  ) => await this.repository.getByFilters(filters, limit, offset)
+    pagination?: PaginationDTO,
+  ) => await this.repository.getByFilters(filters, pagination)
 
   update = async (degreeCertificate: Partial<IDegreeCertificate>) =>
     await this.repository.update(degreeCertificate)

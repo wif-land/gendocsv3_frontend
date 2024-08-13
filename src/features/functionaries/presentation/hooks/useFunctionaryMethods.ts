@@ -3,6 +3,7 @@ import useLoaderStore from '../../../../shared/store/useLoaderStore'
 import { FunctionaryUseCasesImpl } from '../../domain/usecases/FunctionaryServices'
 import { FunctionaryModel } from '../../data/models/FunctionatyModel'
 import { IFunctionaryFilters } from '../../domain/entities/IFunctionaryFilters'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export const useFunctionaryMethods = () => {
   const { functionaries, setFunctionaries } = useFunctionaryStore()
@@ -10,8 +11,10 @@ export const useFunctionaryMethods = () => {
 
   const fetchData = async (rowsPerPage: number, currentPage: number) =>
     await FunctionaryUseCasesImpl.getInstance().getAll(
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   const updateRow = async (functionary: Partial<FunctionaryModel>) =>
@@ -32,8 +35,10 @@ export const useFunctionaryMethods = () => {
   ) =>
     await FunctionaryUseCasesImpl.getInstance().getByFilters(
       filters,
-      rowsPerPage,
-      currentPage * rowsPerPage,
+      new PaginationDTO(
+        (currentPage * rowsPerPage) / rowsPerPage + 1,
+        rowsPerPage,
+      ),
     )
 
   return {

@@ -1,3 +1,4 @@
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { ProcessModel } from '../../data/models/ProcessesModel'
 import { IProcess } from '../entities/IProcess'
 import { IProcessFilters } from '../entities/IProcessFilters'
@@ -10,8 +11,7 @@ export interface ProcessesRepository {
   getByFilters: (
     filters: IProcessFilters,
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ) => Promise<{
     count: number
     processes: ProcessModel[]
@@ -23,8 +23,7 @@ export interface ProcessesRepository {
 
   getAllProcessesByModuleId(
     moduleId: number,
-    limit: number,
-    offset: number,
+    pagination?: PaginationDTO,
   ): Promise<{
     processes: ProcessModel[]
     count: number

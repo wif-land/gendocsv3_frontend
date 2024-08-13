@@ -1,4 +1,4 @@
-import { PaginationParams } from '../../../../shared/utils/PaginationUtil'
+import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { NumerationModel } from '../../data/models/NumerationModel'
 import { DocumentsRepositoryImpl } from '../../data/repositories/DocumentsRepositoryImpl'
@@ -14,7 +14,7 @@ interface DocumentUseCases {
 
   getAllDocumentsByModuleId(
     moduleId: number,
-    params: PaginationParams,
+    params: PaginationDTO,
   ): Promise<{
     count: number
     documents: DocumentModel[]
@@ -46,10 +46,8 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
 
   getAll = async () => await this.modelRepository.getAll()
 
-  getAllDocumentsByModuleId = async (
-    moduleId: number,
-    params: PaginationParams,
-  ) => await this.modelRepository.getAllDocumentsByModuleId(moduleId, params)
+  getAllDocumentsByModuleId = async (moduleId: number, params: PaginationDTO) =>
+    await this.modelRepository.getAllDocumentsByModuleId(moduleId, params)
 
   getNumerationByCouncil = async (councilId: number) =>
     await this.modelRepository.getNumerationByCouncil(councilId)
