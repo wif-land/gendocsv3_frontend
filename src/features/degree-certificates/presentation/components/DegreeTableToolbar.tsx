@@ -6,19 +6,8 @@ import Iconify from '../../../../core/iconify'
 import { TableProps } from '../../../../shared/sdk/table'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { CareerFilter } from '../../../../shared/sdk/filters/career-filter'
-import {
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material'
-import {
-  DATE_TYPES,
-  IDegreeCertificateFilters,
-} from '../../domain/entities/IDegreeCertificateFilters'
+import { FormControl, IconButton, SelectChangeEvent } from '@mui/material'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { DatePicker } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
@@ -27,7 +16,6 @@ import { DATE_FORMAT } from '../../../../core/utils/format-time'
 export type IDegreeCertificateTableFilterValue =
   | string
   | Date
-  | typeof DATE_TYPES
   | undefined
   | boolean
 
@@ -36,7 +24,6 @@ export type IDegreeCertificateTableFilters = {
   field?: string
   startDate?: Date | undefined
   endDate?: Date | undefined
-  dateType?: typeof DATE_TYPES | undefined
   isReport?: boolean
   isEnd?: boolean
 }
@@ -204,36 +191,7 @@ export const DegreeCertificatesTableToolbar = ({
                 width: { xs: 1, md: '20%' },
               }}
             >
-              <InputLabel id="date-type-label">Tipo de fecha</InputLabel>
-              <Select
-                labelId="date-type-label"
-                id="demo-simple-select"
-                label="Tipo de fecha"
-                value={filters.dateType || ''}
-                input={<OutlinedInput label="Tipo de Fecha" />}
-                onChange={(event) => {
-                  const {
-                    target: { value },
-                  } = event
-
-                  onFilters('dateType', value)
-                }}
-              >
-                {DATE_TYPES.map((item) => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl
-              sx={{
-                flexShrink: 0,
-                width: { xs: 1, md: '20%' },
-              }}
-            >
               <DatePicker
-                disabled={!filters.dateType}
                 value={dayjs(filters.startDate) || null}
                 format={DATE_FORMAT}
                 onAccept={(e) => {
@@ -253,7 +211,7 @@ export const DegreeCertificatesTableToolbar = ({
               }}
             >
               <DatePicker
-                disabled={!filters.dateType || !filters.startDate}
+                disabled={!filters.startDate}
                 value={dayjs(filters.endDate) || null}
                 minDate={filters.startDate ? dayjs(filters.startDate) : null}
                 format={DATE_FORMAT}

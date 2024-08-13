@@ -8,7 +8,7 @@ import {
   resolveDefaultValuesDegreeCertificate,
 } from '../constants'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -33,6 +33,8 @@ export const useDegreeCertificateForm = (
     getByFilter: getStudentsByFilter,
   } = useStudentStore()
   const { user } = useAccountStore()
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams as unknown as string)
 
   const defaultValues = useMemo(
     () => resolveDefaultValuesDegreeCertificate(currentDegreeCertificate),
@@ -86,13 +88,14 @@ export const useDegreeCertificateForm = (
       }
 
       if (!!result && !currentDegreeCertificate) {
-        router.back()
         reset()
+        if (searchParams.has('isReport')) params.delete('isReport')
+        window.location.assign(window.location.href.replace(/\/\d+\/edit/, ''))
       }
 
       if (!!result && currentDegreeCertificate) {
-        router.back()
         reset()
+        window.location.assign(window.location.href.replace(/\/\d+\/edit/, ''))
       }
     },
     [currentDegreeCertificate, enqueueSnackbar, reset, router],

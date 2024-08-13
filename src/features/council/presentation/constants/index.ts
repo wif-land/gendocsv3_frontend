@@ -26,7 +26,6 @@ export const defaultFilters: ICouncilTableFilters = {
   state: undefined,
   startDate: undefined,
   endDate: undefined,
-  dateType: undefined,
   type: undefined,
 }
 

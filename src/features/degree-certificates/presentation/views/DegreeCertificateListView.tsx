@@ -48,6 +48,8 @@ import useModulesStore from '../../../../shared/store/modulesStore'
 import { useParams } from 'next/navigation'
 import { resolveModuleByCode } from '../../../../shared/utils/ModuleUtil'
 import { useSocketListeners } from '../../../../core/providers/use-socket-notifications'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
+import { UserRole } from '../../../../features/users/domain/entities/IUser'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   useSocketListeners()
@@ -61,6 +63,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
 
   const { modules } = useModulesStore()
+  const { user } = useAccountStore()
   const { codeModule } = useParams()
 
   const module = resolveModuleByCode(modules, codeModule as string)
@@ -222,15 +225,18 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       >
         Generar numeración
       </Button>
-      <Button
-        component={RouterLink}
-        href={`${pathname}/templates`}
-        variant="contained"
-        startIcon={<Iconify icon="mingcute:document-3-line" />}
-        sx={{ mr: 1.5 }}
-      >
-        Plantillas
-      </Button>
+      {user?.role === UserRole.ADMIN ||
+        (user?.role === UserRole.TEMP_ADMIN && (
+          <Button
+            component={RouterLink}
+            href={`${pathname}/templates`}
+            variant="contained"
+            startIcon={<Iconify icon="mingcute:document-3-line" />}
+            sx={{ mr: 1.5 }}
+          >
+            Plantillas
+          </Button>
+        ))}
       <Button
         variant="contained"
         startIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
@@ -330,6 +336,18 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
             >
               Las actas deben tener fecha de presentación y asistencia del
               presidente de acta para formar el reporte final
+            </Alert>
+          )}
+          {filters.isReport && filters.isEnd === false && (
+            <Alert
+              severity="info"
+              variant="outlined"
+              sx={{
+                mb: 3,
+              }}
+            >
+              Las actas deben tener presidente de acta para formar el reporte
+              inicial
             </Alert>
           )}
 

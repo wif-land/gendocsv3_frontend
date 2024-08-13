@@ -80,6 +80,7 @@ export const useSocketListeners = () => {
 
     socketClient.on('change-user', (data: { id: number; user: UserModel }) => {
       if (user?.id === data.id) {
+        console.log('User updated', data.user)
         setUser({
           ...user,
           ...data.user,

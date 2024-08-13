@@ -52,7 +52,6 @@ export const useDegreeCertificateMethods = () => {
     if (isEnd === true) {
       return await DegreeCertificatesUseCasesImpl.getInstance().getReports({
         careerId: data.careerId,
-        dateType: data.dateType,
         startDate: data.startDate,
         endDate: data.endDate,
         field: data.field,
@@ -72,7 +71,6 @@ export const useDegreeCertificateMethods = () => {
     if (isEnd === true) {
       return await DegreeCertificatesUseCasesImpl.getInstance().downloadReport({
         careerId: data.careerId,
-        dateType: data.dateType,
         startDate: data.startDate,
         endDate: data.endDate,
         field: data.field,

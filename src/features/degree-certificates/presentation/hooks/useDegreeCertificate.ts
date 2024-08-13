@@ -6,14 +6,8 @@ import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import {
-  IDegreeCertificateTableFilters,
-  IDegreeCertificateTableFilterValue,
-} from '../components/DegreeTableToolbar'
-import {
-  DATE_TYPES,
-  IDegreeCertificateFilters,
-} from '../../domain/entities/IDegreeCertificateFilters'
+import { IDegreeCertificateTableFilters } from '../components/DegreeTableToolbar'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { defaultFilters } from '../constants'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 import { UserRole } from '../../../../features/users/domain/entities/IUser'
@@ -111,15 +105,6 @@ export const useDegreeCertificateView = ({
       })
     }
 
-    if (searchParams.has('dateType')) {
-      setFilters({
-        ...filters,
-        dateType: searchParams.get(
-          'dateType',
-        ) as IDegreeCertificateTableFilterValue as typeof DATE_TYPES,
-      })
-    }
-
     if (searchParams.has('field')) {
       setFilters({
         ...filters,
@@ -150,10 +135,6 @@ export const useDegreeCertificateView = ({
 
     if (filters.endDate) {
       params.set('endDate', filters.endDate.toISOString())
-    }
-
-    if (filters.dateType) {
-      params.set('dateType', filters.dateType.toString())
     }
 
     if (filters.field) {
