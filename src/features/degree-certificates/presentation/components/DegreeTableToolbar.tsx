@@ -6,7 +6,7 @@ import Iconify from '../../../../core/iconify'
 import { TableProps } from '../../../../shared/sdk/table'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { CareerFilter } from '../../../../shared/sdk/filters/career-filter'
-import { FormControl, IconButton, SelectChangeEvent } from '@mui/material'
+import { FormControl, SelectChangeEvent } from '@mui/material'
 import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { DatePicker } from '@mui/x-date-pickers'
@@ -51,7 +51,6 @@ export const DegreeCertificatesTableToolbar = ({
 }: Props) => {
   const [inputValue, setInputValue] = useState(undefined as string | undefined)
   const debouncedValue = useDebounce(inputValue ? inputValue : '')
-  const [areFiltersActive, setAreFiltersActive] = useState(false)
 
   const handleFilterName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
@@ -158,72 +157,70 @@ export const DegreeCertificatesTableToolbar = ({
             }}
             sx={{ flexGrow: 1 }}
           />
-          {filters.isReport === true && filters.isEnd === true && (
+          {/* {filters.isReport === true && filters.isEnd === true && (
             <IconButton
               onClick={() => setAreFiltersActive(!areFiltersActive)}
               title="Más filtros"
             >
               <Iconify icon="icon-park-outline:filter" />
             </IconButton>
-          )}
+          )} */}
         </Stack>
       </Stack>
-      {areFiltersActive &&
-        filters.isReport === true &&
-        filters.isEnd === true && (
-          <Stack
-            spacing={2}
-            alignItems={{ xs: 'flex-end', md: 'center' }}
-            direction={{
-              xs: 'column',
-              md: 'row',
-            }}
+      {filters.isReport === true && (
+        <Stack
+          spacing={2}
+          alignItems={{ xs: 'flex-end', md: 'center' }}
+          direction={{
+            xs: 'column',
+            md: 'row',
+          }}
+          sx={{
+            p: 2.5,
+            pt: 0,
+            pr: { xs: 2.5, md: 2 },
+            ml: 1.2,
+          }}
+        >
+          <FormControl
             sx={{
-              p: 2.5,
-              pt: 0,
-              pr: { xs: 2.5, md: 2 },
-              ml: 1.2,
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
             }}
           >
-            <FormControl
-              sx={{
-                flexShrink: 0,
-                width: { xs: 1, md: '20%' },
+            <DatePicker
+              value={dayjs(filters.startDate) || null}
+              format={DATE_FORMAT}
+              onAccept={(e) => {
+                e && onFilters('startDate', (e as unknown as Dayjs).toDate())
+                if (!filters.endDate) {
+                  e && onFilters('endDate', (e as unknown as Dayjs).toDate())
+                }
               }}
-            >
-              <DatePicker
-                value={dayjs(filters.startDate) || null}
-                format={DATE_FORMAT}
-                onAccept={(e) => {
-                  e && onFilters('startDate', (e as unknown as Dayjs).toDate())
-                  if (!filters.endDate) {
-                    e && onFilters('endDate', (e as unknown as Dayjs).toDate())
-                  }
-                }}
-                sx={{ textTransform: 'capitalize' }}
-                label="Fecha de inicio"
-              />
-            </FormControl>
-            <FormControl
-              sx={{
-                flexShrink: 0,
-                width: { xs: 1, md: '20%' },
+              sx={{ textTransform: 'capitalize' }}
+              label="Fecha de inicio"
+            />
+          </FormControl>
+          <FormControl
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
+            }}
+          >
+            <DatePicker
+              disabled={!filters.startDate}
+              value={dayjs(filters.endDate) || null}
+              minDate={filters.startDate ? dayjs(filters.startDate) : null}
+              format={DATE_FORMAT}
+              onAccept={(e) => {
+                onFilters('endDate', (e as unknown as Dayjs).toDate())
               }}
-            >
-              <DatePicker
-                disabled={!filters.startDate}
-                value={dayjs(filters.endDate) || null}
-                minDate={filters.startDate ? dayjs(filters.startDate) : null}
-                format={DATE_FORMAT}
-                onAccept={(e) => {
-                  onFilters('endDate', (e as unknown as Dayjs).toDate())
-                }}
-                sx={{ textTransform: 'capitalize' }}
-                label="Fecha de fin"
-              />
-            </FormControl>
-          </Stack>
-        )}
+              sx={{ textTransform: 'capitalize' }}
+              label="Fecha de fin"
+            />
+          </FormControl>
+        </Stack>
+      )}
     </>
   )
 }

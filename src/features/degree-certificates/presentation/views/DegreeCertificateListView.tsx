@@ -346,8 +346,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                 mb: 3,
               }}
             >
-              Las actas deben tener presidente de acta para formar el reporte
-              inicial
+              Se muestran las actas que no tengan asignada la fecha de
+              presentacion
             </Alert>
           )}
 
