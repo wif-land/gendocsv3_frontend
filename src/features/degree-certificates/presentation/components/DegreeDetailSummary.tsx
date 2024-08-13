@@ -43,7 +43,7 @@ export const DegreeDetailsSummary = ({
       icon: 'eva:calendar-outline',
     },
     {
-      title: 'Modalidad de grado',
+      title: 'Tipo de grado',
       value: degreeCertificate?.degreeModality?.name || 'No especificado',
       icon: 'fe:book',
     },

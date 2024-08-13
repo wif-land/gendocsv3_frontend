@@ -381,7 +381,7 @@ export const DegreeCertificateNewEditForm = ({
                 {methods.watch('student').id! > 0 && (
                   <RHFSelect
                     id="certificateTypeId"
-                    label="Tipo de grado"
+                    label="Modalidad de grado"
                     name="certificateTypeId"
                     required
                     disabled={checkUpdateInputPermission(
@@ -416,7 +416,7 @@ export const DegreeCertificateNewEditForm = ({
                 >
                   <RHFSelect
                     id="degreeModalityId"
-                    label="Modalidad"
+                    label="Tipo de grado"
                     name="degreeModalityId"
                     disabled={checkUpdateInputPermission(
                       'degreeModalityId',
