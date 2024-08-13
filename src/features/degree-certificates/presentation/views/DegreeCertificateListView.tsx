@@ -85,6 +85,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     searchParams,
     filters,
     setFilters,
+    deleteReportParam,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
@@ -257,6 +258,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           handleFilters('isEnd', false)
           handleFilters('startDate', new Date(new Date().setMonth(0, 1)))
           handleFilters('endDate', new Date())
+          deleteReportParam()
         }}
         sx={{ mr: 1.5 }}
       >

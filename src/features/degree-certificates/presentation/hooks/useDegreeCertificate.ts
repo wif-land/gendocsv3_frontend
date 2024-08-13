@@ -69,6 +69,14 @@ export const useDegreeCertificateView = ({
     return 1
   }
 
+  const deleteReportParam = () => {
+    const params = new URLSearchParams(searchParams as unknown as string)
+    console.log(searchParams.has('isReport'))
+    if (searchParams.has('isReport')) params.set('isReport', 'false')
+
+    console.log(params.toString())
+  }
+
   useEffect(() => {
     if (searchParams.has('careerId')) {
       setFilters({
@@ -87,7 +95,7 @@ export const useDegreeCertificateView = ({
     if (searchParams.has('isReport')) {
       setFilters({
         ...filters,
-        isReport: searchParams.get('isReport') === 'true',
+        isReport: searchParams.get('isReport') === 'false',
       })
     }
 
@@ -465,5 +473,6 @@ export const useDegreeCertificateView = ({
     handleDownload,
     filters,
     setFilters,
+    deleteReportParam,
   }
 }

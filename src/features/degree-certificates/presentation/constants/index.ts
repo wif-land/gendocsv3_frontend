@@ -149,9 +149,11 @@ export const defaultFilters = (
   isEnd: searchParams.has('isEnd')
     ? searchParams.get('isEnd') === 'true'
     : false,
-  isReport: searchParams.has('isReport')
-    ? searchParams.get('isReport') === 'true'
-    : false,
+  isReport:
+    // searchParams.has('isReport')
+    // ? // eslint-disable-next-line eqeqeq
+    //   Boolean(searchParams.get('isReport') == 'true')
+    false,
   startDate: searchParams.has('startDate')
     ? new Date(searchParams.get('startDate') as string)
     : new Date(),
