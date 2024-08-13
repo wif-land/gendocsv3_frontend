@@ -182,31 +182,39 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     )
   }, [router, pathname])
 
-  const reportOptions = [
-    {
-      value: 'start',
-      label: 'Reporte inicial',
-      action: () => {
-        handleFilters('isReport', true)
-        handleFilters('isEnd', false)
+  const getReportOptions = () => {
+    const options = [
+      {
+        value: 'start',
+        label: 'Reporte inicial',
+        action: () => {
+          handleFilters('isReport', true)
+          handleFilters('isEnd', false)
+        },
       },
-    },
-    {
-      value: 'final',
-      label: 'Reporte final',
-      action: () => {
-        handleFilters('isReport', true)
-        handleFilters('isEnd', true)
+      {
+        value: 'final',
+        label: 'Reporte final',
+        action: () => {
+          handleFilters('isReport', true)
+          handleFilters('isEnd', true)
+        },
       },
-    },
-    {
-      value: 'template',
-      label: 'Plantilla',
-      action: () => {
-        onShowReportTemplate()
+      {
+        value: 'template',
+        label: 'Plantilla',
+        action: () => {
+          onShowReportTemplate()
+        },
       },
-    },
-  ]
+    ]
+
+    if (user?.role === UserRole.ADMIN || user?.role === UserRole.TEMP_ADMIN) {
+      return options
+    } else {
+      return options.slice(0, 2)
+    }
+  }
 
   const degreeActions = (
     <>
@@ -440,7 +448,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
         arrow="top-right"
         sx={{ width: 140 }}
       >
-        {reportOptions.map((option) => (
+        {getReportOptions().map((option) => (
           <MenuItem
             key={option.value}
             onClick={() => {
