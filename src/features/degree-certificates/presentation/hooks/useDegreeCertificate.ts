@@ -71,10 +71,8 @@ export const useDegreeCertificateView = ({
 
   const deleteReportParam = () => {
     const params = new URLSearchParams(searchParams as unknown as string)
-    console.log(searchParams.has('isReport'))
-    if (searchParams.has('isReport')) params.set('isReport', 'false')
 
-    console.log(params.toString())
+    if (searchParams.has('isReport')) params.set('isReport', 'false')
   }
 
   useEffect(() => {

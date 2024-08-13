@@ -293,7 +293,7 @@ export class DegreeCertificateDatasourceImpl
 
   downloadReport = async (filters: IDegreeCertificateFilters) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isEnd, isReport, ...rest } = filters
+    const { isReport, ...rest } = filters
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.DOWNLOAD,
       {

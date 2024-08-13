@@ -75,6 +75,7 @@ export const useDegreeCertificateMethods = () => {
         startDate: data.startDate,
         endDate: data.endDate,
         field: data.field,
+        isEnd: data.isEnd,
       })
     } else {
       return await DegreeCertificatesUseCasesImpl.getInstance().downloadReport({

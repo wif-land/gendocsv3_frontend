@@ -172,7 +172,6 @@ export const DegreeAttendeeNewEditForm = (props: Props) => {
         >
           Cancelar
         </Button>
-
         <LoadingButton
           type="submit"
           variant="contained"

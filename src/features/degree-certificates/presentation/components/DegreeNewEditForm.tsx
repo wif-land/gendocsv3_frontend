@@ -646,15 +646,18 @@ export const DegreeCertificateNewEditForm = ({
       >
         {currentDegreeCertificate && (
           <Box sx={{ flexGrow: 1 }}>
-            <RHFSwitch
-              name="isClosed"
-              label="Acta cerrada?"
-              disabled={checkUpdateInputPermission(
-                'isClosed',
-                user!.role!,
-                DegreeCertificateModel.name,
-              )}
-            />
+            <Button
+              variant="soft"
+              size="large"
+              sx={{ justifySelf: 'start' }}
+              startIcon={<Iconify icon="eva:arrow-back-fill" />}
+              onClick={() => {
+                methods.reset()
+                router.back()
+              }}
+            >
+              Regresar
+            </Button>
           </Box>
         )}
 
