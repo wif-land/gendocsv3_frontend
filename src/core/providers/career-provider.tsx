@@ -1,7 +1,7 @@
 'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { CareerModel } from '../../features/careers/data/models/CareerModel'
-import { CareersDataSourceImpl } from '@/features/careers/data/datasources/CareerDatasource'
+import { CareersDataSourceImpl } from '../../features/careers/data/datasources/CareerDatasource'
 import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
 
 export interface CareerContextData {

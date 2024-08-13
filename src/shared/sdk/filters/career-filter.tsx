@@ -7,7 +7,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
-import { useCareerData } from '@/core/providers/career-provider'
+import { useCareerData } from '../../../core/providers/career-provider'
 
 interface IStatusFilterProps {
   onChange: (event: SelectChangeEvent) => void
