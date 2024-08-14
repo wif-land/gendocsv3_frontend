@@ -64,13 +64,6 @@ export const DegreeCertificateTableRow = ({
       <TableRow hover selected={selected}>
         <TableCell>
           <ListItemText
-            primary={row.auxNumber ?? ''}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          />
-        </TableCell>
-
-        <TableCell>
-          <ListItemText
             primary={row.number ?? '--'}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />

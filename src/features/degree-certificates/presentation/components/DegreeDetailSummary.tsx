@@ -30,7 +30,7 @@ export const DegreeDetailsSummary = ({
     {
       title: 'Estudiante',
       value:
-        `${degreeCertificate.student?.firstLastName} ${degreeCertificate.student?.secondLastName} ${degreeCertificate.student?.firstName} ${degreeCertificate.student?.secondLastName} ` ||
+        `${degreeCertificate.student?.firstLastName} ${degreeCertificate.student?.secondLastName} ${degreeCertificate.student?.firstName} ${degreeCertificate.student?.secondName} ` ||
         'No especificado',
       icon: 'fe:user',
     },

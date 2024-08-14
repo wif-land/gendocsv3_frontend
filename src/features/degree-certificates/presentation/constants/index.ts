@@ -38,7 +38,6 @@ export interface AttendanceFormValuesProps
 
 export const getTableHead = (isReport: boolean) => {
   const baseHeaders = [
-    { id: 'auxNumber', label: '#Reg' },
     { id: 'number', label: 'Número Acta' },
     { id: 'topic', label: 'Tema' },
     { id: 'student', label: 'Estudiante' },
