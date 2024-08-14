@@ -107,7 +107,7 @@ export const DegreeCertificateNewEditForm = ({
             Detalles
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Números de registro y numeración de acta de grado
+            Numeración de acta de grado
           </Typography>
         </Grid>
       )}
@@ -131,12 +131,12 @@ export const DegreeCertificateNewEditForm = ({
               disabled
               sx={{ flexGrow: 1 }}
             />
-            <RHFTextField
+            {/* <RHFTextField
               name="auxNumber"
               label="Numeracion"
               disabled
               sx={{ flexGrow: 1 }}
-            />
+            /> */}
           </Stack>
         </Card>
       </Grid>

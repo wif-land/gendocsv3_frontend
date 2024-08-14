@@ -56,11 +56,13 @@ export const useDegreeCertificateMethods = () => {
         endDate: data.endDate,
         field: data.field,
         isEnd: data.isEnd,
+        order: data.order,
       })
     } else {
       return await DegreeCertificatesUseCasesImpl.getInstance().getReports({
         careerId: data.careerId,
         field: data.field,
+        order: data.order,
       })
     }
   }
@@ -81,6 +83,7 @@ export const useDegreeCertificateMethods = () => {
       return await DegreeCertificatesUseCasesImpl.getInstance().downloadReport({
         careerId: data.careerId,
         field: data.field,
+        order: data.order,
       })
     }
   }
