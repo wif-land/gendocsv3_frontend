@@ -23,3 +23,11 @@ export const getCookie = async (key: string) => {
 
   return cookieData
 }
+
+/**
+ * Remove cookie from the browser
+ * @param key - Cookie key
+ */
+export const removeCookie = (key: string) => {
+  cookies().delete(key)
+}

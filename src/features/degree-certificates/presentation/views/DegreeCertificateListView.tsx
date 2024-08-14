@@ -234,18 +234,18 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       >
         Generar numeración
       </Button>
-      {user?.role === UserRole.ADMIN ||
-        (user?.role === UserRole.TEMP_ADMIN && (
-          <Button
-            component={RouterLink}
-            href={`${pathname}/templates`}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:document-3-line" />}
-            sx={{ mr: 1.5 }}
-          >
-            Plantillas
-          </Button>
-        ))}
+      {(user?.role === UserRole.ADMIN ||
+        user?.role === UserRole.TEMP_ADMIN) && (
+        <Button
+          component={RouterLink}
+          href={`${pathname}/templates`}
+          variant="contained"
+          startIcon={<Iconify icon="mingcute:document-3-line" />}
+          sx={{ mr: 1.5 }}
+        >
+          Plantillas
+        </Button>
+      )}
       <Button
         variant="contained"
         startIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}

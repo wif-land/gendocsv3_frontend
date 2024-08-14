@@ -62,6 +62,7 @@ export class AxiosClient {
       async (error) => {
         if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
           await new LogoutUseCase().call()
+          this.accessToken = null
         }
 
         return Promise.reject(error)
