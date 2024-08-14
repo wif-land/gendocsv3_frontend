@@ -117,6 +117,13 @@ export const useDegreeCertificateView = ({
         field: searchParams.get('field') as string,
       })
     }
+
+    if (searchParams.has('order')) {
+      setFilters({
+        ...filters,
+        order: searchParams.get('order') as 'ASC' | 'DESC',
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -145,6 +152,10 @@ export const useDegreeCertificateView = ({
 
     if (filters.field) {
       params.set('field', filters.field)
+    }
+
+    if (filters.order) {
+      params.set('order', filters.order)
     }
 
     router.replace(`${pathname}?${params.toString()}`)
@@ -452,6 +463,12 @@ export const useDegreeCertificateView = ({
     handleChangeRowsPerPage()
   }, [table.rowsPerPage])
 
+  const updateOrderParam = (order: 'ASC' | 'DESC') => {
+    const params = new URLSearchParams(searchParams as unknown as string)
+    params.set('order', order)
+    router.replace(`${pathname}?${params.toString()}`)
+  }
+
   return {
     count,
     tableData,
@@ -472,5 +489,6 @@ export const useDegreeCertificateView = ({
     filters,
     setFilters,
     deleteReportParam,
+    updateOrderParam,
   }
 }

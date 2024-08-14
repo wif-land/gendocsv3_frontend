@@ -37,8 +37,9 @@ export interface AttendanceFormValuesProps
   > {}
 
 export const getTableHead = (isReport: boolean) => {
+  // aqui quiero agregar una propiedad sortable
   const baseHeaders = [
-    { id: 'number', label: 'Número Acta' },
+    { id: 'number', label: 'Número Acta', sortable: true },
     { id: 'topic', label: 'Tema' },
     { id: 'student', label: 'Estudiante' },
     { id: 'presentationDate', label: 'Fecha de presentación' },
@@ -159,6 +160,9 @@ export const defaultFilters = (
   endDate: searchParams.has('endDate')
     ? new Date(searchParams.get('endDate') as string)
     : new Date(),
+  order: searchParams.has('order')
+    ? (searchParams.get('order') as 'ASC' | 'DESC')
+    : 'ASC',
 })
 
 export const NewDegreeCertificateSchema = Yup.object().shape({

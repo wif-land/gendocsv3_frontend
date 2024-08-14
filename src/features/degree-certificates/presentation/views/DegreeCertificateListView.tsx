@@ -86,6 +86,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     filters,
     setFilters,
     deleteReportParam,
+    updateOrderParam,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
@@ -296,6 +297,12 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     router.push(`${pathname}/${id}?${params.toString()}`)
   }
 
+  const handleChangeOrder = () => {
+    const order = filters.order === 'ASC' ? 'DESC' : 'ASC'
+    handleFilters('order', order)
+    updateOrderParam(order)
+  }
+
   return (
     <div key={moduleId}>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -373,7 +380,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                   headLabel={getTableHead(filters.isReport as boolean)}
                   rowCount={count}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
+                  onSort={(id) => {
+                    handleChangeOrder()
+                    table.onSort(id)
+                  }}
                 />
 
                 <TableBody>

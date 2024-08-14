@@ -26,6 +26,7 @@ export type IDegreeCertificateTableFilters = {
   endDate?: Date | undefined
   isReport?: boolean
   isEnd?: boolean
+  order?: 'ASC' | 'DESC'
 }
 
 type Props = {
@@ -79,7 +80,7 @@ export const DegreeCertificatesTableToolbar = ({
     return () => {
       isMounted = false
     }
-  }, [debouncedValue, filters.careerId])
+  }, [debouncedValue, filters.careerId, filters.order])
 
   useEffect(() => {
     let isMounted = true
@@ -102,7 +103,8 @@ export const DegreeCertificatesTableToolbar = ({
     (inputValue !== undefined && inputValue !== '') ||
     filters.startDate !== undefined ||
     filters.endDate !== undefined ||
-    filters.careerId !== undefined
+    filters.careerId !== undefined ||
+    filters.order !== 'ASC'
 
   const handleChange = (event: SelectChangeEvent) => {
     const {
