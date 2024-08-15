@@ -143,9 +143,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       const params = filtersToSearch(filters)
       router.push(`${pathname}/${id}/edit?${params.toString()}`)
     },
-    [router],
+    [router, filters],
   )
-
   const onGenerateDocument = useCallback(
     async (row: DegreeCertificateModel) => {
       if (row.certificateDriveId) {

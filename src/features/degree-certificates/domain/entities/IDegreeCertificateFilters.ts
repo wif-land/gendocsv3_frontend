@@ -5,4 +5,5 @@ export interface IDegreeCertificateFilters {
   endDate?: Date | undefined
   isReport?: boolean
   isEnd?: boolean
+  order?: 'ASC' | 'DESC'
 }

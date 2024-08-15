@@ -85,6 +85,8 @@ interface CertificateDegreeUseCases {
   getAttendees(id: number): Promise<IDegreeCertificatesAttendee[]>
 
   deleteAttendee(id: number): Promise<void>
+
+  getEnqueuedNumbers(careerId: number): Promise<number[]>
 }
 
 export class DegreeCertificatesUseCasesImpl
@@ -200,4 +202,8 @@ export class DegreeCertificatesUseCasesImpl
 
   downloadReport = async (filters: IDegreeCertificateFilters) =>
     await this.repository.downloadReport(filters)
+
+  getEnqueuedNumbers(careerId: number): Promise<number[]> {
+    return this.repository.getEnqueuedNumbers(careerId)
+  }
 }
