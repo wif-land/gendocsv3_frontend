@@ -250,13 +250,9 @@ export const transformData = (
             ? (item['Fin clases'] as string).trim()
             : undefined
 
-          if (
-            endStudiesDateToCheck &&
-            endStudiesDateToCheck !== 'EN PROCESO' &&
-            endStudiesDateToCheck.split('/').length !== 3
-          ) {
+          if (endStudiesDateToCheck && !isValidDate(endStudiesDateToCheck)) {
             enqueueSnackbar(
-              `Por favor, asegúrate de que la fecha de fin de clases "${endStudiesDateToCheck}"del estudiante con cédula ${item['Cédula']} sea válida`,
+              `Por favor, asegúrate de que la fecha de fin de clases "${endStudiesDateToCheck}" del estudiante con cédula ${item['Cédula']} sea válida`,
               { variant: 'error' },
             )
 
@@ -272,18 +268,25 @@ export const transformData = (
             return
           }
 
+          const highSchoolName = String(
+            item['Institución educativa'] || '',
+          ).trim()
+
           return {
             dni: item['Cédula'].toString(),
             startStudiesDate,
-            endStudiesDate: endStudiesDateToCheck
-              ? new Date(
-                  (endStudiesDateToCheck as string)
-                    .trim()
-                    .split('/')
-                    .reverse()
-                    .join('-'),
-                )
-              : undefined,
+            endStudiesDate:
+              endStudiesDateToCheck &&
+              isValidDate(endStudiesDateToCheck) &&
+              !endStudiesDateToCheck.includes('EN PROCESO')
+                ? new Date(
+                    (endStudiesDateToCheck as string)
+                      .trim()
+                      .split('/')
+                      .reverse()
+                      .join('-'),
+                  )
+                : undefined,
             approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
             bachelorDegree: capitalizeSentence(getBachelorDegree()),
             highSchoolName,
@@ -304,7 +307,8 @@ export const transformData = (
 
 const isValidDate = (date: string): boolean => {
   // date format is dd/mm/yyyy
-  if (date === 'EN PROCESO') {
+  if (date.includes('EN PROCESO')) {
+    console.log('EN PROCESO')
     return true
   }
   if (typeof date === 'number') {

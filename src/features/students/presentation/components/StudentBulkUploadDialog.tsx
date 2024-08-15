@@ -146,9 +146,9 @@ export const StudentBulkUploadDialog = ({
 
       const sheet = XLSX.utils.json_to_sheet(filteredData, { skipHeader: true })
       const jsonData = XLSX.utils.sheet_to_json(sheet)
-
+      console.log(jsonData)
       const transformedData = transformData(jsonData, careers, cities)
-
+      console.log(transformedData)
       if (
         transformedData == null ||
         transformedData.length < jsonData.length - 1
@@ -255,7 +255,7 @@ export const StudentBulkUploadDialog = ({
 
       setTimeout(() => {
         if (isComplete) {
-          window.location.reload()
+          // window.location.reload()
         }
       }, 1000)
     }
