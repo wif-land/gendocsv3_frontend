@@ -255,7 +255,7 @@ export const StudentBulkUploadDialog = ({
 
       setTimeout(() => {
         if (isComplete) {
-          // window.location.reload()
+          window.location.reload()
         }
       }, 1000)
     }

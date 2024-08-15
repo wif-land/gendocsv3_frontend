@@ -289,7 +289,17 @@ export const transformData = (
                 : undefined,
             approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
             bachelorDegree: capitalizeSentence(getBachelorDegree()),
-            highSchoolName,
+            highSchoolName:
+              highSchoolName.toUpperCase().includes('unidad') ||
+              highSchoolName.toUpperCase().includes('colegio') ||
+              highSchoolName.toUpperCase().includes('escuela') ||
+              highSchoolName.toUpperCase().includes('instituto') ||
+              highSchoolName.toUpperCase().includes('academia') ||
+              highSchoolName.toUpperCase().includes('liceo') ||
+              highSchoolName.toUpperCase ||
+              highSchoolName.toUpperCase().includes('tecológico')
+                ? highSchoolName.toUpperCase()
+                : `UNIDAD EDUCATIVA ${highSchoolName.toUpperCase()}`,
           } as StudentModel
         }
       } catch (error) {
@@ -308,7 +318,6 @@ export const transformData = (
 const isValidDate = (date: string): boolean => {
   // date format is dd/mm/yyyy
   if (date.includes('EN PROCESO')) {
-    console.log('EN PROCESO')
     return true
   }
   if (typeof date === 'number') {
