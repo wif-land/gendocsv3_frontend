@@ -296,8 +296,7 @@ export const transformData = (
               highSchoolName.toLowerCase().includes('instituto') ||
               highSchoolName.toLowerCase().includes('academia') ||
               highSchoolName.toLowerCase().includes('liceo') ||
-              highSchoolName.toLowerCase ||
-              highSchoolName.toLowerCase().includes('tecológico')
+              highSchoolName.toLowerCase().includes('tecnológico')
                 ? highSchoolName.toLowerCase()
                 : `UNIDAD EDUCATIVA ${highSchoolName.toUpperCase()}`,
           } as StudentModel
