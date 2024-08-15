@@ -113,6 +113,7 @@ export const DegCerBulkUploadDialog = ({
       const worksheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[worksheetName]
       const data = XLSX.utils.sheet_to_json(worksheet)
+      console.log(data)
       const transformedData = transformData(data)
       setDegreeCertificates(transformedData)
     } catch (error) {
