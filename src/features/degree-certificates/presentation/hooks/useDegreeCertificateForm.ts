@@ -88,7 +88,9 @@ export const useDegreeCertificateForm = (
           id: currentDegreeCertificate.id!,
         })
       }
+      getEnqueuedNumbers()
     },
+
     [currentDegreeCertificate, enqueueSnackbar, reset, router],
   )
 
@@ -157,7 +159,6 @@ export const useDegreeCertificateForm = (
 
   const getEnqueuedNumbers = async () => {
     const careerId = getCareerIdFromQueryParams()
-    console.log(careerId)
     if (!careerId) return
 
     const numbers =

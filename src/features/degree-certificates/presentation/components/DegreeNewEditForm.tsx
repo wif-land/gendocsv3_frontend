@@ -91,6 +91,11 @@ export const DegreeCertificateNewEditForm = ({
 
   const { user } = useAccountStore()
 
+  const showEnqueuedButton =
+    (enqueuedNumbers.length > 0 && methods.watch('number') == null) ||
+    (methods.watch('number') != null &&
+      enqueuedNumbers.includes(methods.watch('number') as number))
+
   const renderDetails = (
     <>
       {mdUp && (
@@ -129,16 +134,22 @@ export const DegreeCertificateNewEditForm = ({
           >
             <RHFTextField
               name="number"
-              label="Numeracion de acta de grado"
-              disabled
+              label={
+                methods.watch('number') != null
+                  ? ''
+                  : 'Numeracion de acta de grado'
+              }
+              disabled={!isNumerationModalOpen.value}
               sx={{ flexGrow: 1 }}
             />
-            <Button
-              onClick={() => isNumerationModalOpen.onTrue()}
-              variant="contained"
-            >
-              <Iconify icon="tabler:number" />
-            </Button>
+            {showEnqueuedButton && (
+              <Button
+                onClick={() => isNumerationModalOpen.onTrue()}
+                variant="contained"
+              >
+                <Iconify icon="tabler:number" />
+              </Button>
+            )}
             {/* <RHFTextField
               name="auxNumber"
               label="Numeracion"
