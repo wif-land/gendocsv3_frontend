@@ -64,6 +64,7 @@ export const DegreeCertificateNewEditForm = ({
   const isStudentModalOpen = useBoolean(false)
   const isDocumentModalOpen = useBoolean(false)
   const isDegreeModalOpen = useBoolean(false)
+  const isNumerationModalOpen = useBoolean(false)
   const popover = usePopover()
 
   const { degCerTemplates } = degreeTemplatesStore()
@@ -75,6 +76,7 @@ export const DegreeCertificateNewEditForm = ({
     isOpen,
     loading,
     refreshStudent,
+    enqueuedNumbers,
   } = useDegreeCertificateForm(currentDegreeCertificate)
 
   const {
@@ -131,6 +133,12 @@ export const DegreeCertificateNewEditForm = ({
               disabled
               sx={{ flexGrow: 1 }}
             />
+            <Button
+              onClick={() => isNumerationModalOpen.onTrue()}
+              variant="contained"
+            >
+              <Iconify icon="tabler:number" />
+            </Button>
             {/* <RHFTextField
               name="auxNumber"
               label="Numeracion"
@@ -692,6 +700,11 @@ export const DegreeCertificateNewEditForm = ({
     await refreshStudent(methods.watch('selectedValue').id)
   }
 
+  const updateDegreeNumber = (newNumber: number) => {
+    methods.setValue('number', newNumber)
+    isNumerationModalOpen.onFalse()
+  }
+
   const renderStudentModal = (
     <Dialog
       fullWidth
@@ -801,6 +814,74 @@ export const DegreeCertificateNewEditForm = ({
     </Dialog>
   )
 
+  const renderNumerationModal = (
+    <Dialog
+      fullWidth
+      maxWidth="lg"
+      open={isNumerationModalOpen.value}
+      onClose={isNumerationModalOpen.onFalse}
+      sx={{
+        overflow: 'hidden',
+        padding: 2,
+      }}
+    >
+      <DialogTitle sx={{ pb: 2 }}>Numeración de acta de grado</DialogTitle>
+
+      <DialogContent
+        sx={{
+          typography: 'body2',
+          overflowY: 'auto',
+          paddingX: 10,
+          paddingY: 2,
+        }}
+      >
+        <Stack spacing={3}>
+          {enqueuedNumbers.length > 0 && (
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Los números son aquellos encolados y disponibles para ser
+              asignados, selecciona uno para asignarlo a la acta de grado.
+            </Typography>
+          )}
+
+          <Stack
+            spacing={1}
+            sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+          >
+            {enqueuedNumbers.length > 0 ? (
+              enqueuedNumbers.map((number) => (
+                <Button
+                  key={number}
+                  variant="outlined"
+                  sx={{ width: 25, height: 40 }}
+                  onClick={() => updateDegreeNumber(number)}
+                >
+                  {number}
+                </Button>
+              ))
+            ) : (
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                No hay números disponibles. Aquí se mostrarán los números
+                encolados disponibles para ser asignados.
+              </Typography>
+            )}
+          </Stack>
+        </Stack>
+      </DialogContent>
+
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            isNumerationModalOpen.onFalse()
+          }}
+        >
+          Regresar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+
   return (
     <>
       {renderDegreeModal}
@@ -808,6 +889,8 @@ export const DegreeCertificateNewEditForm = ({
       {renderStudentModal}
 
       {renderDocumentsModal}
+
+      {renderNumerationModal}
 
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit as any)}>
         <Grid container spacing={3}>

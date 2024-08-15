@@ -76,6 +76,8 @@ export interface IDegreeCertificateDatasource {
     fileName: string
     file: string
   }>
+
+  getEnqueuedNumbers(careerId: number): Promise<number[]>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -306,5 +308,17 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as { fileName: string; file: string }
+  }
+
+  getEnqueuedNumbers = async (careerId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ENQUEUED_NUMBERS(careerId),
+    )
+
+    if ('error' in result) {
+      return []
+    }
+
+    return result.data as number[]
   }
 }

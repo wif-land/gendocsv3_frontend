@@ -8,7 +8,7 @@ import {
   resolveDefaultValuesDegreeCertificate,
 } from '../constants'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
@@ -19,6 +19,7 @@ import {
   IDegreeCertificate,
 } from '../../domain/entities/IDegreeCertificates'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
+import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
 
 export const useDegreeCertificateForm = (
   currentDegreeCertificate?: IDegreeCertificate,
@@ -27,6 +28,9 @@ export const useDegreeCertificateForm = (
   const debouncedValue = useDebounce(inputValue)
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
+  const [enqueuedNumbers, setEnqueuedNumbers] = useState<number[]>([])
+  const searchParams = useSearchParams()
+
   const {
     students,
     getById: getStudentById,
@@ -77,7 +81,10 @@ export const useDegreeCertificateForm = (
         await updateDegreeCertificate({
           ...formattedData,
           auxNumber: undefined,
-          number: undefined,
+          number:
+            data.number === currentDegreeCertificate.number
+              ? undefined
+              : data.number,
           id: currentDegreeCertificate.id!,
         })
       }
@@ -143,6 +150,24 @@ export const useDegreeCertificateForm = (
     methods.trigger('student')
   }
 
+  const getCareerIdFromQueryParams = () => {
+    const params = new URLSearchParams(searchParams as unknown as string)
+    return Number(params.get('careerId'))
+  }
+
+  const getEnqueuedNumbers = async () => {
+    const careerId = getCareerIdFromQueryParams()
+    console.log(careerId)
+    if (!careerId) return
+
+    const numbers =
+      await DegreeCertificatesUseCasesImpl.getInstance().getEnqueuedNumbers(
+        careerId,
+      )
+
+    setEnqueuedNumbers(numbers)
+  }
+
   useEffect(() => {
     if (
       !methods.watch('presentationDate') ||
@@ -171,6 +196,10 @@ export const useDegreeCertificateForm = (
     methods.watch('roomId'),
   ])
 
+  useEffect(() => {
+    getEnqueuedNumbers()
+  }, [])
+
   return {
     methods,
     defaultValues,
@@ -181,5 +210,6 @@ export const useDegreeCertificateForm = (
     loading,
     isOpen,
     refreshStudent,
+    enqueuedNumbers,
   }
 }

@@ -74,4 +74,6 @@ export interface IDegreeCertificatesRepository {
     count: number
     degreeCertificates: DegreeCertificateModel[]
   }>
+
+  getEnqueuedNumbers(careerId: number): Promise<number[]>
 }
