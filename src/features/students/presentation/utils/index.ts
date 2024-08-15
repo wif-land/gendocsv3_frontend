@@ -290,15 +290,15 @@ export const transformData = (
             approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
             bachelorDegree: capitalizeSentence(getBachelorDegree()),
             highSchoolName:
-              highSchoolName.toUpperCase().includes('unidad') ||
-              highSchoolName.toUpperCase().includes('colegio') ||
-              highSchoolName.toUpperCase().includes('escuela') ||
-              highSchoolName.toUpperCase().includes('instituto') ||
-              highSchoolName.toUpperCase().includes('academia') ||
-              highSchoolName.toUpperCase().includes('liceo') ||
-              highSchoolName.toUpperCase ||
-              highSchoolName.toUpperCase().includes('tecológico')
-                ? highSchoolName.toUpperCase()
+              highSchoolName.toLowerCase().includes('unidad') ||
+              highSchoolName.toLowerCase().includes('colegio') ||
+              highSchoolName.toLowerCase().includes('escuela') ||
+              highSchoolName.toLowerCase().includes('instituto') ||
+              highSchoolName.toLowerCase().includes('academia') ||
+              highSchoolName.toLowerCase().includes('liceo') ||
+              highSchoolName.toLowerCase ||
+              highSchoolName.toLowerCase().includes('tecológico')
+                ? highSchoolName.toLowerCase()
                 : `UNIDAD EDUCATIVA ${highSchoolName.toUpperCase()}`,
           } as StudentModel
         }
