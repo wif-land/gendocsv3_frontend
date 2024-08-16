@@ -9,6 +9,7 @@ const MUTATE_FIELDS_WRITTER = {
     'certificateStatusId',
     'userId',
     'presentationDate',
+    'studentId',
   ],
 }
 
