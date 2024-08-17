@@ -85,7 +85,6 @@ export const useSocketListeners = () => {
           ...data.user,
           id: user.id,
         })
-        console.log('User updated', data.user)
         enqueueSnackbar('Se ha actualizado su información', {
           variant: 'success',
         })

@@ -347,7 +347,11 @@ export const useDegreeCertificateView = ({
 
   const handleGenerateNumeration = async () => {
     await generateNumeration(getCareerId())
-    await loadData()
+    setTableData([])
+    table.setPage(0)
+    setVisitedPages([])
+
+    handleChangeRowsPerPage()
   }
 
   const handleSearch = (filters: IDegreeCertificateFilters) => {
@@ -422,9 +426,10 @@ export const useDegreeCertificateView = ({
         setFirstCharge(false)
         setPrevCareer(getCareerId())
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error)
+    }
   }, [table.rowsPerPage, table.page, filters.careerId])
-
   const loadReportData = useCallback(async () => {
     try {
       const data = await getReports(
