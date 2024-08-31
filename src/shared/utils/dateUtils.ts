@@ -10,4 +10,8 @@ export class DateUtils {
 
     return date.toISOString().split('T')[0]
   }
+
+  static FIRST_DAY_OF_YEAR = new Date(new Date().getFullYear(), 0, 1)
+  static LAST_DAY_OF_YEAR = new Date(new Date().getFullYear(), 11, 31)
+  static ONE_DAY_AFTER_NOW = new Date(Date.now() + 1000 * 60 * 60 * 24)
 }
