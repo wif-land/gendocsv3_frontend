@@ -6,6 +6,7 @@ import { useTemplatesMethods } from './useTemplatesMethods'
 import { TemplateModel } from '../../data/models/TemplatesModel'
 import { ITemplate } from '../../domain/entities/ITemplate'
 import { useProcessStore } from '../../../../features/processes/presentation/state/useProcessStore'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   processId: number
@@ -14,9 +15,10 @@ interface Props {
 
 export const useTemplateView = ({ processId }: Props) => {
   const { loader } = useLoaderStore()
-  const { updateRow } = useTemplatesMethods()
+  const { updateRow, migrateToNewProcess } = useTemplatesMethods()
   const { processes, updateTemplate } = useProcessStore()
   const { fetchData } = useTemplatesMethods()
+  const router = useRouter()
 
   const currentProcess = processes?.find(
     (process) => process.id! === +processId,
@@ -46,10 +48,21 @@ export const useTemplateView = ({ processId }: Props) => {
     })
   }
 
+  const handleMigrateToNewProcess = async (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) => {
+    await migrateToNewProcess(templateIds, userId, moduleId, processValue)
+    router.back()
+  }
+
   return {
     loader,
     templates,
     updateTemplate,
     handleUpdateRow,
+    handleMigrateToNewProcess,
   }
 }

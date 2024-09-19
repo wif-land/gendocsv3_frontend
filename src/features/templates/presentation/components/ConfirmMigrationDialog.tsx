@@ -12,11 +12,17 @@ import {
   Autocomplete,
 } from '@mui/material'
 import { useMigrateProcess } from '../hooks/useMigrateProcess'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 
 interface ConfirmMigrationDialogProps {
   open: boolean
   onClose: () => void
-  onConfirm: (selectedItems: string[], processValue: string | number) => void
+  onConfirm: (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) => void
   selectedItems: string[]
   moduleId: number
 }
@@ -31,14 +37,19 @@ const ConfirmMigrationDialog: React.FC<ConfirmMigrationDialogProps> = ({
   const [isNewProcess, setIsNewProcess] = useState(false)
   const [processName, setProcessName] = useState('')
   const [selectedProcess, setSelectedProcess] = useState<number>()
+  const { user } = useAccountStore()
 
   const { processes, setInputValue, loading, isOpen } =
     useMigrateProcess(moduleId)
 
   const handleConfirm = () => {
     const processValue = isNewProcess ? processName : Number(selectedProcess)
-    onConfirm(selectedItems, processValue)
-    console.log(processValue)
+    onConfirm(
+      selectedItems.map((id) => Number(id)),
+      user?.id as number,
+      moduleId,
+      processValue,
+    )
     onClose()
   }
 
@@ -88,7 +99,11 @@ const ConfirmMigrationDialog: React.FC<ConfirmMigrationDialogProps> = ({
               setInputValue(newInputValue)
             }}
             getOptionLabel={(option) => option.label}
-            renderOption={(props, option) => <li {...props}>{option.label}</li>}
+            renderOption={(props, option) => (
+              <li {...props} key={props.id}>
+                {option.label}
+              </li>
+            )}
             renderInput={(params) => <TextField {...params} label="Proceso" />}
           />
         )}

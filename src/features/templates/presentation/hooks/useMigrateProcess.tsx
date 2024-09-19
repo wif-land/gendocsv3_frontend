@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
 import { ProcessesUseCasesImpl } from '../../../processes/domain/usecases/ProcessServices'
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
+import { useParams } from 'next/navigation'
 
 export const useMigrateProcess = (moduleId: number) => {
   const [processes, setProcesses] = useState<IProcess[]>([])
@@ -11,6 +12,7 @@ export const useMigrateProcess = (moduleId: number) => {
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
   const debouncedValue = useDebounce(inputValue)
+  const { id } = useParams()
 
   useEffect(() => {
     let isMounted = true
@@ -24,7 +26,9 @@ export const useMigrateProcess = (moduleId: number) => {
         .getByFilters({ field }, moduleId, new PaginationDTO())
         .then((res) => {
           if (isMounted) {
-            setProcesses(res.processes)
+            setProcesses(
+              res.processes.filter((process) => process.id !== Number(id)),
+            )
             return
           }
 

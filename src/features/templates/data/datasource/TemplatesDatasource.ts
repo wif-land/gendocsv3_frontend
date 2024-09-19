@@ -114,7 +114,7 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
     const keyName =
       typeof processValue === 'string' ? 'newProcessName' : 'processId'
 
-    const result = await AxiosClient.post(API_ROUTES.TEMPLATES.MIGRATE, {
+    const result = await AxiosClient.patch(API_ROUTES.TEMPLATES.MIGRATE, {
       templateIds,
       userId,
       moduleId,
