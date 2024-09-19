@@ -147,7 +147,12 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
                 )
               }
               action={
-                <Button color="primary" onClick={confirm.onTrue}>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    confirm.onTrue()
+                  }}
+                >
                   Migrar a proceso
                 </Button>
               }
@@ -238,6 +243,7 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
           console.log('confirm')
         }}
         selectedItems={table.selected}
+        moduleId={process.moduleId}
       />
     </div>
   )
