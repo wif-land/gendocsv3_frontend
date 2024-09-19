@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation'
 
 export const useMigrateProcess = (moduleId: number) => {
   const [processes, setProcesses] = useState<IProcess[]>([])
-  const [inputValue, setInputValue] = useState('' as string)
+  const [inputValue, setInputValue] = useState('')
   const isOpen = useBoolean()
   const [loading, setIsLoading] = useState(false)
   const debouncedValue = useDebounce(inputValue)
