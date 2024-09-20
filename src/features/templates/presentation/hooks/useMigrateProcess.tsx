@@ -17,7 +17,7 @@ export const useMigrateProcess = (moduleId: number) => {
   useEffect(() => {
     let isMounted = true
 
-    if (isOpen.value === false) return
+    if (!isOpen.value) return
 
     setIsLoading(true)
 
