@@ -27,6 +27,15 @@ interface TemplateUseCases {
     count: number
     templates: TemplateModel[]
   }>
+
+  migrateToNewProcess: (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) => Promise<{
+    status: number
+  }>
 }
 
 export class TemplatesUseCasesImpl implements TemplateUseCases {
@@ -59,4 +68,17 @@ export class TemplatesUseCasesImpl implements TemplateUseCases {
       ...template,
       id,
     })
+
+  migrateToNewProcess = async (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) =>
+    await this.templateRepository.migrateToNewProcess(
+      templateIds,
+      userId,
+      moduleId,
+      processValue,
+    )
 }

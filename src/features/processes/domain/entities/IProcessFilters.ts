@@ -1,4 +1,4 @@
 export interface IProcessFilters {
-  name?: string
+  field?: string
   state?: boolean
 }

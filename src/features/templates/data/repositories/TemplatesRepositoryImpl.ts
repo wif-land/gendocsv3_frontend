@@ -32,4 +32,17 @@ export class TemplatesRepositoryImpl implements TemplatesRepository {
 
   create = async (templateData: ITemplate) =>
     await this.datasource.create(templateData)
+
+  migrateToNewProcess = async (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) =>
+    await this.datasource.migrateToNewProcess(
+      templateIds,
+      userId,
+      moduleId,
+      processValue,
+    )
 }

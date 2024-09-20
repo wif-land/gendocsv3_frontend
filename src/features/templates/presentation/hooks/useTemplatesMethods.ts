@@ -22,6 +22,19 @@ export const useTemplatesMethods = () => {
       searchTerm,
     )
 
+  const migrateToNewProcess = async (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) =>
+    await TemplatesUseCasesImpl.getInstance().migrateToNewProcess(
+      templateIds,
+      userId,
+      moduleId,
+      processValue,
+    )
+
   return {
     loader,
     templates,
@@ -29,5 +42,6 @@ export const useTemplatesMethods = () => {
     fetchData,
     updateRow,
     fetchDataByField,
+    migrateToNewProcess,
   }
 }

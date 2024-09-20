@@ -11,12 +11,20 @@ import {
   TextField,
   Autocomplete,
 } from '@mui/material'
+import { useMigrateProcess } from '../hooks/useMigrateProcess'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 
 interface ConfirmMigrationDialogProps {
   open: boolean
   onClose: () => void
-  onConfirm: (selectedItems: string[], processValue: string) => void
+  onConfirm: (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) => void
   selectedItems: string[]
+  moduleId: number
 }
 
 const ConfirmMigrationDialog: React.FC<ConfirmMigrationDialogProps> = ({
@@ -24,22 +32,26 @@ const ConfirmMigrationDialog: React.FC<ConfirmMigrationDialogProps> = ({
   onClose,
   onConfirm,
   selectedItems,
+  moduleId,
 }) => {
   const [isNewProcess, setIsNewProcess] = useState(false)
   const [processName, setProcessName] = useState('')
-  const [selectedProcess, setSelectedProcess] = useState('')
+  const [selectedProcess, setSelectedProcess] = useState<number>()
+  const { user } = useAccountStore()
+
+  const { processes, setInputValue, loading, isOpen } =
+    useMigrateProcess(moduleId)
 
   const handleConfirm = () => {
-    const processValue = isNewProcess ? processName : selectedProcess
-    onConfirm(selectedItems, processValue)
+    const processValue = isNewProcess ? processName : Number(selectedProcess)
+    onConfirm(
+      selectedItems.map((id) => Number(id)),
+      user?.id as number,
+      moduleId,
+      processValue,
+    )
     onClose()
   }
-
-  const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-  ]
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -69,10 +81,29 @@ const ConfirmMigrationDialog: React.FC<ConfirmMigrationDialogProps> = ({
           <Autocomplete
             disablePortal
             id="process-id"
-            options={top100Films}
+            options={processes.map((process) => ({
+              label: process.name,
+              id: process.id,
+            }))}
             onChange={(event, newValue) =>
-              setSelectedProcess(newValue?.label || '')
+              setSelectedProcess(Number(newValue?.id))
             }
+            loading={loading}
+            open={isOpen.value}
+            onOpen={isOpen.onTrue}
+            onClose={() => {
+              isOpen.onFalse()
+              setInputValue('')
+            }}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue)
+            }}
+            getOptionLabel={(option) => option.label}
+            renderOption={(props, option) => (
+              <li {...props} key={props.id}>
+                {option.label}
+              </li>
+            )}
             renderInput={(params) => <TextField {...params} label="Proceso" />}
           />
         )}

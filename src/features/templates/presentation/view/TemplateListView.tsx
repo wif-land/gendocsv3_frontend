@@ -54,10 +54,11 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
   const pathNameWithoutId = pathname.split('/').slice(0, -1).join('/')
 
-  const { loader, templates, handleUpdateRow } = useTemplateView({
-    processId: process.id!,
-    isDataFiltered,
-  })
+  const { loader, templates, handleUpdateRow, handleMigrateToNewProcess } =
+    useTemplateView({
+      processId: process.id!,
+      isDataFiltered,
+    })
 
   const [filters, setFilters] = useState<ITemplateTableFilters>(defaultFilters)
 
@@ -147,7 +148,12 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
                 )
               }
               action={
-                <Button color="primary" onClick={confirm.onTrue}>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    confirm.onTrue()
+                  }}
+                >
                   Migrar a proceso
                 </Button>
               }
@@ -233,11 +239,9 @@ const TemplateListView = ({ process }: { process: ProcessModel }) => {
       <ConfirmMigrationDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        onConfirm={() => {
-          // eslint-disable-next-line no-console
-          console.log('confirm')
-        }}
+        onConfirm={handleMigrateToNewProcess}
         selectedItems={table.selected}
+        moduleId={process.moduleId}
       />
     </div>
   )

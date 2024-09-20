@@ -92,6 +92,7 @@ export const API_ROUTES = {
     GET_BY_PROCESS_ID: (id: number) => `/templates/process/${id}`,
     GET_BY_PROCESS_AND_FIELD: (processId: number, field: string) =>
       `/templates/process/${processId}/${field}`,
+    MIGRATE: '/templates/migrate',
   },
   DOCUMENTS: {
     GET_ALL: '/documents',
