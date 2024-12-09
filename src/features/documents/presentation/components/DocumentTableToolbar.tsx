@@ -95,7 +95,7 @@ export const DocumentTableToolbar = ({ moduleName }: Props) => {
               ),
             }}
           />
-       </Stack>
+        </Stack>
       </Stack>
     </>
   )

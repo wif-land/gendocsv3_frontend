@@ -1,5 +1,8 @@
 {
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "env": {
     "node": true
   },
@@ -11,7 +14,8 @@
     "prefer-arrow"
   ],
   "ignorePatterns": [
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "next.config.js"
   ],
   "extends": [
     "plugin:@typescript-eslint/eslint-recommended",
@@ -131,9 +135,22 @@
     "@typescript-eslint/interface-name-prefix": "off",
     "no-restricted-globals": "off"
   },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": "./tsconfig.json"
+      }
+    }
+  },
   "overrides": [
     {
-      "files": "**.ts*",
+      "files": [
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
       "excludedFiles": "*.test.*"
       // "rules": {
       //   "no-magic-numbers": [

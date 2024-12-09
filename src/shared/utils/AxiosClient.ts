@@ -61,7 +61,13 @@ export class AxiosClient {
       (response) => response,
       async (error) => {
         if (error.response?.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-          await new LogoutUseCase().call()
+          if (error.response.data.message === 'Credenciales incorrectas') {
+            enqueueSnackbar('Credenciales incorrectas', {
+              variant: 'error',
+            })
+          } else {
+            await new LogoutUseCase().call()
+          }
           this.accessToken = null
         }
 

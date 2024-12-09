@@ -17,6 +17,7 @@ import { DegreeCertificateForBulk } from '../components/DegreeBulkUploadDialog'
 import { IDegreeCertificateTableFilters } from '../components/DegreeTableToolbar'
 import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
 import { ReadonlyURLSearchParams } from 'next/navigation'
+import { DateUtils } from '@/shared/utils/dateUtils'
 
 export interface FormValuesProps
   extends Omit<
@@ -156,10 +157,10 @@ export const defaultFilters = (
     false,
   startDate: searchParams.has('startDate')
     ? new Date(searchParams.get('startDate') as string)
-    : new Date(),
+    : DateUtils.FIRST_DAY_OF_YEAR,
   endDate: searchParams.has('endDate')
     ? new Date(searchParams.get('endDate') as string)
-    : new Date(),
+    : DateUtils.LAST_DAY_OF_YEAR,
   order: searchParams.has('order')
     ? (searchParams.get('order') as 'ASC' | 'DESC')
     : 'ASC',

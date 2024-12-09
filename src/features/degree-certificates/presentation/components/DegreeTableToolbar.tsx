@@ -140,7 +140,7 @@ export const DegreeCertificatesTableToolbar = ({
           <CareerFilter
             onChange={handleChange}
             filters={filters}
-            sx={{ width: 700 }}
+            sx={{ width: { md: 700 } }}
           />
           <TextField
             fullWidth
@@ -167,6 +167,43 @@ export const DegreeCertificatesTableToolbar = ({
               <Iconify icon="icon-park-outline:filter" />
             </IconButton>
           )} */}
+        </Stack>
+        <Stack
+          spacing={2}
+          alignItems="start"
+          sx={{ width: 1 }}
+          direction={{
+            xs: 'column',
+            md: 'row',
+          }}
+        >
+          <FormControl>
+            <DatePicker
+              value={dayjs(filters.startDate) || null}
+              format={DATE_FORMAT}
+              onAccept={(e) => {
+                e && onFilters('startDate', (e as unknown as Dayjs).toDate())
+                if (!filters.endDate) {
+                  e && onFilters('endDate', (e as unknown as Dayjs).toDate())
+                }
+              }}
+              sx={{ textTransform: 'capitalize' }}
+              label="Fecha de inicio"
+            />
+          </FormControl>
+          <FormControl>
+            <DatePicker
+              disabled={!filters.startDate}
+              value={dayjs(filters.endDate) || null}
+              minDate={filters.startDate ? dayjs(filters.startDate) : null}
+              format={DATE_FORMAT}
+              onAccept={(e) => {
+                onFilters('endDate', (e as unknown as Dayjs).toDate())
+              }}
+              sx={{ textTransform: 'capitalize' }}
+              label="Fecha de fin"
+            />
+          </FormControl>
         </Stack>
       </Stack>
       {filters.isReport === true && (
