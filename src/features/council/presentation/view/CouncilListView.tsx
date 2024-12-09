@@ -129,7 +129,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
               <Stack
                 sx={{
                   display: { xs: 'none', md: 'flex', flexDirection: 'row' },
-                  gap: 2.5,
+                  gap: 1.5,
                 }}
               >
                 <Button

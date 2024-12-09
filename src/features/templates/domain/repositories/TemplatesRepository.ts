@@ -22,4 +22,13 @@ export interface TemplatesRepository {
     count: number
     templates: TemplateModel[]
   }>
+
+  migrateToNewProcess: (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) => Promise<{
+    status: number
+  }>
 }
