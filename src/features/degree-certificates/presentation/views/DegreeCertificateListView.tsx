@@ -48,6 +48,8 @@ import useModulesStore from '../../../../shared/store/modulesStore'
 import { useParams } from 'next/navigation'
 import { resolveModuleByCode } from '../../../../shared/utils/ModuleUtil'
 import { useSocketListeners } from '../../../../core/providers/use-socket-notifications'
+import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
+import { UserRole } from '../../../../features/users/domain/entities/IUser'
 
 const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   useSocketListeners()
@@ -61,6 +63,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const [isDataFiltered, setIsDataFiltered] = useState(false)
 
   const { modules } = useModulesStore()
+  const { user } = useAccountStore()
   const { codeModule } = useParams()
 
   const module = resolveModuleByCode(modules, codeModule as string)
@@ -82,6 +85,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     searchParams,
     filters,
     setFilters,
+    deleteReportParam,
+    updateOrderParam,
   } = useDegreeCertificateView({
     table,
     isDataFiltered,
@@ -138,9 +143,8 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       const params = filtersToSearch(filters)
       router.push(`${pathname}/${id}/edit?${params.toString()}`)
     },
-    [router],
+    [router, filters],
   )
-
   const onGenerateDocument = useCallback(
     async (row: DegreeCertificateModel) => {
       if (row.certificateDriveId) {
@@ -178,31 +182,39 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
     )
   }, [router, pathname])
 
-  const reportOptions = [
-    {
-      value: 'start',
-      label: 'Reporte inicial',
-      action: () => {
-        handleFilters('isReport', true)
-        handleFilters('isEnd', false)
+  const getReportOptions = () => {
+    const options = [
+      {
+        value: 'start',
+        label: 'Reporte inicial',
+        action: () => {
+          handleFilters('isReport', true)
+          handleFilters('isEnd', false)
+        },
       },
-    },
-    {
-      value: 'final',
-      label: 'Reporte final',
-      action: () => {
-        handleFilters('isReport', true)
-        handleFilters('isEnd', true)
+      {
+        value: 'final',
+        label: 'Reporte final',
+        action: () => {
+          handleFilters('isReport', true)
+          handleFilters('isEnd', true)
+        },
       },
-    },
-    {
-      value: 'template',
-      label: 'Plantilla',
-      action: () => {
-        onShowReportTemplate()
+      {
+        value: 'template',
+        label: 'Plantilla',
+        action: () => {
+          onShowReportTemplate()
+        },
       },
-    },
-  ]
+    ]
+
+    if (user?.role === UserRole.ADMIN || user?.role === UserRole.TEMP_ADMIN) {
+      return options
+    } else {
+      return options.slice(0, 2)
+    }
+  }
 
   const degreeActions = (
     <>
@@ -222,15 +234,18 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
       >
         Generar numeración
       </Button>
-      <Button
-        component={RouterLink}
-        href={`${pathname}/templates`}
-        variant="contained"
-        startIcon={<Iconify icon="mingcute:document-3-line" />}
-        sx={{ mr: 1.5 }}
-      >
-        Plantillas
-      </Button>
+      {(user?.role === UserRole.ADMIN ||
+        user?.role === UserRole.TEMP_ADMIN) && (
+        <Button
+          component={RouterLink}
+          href={`${pathname}/templates`}
+          variant="contained"
+          startIcon={<Iconify icon="mingcute:document-3-line" />}
+          sx={{ mr: 1.5 }}
+        >
+          Plantillas
+        </Button>
+      )}
       <Button
         variant="contained"
         startIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
@@ -251,6 +266,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
           handleFilters('isEnd', false)
           handleFilters('startDate', new Date(new Date().setMonth(0, 1)))
           handleFilters('endDate', new Date())
+          deleteReportParam()
         }}
         sx={{ mr: 1.5 }}
       >
@@ -278,6 +294,12 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
   const openDegreeCertificateDetail = (id: number) => {
     const params = filtersToSearch(filters)
     router.push(`${pathname}/${id}?${params.toString()}`)
+  }
+
+  const handleChangeOrder = () => {
+    const order = filters.order === 'ASC' ? 'DESC' : 'ASC'
+    handleFilters('order', order)
+    updateOrderParam(order)
   }
 
   return (
@@ -332,6 +354,18 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
               presidente de acta para formar el reporte final
             </Alert>
           )}
+          {filters.isReport && filters.isEnd === false && (
+            <Alert
+              severity="info"
+              variant="outlined"
+              sx={{
+                mb: 3,
+              }}
+            >
+              Se muestran las actas que no tengan asignada la fecha de
+              presentacion
+            </Alert>
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <Scrollbar>
@@ -345,7 +379,10 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
                   headLabel={getTableHead(filters.isReport as boolean)}
                   rowCount={count}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
+                  onSort={(id) => {
+                    handleChangeOrder()
+                    table.onSort(id)
+                  }}
                 />
 
                 <TableBody>
@@ -420,7 +457,7 @@ const DegreeCertificateListView = ({ moduleId }: { moduleId: string }) => {
         arrow="top-right"
         sx={{ width: 140 }}
       >
-        {reportOptions.map((option) => (
+        {getReportOptions().map((option) => (
           <MenuItem
             key={option.value}
             onClick={() => {

@@ -52,15 +52,17 @@ export const useDegreeCertificateMethods = () => {
     if (isEnd === true) {
       return await DegreeCertificatesUseCasesImpl.getInstance().getReports({
         careerId: data.careerId,
-        dateType: data.dateType,
         startDate: data.startDate,
         endDate: data.endDate,
         field: data.field,
+        isEnd: data.isEnd,
+        order: data.order,
       })
     } else {
       return await DegreeCertificatesUseCasesImpl.getInstance().getReports({
         careerId: data.careerId,
         field: data.field,
+        order: data.order,
       })
     }
   }
@@ -72,15 +74,16 @@ export const useDegreeCertificateMethods = () => {
     if (isEnd === true) {
       return await DegreeCertificatesUseCasesImpl.getInstance().downloadReport({
         careerId: data.careerId,
-        dateType: data.dateType,
         startDate: data.startDate,
         endDate: data.endDate,
         field: data.field,
+        isEnd: data.isEnd,
       })
     } else {
       return await DegreeCertificatesUseCasesImpl.getInstance().downloadReport({
         careerId: data.careerId,
         field: data.field,
+        order: data.order,
       })
     }
   }

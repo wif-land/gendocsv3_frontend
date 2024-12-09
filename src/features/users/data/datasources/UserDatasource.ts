@@ -39,8 +39,6 @@ export class UserDataSourceImpl implements UserDataSource {
   }
 
   getAll = async (pagination?: PaginationDTO) => {
-    console.log('pagination', pagination)
-
     const result = await AxiosClient.get(API_ROUTES.USERS.GET_ALL, {
       params: { ...pagination },
     })

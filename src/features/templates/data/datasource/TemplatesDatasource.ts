@@ -25,6 +25,15 @@ export interface TemplatesDataSource {
     count: number
     templates: TemplateModel[]
   }>
+
+  migrateToNewProcess: (
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) => Promise<{
+    status: number
+  }>
 }
 
 export class TemplatesDataSourceImpl implements TemplatesDataSource {
@@ -94,5 +103,32 @@ export class TemplatesDataSourceImpl implements TemplatesDataSource {
     }
 
     return result.data as { template: TemplateModel }
+  }
+
+  async migrateToNewProcess(
+    templateIds: number[],
+    userId: number,
+    moduleId: number,
+    processValue: string | number,
+  ) {
+    const keyName =
+      typeof processValue === 'string' ? 'newProcessName' : 'processId'
+
+    const result = await AxiosClient.patch(API_ROUTES.TEMPLATES.MIGRATE, {
+      templateIds,
+      userId,
+      moduleId,
+      [keyName]: processValue,
+    })
+
+    if ('error' in result) {
+      return {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      }
+    }
+
+    return {
+      status: HTTP_STATUS_CODES.OK,
+    }
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import {
   DEGREE_ATTENDANCE_ROLES_OPTIONS,
   IDegreeCertificatesAttendee,
+  sortMembersByRole,
 } from '../../domain/entities/IDegreeCertificateAttendee'
 import { useDegreeCertificateStore } from '../store/useDegreeCertificateStore'
 import { DegreeCertificatesUseCasesImpl } from '../../domain/usecases/DegreeCertificatesUseCases'
@@ -29,6 +30,7 @@ const Description = (props: {
   onEdit: (member: IDegreeCertificatesAttendee) => void
 }) => {
   const loader = useLoaderStore((state) => state.loader)
+  const sortedMembers = sortMembersByRole(props.members)
 
   return (
     <Stack spacing={3}>
@@ -43,12 +45,12 @@ const Description = (props: {
           m: 3,
         }}
       >
-        {!props.members || props.members.length === 0 ? (
+        {!sortedMembers || sortedMembers.length === 0 ? (
           <Typography variant="body1">No hay miembros asignados</Typography>
         ) : (
           <>
-            {props.members?.map((member, index) => {
-              const isLast = index === props.members.length - 1
+            {sortedMembers?.map((member, index) => {
+              const isLast = index === sortedMembers.length - 1
 
               return (
                 <Grid
@@ -178,6 +180,7 @@ export const Attendance = (props: {
   return (
     <Stack spacing={3} sx={{ p: 3 }}>
       <Description
+        // aqui ya deberíamos retornar los miembros ordenados en vez de direcametnte members
         members={degreeCertificate.members || []}
         handleSetAttendance={handleSetAttendance}
         onEdit={(member) => {

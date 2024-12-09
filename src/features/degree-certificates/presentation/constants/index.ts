@@ -15,7 +15,6 @@ import {
 import { enqueueSnackbar } from 'notistack'
 import { DegreeCertificateForBulk } from '../components/DegreeBulkUploadDialog'
 import { IDegreeCertificateTableFilters } from '../components/DegreeTableToolbar'
-import { DateType } from '../../domain/entities/IDegreeCertificateFilters'
 import { IFunctionaryFormValues } from '../../../functionaries/domain/entities/IFunctionary'
 import { ReadonlyURLSearchParams } from 'next/navigation'
 
@@ -38,9 +37,9 @@ export interface AttendanceFormValuesProps
   > {}
 
 export const getTableHead = (isReport: boolean) => {
+  // aqui quiero agregar una propiedad sortable
   const baseHeaders = [
-    { id: 'auxNumber', label: '#Reg' },
-    { id: 'number', label: 'Número Acta' },
+    { id: 'number', label: 'Número Acta', sortable: true },
     { id: 'topic', label: 'Tema' },
     { id: 'student', label: 'Estudiante' },
     { id: 'presentationDate', label: 'Fecha de presentación' },
@@ -150,18 +149,20 @@ export const defaultFilters = (
   isEnd: searchParams.has('isEnd')
     ? searchParams.get('isEnd') === 'true'
     : false,
-  isReport: searchParams.has('isReport')
-    ? searchParams.get('isReport') === 'true'
-    : false,
+  isReport:
+    // searchParams.has('isReport')
+    // ? // eslint-disable-next-line eqeqeq
+    //   Boolean(searchParams.get('isReport') == 'true')
+    false,
   startDate: searchParams.has('startDate')
     ? new Date(searchParams.get('startDate') as string)
-    : new Date(`${new Date().getFullYear()}-01-01`),
+    : new Date(),
   endDate: searchParams.has('endDate')
     ? new Date(searchParams.get('endDate') as string)
     : new Date(),
-  dateType: searchParams.has('dateType')
-    ? (searchParams.get('dateType') as DateType)
-    : (DateType.CREATION as any),
+  order: searchParams.has('order')
+    ? (searchParams.get('order') as 'ASC' | 'DESC')
+    : 'ASC',
 })
 
 export const NewDegreeCertificateSchema = Yup.object().shape({

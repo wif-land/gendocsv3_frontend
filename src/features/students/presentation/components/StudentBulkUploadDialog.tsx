@@ -146,9 +146,9 @@ export const StudentBulkUploadDialog = ({
 
       const sheet = XLSX.utils.json_to_sheet(filteredData, { skipHeader: true })
       const jsonData = XLSX.utils.sheet_to_json(sheet)
-
+      console.log(jsonData)
       const transformedData = transformData(jsonData, careers, cities)
-
+      console.log(transformedData)
       if (
         transformedData == null ||
         transformedData.length < jsonData.length - 1
@@ -202,10 +202,6 @@ export const StudentBulkUploadDialog = ({
         (student) => !!student.gender && !!student.outlookEmail,
       )
 
-      console.log(
-        students.find((student) => !student.gender || !student.outlookEmail),
-      )
-
       if (!isValid) {
         enqueueSnackbar(
           'El archivo seleccionado no cumple con el formato de estudiantes por carrera, asegúrate que los campos de género y correo estén completos',
@@ -256,8 +252,6 @@ export const StudentBulkUploadDialog = ({
       }
 
       const isComplete = await bulkCreate(students, isUpdate, user.id)
-
-      console.log(students)
 
       setTimeout(() => {
         if (isComplete) {

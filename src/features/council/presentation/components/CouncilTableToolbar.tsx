@@ -20,10 +20,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
-import {
-  DATE_TYPES,
-  ICouncilFilters,
-} from '../../domain/entities/ICouncilFilters'
+import { ICouncilFilters } from '../../domain/entities/ICouncilFilters'
 import { COUNCIL_TYPES } from '../../domain/entities/ICouncil'
 import dayjs, { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../../../core/utils/format-time'
@@ -31,7 +28,6 @@ import { DATE_FORMAT } from '../../../../core/utils/format-time'
 export type ICouncilTableFilterValue =
   | string
   | Date
-  | typeof DATE_TYPES
   | typeof COUNCIL_TYPES
   | undefined
 
@@ -40,7 +36,6 @@ export type ICouncilTableFilters = {
   state: boolean | undefined
   startDate: Date | undefined
   endDate: Date | undefined
-  dateType: typeof DATE_TYPES | undefined
   type: typeof COUNCIL_TYPES | undefined
 }
 
@@ -226,34 +221,7 @@ export const CouncilTableToolbar = ({
             </Select>
           </FormControl>
           <Divider orientation="vertical" flexItem />
-          <FormControl
-            sx={{
-              flexShrink: 0,
-              width: { xs: 1, md: '20%' },
-            }}
-          >
-            <InputLabel id="date-type-label">Tipo de fecha</InputLabel>
-            <Select
-              labelId="date-type-label"
-              id="demo-simple-select"
-              label="Tipo de fecha"
-              value={filters.dateType || ''}
-              input={<OutlinedInput label="Tipo de Fecha" />}
-              onChange={(event) => {
-                const {
-                  target: { value },
-                } = event
 
-                onFilters('dateType', value)
-              }}
-            >
-              {DATE_TYPES.map((item) => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           <FormControl
             sx={{
               flexShrink: 0,
@@ -261,7 +229,6 @@ export const CouncilTableToolbar = ({
             }}
           >
             <DatePicker
-              disabled={!filters.dateType}
               value={dayjs(filters.startDate) || null}
               format={DATE_FORMAT}
               onAccept={(e) => {
@@ -281,7 +248,7 @@ export const CouncilTableToolbar = ({
             }}
           >
             <DatePicker
-              disabled={!filters.dateType || !filters.startDate}
+              disabled={!filters.startDate}
               value={dayjs(filters.endDate) || null}
               minDate={filters.startDate ? dayjs(filters.startDate) : null}
               format={DATE_FORMAT}

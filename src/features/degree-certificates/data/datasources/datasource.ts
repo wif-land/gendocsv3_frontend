@@ -76,6 +76,8 @@ export interface IDegreeCertificateDatasource {
     fileName: string
     file: string
   }>
+
+  getEnqueuedNumbers(careerId: number): Promise<number[]>
 }
 
 export class DegreeCertificateDatasourceImpl
@@ -133,7 +135,7 @@ export class DegreeCertificateDatasourceImpl
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.GET_ALL,
       {
-        params: { ...filters, pagination },
+        params: { ...filters, ...pagination },
       },
     )
 
@@ -269,7 +271,7 @@ export class DegreeCertificateDatasourceImpl
 
   async getReports(filters: IDegreeCertificateFilters) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isEnd, isReport, ...rest } = filters
+    const { isReport, ...rest } = filters
 
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.REPORTS,
@@ -293,7 +295,7 @@ export class DegreeCertificateDatasourceImpl
 
   downloadReport = async (filters: IDegreeCertificateFilters) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isEnd, isReport, ...rest } = filters
+    const { isReport, ...rest } = filters
     const result = await AxiosClient.get(
       API_ROUTES.DEGREE_CERTIFICATES.DOWNLOAD,
       {
@@ -306,5 +308,17 @@ export class DegreeCertificateDatasourceImpl
     }
 
     return result.data as { fileName: string; file: string }
+  }
+
+  getEnqueuedNumbers = async (careerId: number) => {
+    const result = await AxiosClient.get(
+      API_ROUTES.DEGREE_CERTIFICATES.GET_ENQUEUED_NUMBERS(careerId),
+    )
+
+    if ('error' in result) {
+      return []
+    }
+
+    return result.data as number[]
   }
 }

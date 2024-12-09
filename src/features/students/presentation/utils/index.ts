@@ -207,7 +207,6 @@ export const transformData = (
             dni: item['Cédula'].toString().trim(),
             vinculationHours: parseInt(item['Horas Vinculación'], 10) || 0,
             internshipHours: parseInt(item['Horas Prácticas'], 10) || 0,
-            highSchoolName,
           } as StudentModel
         } else {
           // date format is dd/mm/yyyy
@@ -219,10 +218,24 @@ export const transformData = (
 
             return
           }
+          const startStudiesDateValueToCheck = item['Inicio clases']
+
+          if (
+            startStudiesDateValueToCheck &&
+            startStudiesDateValueToCheck.split('/').length !== 3
+          ) {
+            enqueueSnackbar(
+              `Por favor, asegúrate de que la fecha de inicio de clases "${item['Inicio clases']}" del estudiante con cédula ${item['Cédula']} sea válida`,
+              { variant: 'error' },
+            )
+
+            return
+          }
 
           const startStudiesDate = item['Inicio clases']
             ? new Date(
                 (item['Inicio clases'] as string)
+                  .trim()
                   .split('/')
                   .reverse()
                   .join('-'),
@@ -232,12 +245,60 @@ export const transformData = (
           // const endStudiesDate = item['Fin clases']
           //   ? new Date(item['Fin clases'].split('/').reverse().join('-'))
           //   : undefined
+
+          const endStudiesDateToCheck = item['Fin clases']
+            ? (item['Fin clases'] as string).trim()
+            : undefined
+
+          if (endStudiesDateToCheck && !isValidDate(endStudiesDateToCheck)) {
+            enqueueSnackbar(
+              `Por favor, asegúrate de que la fecha de fin de clases "${endStudiesDateToCheck}" del estudiante con cédula ${item['Cédula']} sea válida`,
+              { variant: 'error' },
+            )
+
+            return
+          }
+
+          if (endStudiesDateToCheck && !isValidDate(endStudiesDateToCheck)) {
+            enqueueSnackbar(
+              `Por favor, asegúrate de que la fecha de fin de clases "${endStudiesDateToCheck}" del estudiante con cédula ${item['Cédula']} sea válida`,
+              { variant: 'error' },
+            )
+
+            return
+          }
+
+          const highSchoolName = String(
+            item['Institución educativa'] || '',
+          ).trim()
+
           return {
             dni: item['Cédula'].toString(),
             startStudiesDate,
+            endStudiesDate:
+              endStudiesDateToCheck &&
+              isValidDate(endStudiesDateToCheck) &&
+              !endStudiesDateToCheck.includes('EN PROCESO')
+                ? new Date(
+                    (endStudiesDateToCheck as string)
+                      .trim()
+                      .split('/')
+                      .reverse()
+                      .join('-'),
+                  )
+                : undefined,
             approvedCredits: parseInt(item['Créditos Carrera'], 10) || 0,
             bachelorDegree: capitalizeSentence(getBachelorDegree()),
-            highSchoolName,
+            highSchoolName:
+              highSchoolName.toLowerCase().includes('unidad') ||
+              highSchoolName.toLowerCase().includes('colegio') ||
+              highSchoolName.toLowerCase().includes('escuela') ||
+              highSchoolName.toLowerCase().includes('instituto') ||
+              highSchoolName.toLowerCase().includes('academia') ||
+              highSchoolName.toLowerCase().includes('liceo') ||
+              highSchoolName.toLowerCase().includes('tecnológico')
+                ? highSchoolName.toLowerCase()
+                : `UNIDAD EDUCATIVA ${highSchoolName.toUpperCase()}`,
           } as StudentModel
         }
       } catch (error) {
@@ -252,3 +313,19 @@ export const transformData = (
       }
     })
     .filter((item) => item !== undefined)
+
+const isValidDate = (date: string): boolean => {
+  // date format is dd/mm/yyyy
+  if (date.includes('EN PROCESO')) {
+    return true
+  }
+  if (typeof date === 'number') {
+    return false
+  }
+
+  if (date && date.split('/').length !== 3) {
+    return false
+  }
+
+  return true
+}

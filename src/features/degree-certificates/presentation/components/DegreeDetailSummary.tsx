@@ -28,6 +28,13 @@ export const DegreeDetailsSummary = ({
     icon: string
   }[] = [
     {
+      title: 'Estudiante',
+      value:
+        `${degreeCertificate.student?.firstLastName} ${degreeCertificate.student?.secondLastName} ${degreeCertificate.student?.firstName} ${degreeCertificate.student?.secondName} ` ||
+        'No especificado',
+      icon: 'fe:user',
+    },
+    {
       title: 'Tema',
       value: degreeCertificate.topic || 'No especificado',
       icon: 'ion:book',

@@ -85,11 +85,17 @@ export const useSocketListeners = () => {
           ...data.user,
           id: user.id,
         })
-        console.log('User updated', data.user)
         enqueueSnackbar('Se ha actualizado su información', {
           variant: 'success',
         })
       }
+    })
+
+    socketClient.on('warning', (data: { title: string; message: string }) => {
+      enqueueSnackbar(data.message, {
+        variant: 'warning',
+        autoHideDuration: 10000,
+      })
     })
 
     // Clean up function to remove listeners when the component unmounts or when the dependencies change
@@ -97,6 +103,7 @@ export const useSocketListeners = () => {
       socketClient.off('notification', handleNotification)
       socketClient.off('user-notifications', setNotifications)
       socketClient.off('change-user')
+      socketClient.off('warning')
     }
   }, [user, firstLoad]) // Adding dependencies to ensure that listeners are setup and teardown properly based on these values
 

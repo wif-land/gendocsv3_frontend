@@ -99,4 +99,8 @@ export class DegreeCertificateRepositoryImpl
 
   downloadReport = async (filters: IDegreeCertificateFilters) =>
     await this.datasource.downloadReport(filters)
+
+  getEnqueuedNumbers(careerId: number): Promise<number[]> {
+    return this.datasource.getEnqueuedNumbers(careerId)
+  }
 }

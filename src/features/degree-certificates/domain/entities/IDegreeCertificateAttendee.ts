@@ -7,11 +7,30 @@ export enum DEGREE_ATTENDANCE_ROLES {
   MENTOR = 'TUTOR',
 }
 
+enum DEEGRE_ATTENDANCE_ROLES_LABELS {
+  PRINCIPAL = 'Miembro principal',
+  SUBSTITUTE = 'Miembro suplente',
+  PRESIDENT = 'Presidente',
+  MENTOR = 'Tutor',
+}
+
 export const DEGREE_ATTENDANCE_ROLES_OPTIONS = [
-  { value: DEGREE_ATTENDANCE_ROLES.PRINCIPAL, label: 'Miembro principal' },
-  { value: DEGREE_ATTENDANCE_ROLES.SUBSTITUTE, label: 'Miembro suplente' },
-  { value: DEGREE_ATTENDANCE_ROLES.PRESIDENT, label: 'Presidente' },
-  { value: DEGREE_ATTENDANCE_ROLES.MENTOR, label: 'Tutor' },
+  {
+    value: DEGREE_ATTENDANCE_ROLES.PRINCIPAL,
+    label: DEEGRE_ATTENDANCE_ROLES_LABELS.PRINCIPAL,
+  },
+  {
+    value: DEGREE_ATTENDANCE_ROLES.SUBSTITUTE,
+    label: DEEGRE_ATTENDANCE_ROLES_LABELS.SUBSTITUTE,
+  },
+  {
+    value: DEGREE_ATTENDANCE_ROLES.PRESIDENT,
+    label: DEEGRE_ATTENDANCE_ROLES_LABELS.PRESIDENT,
+  },
+  {
+    value: DEGREE_ATTENDANCE_ROLES.MENTOR,
+    label: DEEGRE_ATTENDANCE_ROLES_LABELS.MENTOR,
+  },
 ]
 
 export const ROL_PRIORIDAD: { [key: string]: number } = {
@@ -40,3 +59,30 @@ export interface ICreateDegreeCertificatesAttendee
   > {
   functionaryId: number
 }
+
+const rolePriority = [
+  DEEGRE_ATTENDANCE_ROLES_LABELS.PRESIDENT,
+  DEEGRE_ATTENDANCE_ROLES_LABELS.PRINCIPAL,
+  DEEGRE_ATTENDANCE_ROLES_LABELS.SUBSTITUTE,
+  DEEGRE_ATTENDANCE_ROLES_LABELS.MENTOR,
+]
+
+export const sortMembersByRole = (members: IDegreeCertificatesAttendee[]) =>
+  members.sort((a, b) => {
+    const roleALabel = DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
+      (role) => role.value === a.role,
+    )?.label
+
+    const roleBLabel = DEGREE_ATTENDANCE_ROLES_OPTIONS.find(
+      (role) => role.value === b.role,
+    )?.label
+
+    const roleA = roleALabel
+      ? rolePriority.indexOf(roleALabel)
+      : rolePriority.length
+    const roleB = roleBLabel
+      ? rolePriority.indexOf(roleBLabel)
+      : rolePriority.length
+
+    return roleA - roleB
+  })

@@ -47,10 +47,10 @@ export const DegreeCertificateTableRow = ({
 }: Props) => {
   const { isClosed, presentationDate } = row
 
-  const studentName = `${(row.student as IStudent).firstName} ${
-    (row.student as IStudent).secondName
-  } ${(row.student as IStudent).firstLastName} ${
+  const studentName = ` ${(row.student as IStudent).firstLastName} ${
     (row.student as IStudent).secondLastName
+  } ${(row.student as IStudent).firstName} ${
+    (row.student as IStudent).secondName
   }`
 
   const confirm = useBoolean()
@@ -62,13 +62,6 @@ export const DegreeCertificateTableRow = ({
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell>
-          <ListItemText
-            primary={row.auxNumber ?? ''}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          />
-        </TableCell>
-
         <TableCell>
           <ListItemText
             primary={row.number ?? '--'}

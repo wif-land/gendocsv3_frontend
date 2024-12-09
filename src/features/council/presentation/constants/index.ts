@@ -12,6 +12,7 @@ import {
   IDefaultMembers,
   IMember,
 } from '../../../default-members/domain/entities/IDefaultMembers'
+import { DateUtils } from '@/shared/utils/dateUtils'
 
 export const TABLE_HEAD = [
   { id: 'name', label: 'Consejo' },
@@ -24,9 +25,8 @@ export const TABLE_HEAD = [
 export const defaultFilters: ICouncilTableFilters = {
   name: undefined,
   state: undefined,
-  startDate: undefined,
+  startDate: DateUtils.FIRST_DAY_OF_YEAR,
   endDate: undefined,
-  dateType: undefined,
   type: undefined,
 }
 
@@ -43,7 +43,7 @@ export const resolveDefaultValues = (
   currentCouncil?: ICouncil,
 ): ICouncilFormValues => ({
   name: currentCouncil?.name || '',
-  date: currentCouncil?.date || new Date(Date.now() + 1000 * 60 * 60 * 24),
+  date: currentCouncil?.date || DateUtils.ONE_DAY_AFTER_NOW,
   type: currentCouncil?.type || CouncilType.ORDINARY,
   isActive: !!currentCouncil?.isActive || true,
   isArchived: !!currentCouncil?.isArchived,

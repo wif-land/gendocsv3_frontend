@@ -6,14 +6,8 @@ import { useDegreeCertificateMethods } from './useDegreeCertificateMethods'
 import { DegreeCertificateModel } from '../../data/models/DegreeCertificateModel'
 import { IDegreeCertificate } from '../../domain/entities/IDegreeCertificates'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import {
-  IDegreeCertificateTableFilters,
-  IDegreeCertificateTableFilterValue,
-} from '../components/DegreeTableToolbar'
-import {
-  DATE_TYPES,
-  IDegreeCertificateFilters,
-} from '../../domain/entities/IDegreeCertificateFilters'
+import { IDegreeCertificateTableFilters } from '../components/DegreeTableToolbar'
+import { IDegreeCertificateFilters } from '../../domain/entities/IDegreeCertificateFilters'
 import { defaultFilters } from '../constants'
 import { useAccountStore } from '../../../../features/auth/presentation/state/useAccountStore'
 import { UserRole } from '../../../../features/users/domain/entities/IUser'
@@ -75,6 +69,12 @@ export const useDegreeCertificateView = ({
     return 1
   }
 
+  const deleteReportParam = () => {
+    const params = new URLSearchParams(searchParams as unknown as string)
+
+    if (searchParams.has('isReport')) params.set('isReport', 'false')
+  }
+
   useEffect(() => {
     if (searchParams.has('careerId')) {
       setFilters({
@@ -93,7 +93,7 @@ export const useDegreeCertificateView = ({
     if (searchParams.has('isReport')) {
       setFilters({
         ...filters,
-        isReport: searchParams.get('isReport') === 'true',
+        isReport: searchParams.get('isReport') === 'false',
       })
     }
 
@@ -111,19 +111,17 @@ export const useDegreeCertificateView = ({
       })
     }
 
-    if (searchParams.has('dateType')) {
-      setFilters({
-        ...filters,
-        dateType: searchParams.get(
-          'dateType',
-        ) as IDegreeCertificateTableFilterValue as typeof DATE_TYPES,
-      })
-    }
-
     if (searchParams.has('field')) {
       setFilters({
         ...filters,
         field: searchParams.get('field') as string,
+      })
+    }
+
+    if (searchParams.has('order')) {
+      setFilters({
+        ...filters,
+        order: searchParams.get('order') as 'ASC' | 'DESC',
       })
     }
   }, [])
@@ -152,12 +150,12 @@ export const useDegreeCertificateView = ({
       params.set('endDate', filters.endDate.toISOString())
     }
 
-    if (filters.dateType) {
-      params.set('dateType', filters.dateType.toString())
-    }
-
     if (filters.field) {
       params.set('field', filters.field)
+    }
+
+    if (filters.order) {
+      params.set('order', filters.order)
     }
 
     router.replace(`${pathname}?${params.toString()}`)
@@ -239,7 +237,6 @@ export const useDegreeCertificateView = ({
           }
         })
       } else {
-        console.log('filters', table.rowsPerPage, newPage, filters)
         fetchData(
           table.rowsPerPage,
           newPage,
@@ -350,7 +347,13 @@ export const useDegreeCertificateView = ({
 
   const handleGenerateNumeration = async () => {
     await generateNumeration(getCareerId())
-    await loadData()
+
+    table.setPage(0)
+    setVisitedPages([])
+    setTableData([])
+    setFirstCharge(true)
+
+    loadData()
   }
 
   const handleSearch = (filters: IDegreeCertificateFilters) => {
@@ -411,7 +414,7 @@ export const useDegreeCertificateView = ({
     })
   }
 
-  const loadData = useCallback(async () => {
+  const loadData = async () => {
     try {
       const data = await fetchData(
         table.rowsPerPage,
@@ -425,8 +428,10 @@ export const useDegreeCertificateView = ({
         setFirstCharge(false)
         setPrevCareer(getCareerId())
       }
-    } catch (error) {}
-  }, [table.rowsPerPage, table.page, filters.careerId])
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const loadReportData = useCallback(async () => {
     try {
@@ -466,6 +471,12 @@ export const useDegreeCertificateView = ({
     handleChangeRowsPerPage()
   }, [table.rowsPerPage])
 
+  const updateOrderParam = (order: 'ASC' | 'DESC') => {
+    const params = new URLSearchParams(searchParams as unknown as string)
+    params.set('order', order)
+    router.replace(`${pathname}?${params.toString()}`)
+  }
+
   return {
     count,
     tableData,
@@ -485,5 +496,7 @@ export const useDegreeCertificateView = ({
     handleDownload,
     filters,
     setFilters,
+    deleteReportParam,
+    updateOrderParam,
   }
 }

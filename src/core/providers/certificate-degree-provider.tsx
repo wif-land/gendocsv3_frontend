@@ -7,7 +7,6 @@ import { RoomModel } from './data/models/roomModel'
 import { ProvidersUseCasesImpl } from './domain/usecases/ProvidersService'
 import { DegCerTemplateUseCasesImpl } from '../../features/degcer-templates/domain/usecases/DegCerTemplatesUseCases'
 import { degreeTemplatesStore } from '../../features/degcer-templates/presentation/store/degCerTemplatesStore'
-import { useAccountStore } from '../../features/auth/presentation/state/useAccountStore'
 
 export interface CertificateContextData {
   certificateTypes: CertificateTypeModel[]
@@ -41,18 +40,15 @@ export const CertificateProvider = ({
   >([])
   const [rooms, setRooms] = useState<RoomModel[]>([])
   const { degCerTemplates, setDegCerTemplates } = degreeTemplatesStore()
-  const isLogged = useAccountStore((state) => state.isLogged)
 
   useEffect(() => {
-    if (!isLogged) return
-
     if (
       certificateTypes.length > 0 &&
       certificateStatuses.length > 0 &&
       degreeModalities.length > 0 &&
       rooms.length > 0
-    ) return
-
+    )
+      return
 
     ProvidersUseCasesImpl.getInstance()
       .getAllCertificateTypes()
@@ -77,8 +73,7 @@ export const CertificateProvider = ({
       .then((data) => {
         setRooms(data)
       })
-
-  }, [isLogged])
+  }, [])
 
   useEffect(() => {
     let isMounted = true

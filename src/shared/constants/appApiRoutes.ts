@@ -92,6 +92,7 @@ export const API_ROUTES = {
     GET_BY_PROCESS_ID: (id: number) => `/templates/process/${id}`,
     GET_BY_PROCESS_AND_FIELD: (processId: number, field: string) =>
       `/templates/process/${processId}/${field}`,
+    MIGRATE: '/templates/migrate',
   },
   DOCUMENTS: {
     GET_ALL: '/documents',
@@ -137,6 +138,8 @@ export const API_ROUTES = {
     GET_ATTENDANCE: (degreeCertificateId: number) =>
       `/degree-certificate-attendance/${degreeCertificateId}`,
     DELETE_ATTENDANCE: (id: number) => `/degree-certificate-attendance/${id}`,
+    GET_ENQUEUED_NUMBERS: (careerID: number) =>
+      `/degree-certificates/numeration/enqueued/${careerID}`,
   },
   DEGREE_CERTIFICATE_TEMPLATES: {
     GET_ALL:
