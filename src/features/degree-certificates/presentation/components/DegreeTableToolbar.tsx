@@ -159,25 +159,12 @@ export const DegreeCertificatesTableToolbar = ({
             }}
             sx={{ flexGrow: 1 }}
           />
-          {/* {filters.isReport === true && filters.isEnd === true && (
-            <IconButton
-              onClick={() => setAreFiltersActive(!areFiltersActive)}
-              title="Más filtros"
-            >
-              <Iconify icon="icon-park-outline:filter" />
-            </IconButton>
-          )} */}
-        </Stack>
-        <Stack
-          spacing={2}
-          alignItems="start"
-          sx={{ width: 1 }}
-          direction={{
-            xs: 'column',
-            md: 'row',
-          }}
-        >
-          <FormControl>
+          <FormControl
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
+            }}
+          >
             <DatePicker
               value={dayjs(filters.startDate) || null}
               format={DATE_FORMAT}
@@ -191,7 +178,12 @@ export const DegreeCertificatesTableToolbar = ({
               label="Fecha de inicio"
             />
           </FormControl>
-          <FormControl>
+          <FormControl
+            sx={{
+              flexShrink: 0,
+              width: { xs: 1, md: '20%' },
+            }}
+          >
             <DatePicker
               disabled={!filters.startDate}
               value={dayjs(filters.endDate) || null}
@@ -206,60 +198,6 @@ export const DegreeCertificatesTableToolbar = ({
           </FormControl>
         </Stack>
       </Stack>
-      {filters.isReport === true && (
-        <Stack
-          spacing={2}
-          alignItems={{ xs: 'flex-end', md: 'center' }}
-          direction={{
-            xs: 'column',
-            md: 'row',
-          }}
-          sx={{
-            p: 2.5,
-            pt: 0,
-            pr: { xs: 2.5, md: 2 },
-            ml: 1.2,
-          }}
-        >
-          <FormControl
-            sx={{
-              flexShrink: 0,
-              width: { xs: 1, md: '20%' },
-            }}
-          >
-            <DatePicker
-              value={dayjs(filters.startDate) || null}
-              format={DATE_FORMAT}
-              onAccept={(e) => {
-                e && onFilters('startDate', (e as unknown as Dayjs).toDate())
-                if (!filters.endDate) {
-                  e && onFilters('endDate', (e as unknown as Dayjs).toDate())
-                }
-              }}
-              sx={{ textTransform: 'capitalize' }}
-              label="Fecha de inicio"
-            />
-          </FormControl>
-          <FormControl
-            sx={{
-              flexShrink: 0,
-              width: { xs: 1, md: '20%' },
-            }}
-          >
-            <DatePicker
-              disabled={!filters.startDate}
-              value={dayjs(filters.endDate) || null}
-              minDate={filters.startDate ? dayjs(filters.startDate) : null}
-              format={DATE_FORMAT}
-              onAccept={(e) => {
-                onFilters('endDate', (e as unknown as Dayjs).toDate())
-              }}
-              sx={{ textTransform: 'capitalize' }}
-              label="Fecha de fin"
-            />
-          </FormControl>
-        </Stack>
-      )}
     </>
   )
 }
