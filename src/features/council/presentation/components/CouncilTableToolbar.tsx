@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import Stack from '@mui/material/Stack'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
@@ -63,7 +62,6 @@ export const CouncilTableToolbar = ({
   const popover = usePopover()
   const [inputValue, setInputValue] = useState(undefined as string | undefined)
   const debouncedValue = useDebounce(inputValue ? inputValue : '')
-  const [areFiltersActive, setAreFiltersActive] = useState(false)
 
   const resetValues = () => {
     setVisitedPages([])
@@ -153,6 +151,9 @@ export const CouncilTableToolbar = ({
 
           <TextField
             fullWidth
+            sx={{
+              marginRight: 2,
+            }}
             value={filters.name || ''}
             onChange={handleFilterName}
             placeholder="Busca por nombre de consejo"
@@ -167,100 +168,91 @@ export const CouncilTableToolbar = ({
               ),
             }}
           />
-
-          <IconButton
-            onClick={() => setAreFiltersActive(!areFiltersActive)}
-            title="Más filtros"
-          >
-            <Iconify icon="icon-park-outline:filter" />
-          </IconButton>
         </Stack>
       </Stack>
 
-      {areFiltersActive && (
-        <Stack
-          spacing={2}
-          alignItems={{ xs: 'flex-end', md: 'center' }}
-          direction={{
-            xs: 'column',
-            md: 'row',
-          }}
+      <Stack
+        spacing={2}
+        alignItems={{ xs: 'flex-end', md: 'center' }}
+        direction={{
+          xs: 'column',
+          md: 'row',
+        }}
+        sx={{
+          p: 2.5,
+          pt: 0,
+          pr: { xs: 2.5, md: 2 },
+          ml: 1.2,
+        }}
+      >
+        <FormControl
           sx={{
-            p: 2.5,
-            pt: 0,
-            pr: { xs: 2.5, md: 2 },
-            ml: 1.2,
+            flexShrink: 0,
+            width: { xs: 1, md: '20%' },
           }}
         >
-          <FormControl
-            sx={{
-              flexShrink: 0,
-              width: { xs: 1, md: '20%' },
+          <InputLabel id="council-type-label">Tipo de Consejo</InputLabel>
+          <Select
+            labelId="council-type-label"
+            id="council-simple-select"
+            label="Tipo de Consejo"
+            value={filters.type || ''}
+            input={<OutlinedInput label="Tipo de Consejo" />}
+            onChange={(event) => {
+              const {
+                target: { value },
+              } = event
+              onFilters('type', value)
+              setIsDataFiltered(true)
             }}
           >
-            <InputLabel id="council-type-label">Tipo de Consejo</InputLabel>
-            <Select
-              labelId="council-type-label"
-              id="council-simple-select"
-              label="Tipo de Consejo"
-              value={filters.type || ''}
-              input={<OutlinedInput label="Tipo de Consejo" />}
-              onChange={(event) => {
-                const {
-                  target: { value },
-                } = event
-                onFilters('type', value)
-                setIsDataFiltered(true)
-              }}
-            >
-              {COUNCIL_TYPES.map((item) => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Divider orientation="vertical" flexItem />
+            {COUNCIL_TYPES.map((item) => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Divider orientation="vertical" flexItem />
 
-          <FormControl
-            sx={{
-              flexShrink: 0,
-              width: { xs: 1, md: '20%' },
+        <FormControl
+          sx={{
+            flexShrink: 0,
+            width: { xs: 1, md: '20%' },
+          }}
+        >
+          <DatePicker
+            value={dayjs(filters.startDate) || null}
+            format={DATE_FORMAT}
+            onAccept={(e) => {
+              e && onFilters('startDate', (e as unknown as Dayjs).toDate())
+              if (!filters.endDate) {
+                e && onFilters('endDate', (e as unknown as Dayjs).toDate())
+              }
             }}
-          >
-            <DatePicker
-              value={dayjs(filters.startDate) || null}
-              format={DATE_FORMAT}
-              onAccept={(e) => {
-                e && onFilters('startDate', (e as unknown as Dayjs).toDate())
-                if (!filters.endDate) {
-                  e && onFilters('endDate', (e as unknown as Dayjs).toDate())
-                }
-              }}
-              sx={{ textTransform: 'capitalize' }}
-              label="Fecha de inicio"
-            />
-          </FormControl>
-          <FormControl
-            sx={{
-              flexShrink: 0,
-              width: { xs: 1, md: '20%' },
+            sx={{ textTransform: 'capitalize' }}
+            label="Fecha de inicio"
+          />
+        </FormControl>
+        <FormControl
+          sx={{
+            flexShrink: 0,
+            width: { xs: 1, md: '20%' },
+          }}
+        >
+          <DatePicker
+            disabled={!filters.startDate}
+            value={dayjs(filters.endDate) || null}
+            minDate={filters.startDate ? dayjs(filters.startDate) : null}
+            format={DATE_FORMAT}
+            onAccept={(e) => {
+              onFilters('endDate', (e as unknown as Dayjs).toDate())
             }}
-          >
-            <DatePicker
-              disabled={!filters.startDate}
-              value={dayjs(filters.endDate) || null}
-              minDate={filters.startDate ? dayjs(filters.startDate) : null}
-              format={DATE_FORMAT}
-              onAccept={(e) => {
-                onFilters('endDate', (e as unknown as Dayjs).toDate())
-              }}
-              sx={{ textTransform: 'capitalize' }}
-              label="Fecha de fin"
-            />
-          </FormControl>
-        </Stack>
-      )}
+            sx={{ textTransform: 'capitalize' }}
+            label="Fecha de fin"
+          />
+        </FormControl>
+      </Stack>
 
       <CustomPopover
         open={popover.open}
