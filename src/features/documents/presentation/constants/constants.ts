@@ -1,4 +1,5 @@
-import { IDocumentTableFilters } from '../components/DocumentTableToolbar'
+import { DateUtils } from '@/shared/utils/dateUtils'
+import { IDocumentFilters } from '../components/DocumentTableToolbar'
 import * as yup from 'yup'
 
 export const TABLE_HEAD = [
@@ -11,7 +12,7 @@ export const TABLE_HEAD = [
     label: 'Fecha de creación',
   },
   {
-    key: 'userId',
+    key: 'userName',
     label: 'Creado Por',
   },
   {
@@ -62,10 +63,13 @@ export const STUDENT_DEGREE_CERTIFICATES_TABLE_HEAD = [
   },
 ]
 
-export const defaultFilters: IDocumentTableFilters = {
-  createdAt: null,
-  number: null,
-}
+export const defaultFilters = (moduleId: number): IDocumentFilters => ({
+  moduleId,
+  field: undefined,
+  startDate: DateUtils.FIRST_DAY_OF_YEAR,
+  endDate: DateUtils.getToday(),
+  order: 'DESC',
+})
 
 export const resolveDefaultValues = () => ({
   number: undefined,

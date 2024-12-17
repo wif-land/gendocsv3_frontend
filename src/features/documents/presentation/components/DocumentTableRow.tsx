@@ -5,7 +5,6 @@ import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
@@ -16,28 +15,17 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import Stack from '@mui/material/Stack'
-import { useUsersStore } from '../../../../features/users/presentation/state/usersStore'
-import { fUserNames } from '../../../../shared/utils/format-names'
 import { useProcessStore } from '../../../../features/processes/presentation/state/useProcessStore'
 import { useCouncilsStore } from '../../../../features/council/presentation/store/councilsStore'
 
 type Props = {
   row: DocumentModel
-  selected: boolean
   onViewRow: VoidFunction
-  onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
 }
 
-export const DocumentTableRow = ({
-  row,
-  selected,
-  onSelectRow,
-  onDeleteRow,
-  onViewRow,
-}: Props) => {
+export const DocumentTableRow = ({ row, onDeleteRow, onViewRow }: Props) => {
   const { number, description, createdAt } = row
-  const { users } = useUsersStore()
   const { processes } = useProcessStore()
   const { councils } = useCouncilsStore()
 
@@ -47,11 +35,7 @@ export const DocumentTableRow = ({
 
   return (
     <>
-      <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
-
+      <TableRow hover>
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
             disableTypography
@@ -97,9 +81,7 @@ export const DocumentTableRow = ({
                 alignItems="center"
                 justifyContent="start"
               >
-                {users?.find((user) => user.id === row.userId) !== undefined
-                  ? fUserNames(users.find((user) => user.id === row.userId)!)
-                  : 'N/A'}
+                {row.userName ?? 'N/A'}
               </Stack>
             }
           />

@@ -5,12 +5,16 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Iconify from '../../../../core/iconify'
 import { useDocumentView } from '../hooks/useDocumentsView'
 import { useDebounce } from '../../../../shared/hooks/use-debounce'
+import { defaultFilters } from '../constants/constants'
 
 export type IDocumentTableFilterValue = string | string[]
 
-export type IDocumentTableFilters = {
-  createdAt: Date | null
-  number: number | null
+export interface IDocumentFilters {
+  moduleId?: number
+  field?: string
+  startDate?: Date
+  endDate?: Date
+  order?: 'ASC' | 'DESC'
 }
 
 type Props = {
@@ -24,22 +28,25 @@ export const DocumentTableToolbar = ({ moduleName }: Props) => {
   const {
     isDataFiltered,
     table,
-    setSearchTerm,
     setVisitedPages,
     filters,
+    moduleIdentifier,
+    setFilters,
     setTableData,
     handleFilters,
+    getFilteredDocuments,
   } = useDocumentView(moduleName)
 
   const handleFilterDocument = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setInputValue(event.target.value)
-      handleFilters('name', event.target.value)
+      handleFilters('field', event.target.value)
     },
     [handleFilters],
   )
 
   const resetValues = () => {
+    setFilters(defaultFilters(moduleIdentifier))
     setVisitedPages([])
     setTableData([])
     isDataFiltered.onFalse()
@@ -51,8 +58,7 @@ export const DocumentTableToolbar = ({ moduleName }: Props) => {
 
     if (inputValue) {
       isDataFiltered.onTrue()
-      setSearchTerm(inputValue)
-      // getFilteredCouncils(debouncedValue)
+      getFilteredDocuments(filters)
     } else {
       resetValues()
     }
@@ -81,9 +87,9 @@ export const DocumentTableToolbar = ({ moduleName }: Props) => {
         >
           <TextField
             fullWidth
-            value={filters.number}
+            value={filters.field}
             onChange={handleFilterDocument}
-            placeholder="Buscar por número de documento"
+            placeholder="Buscar por número de documento, estudiante, docente, plantilla, consejo"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

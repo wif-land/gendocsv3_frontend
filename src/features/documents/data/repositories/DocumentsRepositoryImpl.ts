@@ -23,7 +23,7 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
   private constructor(private readonly datasource: DocumentsDataSource) {}
 
   getAllDocumentsByModuleId = async (moduleId: number, params: PaginationDTO) =>
-    await this.datasource.getAllDocumentsByModuleId(moduleId, params)
+    await this.datasource.getAllByFilters(moduleId, params)
 
   getAll = async () => await this.datasource.getAll()
 

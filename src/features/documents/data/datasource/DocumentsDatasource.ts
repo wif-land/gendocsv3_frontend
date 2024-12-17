@@ -5,14 +5,15 @@ import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IDocument } from '../../domain/entities/IDocument'
 import { NumerationModel } from '../models/NumerationModel'
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
+import { IDocumentFilters } from '../../presentation/components/DocumentTableToolbar'
 
 export interface DocumentsDataSource {
   getAll(): Promise<{
     documents: DocumentModel[]
   }>
 
-  getAllDocumentsByModuleId(
-    moduleId: number,
+  getAllByFilters(
+    filters: IDocumentFilters,
     pagination: PaginationDTO,
   ): Promise<{
     documents: DocumentModel[]
@@ -55,9 +56,9 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     return DocumentsDataSourceImpl.instance
   }
 
-  async getAllDocumentsByModuleId(moduleId: number, pagination: PaginationDTO) {
+  async getAllByFilters(filters: IDocumentFilters, pagination: PaginationDTO) {
     const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.GET_ALL, {
-      params: { moduleId, ...pagination },
+      params: { ...filters, ...pagination },
     })
 
     if ('error' in result) {
