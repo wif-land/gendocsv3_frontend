@@ -65,7 +65,7 @@ export const DocumentTableRow = ({ row, onDeleteRow, onViewRow }: Props) => {
           <ListItemText
             primary={format(
               new Date(createdAt || Date.now()),
-              'dd/mm/yyyy hh:mm',
+              'dd/MM/yyyy hh:mm',
             )}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />

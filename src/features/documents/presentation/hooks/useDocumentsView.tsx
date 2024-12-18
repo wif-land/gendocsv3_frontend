@@ -1,45 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { DocumentModel } from '../../data/models/DocumentsModel'
-import useModulesStore from '../../../../shared/store/modulesStore'
 import { usePathname, useRouter } from 'next/navigation'
 import { DENSE, NO_DENSE, useTable } from '../../../../shared/sdk/table'
 import {
   IDocumentTableFilterValue,
   IDocumentFilters,
 } from '../components/DocumentTableToolbar'
-import { defaultFilters } from '../constants/constants'
-import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useDocumentsMethods } from './useDocumentsMethods'
+import { useDocumentsTable } from '../context/DocumentTableProvider'
 
-export const useDocumentView = (moduleName: string) => {
-  const { modules } = useModulesStore()
+export const useDocumentView = () => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
-
-  const moduleIdentifier =
-    modules?.find((module) => module.code === moduleName.toUpperCase())?.id ?? 0
+  const {
+    count,
+    filters,
+    isDataFiltered,
+    setIsDataFiltered,
+    setCount,
+    setFilters,
+    setTableData,
+    setVisitedPages,
+    tableData,
+    visitedPages,
+    moduleIdentifier,
+    handleResetFilters,
+  } = useDocumentsTable()
 
   const { documents, fetchData, deleteDocument, loader, setDocuments } =
     useDocumentsMethods()
-  const [filters, setFilters] = useState<IDocumentFilters>(
-    defaultFilters(moduleIdentifier),
-  )
-  const [tableData, setTableData] = useState<DocumentModel[]>([])
-  const [visitedPages, setVisitedPages] = useState<number[]>([])
-  const [count, setCount] = useState(0)
-  const isDataFiltered = useBoolean(false)
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
   const handleFilters = useCallback(
     (name: string, value: IDocumentTableFilterValue) => {
       table.onResetPage()
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }))
+      setFilters(
+        (prevState: IDocumentFilters) =>
+          ({
+            ...prevState,
+            [name]: value,
+          }) as IDocumentFilters,
+      )
+      setIsDataFiltered(true)
     },
     [table],
   )
@@ -88,7 +93,7 @@ export const useDocumentView = (moduleName: string) => {
     }
 
     if (newPage > table.page) {
-      if (isDataFiltered.value) {
+      if (isDataFiltered) {
         fetchData(filters, table.rowsPerPage, newPage).then((response) => {
           if (response?.count === 0) return
           setDocuments([...documents, ...response.documents])
@@ -107,7 +112,7 @@ export const useDocumentView = (moduleName: string) => {
 
   useEffect(() => {
     let isMounted = true
-    if (tableData.length !== 0) return
+    // if (tableData.length !== 0) return
 
     const fetchDocuments = async () => {
       if (!isMounted) return
@@ -126,11 +131,10 @@ export const useDocumentView = (moduleName: string) => {
     return () => {
       isMounted = false
     }
-  }, [moduleIdentifier])
+  }, [moduleIdentifier, filters])
 
   const getFilteredDocuments = (filters: IDocumentFilters) => {
     fetchData(filters, table.rowsPerPage, table.page).then((response) => {
-      console.log('response', response)
       if (response?.count > 0) {
         setDocuments(response.documents)
         setTableData(response.documents)
@@ -156,6 +160,7 @@ export const useDocumentView = (moduleName: string) => {
     tableData,
     denseHeight,
     isDataFiltered,
+    setIsDataFiltered,
     setTableData,
     setVisitedPages,
     handleChangePage,
@@ -164,5 +169,6 @@ export const useDocumentView = (moduleName: string) => {
     handleEditRow,
     handleViewRow,
     getFilteredDocuments,
+    handleResetFilters,
   }
 }

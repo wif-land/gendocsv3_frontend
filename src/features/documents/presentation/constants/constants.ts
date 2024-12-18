@@ -65,7 +65,7 @@ export const STUDENT_DEGREE_CERTIFICATES_TABLE_HEAD = [
 
 export const defaultFilters = (moduleId: number): IDocumentFilters => ({
   moduleId,
-  field: undefined,
+  field: '',
   startDate: DateUtils.FIRST_DAY_OF_YEAR,
   endDate: DateUtils.getToday(),
   order: 'DESC',

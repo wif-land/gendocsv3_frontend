@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
   TableEmptyRows,
   TableHeadCustom,
@@ -27,9 +27,9 @@ import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-
 import { DocumentTableRow } from '../components/DocumentTableRow'
 import { useDocumentView } from '../hooks/useDocumentsView'
 import { TABLE_HEAD } from '../constants/constants'
+import { DocumentTableFiltersResult } from '../components/DocumentTableFiltersResult'
 
 const DocumentListView = () => {
-  const { codeModule } = useParams()
   const {
     loader,
     table,
@@ -40,7 +40,8 @@ const DocumentListView = () => {
     handleDeleteRow,
     handleChangePage,
     handleViewRow,
-  } = useDocumentView(codeModule as string)
+    handleResetFilters,
+  } = useDocumentView()
   const pathname = usePathname()
   const confirm = useBoolean()
   const settings = useSettingsContext()
@@ -72,7 +73,15 @@ const DocumentListView = () => {
         />
 
         <Card>
-          <DocumentTableToolbar moduleName={codeModule as string} />
+          <DocumentTableToolbar />
+
+          {isDataFiltered && (
+            <DocumentTableFiltersResult
+              onResetFilters={handleResetFilters}
+              results={count}
+              sx={{ p: 2.5, pt: 0 }}
+            />
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <Scrollbar>

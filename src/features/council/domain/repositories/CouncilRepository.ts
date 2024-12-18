@@ -5,7 +5,7 @@ import { ICouncilFilters } from '../entities/ICouncilFilters'
 import { INotifyMembers } from '../entities/INotifyMembers'
 
 export interface CouncilRepository {
-  getAll: () => Promise<CouncilModel[]>
+  getAll: () => Promise<{ councils: CouncilModel[]; count: number }>
 
   getByFilters: (
     filters: ICouncilFilters,
