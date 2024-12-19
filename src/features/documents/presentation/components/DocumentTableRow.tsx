@@ -18,13 +18,23 @@ import Stack from '@mui/material/Stack'
 import { useProcessStore } from '../../../../features/processes/presentation/state/useProcessStore'
 import { useCouncilsStore } from '../../../../features/council/presentation/store/councilsStore'
 
+export interface INotifyStudentOptions {
+  whatsapp?: boolean
+}
+
 type Props = {
   row: DocumentModel
   onViewRow: VoidFunction
   onDeleteRow: VoidFunction
+  onNotifyStudent: (options?: INotifyStudentOptions) => void
 }
 
-export const DocumentTableRow = ({ row, onDeleteRow, onViewRow }: Props) => {
+export const DocumentTableRow = ({
+  row,
+  onDeleteRow,
+  onViewRow,
+  onNotifyStudent,
+}: Props) => {
   const { number, description, createdAt } = row
   const { processes } = useProcessStore()
   const { councils } = useCouncilsStore()
@@ -74,16 +84,16 @@ export const DocumentTableRow = ({ row, onDeleteRow, onViewRow }: Props) => {
         <TableCell sx={{ alignItems: 'center' }}>
           <ListItemText
             disableTypography
-            primary={
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems="center"
-                justifyContent="start"
-              >
-                {row.userName ?? 'N/A'}
-              </Stack>
-            }
+            primaryTypographyProps={{ typography: 'body2', noWrap: false }}
+            primary={row.studentName ?? 'N/A'}
+          />
+        </TableCell>
+
+        <TableCell sx={{ alignItems: 'center' }}>
+          <ListItemText
+            disableTypography
+            primaryTypographyProps={{ typography: 'body2', noWrap: false }}
+            primary={row.userName ?? 'N/A'}
           />
         </TableCell>
 
@@ -144,7 +154,6 @@ export const DocumentTableRow = ({ row, onDeleteRow, onViewRow }: Props) => {
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 140 }}
       >
         <MenuItem
           onClick={() => {
@@ -153,8 +162,45 @@ export const DocumentTableRow = ({ row, onDeleteRow, onViewRow }: Props) => {
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          Detalles
+          Ver
         </MenuItem>
+
+        {row.studentId && (
+          <>
+            <MenuItem
+              onClick={() => {
+                onNotifyStudent()
+                popover.onClose()
+              }}
+              disabled={row.studentNotified}
+            >
+              <Iconify icon="solar:letter-bold" />
+              <ListItemText
+                disableTypography
+                primaryTypographyProps={{
+                  typography: 'body2',
+                  noWrap: false,
+                }}
+                primary={'Notificar a estudiante'}
+              />
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                onNotifyStudent({ whatsapp: true })
+                popover.onClose()
+              }}
+            >
+              <Iconify icon="fa6-brands:whatsapp" />
+              <ListItemText
+                disableTypography
+                primaryTypographyProps={{ typography: 'body2', noWrap: false }}
+                primary={'Notificar a estudiante'}
+                sx={{ wordWrap: 'break-word' }}
+              />
+            </MenuItem>
+          </>
+        )}
 
         <MenuItem
           onClick={() => {

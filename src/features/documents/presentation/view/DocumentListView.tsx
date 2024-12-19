@@ -24,7 +24,10 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
-import { DocumentTableRow } from '../components/DocumentTableRow'
+import {
+  DocumentTableRow,
+  INotifyStudentOptions,
+} from '../components/DocumentTableRow'
 import { useDocumentView } from '../hooks/useDocumentsView'
 import { TABLE_HEAD } from '../constants/constants'
 import { DocumentTableFiltersResult } from '../components/DocumentTableFiltersResult'
@@ -41,6 +44,7 @@ const DocumentListView = () => {
     handleChangePage,
     handleViewRow,
     handleResetFilters,
+    handleNotifyStudent,
   } = useDocumentView()
   const pathname = usePathname()
   const confirm = useBoolean()
@@ -122,6 +126,9 @@ const DocumentListView = () => {
                             key={row.id}
                             row={row}
                             onDeleteRow={() => handleDeleteRow(row.id!)}
+                            onNotifyStudent={(
+                              options?: INotifyStudentOptions,
+                            ) => handleNotifyStudent(row.id!, options)}
                             onViewRow={() =>
                               handleViewRow(
                                 row.id!.toString(),

@@ -11,6 +11,7 @@ export class DocumentModel implements IDocument {
   userName?: string
   templateId: number
   studentId?: number
+  studentName?: string
   functionariesIds?: number[]
   description: string
   variables?: string
@@ -27,6 +28,7 @@ export class DocumentModel implements IDocument {
     this.userName = props.userName
     this.templateId = props.templateId
     this.studentId = props.studentId
+    this.studentName = props.studentName
     this.functionariesIds = props.functionariesIds
     this.description = props.description
     this.variables = props.variables

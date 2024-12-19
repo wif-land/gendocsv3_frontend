@@ -9,6 +9,7 @@ import {
 } from '../components/DocumentTableToolbar'
 import { useDocumentsMethods } from './useDocumentsMethods'
 import { useDocumentsTable } from '../context/DocumentTableProvider'
+import { INotifyStudentOptions } from '../components/DocumentTableRow'
 
 export const useDocumentView = () => {
   const table = useTable()
@@ -29,8 +30,14 @@ export const useDocumentView = () => {
     handleResetFilters,
   } = useDocumentsTable()
 
-  const { documents, fetchData, deleteDocument, loader, setDocuments } =
-    useDocumentsMethods()
+  const {
+    documents,
+    fetchData,
+    deleteDocument,
+    loader,
+    setDocuments,
+    notifyStudent,
+  } = useDocumentsMethods()
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
@@ -150,6 +157,19 @@ export const useDocumentView = () => {
     })
   }
 
+  const handleNotifyStudent = async (
+    id: number,
+    options?: INotifyStudentOptions,
+  ) => {
+    const link = await notifyStudent(id, options)
+
+    if (link) {
+      window.open(link, '_blank')
+    }
+
+    handleResetFilters()
+  }
+
   return {
     count,
     loader,
@@ -170,5 +190,6 @@ export const useDocumentView = () => {
     handleViewRow,
     getFilteredDocuments,
     handleResetFilters,
+    handleNotifyStudent,
   }
 }

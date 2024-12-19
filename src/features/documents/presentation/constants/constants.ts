@@ -12,6 +12,10 @@ export const TABLE_HEAD = [
     label: 'Fecha de creación',
   },
   {
+    key: 'studentName',
+    label: 'Estudiante',
+  },
+  {
     key: 'userName',
     label: 'Creado Por',
   },

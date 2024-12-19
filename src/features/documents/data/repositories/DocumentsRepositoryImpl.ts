@@ -6,6 +6,7 @@ import {
   DocumentsDataSource,
   DocumentsDataSourceImpl,
 } from '../datasource/DocumentsDatasource'
+import { IDocumentFilters } from '../../presentation/components/DocumentTableToolbar'
 
 export class DocumentsRepositoryImpl implements DocumentsRepository {
   static instance: DocumentsRepositoryImpl
@@ -22,8 +23,10 @@ export class DocumentsRepositoryImpl implements DocumentsRepository {
 
   private constructor(private readonly datasource: DocumentsDataSource) {}
 
-  getAllDocumentsByModuleId = async (moduleId: number, params: PaginationDTO) =>
-    await this.datasource.getAllByFilters(moduleId, params)
+  getAllDocumentsByFilters = async (
+    filters: IDocumentFilters,
+    params: PaginationDTO,
+  ) => await this.datasource.getAllByFilters(filters, params)
 
   getAll = async () => await this.datasource.getAll()
 

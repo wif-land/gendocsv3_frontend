@@ -1,6 +1,7 @@
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { NumerationModel } from '../../data/models/NumerationModel'
+import { IDocumentFilters } from '../../presentation/components/DocumentTableToolbar'
 import { IDocument } from '../entities/IDocument'
 
 export interface DocumentsRepository {
@@ -10,8 +11,8 @@ export interface DocumentsRepository {
 
   create: (processData: IDocument) => Promise<DocumentModel>
 
-  getAllDocumentsByModuleId: (
-    moduleId: number,
+  getAllDocumentsByFilters: (
+    filters: IDocumentFilters,
     params: PaginationDTO,
   ) => Promise<{
     count: number

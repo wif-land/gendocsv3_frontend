@@ -8,6 +8,7 @@ export interface IDocument {
   userName?: string
   templateId: number
   studentId?: number
+  studentName?: string
   functionariesIds?: number[]
   description: string
   variables?: string
