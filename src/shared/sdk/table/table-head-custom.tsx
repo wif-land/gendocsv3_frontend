@@ -5,6 +5,7 @@ import Checkbox from '@mui/material/Checkbox'
 import TableHead from '@mui/material/TableHead'
 import TableCell from '@mui/material/TableCell'
 import TableSortLabel from '@mui/material/TableSortLabel'
+import { uniqueId } from 'lodash'
 const visuallyHidden = {
   border: 0,
   margin: -1,
@@ -54,7 +55,7 @@ export default function TableHeadCustom({
         )}
         {headLabel.map((headCell) => (
           <TableCell
-            key={headCell.id}
+            key={uniqueId()}
             align={headCell.align || 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{ width: headCell.width, minWidth: headCell.minWidth }}

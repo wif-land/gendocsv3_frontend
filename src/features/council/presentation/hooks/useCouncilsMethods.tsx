@@ -23,6 +23,12 @@ export const useCouncilsMethods = () => {
       ),
     )
 
+  const fetchAndSetData = async () => {
+    if (councils.length) return
+    const data = await CouncilsUseCasesImpl.getInstance().getAll()
+    setCouncils(data.councils)
+  }
+
   const updateRow = async (council: IUpdateCouncil) =>
     await CouncilRepositoryImpl.getInstance().update({
       id: council.id as number,
@@ -51,5 +57,6 @@ export const useCouncilsMethods = () => {
     fetchData,
     updateRow,
     fetchDataByField,
+    fetchAndSetData,
   }
 }

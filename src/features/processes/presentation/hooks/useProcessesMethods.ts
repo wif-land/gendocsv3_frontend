@@ -22,6 +22,13 @@ export const useProcessesMethods = () => {
       ),
     )
 
+  const fetchAndSetData = async () => {
+    if (processes.length) return
+
+    const data = await ProcessesUseCasesImpl.getInstance().getAll()
+    setProcesses(data.processes)
+  }
+
   const updateRow = async (process: Partial<IProcess>) =>
     await ProcessesUseCasesImpl.getInstance().update(process.id as number, {
       isActive: !process.isActive,
@@ -49,5 +56,6 @@ export const useProcessesMethods = () => {
     fetchData,
     updateRow,
     fetchDataByField,
+    fetchAndSetData,
   }
 }

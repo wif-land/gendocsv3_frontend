@@ -140,7 +140,7 @@ export const DegreeCertificatesTableToolbar = ({
           <CareerFilter
             onChange={handleChange}
             filters={filters}
-            sx={{ width: 700 }}
+            sx={{ width: { md: 700 } }}
           />
           <TextField
             fullWidth
@@ -159,31 +159,6 @@ export const DegreeCertificatesTableToolbar = ({
             }}
             sx={{ flexGrow: 1 }}
           />
-          {/* {filters.isReport === true && filters.isEnd === true && (
-            <IconButton
-              onClick={() => setAreFiltersActive(!areFiltersActive)}
-              title="Más filtros"
-            >
-              <Iconify icon="icon-park-outline:filter" />
-            </IconButton>
-          )} */}
-        </Stack>
-      </Stack>
-      {filters.isReport === true && (
-        <Stack
-          spacing={2}
-          alignItems={{ xs: 'flex-end', md: 'center' }}
-          direction={{
-            xs: 'column',
-            md: 'row',
-          }}
-          sx={{
-            p: 2.5,
-            pt: 0,
-            pr: { xs: 2.5, md: 2 },
-            ml: 1.2,
-          }}
-        >
           <FormControl
             sx={{
               flexShrink: 0,
@@ -222,7 +197,7 @@ export const DegreeCertificatesTableToolbar = ({
             />
           </FormControl>
         </Stack>
-      )}
+      </Stack>
     </>
   )
 }

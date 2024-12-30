@@ -5,14 +5,16 @@ import { HTTP_STATUS_CODES } from '../../../../shared/utils/app-enums'
 import { IDocument } from '../../domain/entities/IDocument'
 import { NumerationModel } from '../models/NumerationModel'
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
+import { IDocumentFilters } from '../../presentation/components/DocumentTableToolbar'
+import { INotifyStudentOptions } from '../../presentation/components/DocumentTableRow'
 
 export interface DocumentsDataSource {
   getAll(): Promise<{
     documents: DocumentModel[]
   }>
 
-  getAllDocumentsByModuleId(
-    moduleId: number,
+  getAllByFilters(
+    filters: IDocumentFilters,
     pagination: PaginationDTO,
   ): Promise<{
     documents: DocumentModel[]
@@ -42,6 +44,11 @@ export interface DocumentsDataSource {
     fileName: string
     file: string
   }>
+
+  notifyStudent(
+    id: number,
+    options?: INotifyStudentOptions,
+  ): Promise<{ link?: string } | { status: number }>
 }
 
 export class DocumentsDataSourceImpl implements DocumentsDataSource {
@@ -55,9 +62,9 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     return DocumentsDataSourceImpl.instance
   }
 
-  async getAllDocumentsByModuleId(moduleId: number, pagination: PaginationDTO) {
+  async getAllByFilters(filters: IDocumentFilters, pagination: PaginationDTO) {
     const result = await AxiosClient.get(API_ROUTES.DOCUMENTS.GET_ALL, {
-      params: { moduleId, ...pagination },
+      params: { ...filters, ...pagination },
     })
 
     if ('error' in result) {
@@ -165,5 +172,19 @@ export class DocumentsDataSourceImpl implements DocumentsDataSource {
     }
 
     return result.data as { documents: DocumentModel[] }
+  }
+
+  notifyStudent = async (id: number, options?: INotifyStudentOptions) => {
+    const result = await AxiosClient.patch(
+      API_ROUTES.DOCUMENTS.NOTIFY_STUDENT(id),
+      undefined,
+      options as Record<string, unknown> | undefined,
+    )
+
+    if ('error' in result) {
+      return { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
+    }
+
+    return result.data as { link?: string }
   }
 }

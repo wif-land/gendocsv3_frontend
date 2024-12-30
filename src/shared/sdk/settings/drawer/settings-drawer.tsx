@@ -167,7 +167,7 @@ export default function SettingsDrawer() {
         <Stack spacing={3} sx={{ p: 3 }}>
           {renderMode}
 
-          {renderContrast}
+          {/* {renderContrast} */}
 
           {renderLayout}
 

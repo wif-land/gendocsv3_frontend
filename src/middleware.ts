@@ -3,7 +3,7 @@ import { ACCESS_TOKEN_COOKIE_NAME } from './shared/constants/appApiRoutes'
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|assets|favicon.ico).*)',
     '/',
     '/login',
     '/dashboard/:slug',

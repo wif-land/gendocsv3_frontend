@@ -47,7 +47,7 @@ export class DocumentsUseCasesImpl implements DocumentUseCases {
   getAll = async () => await this.modelRepository.getAll()
 
   getAllDocumentsByModuleId = async (moduleId: number, params: PaginationDTO) =>
-    await this.modelRepository.getAllDocumentsByModuleId(moduleId, params)
+    await this.modelRepository.getAllDocumentsByFilters(moduleId, params)
 
   getNumerationByCouncil = async (councilId: number) =>
     await this.modelRepository.getNumerationByCouncil(councilId)

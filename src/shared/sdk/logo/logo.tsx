@@ -4,6 +4,8 @@ import { useTheme } from '@mui/material/styles'
 import Link from '@mui/material/Link'
 import Box from '@mui/material/Box'
 import { RouterLink } from '../../../core/routes/components'
+import Banner from '../../../../public/assets/logo-sitio-fisei-2020.png'
+import Image from 'next/image'
 
 const Logo = forwardRef<HTMLDivElement, any>(
   ({ disabledLink = false, sx, ...other }, ref) => {
@@ -20,14 +22,14 @@ const Logo = forwardRef<HTMLDivElement, any>(
         ref={ref}
         component="div"
         sx={{
-          width: 40,
-          height: 40,
+          width: 200,
+          height: 70,
           display: 'inline-flex',
           ...sx,
         }}
         {...other}
       >
-        <svg
+        {/* <svg
           xmlns="http://www.w3.org/2000/svg"
           width="100%"
           height="100%"
@@ -69,7 +71,16 @@ const Logo = forwardRef<HTMLDivElement, any>(
               d="M450 384c26.509 0 48-21.491 48-48s-21.491-48-48-48-48 21.491-48 48 21.491 48 48 48"
             />
           </g>
-        </svg>
+        </svg> */}
+        <Image
+          src={Banner}
+          alt="portada"
+          priority
+          style={{
+            width: 'auto',
+            height: 'auto',
+          }}
+        />
       </Box>
     )
 
@@ -78,7 +89,11 @@ const Logo = forwardRef<HTMLDivElement, any>(
     }
 
     return (
-      <Link component={RouterLink} href="/" sx={{ display: 'contents' }}>
+      <Link
+        component={RouterLink}
+        href="/dashboard"
+        sx={{ display: 'contents' }}
+      >
         {logo}
       </Link>
     )

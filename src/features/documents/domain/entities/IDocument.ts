@@ -5,8 +5,10 @@ export interface IDocument {
   createdAt?: Date
   driveId?: string
   userId: number
+  userName?: string
   templateId: number
   studentId?: number
+  studentName?: string
   functionariesIds?: number[]
   description: string
   variables?: string

@@ -8,6 +8,7 @@ import { RoomModel } from '../models/roomModel'
 import { API_ROUTES } from '../../../../shared/constants/appApiRoutes'
 import { DegreeModel } from '../models/degreeModel'
 import { IVariableList } from '../../domain/entities/IVariableProvider'
+import { CouncilModel } from '@/features/council/data/models/CouncilModel'
 
 export interface ProvidersDataSource {
   getAllCities(): Promise<CityModel[]>
@@ -21,10 +22,12 @@ export interface ProvidersDataSource {
   getAllDegreeModalities(): Promise<DegreeModalityModel[]>
 
   getAllRooms(): Promise<RoomModel[]>
-  
+
   getAllDegrees(): Promise<DegreeModel[]>
 
   getVariables(): Promise<IVariableList>
+
+  getAllCouncils(): Promise<CouncilModel[]>
 }
 
 export class ProvidersDataSourceImpl implements ProvidersDataSource {
@@ -98,15 +101,15 @@ export class ProvidersDataSourceImpl implements ProvidersDataSource {
     }
 
     return result.data as RoomModel[]
-  } 
+  }
 
   async getAllDegrees(): Promise<DegreeModel[]> {
-      const result = await AxiosClient.get(API_ROUTES.DEGREES.GET_ALL)
+    const result = await AxiosClient.get(API_ROUTES.DEGREES.GET_ALL)
 
-      if ('error' in result) {
-        return [] as DegreeModel[]
-      }
-      return result.data as DegreeModel[]
+    if ('error' in result) {
+      return [] as DegreeModel[]
+    }
+    return result.data as DegreeModel[]
   }
 
   async getVariables(): Promise<IVariableList> {
@@ -117,5 +120,15 @@ export class ProvidersDataSourceImpl implements ProvidersDataSource {
     }
 
     return result.data as IVariableList
+  }
+
+  async getAllCouncils(): Promise<CouncilModel[]> {
+    const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL)
+
+    if ('error' in result) {
+      return [] as CouncilModel[]
+    }
+
+    return result.data as CouncilModel[]
   }
 }

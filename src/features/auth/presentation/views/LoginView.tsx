@@ -1,6 +1,9 @@
 import React from 'react'
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { LoginForm } from '../components/LoginForm'
+import Image from 'next/image'
+import Banner from '../../../../../public/assets/logo-sitio-fisei-2020.png'
+import BannerBuild from '../../../../../public/assets/bannerfiseicorreos.png'
 
 const LoginView = () => (
   <Grid
@@ -12,23 +15,41 @@ const LoginView = () => (
     <Grid
       item
       sm={6}
+      columns={1}
       sx={{
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
+        p: 3,
       }}
     >
-      <img
-        src="https://w0.peakpx.com/wallpaper/951/996/HD-wallpaper-ipad-pro-2021-apple-ios-iphone-stock.jpg"
+      <Image
+        src={Banner}
         alt="portada"
+        priority
         style={{
-          width: 'calc(100% - 1%)',
-          height: 'calc(100vh - 1%)',
-          objectFit: 'cover',
-          borderRadius: '10px',
+          width: 'auto',
+          height: 'auto',
         }}
       />
+      <Box
+        sx={{
+          p: 3,
+        }}
+      >
+        <Image
+          src={BannerBuild}
+          alt="portada"
+          priority
+          quality={100}
+          style={{
+            width: 'auto',
+            height: 'auto',
+          }}
+        />
+      </Box>
     </Grid>
 
     <Grid item xs={12} sm={6}>

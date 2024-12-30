@@ -11,7 +11,7 @@ import { INotifyMembers } from '../../domain/entities/INotifyMembers'
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 export interface CouncilsDataSource {
-  getAll(): Promise<CouncilModel[]>
+  getAll(): Promise<{ councils: CouncilModel[]; count: number }>
 
   getAllCouncilsByModuleId(
     moduleId: number,
@@ -127,10 +127,10 @@ export class CouncilsDataSourceImpl implements CouncilsDataSource {
     const result = await AxiosClient.get(API_ROUTES.COUNCILS.GET_ALL)
 
     if ('error' in result) {
-      return [] as CouncilModel[]
+      return { councils: [], count: 0 }
     }
 
-    return result.data as CouncilModel[]
+    return result.data as { councils: CouncilModel[]; count: number }
   }
 
   getByFilters = async (
