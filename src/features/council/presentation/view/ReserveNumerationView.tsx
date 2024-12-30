@@ -45,7 +45,7 @@ export const ReserveNumerationView = () => {
 
   const renderDetails = (
     <>
-      <Grid md={4}>
+      <Grid md={4} item>
         <Typography variant="h6" sx={{ mb: 0.5 }}>
           Detalles
         </Typography>
@@ -54,7 +54,7 @@ export const ReserveNumerationView = () => {
         </Typography>
       </Grid>
 
-      <Grid xs={12} md={8}>
+      <Grid xs={12} md={8} item>
         {renderTabs}
         {currentTab === 'reservar' ? (
           <ReserveNumerationForm />
@@ -73,6 +73,7 @@ export const ReserveNumerationView = () => {
         sx={{
           mt: 3,
         }}
+        item
       >
         {renderDetails}
       </Grid>

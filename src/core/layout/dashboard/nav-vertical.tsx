@@ -12,6 +12,8 @@ import { useResponsive } from '../../../shared/hooks/use-responsive'
 import Scrollbar from '../../../shared/sdk/scrollbar'
 import Logo from '../../../shared/sdk/logo'
 import NavSectionVertical from '../../../shared/sdk/nav-section/vertical/nav-section-vertical'
+import Banner from '../../../../public/assets/logo-sitio-fisei-2020.png'
+import Image from 'next/image'
 
 type Props = {
   openNav: boolean

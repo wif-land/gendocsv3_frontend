@@ -15,7 +15,7 @@ type NumerationFormValues = {
 }
 
 const resolveDefaultValues = () => ({
-  councilId: 1,
+  councilId: '' as unknown as number,
   from: 0,
   to: 0,
 })

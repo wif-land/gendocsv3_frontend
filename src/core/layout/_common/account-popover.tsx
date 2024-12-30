@@ -1,3 +1,5 @@
+'use client'
+
 import { m } from 'framer-motion'
 import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
@@ -11,12 +13,16 @@ import { varHover } from '../../../shared/sdk/animate'
 import CustomPopover from '../../../shared/sdk/custom-popover/custom-popover'
 import { useAuth } from '../../../features/auth/presentation/hooks/useAuth'
 import { useAccountStore } from '../../../features/auth/presentation/state/useAccountStore'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { UserRole } from '@/features/users/domain/entities/IUser'
+import { Button, Grid } from '@mui/material'
+import NumerationResetDialog from './numeration-reset'
 
 export default function AccountPopover() {
   const { user } = useAccountStore()
   const { handleLogout } = useAuth()
   const popover = usePopover()
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     return () => {
@@ -57,7 +63,7 @@ export default function AccountPopover() {
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
-        sx={{ width: 200, p: 0 }}
+        sx={{ width: 230, p: 0 }}
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
@@ -68,6 +74,30 @@ export default function AccountPopover() {
             {user?.googleEmail}
           </Typography>
         </Box>
+        {user?.role === UserRole.ADMIN && (
+          <>
+            <Divider sx={{ borderStyle: 'dashed' }} />
+
+            <Box sx={{ p: 1 }}>
+              <MenuItem
+                onClick={() => {
+                  popover.onClose()
+                  setOpen(true)
+                }}
+                sx={{ m: 1, fontWeight: 'fontWeightBold' }}
+              >
+                <Grid container spacing={1}>
+                  <Typography variant="subtitle2" color={'GrayText'}>
+                    {'(Administrador)'}
+                  </Typography>
+                  <Typography variant="body2" color={'GrayText'} noWrap>
+                    {'Reinicio anual de numeración'}
+                  </Typography>
+                </Grid>
+              </MenuItem>
+            </Box>
+          </>
+        )}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
@@ -78,6 +108,7 @@ export default function AccountPopover() {
           Cerrar Sesión
         </MenuItem>
       </CustomPopover>
+      <NumerationResetDialog open={open} onClose={() => setOpen(false)} />
     </>
   )
 }

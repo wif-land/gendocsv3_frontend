@@ -46,7 +46,11 @@ export const DocumentSeeNumerationDialog = ({
           }}
         >
           {numeration?.enqueuedNumbers?.map((number, index) => (
-            <Box key={index} onClick={() => setNumeration(number)}>
+            <Box
+              key={index}
+              onClick={() => setNumeration(number)}
+              sx={{ cursor: 'pointer' }}
+            >
               {number}
             </Box>
           ))}
@@ -62,7 +66,11 @@ export const DocumentSeeNumerationDialog = ({
           }}
         >
           {numeration?.reservedNumbers?.map((number, index) => (
-            <Box key={index} onClick={() => setNumeration(number)}>
+            <Box
+              key={index}
+              onClick={() => setNumeration(number)}
+              sx={{ cursor: 'pointer' }}
+            >
               {number}
             </Box>
           ))}
