@@ -11,7 +11,7 @@ import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 interface CouncilUseCases {
   create(council: ICouncilFormValues): Promise<CouncilModel>
 
-  getAll(): Promise<CouncilModel[]>
+  getAll(): Promise<{ councils: CouncilModel[]; count: number }>
 
   getByFilters(
     filters: ICouncilFilters,

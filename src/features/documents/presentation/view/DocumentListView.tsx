@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams, usePathname } from 'next/navigation'
-import { memo } from 'react'
+import { usePathname } from 'next/navigation'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
   TablePaginationCustom,
-  TableSelectedAction,
   TableSkeleton,
   emptyRows,
 } from '../../../../shared/sdk/table'
@@ -16,8 +14,6 @@ import {
   Card,
   TableBody,
   TableContainer,
-  Tooltip,
-  IconButton,
   Container,
   Button,
   Table,
@@ -28,28 +24,35 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
-import { DocumentTableRow } from '../components/DocumentTableRow'
+import {
+  DocumentTableRow,
+  INotifyStudentOptions,
+} from '../components/DocumentTableRow'
 import { useDocumentView } from '../hooks/useDocumentsView'
 import { TABLE_HEAD } from '../constants/constants'
+import { DocumentTableFiltersResult } from '../components/DocumentTableFiltersResult'
 
-export default memo(() => {
-  const { codeModule } = useParams()
+const DocumentListView = () => {
   const {
     loader,
     table,
     tableData,
-    dataFiltered,
+    isDataFiltered,
     denseHeight,
-    notFound,
     count,
     handleDeleteRow,
-    handleDeleteRows,
     handleChangePage,
     handleViewRow,
-  } = useDocumentView(codeModule as string)
+    handleResetFilters,
+    handleNotifyStudent,
+  } = useDocumentView()
   const pathname = usePathname()
   const confirm = useBoolean()
   const settings = useSettingsContext()
+
+  const notFound =
+    (!loader.length && count === 0) ||
+    (!loader.length && count === 0 && isDataFiltered)
 
   return (
     <div>
@@ -74,28 +77,17 @@ export default memo(() => {
         />
 
         <Card>
-          <DocumentTableToolbar moduleName={codeModule as string} />
+          <DocumentTableToolbar />
+
+          {isDataFiltered && (
+            <DocumentTableFiltersResult
+              onResetFilters={handleResetFilters}
+              results={count}
+              sx={{ p: 2.5, pt: 0 }}
+            />
+          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={count}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id!.toString()),
-                )
-              }
-              action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
-              }
-            />
-
             <Scrollbar>
               <Table
                 size={table.dense ? 'small' : 'medium'}
@@ -108,6 +100,7 @@ export default memo(() => {
                   rowCount={tableData.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
+                  isMultiSelect={false}
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
@@ -123,7 +116,7 @@ export default memo(() => {
                     ))
                   ) : (
                     <>
-                      {dataFiltered
+                      {tableData
                         .slice(
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage,
@@ -132,15 +125,10 @@ export default memo(() => {
                           <DocumentTableRow
                             key={row.id}
                             row={row}
-                            selected={table.selected.includes(
-                              row.id!.toString(),
-                            )}
-                            onSelectRow={() =>
-                              table.onSelectRow(row.id!.toString())
-                            }
-                            onDeleteRow={() =>
-                              handleDeleteRow(row.id!.toString())
-                            }
+                            onDeleteRow={() => handleDeleteRow(row.id!)}
+                            onNotifyStudent={(
+                              options?: INotifyStudentOptions,
+                            ) => handleNotifyStudent(row.id!, options)}
                             onViewRow={() =>
                               handleViewRow(
                                 row.id!.toString(),
@@ -161,14 +149,14 @@ export default memo(() => {
                     )}
                   />
 
-                  <TableNoData notFound={notFound} />
+                  <TableNoData notFound={!!notFound} />
                 </TableBody>
               </Table>
             </Scrollbar>
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={count}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}
@@ -194,7 +182,6 @@ export default memo(() => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows()
               confirm.onFalse()
             }}
           >
@@ -204,4 +191,6 @@ export default memo(() => {
       />
     </div>
   )
-})
+}
+
+export default DocumentListView

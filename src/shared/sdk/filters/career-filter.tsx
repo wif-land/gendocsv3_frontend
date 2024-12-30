@@ -22,25 +22,27 @@ export const CareerFilter = ({ onChange, filters, sx }: IStatusFilterProps) => {
   return (
     <FormControl sx={{ m: 1, ...sx }}>
       <InputLabel id="demo-multiple-checkbox-label">Carrera</InputLabel>
-      <Select
-        labelId="council-type-label"
-        id="council-simple-select"
-        label="Carrera"
-        value={filters.careerId ? filters.careerId : ''}
-        input={<OutlinedInput label="Estado" />}
-        onChange={onChange}
-      >
-        {careers
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map(
-            (career) =>
-              user?.accessCareersDegCert?.includes(career.id) && (
-                <MenuItem key={career.id} value={career.id as number}>
-                  {career.name}
-                </MenuItem>
-              ),
-          )}
-      </Select>
+      {careers && careers.length > 0 && (
+        <Select
+          labelId="council-type-label"
+          id="council-simple-select"
+          label="Carrera"
+          value={filters.careerId ? filters.careerId : ''}
+          input={<OutlinedInput label="Estado" />}
+          onChange={onChange}
+        >
+          {careers
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(
+              (career) =>
+                user?.accessCareersDegCert?.includes(career.id) && (
+                  <MenuItem key={career.id} value={career.id as number}>
+                    {career.name}
+                  </MenuItem>
+                ),
+            )}
+        </Select>
+      )}
     </FormControl>
   )
 }

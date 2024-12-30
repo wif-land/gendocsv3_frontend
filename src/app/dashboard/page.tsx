@@ -1,6 +1,5 @@
 'use client'
 
-import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 
@@ -21,11 +20,6 @@ export default () => {
             title={`Hola 👋, ${user?.firstName} ${user?.firstLastName}`}
             description="Bienvenido a tu panel de control, aquí podrás gestionar los documentos"
             img={<SeoIllustration />}
-            action={
-              <Button variant="contained" color="primary">
-                Empezar
-              </Button>
-            }
           />
         </Grid>
       </Grid>

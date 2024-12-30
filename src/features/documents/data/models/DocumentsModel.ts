@@ -8,8 +8,10 @@ export class DocumentModel implements IDocument {
   createdAt?: Date
   driveId?: string
   userId: number
+  userName?: string
   templateId: number
   studentId?: number
+  studentName?: string
   functionariesIds?: number[]
   description: string
   variables?: string
@@ -23,8 +25,10 @@ export class DocumentModel implements IDocument {
     this.createdAt = props.createdAt
     this.driveId = props.driveId
     this.userId = props.userId
+    this.userName = props.userName
     this.templateId = props.templateId
     this.studentId = props.studentId
+    this.studentName = props.studentName
     this.functionariesIds = props.functionariesIds
     this.description = props.description
     this.variables = props.variables
@@ -43,6 +47,7 @@ export class DocumentModel implements IDocument {
         createdAt: json.createdAt,
         driveId: json.driveId,
         userId: json.userId,
+        userName: json.userName,
         templateId: json.templateId,
         studentId: json.student?.id,
         functionariesIds: json.functionariesIds?.map(

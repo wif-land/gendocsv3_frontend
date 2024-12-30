@@ -1,3 +1,4 @@
+import { CouncilModel } from '@/features/council/data/models/CouncilModel'
 import { CertificateStatusModel } from '../../data/models/certificateStatusModel'
 import { CertificateTypeModel } from '../../data/models/certificateTypeModel'
 import { CityModel } from '../../data/models/cityModel'
@@ -24,4 +25,5 @@ export interface ProvidersRepository {
 
   getVariables(): Promise<IVariableList>
 
+  getAllCouncils(): Promise<CouncilModel[]>
 }

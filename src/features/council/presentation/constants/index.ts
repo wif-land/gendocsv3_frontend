@@ -26,7 +26,7 @@ export const defaultFilters: ICouncilTableFilters = {
   name: undefined,
   state: undefined,
   startDate: DateUtils.FIRST_DAY_OF_YEAR,
-  endDate: undefined,
+  endDate: DateUtils.LAST_DAY_OF_YEAR,
   type: undefined,
 }
 

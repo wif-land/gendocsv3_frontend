@@ -1,3 +1,4 @@
+import { CouncilModel } from '@/features/council/data/models/CouncilModel'
 import { CertificateStatusModel } from '../../data/models/certificateStatusModel'
 import { CertificateTypeModel } from '../../data/models/certificateTypeModel'
 import { CityModel } from '../../data/models/cityModel'
@@ -20,12 +21,13 @@ interface ProvidersUseCases {
 
   getAllDegreeModalities(): Promise<DegreeModalityModel[]>
 
+  getAllCouncils(): Promise<CouncilModel[]>
+
   getAllRooms(): Promise<RoomModel[]>
 
   getAllDegrees(): Promise<DegreeModel[]>
 
   getVariables(): Promise<IVariableList>
-
 }
 
 export class ProvidersUseCasesImpl implements ProvidersUseCases {
@@ -60,5 +62,6 @@ export class ProvidersUseCasesImpl implements ProvidersUseCases {
   getAllDegrees = async () => await this.providerRepository.getAllDegrees()
 
   getVariables = async () => await this.providerRepository.getVariables()
-}
 
+  getAllCouncils = async () => await this.providerRepository.getAllCouncils()
+}

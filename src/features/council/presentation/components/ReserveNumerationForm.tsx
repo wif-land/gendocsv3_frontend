@@ -68,8 +68,9 @@ export const ReserveNumerationForm = () => {
 
   const renderActions = (
     <>
-      {mdUp && <Grid md={4} />}
+      {mdUp && <Grid md={4} item />}
       <Grid
+        item
         xs={12}
         mt={3}
         sx={{
