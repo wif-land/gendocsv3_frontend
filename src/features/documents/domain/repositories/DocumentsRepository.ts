@@ -9,7 +9,7 @@ export interface DocumentsRepository {
     documents: DocumentModel[]
   }>
 
-  create: (processData: IDocument) => Promise<DocumentModel>
+  create: (documentData: IDocument) => Promise<DocumentModel>
 
   getAllDocumentsByFilters: (
     filters: IDocumentFilters,

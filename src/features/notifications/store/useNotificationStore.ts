@@ -18,7 +18,9 @@ export const useNotificationStore = create<StoreState>(
   persist(
     (set, get) => ({
       notifications: DEFAULT_NOTIFICATIONS,
-      setNotifications: (notifications) => set({ notifications }),
+      setNotifications: (notifications) => {
+        set({ notifications })
+      },
       addNotification: (notification, user) => {
         if (filterByScope(notification, user)) {
           const inListNotification = get().notifications.find(

@@ -1,6 +1,6 @@
 export interface ICouncilFilters {
   name?: string
-  status?: boolean
+  state?: boolean
   startDate?: Date | string
   endDate?: Date | string
 }

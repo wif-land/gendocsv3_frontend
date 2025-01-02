@@ -173,4 +173,7 @@ export const API_ROUTES = {
   VARIABLES: {
     GET_ALL: '/variables',
   },
+  SYSTEM: {
+    UPDATE_YEAR: 'year-module/update-system-year',
+  },
 }

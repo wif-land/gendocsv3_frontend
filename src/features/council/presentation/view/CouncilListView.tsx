@@ -226,6 +226,7 @@ const CouncilListView = ({ moduleId }: { moduleId: string }) => {
                       tableData.map((row) => row.id!.toString()),
                     )
                   }
+                  isMultiSelect={false}
                 />
 
                 <TableBody>

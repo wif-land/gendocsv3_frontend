@@ -2,7 +2,7 @@
 
 import { memo, useEffect } from 'react'
 import Container from '@mui/material/Container'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import { useSettingsContext } from '../../../../shared/sdk/settings'
 import CustomBreadcrumbs from '../../../../shared/sdk/custom-breadcrumbs/custom-breadcrumbs'
 import { CouncilDetailsSummary } from '../components/CouncilDetailSummary'
@@ -14,6 +14,9 @@ const CouncilDetailsView = () => {
   const { id } = useParams()
   const settings = useSettingsContext()
   const { council, getCouncil } = useCouncilStore()
+  const pathname = usePathname()
+  const councilPath = pathname.split('/')
+  councilPath.pop()
 
   useEffect(() => {
     getCouncil(Number(id))
@@ -25,7 +28,7 @@ const CouncilDetailsView = () => {
         heading={council?.name || 'Cargando...'}
         links={[
           { name: 'Dashboard', href: '/' },
-          { name: 'Consejo', href: '/' },
+          { name: 'Consejo', href: councilPath.join('/') },
           { name: council?.name || 'Cargando...' },
         ]}
         sx={{

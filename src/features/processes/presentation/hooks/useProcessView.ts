@@ -136,8 +136,8 @@ export const useProcessView = ({
     }
   }
 
-  const handleUpdateRow = (row: IProcess) => {
-    updateRow(row)
+  const handleUpdateRow = async (row: IProcess) => {
+    await updateRow(row)
   }
 
   const handleSearch = (filters: IProcessFilters) => {
