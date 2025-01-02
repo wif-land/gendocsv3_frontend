@@ -202,6 +202,7 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                   rowCount={count}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
+                  isMultiSelect={false}
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
@@ -234,7 +235,11 @@ const ProcessListView = ({ moduleId }: { moduleId: string }) => {
                             onSelectRow={() =>
                               table.onSelectRow(row.id!.toString())
                             }
-                            onDeleteRow={() => handleUpdateRow(row)}
+                            onDeleteRow={() => {
+                              handleUpdateRow(row).then(() => {
+                                setTableData([])
+                              })
+                            }}
                             onEditRow={() => handleEditRow(row.id!.toString())}
                             onViewRow={() => handleViewRow(row.id!.toString())}
                           />

@@ -1,4 +1,7 @@
 'use client'
+import { useAccountStore } from '@/features/auth/presentation/state/useAccountStore'
+import { updateSystemYear } from '@/features/modules/api/modules'
+import { useUsersStore } from '@/features/users/presentation/state/usersStore'
 import {
   Box,
   Button,
@@ -10,7 +13,7 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 
 interface Props extends DialogProps {
   open: boolean
@@ -22,6 +25,8 @@ const NumerationResetDialog = ({ open, onClose, ...other }: Props) => {
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [countdown, setCountdown] = useState(5)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
+  const currentYear = new Date().getFullYear()
+  const { user } = useAccountStore()
 
   useEffect(() => {
     let timer: NodeJS.Timeout
@@ -45,8 +50,11 @@ const NumerationResetDialog = ({ open, onClose, ...other }: Props) => {
       setCountdown(5)
       return
     }
+
+    if (!user) return
     // Add your actual reset logic here
     console.log('Numeración reiniciada')
+    updateSystemYear({ year: currentYear, userId: user.id })
     setShowConfirmation(false)
     setCountdown(5)
     setIsButtonDisabled(true)
@@ -71,8 +79,8 @@ const NumerationResetDialog = ({ open, onClose, ...other }: Props) => {
       <DialogTitle sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}>
         <Typography variant="h3" component="div">
           {showConfirmation
-            ? 'Confirmar Reinicio'
-            : 'Reinicio de numeración anual'}
+            ? 'Confirmar Reinicio de numeración para el año ' + currentYear
+            : 'Reinicio de numeración anual para el año ' + currentYear}
         </Typography>
       </DialogTitle>
       <DialogContent dividers sx={{ pt: 1, pb: 0, border: 'none' }}>

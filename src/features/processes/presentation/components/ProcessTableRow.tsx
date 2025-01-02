@@ -3,7 +3,6 @@ import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
@@ -29,7 +28,7 @@ type Props = {
 export const ProcessTableRow = ({
   row,
   selected,
-  onSelectRow,
+  // onSelectRow,
   onDeleteRow,
   onEditRow,
   onViewRow,
@@ -42,9 +41,9 @@ export const ProcessTableRow = ({
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText

@@ -76,15 +76,43 @@ export const defaultFilters = (moduleId: number): IDocumentFilters => ({
 })
 
 export const resolveDefaultValues = () => ({
-  number: undefined,
-  councilId: undefined,
-  templateId: undefined,
-  student: null,
-  functionariesIds: [],
-  userId: undefined,
+  number: null as unknown as number,
+  councilId: null as unknown as { id: number; label: string },
+  processId: null as unknown as { id: number; label: string },
+  templateId: null as unknown as number,
+  student: null as unknown as { id: number; label: string },
+  functionariesIds: [] as unknown as { id: number; label: string }[],
+  userId: null as unknown as number,
   description: '',
 })
 
 export const NewDocumentSchema = yup.object({
-  // name: yup.string().required('El nombre es requerido'),
+  number: yup.number().required('El número es requerido'),
+  councilId: yup
+    .object({
+      id: yup.number(),
+      label: yup.string(),
+    })
+    .required('El consejo es requerido'),
+  processId: yup
+    .object({
+      id: yup.number(),
+      label: yup.string(),
+    })
+    .required('El proceso es requerido'),
+  templateId: yup.number().required('La plantilla es requerida'),
+  student: yup
+    .object({
+      id: yup.number(),
+      label: yup.string(),
+    })
+    .notRequired(),
+  functionariesIds: yup.array().of(
+    yup.object({
+      id: yup.number(),
+      label: yup.string(),
+    }),
+  ),
+  userId: yup.number().nullable(),
+  description: yup.string(),
 })

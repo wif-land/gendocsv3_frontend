@@ -21,8 +21,8 @@ export const useSocketListeners = () => {
       return
     }
     try {
-      console.log('Loading user notifications')
       socketClient.emit('user-notifications', { userId: user.id, limit: 15 })
+      console.log('Loading user notifications')
       setFirstLoad(false)
       socketClient.off('user-notifications')
     } catch (error) {

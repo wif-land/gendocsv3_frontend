@@ -23,12 +23,29 @@ import { useAccountStore } from '../../../auth/presentation/state/useAccountStor
 import { useFunctionaryStore } from '../../../functionaries/presentation/state/useFunctionaryStore'
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
+import { useDebounce } from '@/shared/hooks/use-debounce'
 
-interface IDocumentsForm extends Omit<Partial<IDocument>, 'studentId' | 'id'> {
+interface IDocumentsForm {
   student: {
     id: number
     label: string
   } | null
+  processId: {
+    id: number
+    label: string
+  }
+  councilId: {
+    id: number
+    label: string
+  }
+  number: number
+  userId: number
+  templateId: number
+  functionariesIds?: {
+    id: number
+    label: string
+  }[]
+  description: string | undefined
 }
 
 export const useDocumentsForm = (currentDocument?: DocumentModel) => {
@@ -53,6 +70,8 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { students, setStudents } = useStudentStore()
   const { functionaries, setFunctionaries } = useFunctionaryStore()
   const { user } = useAccountStore()
+  const [searchCouncilField, setSearchCouncilField] = useState('')
+  const [searchProcessField, setSearchProcessField] = useState('')
 
   const [selectedProcess, setSelectedProcess] = useState<ProcessModel>(
     {} as ProcessModel,
@@ -90,6 +109,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
         DocumentModel.fromJson({
           ...data,
           userId: user?.id,
+          councilId: data.councilId.id,
         }),
       )
 
@@ -116,18 +136,94 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     }
   }
 
+  const searchDebounced = useDebounce(searchCouncilField)
+  const searchProcessDebounced = useDebounce(searchProcessField)
+
+  useEffect(() => {
+    let isMounted = true
+    if (!searchDebounced) {
+      return
+    }
+
+    CouncilsUseCasesImpl.getInstance()
+      .getByFilters(
+        {
+          name: searchDebounced,
+          state: true,
+        },
+        moduleId,
+        new PaginationDTO(),
+      )
+      .then((result) => {
+        if (!isMounted) {
+          return
+        }
+
+        if (result.councils) {
+          setCouncils(result.councils)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [searchDebounced])
+
+  useEffect(() => {
+    let isMounted = true
+    if (!searchProcessDebounced) {
+      return
+    }
+
+    ProcessesUseCasesImpl.getInstance()
+      .getByFilters(
+        {
+          field: searchProcessDebounced,
+          state: true,
+        },
+        moduleId,
+        new PaginationDTO(),
+      )
+      .then((result) => {
+        if (!isMounted) {
+          return
+        }
+
+        if (result.processes) {
+          setProcesses(result.processes)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [searchProcessDebounced])
+
   useEffect(() => {
     if (!values.councilId) {
       return
     }
 
     DocumentsUseCasesImpl.getInstance()
-      .getNumerationByCouncil(values.councilId as number)
+      .getNumerationByCouncil(values.councilId.id as number)
       .then((result) => {
         setNumbers(result)
         methods.setValue('number', result.nextAvailableNumber)
       })
   }, [values.councilId])
+
+  useEffect(() => {
+    if (!values.processId) {
+      return
+    }
+
+    processes.forEach((process) => {
+      if (process.isActive && process.id === values.processId.id) {
+        setSelectedProcess(process)
+        isProcessSelected.onTrue()
+      }
+    })
+  }, [values.processId])
 
   useEffect(() => {
     if (!values.templateId) {
@@ -157,7 +253,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       .getAllProcessesByModuleId(moduleId, new PaginationDTO())
       .then((result) => {
         if (result.processes) {
-          setProcesses(result.processes)
+          setProcesses(result.processes.filter((process) => process.isActive))
         }
       })
 
@@ -193,5 +289,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     setProcesses,
     setSelectedProcess,
     getSelectedStudent,
+    setSearchCouncilField,
+    setSearchProcessField,
   }
 }

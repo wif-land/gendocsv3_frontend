@@ -25,7 +25,6 @@ import {
 } from '@mui/material'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { useDocumentsForm } from '../hooks/useDocumentsForm'
-import { ProcessModel } from '../../../processes/data/models/ProcessesModel'
 import Iconify from '../../../../core/iconify'
 import { useBoolean } from '../../../../shared/hooks/use-boolean'
 import { DocumentSeeNumerationDialog } from './DocumentSeeNumerationDialog'
@@ -58,11 +57,12 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     numbers,
     selectedProcess,
     onSubmit,
-    setSelectedProcess,
     getSelectedStudent,
+    setSearchCouncilField,
+    setSearchProcessField,
   } = useDocumentsForm(currentDocument)
 
-  const { handleSubmit, getValues } = methods
+  const { formState, handleSubmit, getValues } = methods
   const seeNumeration = useBoolean(false)
   const isStudentModalOpen = useBoolean(false)
   const isDocumentModalOpen = useBoolean(false)
@@ -86,53 +86,57 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
           {!mdUp && <CardHeader title="Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFSelect
+            <RHFAutocomplete
               name="councilId"
               label="Consejo"
               className="w-full"
               placeholder="Consejo"
-            >
-              {councils &&
-                councils
-                  ?.filter((council) => council.isActive)
-                  ?.map((council: any) => (
-                    <MenuItem
-                      key={council.id as number}
-                      value={council.id as number}
-                    >
-                      {council.name}
-                    </MenuItem>
-                  ))}
-            </RHFSelect>
+              noOptionsText="No hay consejos activos"
+              freeSolo
+              loading={loader.length > 0}
+              getOptionLabel={(option: any) =>
+                (
+                  option as {
+                    id: number
+                    label: string
+                  }
+                ).label
+              }
+              onInputChange={(_event, newInputValue) => {
+                setSearchCouncilField(newInputValue)
+              }}
+              getOptionKey={(option) => (option as { id: number }).id}
+              isOptionEqualToValue={(option, value) => option === value}
+              options={
+                councils?.map((council) => ({
+                  id: council.id,
+                  label: council.name,
+                })) || []
+              }
+            />
 
             {isCouncilSelected.value && (
               <>
-                <RHFSelect
-                  name="process"
+                <RHFAutocomplete
+                  name="processId"
                   label="Proceso"
                   className="w-full"
                   placeholder="Proceso"
-                  onChange={(e) => {
-                    setSelectedProcess(
-                      processes!.find(
-                        (process) => process.id === Number(e.target.value),
-                      ) || ({} as ProcessModel),
-                    )
-                    isProcessSelected.onTrue()
+                  noOptionsText="No hay procesos activos"
+                  freeSolo
+                  loading={loader.length > 0}
+                  getOptionLabel={(option) =>
+                    (option as { label: string }).label
+                  }
+                  onInputChange={(_event, newInputValue) => {
+                    setSearchProcessField(newInputValue)
                   }}
-                >
-                  {processes! &&
-                    processes
-                      ?.filter((process) => process.isActive)
-                      ?.map((process) => (
-                        <MenuItem
-                          key={process.id as number}
-                          value={process.id as number}
-                        >
-                          {process.name}
-                        </MenuItem>
-                      ))}
-                </RHFSelect>
+                  getOptionKey={(option) => (option as { id: number }).id}
+                  options={processes?.map((process) => ({
+                    id: process.id,
+                    label: process.name,
+                  }))}
+                />
               </>
             )}
 
@@ -335,6 +339,10 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
         <LoadingButton
           type="submit"
           variant="contained"
+          onClick={() => {
+            console.log(formState.errors)
+            handleSubmit(onSubmit)
+          }}
           size="large"
           loading={loader.length > 0}
           disabled={isStudentModalOpen.value}

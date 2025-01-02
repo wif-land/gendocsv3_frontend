@@ -7,8 +7,8 @@ import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 
 interface StoreState {
   councils: CouncilModel[]
-  setCouncils: (careers: CouncilModel[]) => void
-  addCouncil: (career: CouncilModel) => void
+  setCouncils: (council: CouncilModel[]) => void
+  addCouncil: (council: CouncilModel) => void
   getCouncilsByModuleId: (
     moduleId: number,
     pagination?: PaginationDTO,
@@ -16,7 +16,7 @@ interface StoreState {
   getById: (id: number) => Promise<CouncilModel>
   createCouncil: (career: ICouncilFormValues) => Promise<CouncilModel>
   updateCouncil: (
-    career: ICouncilFormValues,
+    council: ICouncilFormValues,
     councilToUpdate: ICouncil,
   ) => Promise<CouncilModel>
 }

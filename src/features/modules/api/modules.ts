@@ -12,3 +12,22 @@ export const fetchModules = async (): Promise<IModule[]> => {
 
   return result.data as IModule[]
 }
+
+export const updateSystemYear = async ({
+  year,
+  userId,
+}: {
+  year: number
+  userId: number
+}): Promise<boolean> => {
+  const result = await AxiosClient.post(API_ROUTES.SYSTEM.UPDATE_YEAR, {
+    year,
+    userId,
+  })
+
+  if ('error' in result) {
+    return false
+  }
+
+  return true
+}

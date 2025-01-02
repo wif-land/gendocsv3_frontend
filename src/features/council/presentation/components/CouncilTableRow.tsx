@@ -5,7 +5,6 @@ import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TableRow from '@mui/material/TableRow'
-import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
@@ -33,12 +32,12 @@ type Props = {
 export const CouncilTableRow = ({
   row,
   selected,
-  onSelectRow,
+  // onSelectRow,
   onDeleteRow,
   onEditRow,
   onViewRow,
   onDocumentAction,
-  isOnTable = true,
+  // isOnTable = true,
   activeState,
 }: Props) => {
   const { name, date, isActive, type } = row
@@ -52,11 +51,11 @@ export const CouncilTableRow = ({
   return (
     <>
       <TableRow hover selected={selected}>
-        {isOnTable && (
+        {/* {isOnTable && (
           <TableCell padding="checkbox">
             <Checkbox checked={selected} onClick={onSelectRow} />
           </TableCell>
-        )}
+        )} */}
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
@@ -109,7 +108,7 @@ export const CouncilTableRow = ({
               variant="soft"
               color={(finalActiveState === true && 'success') || 'primary'}
             >
-              {finalActiveState === true ? 'Activo' : 'Inactivo'}
+              {finalActiveState === true ? 'Abierto' : 'Cerrado'}
             </Label>
           )}
         </TableCell>
@@ -169,12 +168,12 @@ export const CouncilTableRow = ({
           {row.isActive ? (
             <>
               <Iconify icon="radix-icons:lock-closed" />
-              Desactivar
+              Cerrar
             </>
           ) : (
             <>
               <Iconify icon="radix-icons:lock-open-2" />
-              Activar
+              Abrir
             </>
           )}
         </MenuItem>
@@ -183,11 +182,11 @@ export const CouncilTableRow = ({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title={row.isActive ? 'Desactivar consejo' : 'Activar consejo'}
+        title={row.isActive ? 'Cerrar consejo' : 'Abrir consejo'}
         content={
           row.isActive
-            ? '¿Está seguro de desactivar este consejo?'
-            : '¿Está seguro de activar este consejo?'
+            ? '¿Está seguro de cerrar este consejo?'
+            : '¿Está seguro de abrir este consejo?'
         }
         action={
           <Button
@@ -198,7 +197,7 @@ export const CouncilTableRow = ({
               confirm.onFalse()
             }}
           >
-            {isActive ? 'Desactivar' : 'Activar'}
+            {isActive ? 'Cerrar' : 'Abrir'}
           </Button>
         }
       />
