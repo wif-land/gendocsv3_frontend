@@ -11,6 +11,7 @@ export class TemplateModel implements ITemplate {
   hasStudent?: boolean
   hasFunctionary?: boolean
   userId: number
+  userName?: string
   processId: number
 
   constructor({
@@ -23,6 +24,7 @@ export class TemplateModel implements ITemplate {
     hasStudent,
     hasFunctionary,
     userId,
+    userName,
     processId,
   }: ITemplate) {
     this.id = id
@@ -34,6 +36,7 @@ export class TemplateModel implements ITemplate {
     this.hasStudent = hasStudent
     this.hasFunctionary = hasFunctionary
     this.userId = userId
+    this.userName = userName
     this.processId = processId
   }
 

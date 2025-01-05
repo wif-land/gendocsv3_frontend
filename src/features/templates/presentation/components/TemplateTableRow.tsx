@@ -15,8 +15,7 @@ import { ConfirmDialog } from '../../../../shared/sdk/custom-dialog'
 import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { TemplateModel } from '../../data/models/TemplatesModel'
-import { useUsersStore } from '../../../users/presentation/state/usersStore'
-import { fUserNamesShort } from '../../../../shared/utils/format-names'
+import dayjs from 'dayjs'
 
 type Props = {
   rowUserId: number
@@ -38,11 +37,8 @@ export const TemplateTableRow = ({
 }: Props) => {
   const confirm = useBoolean()
   const popover = usePopover()
-  const { users } = useUsersStore()
 
-  const user = users.find((user) => user.id === row.userId)
-
-  const { name, isActive, createdAt } = row
+  const { name, isActive, createdAt, userName } = row
 
   return (
     <>
@@ -70,7 +66,11 @@ export const TemplateTableRow = ({
                 component="div"
                 sx={{ typography: 'body2', color: 'text.disabled' }}
               >
-                {createdAt?.toString() || 'Sin fecha'}
+                {createdAt
+                  ? dayjs(createdAt)
+                      .tz('America/Bogota')
+                      .format('DD/MM/YYYY HH:mm')
+                  : 'Sin fecha'}
               </Box>
             }
           />
@@ -81,7 +81,7 @@ export const TemplateTableRow = ({
             component="div"
             sx={{ typography: 'body2', color: 'text.disabled' }}
           >
-            {user ? fUserNamesShort(user) : 'Sin usuario'}
+            {userName || 'Sin usuario'}
           </Box>
         </TableCell>
 
