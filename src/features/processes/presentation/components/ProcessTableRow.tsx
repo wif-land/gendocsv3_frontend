@@ -15,6 +15,7 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 
 import { ProcessModel } from '../../data/models/ProcessesModel'
+import dayjs from 'dayjs'
 
 type Props = {
   row: ProcessModel
@@ -64,7 +65,11 @@ export const ProcessTableRow = ({
                 component="div"
                 sx={{ typography: 'body2', color: 'text.disabled' }}
               >
-                {createdAt?.toString() || 'Sin fecha'}
+                {createdAt
+                  ? dayjs(createdAt)
+                      .tz('America/Bogota')
+                      .format('DD/MM/YYYY HH:mm')
+                  : 'Sin fecha'}
               </Box>
             }
           />

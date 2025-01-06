@@ -8,5 +8,6 @@ export interface ITemplate {
   hasStudent?: boolean
   hasFunctionary?: boolean
   userId: number
+  userName?: string
   processId: number
 }
