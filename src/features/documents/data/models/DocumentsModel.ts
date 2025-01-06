@@ -5,11 +5,13 @@ export class DocumentModel implements IDocument {
   id?: number
   number: number
   councilId: number
+  councilName?: string
   createdAt?: Date
   driveId?: string
   userId: number
   userName?: string
   templateId: number
+  templateName?: string
   studentId?: number
   studentName?: string
   functionariesIds?: number[]
@@ -22,11 +24,13 @@ export class DocumentModel implements IDocument {
     this.id = props.id
     this.number = props.number
     this.councilId = props.councilId
+    this.councilName = props.councilName
     this.createdAt = props.createdAt
     this.driveId = props.driveId
     this.userId = props.userId
     this.userName = props.userName
     this.templateId = props.templateId
+    this.templateName = props.templateName
     this.studentId = props.studentId
     this.studentName = props.studentName
     this.functionariesIds = props.functionariesIds

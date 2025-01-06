@@ -24,6 +24,7 @@ export default function TablePaginationCustom({
       <TablePagination
         rowsPerPageOptions={rowsPerPageOptions}
         component="div"
+        labelRowsPerPage="Filas por página"
         {...other}
         sx={{
           borderTopColor: 'transparent',
@@ -32,7 +33,7 @@ export default function TablePaginationCustom({
 
       {onChangeDense && (
         <FormControlLabel
-          label="Dense"
+          label="Apretado"
           control={<Switch checked={dense} onChange={onChangeDense} />}
           sx={{
             pl: 2,

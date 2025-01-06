@@ -15,8 +15,6 @@ import { usePopover } from '../../../../shared/sdk/custom-popover'
 import CustomPopover from '../../../../shared/sdk/custom-popover/custom-popover'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import Stack from '@mui/material/Stack'
-import { useProcessStore } from '../../../../features/processes/presentation/state/useProcessStore'
-import { useCouncilsStore } from '../../../../features/council/presentation/store/councilsStore'
 
 export interface INotifyStudentOptions {
   whatsapp?: boolean
@@ -35,9 +33,7 @@ export const DocumentTableRow = ({
   onViewRow,
   onNotifyStudent,
 }: Props) => {
-  const { number, description, createdAt } = row
-  const { processes } = useProcessStore()
-  const { councils } = useCouncilsStore()
+  const { number, description, createdAt, councilName, templateName } = row
 
   const confirm = useBoolean()
 
@@ -107,8 +103,7 @@ export const DocumentTableRow = ({
                 alignItems="center"
                 justifyContent="start"
               >
-                {councils?.find((council) => council.id === row.councilId)
-                  ?.name || 'N/A'}
+                {councilName || 'N/A'}
               </Stack>
             }
           />
@@ -124,17 +119,7 @@ export const DocumentTableRow = ({
                 alignItems="center"
                 justifyContent="start"
               >
-                {processes
-                  ?.map((process) => {
-                    const template = process.templateProcesses?.find(
-                      (template) => template.id === row.templateId,
-                    )
-
-                    if (template !== undefined) {
-                      return template.name
-                    }
-                  })
-                  .filter((value) => value !== undefined)[0] || 'N/A'}
+                {templateName || 'N/A'}
               </Stack>
             }
           />

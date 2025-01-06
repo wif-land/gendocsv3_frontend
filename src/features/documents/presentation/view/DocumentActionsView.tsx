@@ -85,7 +85,7 @@ export const DocumentActionsView = () => {
             disabled={!currentCouncil?.hasProcessedDocuments}
             onClick={() => downloadDocument(Number(id))}
           >
-            3. Descargar Documento
+            1.2. Descargar Documento
           </Button>
           <Button
             variant="outlined"
@@ -97,7 +97,7 @@ export const DocumentActionsView = () => {
               router.push(`view/${currentCouncil?.recopilationDriveId}`)
             }}
           >
-            4. Ver acta
+            2.2. Ver acta
           </Button>
         </Stack>
       </Stack>
