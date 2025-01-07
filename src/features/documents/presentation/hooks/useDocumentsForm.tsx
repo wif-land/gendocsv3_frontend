@@ -72,6 +72,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const { user } = useAccountStore()
   const [searchCouncilField, setSearchCouncilField] = useState('')
   const [searchProcessField, setSearchProcessField] = useState('')
+  const [searchStudentField, setSearchStudentField] = useState('')
 
   const [selectedProcess, setSelectedProcess] = useState<ProcessModel>(
     {} as ProcessModel,
@@ -138,6 +139,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
 
   const searchDebounced = useDebounce(searchCouncilField)
   const searchProcessDebounced = useDebounce(searchProcessField)
+  const searchStudentDebounced = useDebounce(searchStudentField)
 
   useEffect(() => {
     let isMounted = true
@@ -198,6 +200,35 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       isMounted = false
     }
   }, [searchProcessDebounced])
+
+  useEffect(() => {
+    let isMounted = true
+    if (!searchStudentDebounced) {
+      return
+    }
+
+    StudentUseCasesImpl.getInstance()
+      .getByFilters(
+        {
+          field: searchStudentDebounced,
+          state: true,
+        },
+        new PaginationDTO(),
+      )
+      .then((result) => {
+        if (!isMounted) {
+          return
+        }
+
+        if (result.students) {
+          setStudents(result.students)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [searchStudentDebounced])
 
   useEffect(() => {
     if (!values.councilId) {
@@ -291,5 +322,6 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     getSelectedStudent,
     setSearchCouncilField,
     setSearchProcessField,
+    setSearchStudentField,
   }
 }

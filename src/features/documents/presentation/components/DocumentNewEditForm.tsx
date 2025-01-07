@@ -60,6 +60,7 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     getSelectedStudent,
     setSearchCouncilField,
     setSearchProcessField,
+    setSearchStudentField,
   } = useDocumentsForm(currentDocument)
 
   const { formState, handleSubmit, getValues } = methods
@@ -219,7 +220,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                     sx={{
                       flexGrow: 1,
                     }}
+                    noOptionsText="No hay estudiantes activos"
                     freeSolo
+                    loading={loader.length > 0}
+                    getOptionLabel={(option) =>
+                      (option as { label: string }).label
+                    }
+                    onInputChange={(_event, newInputValue) => {
+                      setSearchStudentField(newInputValue)
+                    }}
+                    getOptionKey={(option) => (option as { id: number }).id}
                     options={students?.map((student) => ({
                       id: student.id,
                       label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
