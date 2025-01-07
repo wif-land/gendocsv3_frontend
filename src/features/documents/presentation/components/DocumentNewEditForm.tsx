@@ -57,7 +57,6 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
     numbers,
     selectedProcess,
     onSubmit,
-    getSelectedStudent,
     setSearchCouncilField,
     setSearchProcessField,
     setSearchStudentField,
@@ -226,18 +225,16 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                     getOptionLabel={(option) =>
                       (option as { label: string }).label
                     }
+                    getOptionKey={(option) => (option as { id: number }).id}
                     onInputChange={(_event, newInputValue) => {
                       setSearchStudentField(newInputValue)
                     }}
-                    getOptionKey={(option) => (option as { id: number }).id}
                     options={students?.map((student) => ({
                       id: student.id,
-                      label: `${student.dni} - ${student.firstLastName} ${student.secondLastName} ${student.firstName}`,
+                      label: `${student.dni} - ${student.firstLastName} ${
+                        student.secondLastName
+                      } ${student.firstName} ${student.secondName ?? ''}`,
                     }))}
-                    value={getSelectedStudent()}
-                    onSelect={() => {
-                      methods.setValue('student', getSelectedStudent())
-                    }}
                   />
                   {methods.watch('student') && (
                     <>

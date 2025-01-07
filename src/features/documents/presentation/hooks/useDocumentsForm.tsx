@@ -203,6 +203,9 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
 
   useEffect(() => {
     let isMounted = true
+    if (searchStudentDebounced.includes('-')) {
+      return
+    }
     if (!searchStudentDebounced) {
       return
     }
@@ -273,7 +276,13 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
     }
 
     CouncilsUseCasesImpl.getInstance()
-      .getAllCouncilsByModuleId(moduleId, new PaginationDTO())
+      .getByFilters(
+        {
+          state: true,
+        },
+        moduleId,
+        new PaginationDTO(),
+      )
       .then((result) => {
         if (result.councils) {
           setCouncils(result.councils)
