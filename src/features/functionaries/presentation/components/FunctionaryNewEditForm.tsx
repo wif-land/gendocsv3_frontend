@@ -1,3 +1,4 @@
+'use client'
 import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -15,8 +16,10 @@ import { Button, MenuItem } from '@mui/material'
 import { IFunctionary } from '../../domain/entities/IFunctionary'
 import { useFunctionaryForm } from '../hooks/useFunctionaryForm'
 import { RHFSelect } from '../../../../shared/sdk/hook-form/rhf-select'
-import { useDegreeData } from '../../../../core/providers/functionary-degree-provider'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { DegreeModel } from '@/core/providers/data/models/degreeModel'
+import { ProvidersUseCasesImpl } from '@/core/providers/domain/usecases/ProvidersService'
 
 type Props = {
   currentFunctionary?: IFunctionary
@@ -27,7 +30,17 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
   const router = useRouter()
 
   const { methods, onSubmit } = useFunctionaryForm(currentFunctionary)
-  const { degrees } = useDegreeData()
+  const [degrees, setDegrees] = useState<DegreeModel[]>([])
+
+  useEffect(() => {
+    if (degrees.length > 0) return
+
+    ProvidersUseCasesImpl.getInstance()
+      .getAllDegrees()
+      .then((data) => {
+        setDegrees(data)
+      })
+  }, [degrees])
 
   const thirdLevelDegree = degrees.filter(
     (degree) => degree.degreeLevel === '3',
@@ -36,6 +49,8 @@ export const FunctionaryNewEditForm = ({ currentFunctionary }: Props) => {
   const fourthLevelDegree = degrees.filter(
     (degree) => degree.degreeLevel === '4',
   )
+
+  console.log(degrees)
 
   const {
     handleSubmit,

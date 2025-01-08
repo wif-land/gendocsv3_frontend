@@ -306,7 +306,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
       })
 
     FunctionaryUseCasesImpl.getInstance()
-      .getAll(new PaginationDTO())
+      .getAll(new PaginationDTO(1, 1000))
       .then((result) => {
         if (result.functionaries) {
           setFunctionaries(result.functionaries)
