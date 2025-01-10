@@ -97,7 +97,6 @@ export const CouncilNewEditForm = ({ currentCouncil }: Props) => {
                       required: true,
                     },
                   }}
-                  disablePast
                 />
               )}
             />
