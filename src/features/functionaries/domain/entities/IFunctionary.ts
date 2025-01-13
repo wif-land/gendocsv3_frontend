@@ -14,12 +14,12 @@ export interface IFunctionary extends Omit<IMember, 'isStudent'> {
 
 export interface ICreateFunctionary extends Omit<IFunctionary, 'id'> {
   thirdLevelDegree: number
-  fourthLevelDegree: number
+  fourthLevelDegree?: number
 }
 
 export interface IUpdateFunctionary extends Partial<IFunctionary> {}
 
 export interface IFunctionaryFormValues extends Omit<IFunctionary, 'id'> {
   thirdLevelDegree: number
-  fourthLevelDegree: number
+  fourthLevelDegree?: number
 }

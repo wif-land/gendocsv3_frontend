@@ -45,6 +45,7 @@ const DocumentListView = () => {
     handleViewRow,
     handleResetFilters,
     handleNotifyStudent,
+    handleChangeRowsPerPage,
   } = useDocumentView()
   const pathname = usePathname()
   const confirm = useBoolean()
@@ -142,11 +143,7 @@ const DocumentListView = () => {
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(
-                      table.page,
-                      table.rowsPerPage,
-                      tableData.length,
-                    )}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, count)}
                   />
 
                   <TableNoData notFound={!!notFound} />
@@ -160,7 +157,7 @@ const DocumentListView = () => {
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
