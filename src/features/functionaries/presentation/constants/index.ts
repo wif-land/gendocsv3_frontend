@@ -43,7 +43,7 @@ export const TABLE_HEAD = [
 export const NewFunctionarySchema = Yup.object().shape({
   ...DEFAULT_PERSON_SCHEMA.fields,
   thirdLevelDegree: Yup.number().required(VALIDATION_MESSAGES.required),
-  fourthLevelDegree: Yup.number().required(VALIDATION_MESSAGES.required),
+  fourthLevelDegree: Yup.number().nullable(),
 })
 
 export const resolveDefaultValues = (

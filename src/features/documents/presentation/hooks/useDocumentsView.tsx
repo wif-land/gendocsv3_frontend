@@ -117,6 +117,35 @@ export const useDocumentView = () => {
     }
   }
 
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    table.onChangeRowsPerPage(event)
+    table.setPage(0)
+    setTableData([])
+    setVisitedPages([])
+    const rowsPerPage = parseInt(event.target.value, 10)
+
+    if (isDataFiltered) {
+      fetchData(filters, rowsPerPage, table.page).then((response) => {
+        if (response?.count === 0) return
+        setDocuments(response.documents)
+        setTableData(response.documents)
+        setCount(response.count)
+      })
+    } else {
+      fetchData(filters, rowsPerPage, table.page).then((data) => {
+        if (data?.documents) {
+          setDocuments(data.documents)
+          setTableData(data.documents)
+        }
+        if (data?.count) {
+          setCount(data.count)
+        }
+      })
+    }
+  }
+
   useEffect(() => {
     let isMounted = true
     // if (tableData.length !== 0) return
@@ -191,5 +220,6 @@ export const useDocumentView = () => {
     getFilteredDocuments,
     handleResetFilters,
     handleNotifyStudent,
+    handleChangeRowsPerPage,
   }
 }
