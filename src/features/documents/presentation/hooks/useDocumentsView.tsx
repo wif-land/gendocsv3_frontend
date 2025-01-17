@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { usePathname, useRouter } from 'next/navigation'
-import { DENSE, NO_DENSE, useTable } from '../../../../shared/sdk/table'
+import { DENSE, NO_DENSE } from '../../../../shared/sdk/table'
 import {
   IDocumentTableFilterValue,
   IDocumentFilters,
@@ -15,7 +15,6 @@ import useModulesStore from '@/shared/store/modulesStore'
 import { resolveModuleId } from '@/shared/utils/ModuleUtil'
 
 export const useDocumentView = (moduleId: string) => {
-  const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
   const [moduleIdentifier, setModuleIdentifier] = useState(0)
@@ -31,21 +30,16 @@ export const useDocumentView = (moduleId: string) => {
     tableData,
     visitedPages,
     handleResetFilters,
+    table,
   } = useDocumentsTable()
 
   const modules = useStore(useModulesStore, (state) => state.modules)
 
   useEffect(() => {
-    let isMounted = true
-
-    if (!isMounted || !modules || modules.length === 0 || !moduleId) return
+    if (!modules || modules.length === 0) return
 
     setModuleIdentifier(resolveModuleId(modules, moduleId))
-
-    return () => {
-      isMounted = false
-    }
-  }, [modules, moduleId])
+  }, [modules])
 
   useEffect(() => {
     let isMounted = true
@@ -72,20 +66,17 @@ export const useDocumentView = (moduleId: string) => {
 
   const denseHeight = table.dense ? NO_DENSE : DENSE
 
-  const handleFilters = useCallback(
-    (name: string, value: IDocumentTableFilterValue) => {
-      table.onResetPage()
-      setFilters(
-        (prevState: IDocumentFilters) =>
-          ({
-            ...prevState,
-            [name]: value,
-          }) as IDocumentFilters,
-      )
-      setIsDataFiltered(true)
-    },
-    [table],
-  )
+  const handleFilters = (name: string, value: IDocumentTableFilterValue) => {
+    setFilters(
+      (prevState: IDocumentFilters) =>
+        ({
+          ...prevState,
+          moduleId: moduleIdentifier,
+          [name]: value,
+        }) as IDocumentFilters,
+    )
+    setIsDataFiltered(true)
+  }
 
   useEffect(() => {
     if (documents?.length && moduleIdentifier !== 0) {
@@ -132,13 +123,24 @@ export const useDocumentView = (moduleId: string) => {
 
     if (newPage > table.page) {
       if (isDataFiltered) {
-        fetchData(filters, table.rowsPerPage, newPage).then((response) => {
+        fetchData(
+          { ...filters, moduleId: moduleIdentifier },
+          table.rowsPerPage,
+          newPage,
+        ).then((response) => {
           if (response?.count === 0) return
           setDocuments([...documents, ...response.documents])
           setTableData([...documents, ...response.documents])
         })
       } else {
-        fetchData(filters, table.rowsPerPage, newPage).then((data) => {
+        fetchData(
+          {
+            ...filters,
+            moduleId: moduleIdentifier,
+          },
+          table.rowsPerPage,
+          newPage,
+        ).then((data) => {
           if (data?.documents) {
             setDocuments([...documents, ...data.documents])
             setTableData([...documents, ...data.documents])
@@ -158,14 +160,22 @@ export const useDocumentView = (moduleId: string) => {
     const rowsPerPage = parseInt(event.target.value, 10)
 
     if (isDataFiltered) {
-      fetchData(filters, rowsPerPage, table.page).then((response) => {
+      fetchData(
+        { ...filters, moduleId: moduleIdentifier },
+        rowsPerPage,
+        table.page,
+      ).then((response) => {
         if (response?.count === 0) return
         setDocuments(response.documents)
         setTableData(response.documents)
         setCount(response.count)
       })
     } else {
-      fetchData(filters, rowsPerPage, table.page).then((data) => {
+      fetchData(
+        { ...filters, moduleId: moduleIdentifier },
+        rowsPerPage,
+        table.page,
+      ).then((data) => {
         if (data?.documents) {
           setDocuments(data.documents)
           setTableData(data.documents)
@@ -179,14 +189,26 @@ export const useDocumentView = (moduleId: string) => {
 
   useEffect(() => {
     let isMounted = true
+    if (!isMounted) return
+    // console.log({ ...table })
+
+    return () => {
+      isMounted = false
+    }
+  }, [table])
+
+  useEffect(() => {
+    let isMounted = true
     // if (tableData.length !== 0) return
     if (!isMounted || !moduleIdentifier || !modules) return
+    if (tableData.length !== 0) return
 
     const mid = resolveModuleId(modules, moduleId)
 
     const fetchDocuments = async () => {
-      if (!isMounted) return
+      if (!isMounted && !isDataFiltered && mid !== 0) return
 
+      console.log({ ...table })
       const result = await fetchData(
         {
           ...filters,
@@ -197,6 +219,7 @@ export const useDocumentView = (moduleId: string) => {
       )
 
       if (result) {
+        if (result.count === 0) return
         setDocuments(result.documents)
         setTableData(result.documents)
         setCount(result.count)
@@ -208,24 +231,32 @@ export const useDocumentView = (moduleId: string) => {
     return () => {
       isMounted = false
     }
-  }, [moduleIdentifier, filters])
+  }, [moduleIdentifier, filters, isDataFiltered, tableData])
 
-  const getFilteredDocuments = (filters: IDocumentFilters) => {
-    fetchData(filters, table.rowsPerPage, table.page).then((response) => {
-      if (response?.count > 0) {
-        setDocuments(response.documents)
-        setTableData(response.documents)
-        setCount(response.count)
+  const getFilteredDocuments = useCallback(
+    (filters: IDocumentFilters) => {
+      fetchData(
+        { ...filters, moduleId: moduleIdentifier },
+        table.rowsPerPage,
+        table.page,
+      ).then((response) => {
+        console.log({ ...table })
+        if (response?.count > 0) {
+          setDocuments(response.documents)
+          setTableData(response.documents)
+          setCount(response.count)
 
+          return
+        }
+
+        setDocuments([])
+        setTableData([])
+        setCount(0)
         return
-      }
-
-      setDocuments([])
-      setTableData([])
-      setCount(0)
-      return
-    })
-  }
+      })
+    },
+    [table],
+  )
 
   const handleNotifyStudent = async (
     id: number,
