@@ -1,8 +1,16 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react'
 import { IDocumentFilters } from '../components/DocumentTableToolbar'
 import { defaultFilters } from '../constants/constants'
 import useModulesStore from '@/shared/store/modulesStore'
 import { DocumentModel } from '../../data/models/DocumentsModel'
+import { resolveModuleId } from '@/shared/utils/ModuleUtil'
+import useStore from '@/shared/hooks/use-store'
 
 interface DocumentsTableContextProps {
   filters: IDocumentFilters
@@ -31,9 +39,14 @@ export const DocumentsTableProvider: React.FC<{
   children: ReactNode
   moduleCode: string
 }> = ({ moduleCode, children }) => {
-  const { modules } = useModulesStore()
-  const moduleIdentifier =
-    modules?.find((module) => module.code === moduleCode.toUpperCase())?.id ?? 0
+  const modules = useStore(useModulesStore, (state) => state.modules)
+  const [moduleIdentifier, setModuleIdentifier] = useState(0)
+
+  useEffect(() => {
+    if (!modules) return
+
+    setModuleIdentifier(resolveModuleId(modules, moduleCode))
+  }, [modules])
 
   const [filters, setFilters] = useState<IDocumentFilters>(
     defaultFilters(moduleIdentifier),

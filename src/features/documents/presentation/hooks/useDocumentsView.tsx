@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { usePathname, useRouter } from 'next/navigation'
 import { DENSE, NO_DENSE, useTable } from '../../../../shared/sdk/table'
@@ -10,11 +10,15 @@ import {
 import { useDocumentsMethods } from './useDocumentsMethods'
 import { useDocumentsTable } from '../context/DocumentTableProvider'
 import { INotifyStudentOptions } from '../components/DocumentTableRow'
+import useStore from '@/shared/hooks/use-store'
+import useModulesStore from '@/shared/store/modulesStore'
+import { resolveModuleId } from '@/shared/utils/ModuleUtil'
 
-export const useDocumentView = () => {
+export const useDocumentView = (moduleId: string) => {
   const table = useTable()
   const router = useRouter()
   const pathname = usePathname()
+  const [moduleIdentifier, setModuleIdentifier] = useState(0)
   const {
     count,
     filters,
@@ -26,9 +30,36 @@ export const useDocumentView = () => {
     setVisitedPages,
     tableData,
     visitedPages,
-    moduleIdentifier,
     handleResetFilters,
   } = useDocumentsTable()
+
+  const modules = useStore(useModulesStore, (state) => state.modules)
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!isMounted || !modules || modules.length === 0 || !moduleId) return
+
+    setModuleIdentifier(resolveModuleId(modules, moduleId))
+
+    return () => {
+      isMounted = false
+    }
+  }, [modules, moduleId])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (moduleIdentifier !== 0) return
+
+    if (isMounted) {
+      router.refresh()
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [moduleIdentifier])
 
   const {
     documents,
@@ -57,7 +88,7 @@ export const useDocumentView = () => {
   )
 
   useEffect(() => {
-    if (documents?.length) {
+    if (documents?.length && moduleIdentifier !== 0) {
       setTableData(documents as DocumentModel[])
     }
   }, [documents])
@@ -149,11 +180,21 @@ export const useDocumentView = () => {
   useEffect(() => {
     let isMounted = true
     // if (tableData.length !== 0) return
+    if (!isMounted || !moduleIdentifier || !modules) return
+
+    const mid = resolveModuleId(modules, moduleId)
 
     const fetchDocuments = async () => {
       if (!isMounted) return
 
-      const result = await fetchData(filters, table.rowsPerPage, table.page)
+      const result = await fetchData(
+        {
+          ...filters,
+          moduleId: mid,
+        },
+        table.rowsPerPage,
+        table.page,
+      )
 
       if (result) {
         setDocuments(result.documents)
