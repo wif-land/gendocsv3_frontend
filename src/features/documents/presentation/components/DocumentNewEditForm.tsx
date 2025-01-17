@@ -295,7 +295,11 @@ export const DocumentNewEditForm = ({ currentDocument }: Props) => {
                   options={functionaries
                     ?.map((functionary) => ({
                       id: functionary.id,
-                      label: `${functionary.dni} - ${functionary.firstLastName} ${functionary.firstName}`,
+                      label: `${functionary.dni} - ${
+                        functionary.firstLastName
+                      } ${functionary.secondLastName ?? ''} ${
+                        functionary.firstName
+                      } ${functionary.secondName ?? ''}`,
                     }))
                     .filter(
                       (student) =>

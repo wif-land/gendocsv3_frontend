@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { CouncilListView } from '../../../../features/council/presentation/view'
 import { CareerListView } from '../../../../features/careers/presentation/view'
@@ -13,9 +13,23 @@ import { DegreeCertificateListView } from '../../../../features/degree-certifica
 import { DefaultMembersView } from '../../../../features/default-members/presentation/view'
 import NotFound from '../../../not-found'
 import { DocumentsListViewPage } from '@/features/documents/presentation/enclosuredPages'
+import { useEffect } from 'react'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
+  const router = useRouter()
+
+  useEffect(() => {
+    let mounted = true
+
+    if (mounted && codeModule == null) {
+      router.refresh()
+    }
+
+    return () => {
+      mounted = false
+    }
+  }, [codeModule])
 
   const route = `${codeModule}/${subModuleName}`
 
