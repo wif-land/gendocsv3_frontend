@@ -4,7 +4,7 @@ import { DocumentListView } from '../view'
 
 const DocumentsListViewPage = ({ moduleId }: { moduleId: string }) => (
   <DocumentsTableProvider moduleCode={moduleId}>
-    <DocumentListView />
+    <DocumentListView moduleId={moduleId} />
   </DocumentsTableProvider>
 )
 

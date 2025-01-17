@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 import { CouncilListView } from '../../../../features/council/presentation/view'
 import { CareerListView } from '../../../../features/careers/presentation/view'
@@ -13,25 +13,15 @@ import { DegreeCertificateListView } from '../../../../features/degree-certifica
 import { DefaultMembersView } from '../../../../features/default-members/presentation/view'
 import NotFound from '../../../not-found'
 import { DocumentsListViewPage } from '@/features/documents/presentation/enclosuredPages'
-import { useEffect } from 'react'
+import { useModuleValidation } from '@/shared/hooks/useModuleValidation'
+import Loading from '@/app/loading'
 
 const Page = () => {
   const { codeModule, subModuleName } = useParams()
-  const router = useRouter()
+  const { moduleId, isLoading } = useModuleValidation(codeModule as string)
+  const path = window.location.pathname
 
-  useEffect(() => {
-    let mounted = true
-
-    if (mounted && codeModule == null) {
-      router.refresh()
-    }
-
-    return () => {
-      mounted = false
-    }
-  }, [codeModule])
-
-  const route = `${codeModule}/${subModuleName}`
+  const boundedCode = codeModule != null ? codeModule : path.split('/')[2]
 
   const routeToComponent = {
     usuarios: UsersListView,
@@ -46,6 +36,12 @@ const Page = () => {
     representantes: DefaultMembersView,
   }
 
+  if (isLoading) {
+    return <Loading />
+  }
+
+  const route = `${boundedCode}/${subModuleName}`
+
   const defaultComponent = () => <NotFound />
 
   const matchedRoute = Object.keys(routeToComponent).find((key) =>
@@ -56,7 +52,11 @@ const Page = () => {
     routeToComponent[matchedRoute as keyof typeof routeToComponent] ||
     defaultComponent
 
-  return <Component moduleId={codeModule as string} />
+  return moduleId ? (
+    <Component moduleId={boundedCode as string} />
+  ) : (
+    <NotFound />
+  )
 }
 
 export default Page

@@ -25,6 +25,7 @@ import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { useDebounce } from '@/shared/hooks/use-debounce'
 import useStore from '@/shared/hooks/use-store'
+import { useModuleValidation } from '@/shared/hooks/useModuleValidation'
 
 interface IDocumentsForm {
   student: {
@@ -53,6 +54,8 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const router = useRouter()
   const pathname = usePathname()
   const { codeModule } = useParams()
+
+  const { moduleId: moduleCode } = useModuleValidation(codeModule as string)
 
   const resolveModuleId = (modules: IModule[], codeModule: string) => {
     const module = modules.find(
@@ -84,13 +87,19 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const modules = useStore(useModulesStore, (state) => state.modules)
 
   const [moduleId, setModuleId] = useState<number>(
-    resolveModuleId(modules ?? [], codeModule as string) || 0,
+    resolveModuleId(modules ?? [], moduleCode as string) || 0,
   )
 
   useEffect(() => {
-    if (!modules || !codeModule) return
+    if (!modules || !moduleCode) return
 
-    setModuleId(resolveModuleId(modules, codeModule as string) || 0)
+    const moduleId = resolveModuleId(modules, moduleCode as string) || 0
+
+    if (moduleId === 0) {
+      router.refresh()
+    }
+
+    setModuleId(moduleId)
   }, [modules, codeModule])
 
   const defaultValues: IDocumentsForm = useMemo(

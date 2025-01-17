@@ -32,7 +32,7 @@ import { useDocumentView } from '../hooks/useDocumentsView'
 import { TABLE_HEAD } from '../constants/constants'
 import { DocumentTableFiltersResult } from '../components/DocumentTableFiltersResult'
 
-const DocumentListView = () => {
+const DocumentListView = ({ moduleId }: { moduleId: string }) => {
   const {
     loader,
     table,
@@ -46,7 +46,7 @@ const DocumentListView = () => {
     handleResetFilters,
     handleNotifyStudent,
     handleChangeRowsPerPage,
-  } = useDocumentView()
+  } = useDocumentView(moduleId)
   const pathname = usePathname()
   const confirm = useBoolean()
   const settings = useSettingsContext()
