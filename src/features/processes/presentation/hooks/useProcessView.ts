@@ -11,6 +11,8 @@ import { TableProps } from '../../../../shared/sdk/table/types'
 import { useProcessesMethods } from './useProcessesMethods'
 import { IProcess } from '../../domain/entities/IProcess'
 import { IProcessFilters } from '../../domain/entities/IProcessFilters'
+import { useRouter } from 'next/navigation'
+import useStore from '@/shared/hooks/use-store'
 
 interface Props {
   table: TableProps
@@ -32,13 +34,35 @@ export const useProcessView = ({
   const [tableData, setTableData] = useState<ProcessModel[]>([])
   const [count, setCount] = useState(0)
   const { processes, setProcesses } = useProcessStore()
+
   const { loader } = useLoaderStore()
   const { fetchData, updateRow, fetchDataByField } = useProcessesMethods()
-  const { modules } = useModulesStore()
-  const moduleIdentifier = resolveModuleId(modules, moduleId)
+  const modules = useStore(useModulesStore, (state) => state.modules)
+  const [moduleIdentifier, setModuleIdentifier] = useState(0)
   const currentModule = useModulesStore().modules.find(
     (module) => module.id === moduleIdentifier,
   )
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!modules) return
+
+    setModuleIdentifier(resolveModuleId(modules, moduleId))
+  }, [modules])
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (moduleIdentifier !== 0) return
+
+    if (isMounted) {
+      router.refresh()
+    }
+
+    return () => {
+      isMounted = false
+    }
+  }, [moduleIdentifier])
 
   const defaultTemplate = currentModule?.defaultTemplateDriveId
 
@@ -46,7 +70,7 @@ export const useProcessView = ({
     let isMounted = true
     if (tableData.length !== 0) return
 
-    if (isMounted && !isDataFiltered) {
+    if (isMounted && !isDataFiltered && moduleIdentifier !== 0) {
       fetchData(moduleIdentifier, table.rowsPerPage, table.page).then(
         (data) => {
           if (data.count === 0) return
@@ -60,7 +84,7 @@ export const useProcessView = ({
     return () => {
       isMounted = false
     }
-  }, [tableData, isDataFiltered])
+  }, [tableData, isDataFiltered, moduleIdentifier])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     table.onChangePage(event, newPage)

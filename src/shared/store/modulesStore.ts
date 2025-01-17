@@ -52,7 +52,14 @@ const useModulesStore = create<StoreState>(
         set({ accessModules })
       },
     }),
-    { name: STORE_NAME, storage: createJSONStorage(() => sessionStorage) },
+    {
+      name: STORE_NAME,
+      storage: createJSONStorage(
+        // This is the key that will be used in localStorage
+        () => localStorage,
+      ),
+      skipHydration: true,
+    },
   ) as StateCreator<StoreState>,
 )
 

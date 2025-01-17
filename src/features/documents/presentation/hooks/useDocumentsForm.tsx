@@ -24,6 +24,7 @@ import { useFunctionaryStore } from '../../../functionaries/presentation/state/u
 import { FunctionaryUseCasesImpl } from '../../../functionaries/domain/usecases/FunctionaryServices'
 import { PaginationDTO } from '../../../../shared/utils/pagination-dto'
 import { useDebounce } from '@/shared/hooks/use-debounce'
+import useStore from '@/shared/hooks/use-store'
 
 interface IDocumentsForm {
   student: {
@@ -80,10 +81,17 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   const [numbers, setNumbers] = useState<NumerationModel>(
     NumerationModel.fromJson({}),
   )
+  const modules = useStore(useModulesStore, (state) => state.modules)
 
   const [moduleId, setModuleId] = useState<number>(
-    resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
+    resolveModuleId(modules ?? [], codeModule as string) || 0,
   )
+
+  useEffect(() => {
+    if (!modules || !codeModule) return
+
+    setModuleId(resolveModuleId(modules, codeModule as string) || 0)
+  }, [modules, codeModule])
 
   const defaultValues: IDocumentsForm = useMemo(
     () => resolveDefaultValues(),
@@ -268,10 +276,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
   }, [values.templateId])
 
   useEffect(() => {
-    if (!moduleId) {
-      setModuleId(
-        resolveModuleId(useModulesStore().modules, codeModule as string) || 0,
-      )
+    if (!moduleId || moduleId === 0) {
       return
     }
 
@@ -312,7 +317,7 @@ export const useDocumentsForm = (currentDocument?: DocumentModel) => {
           setFunctionaries(result.functionaries)
         }
       })
-  }, [])
+  }, [moduleId])
 
   return {
     councils,
