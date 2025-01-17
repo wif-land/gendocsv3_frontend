@@ -11,6 +11,7 @@ import useModulesStore from '@/shared/store/modulesStore'
 import { DocumentModel } from '../../data/models/DocumentsModel'
 import { resolveModuleId } from '@/shared/utils/ModuleUtil'
 import useStore from '@/shared/hooks/use-store'
+import { TableProps, useTable } from '@/shared/sdk/table'
 
 interface DocumentsTableContextProps {
   filters: IDocumentFilters
@@ -29,6 +30,7 @@ interface DocumentsTableContextProps {
   setIsDataFiltered: (value: boolean) => void
   moduleIdentifier: number
   handleResetFilters: () => void
+  table: TableProps
 }
 
 const DocumentsTableContext = createContext<
@@ -39,6 +41,7 @@ export const DocumentsTableProvider: React.FC<{
   children: ReactNode
   moduleCode: string
 }> = ({ moduleCode, children }) => {
+  const table = useTable()
   const modules = useStore(useModulesStore, (state) => state.modules)
   const [moduleIdentifier, setModuleIdentifier] = useState(0)
 
@@ -78,6 +81,7 @@ export const DocumentsTableProvider: React.FC<{
         setIsDataFiltered,
         moduleIdentifier,
         handleResetFilters,
+        table,
       }}
     >
       {children}
