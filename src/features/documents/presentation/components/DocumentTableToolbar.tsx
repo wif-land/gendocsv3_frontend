@@ -21,7 +21,11 @@ export interface IDocumentFilters {
   order?: 'ASC' | 'DESC'
 }
 
-export const DocumentTableToolbar = () => {
+export const DocumentTableToolbar = ({
+  moduleCode,
+}: {
+  moduleCode: string
+}) => {
   const [inputValue, setInputValue] = useState('')
   const debouncedValue = useDebounce(inputValue)
 
@@ -35,7 +39,7 @@ export const DocumentTableToolbar = () => {
     handleFilters,
     getFilteredDocuments,
     setIsDataFiltered,
-  } = useDocumentView()
+  } = useDocumentView(moduleCode)
 
   const handleFilterDocument = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {

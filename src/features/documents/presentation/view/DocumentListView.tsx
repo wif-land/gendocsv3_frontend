@@ -78,7 +78,7 @@ const DocumentListView = ({ moduleId }: { moduleId: string }) => {
         />
 
         <Card>
-          <DocumentTableToolbar />
+          <DocumentTableToolbar moduleCode={moduleId} />
 
           {isDataFiltered && (
             <DocumentTableFiltersResult
