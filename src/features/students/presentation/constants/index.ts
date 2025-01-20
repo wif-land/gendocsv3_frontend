@@ -44,7 +44,8 @@ export const NewStudentSchema = yup.object().shape({
     .number()
     .positive()
     .max(MAX_CREDITS_TO_APPROVE, 'Debe ser entre 0 y 247')
-    .min(0, 'Debe ser entre 0 y 247'),
+    .min(0, 'Debe ser entre 0 y 247')
+    .nullable(),
   career: yup.number().required(VALIDATION_MESSAGES.required),
   vinculationHours: yup
     .number()
