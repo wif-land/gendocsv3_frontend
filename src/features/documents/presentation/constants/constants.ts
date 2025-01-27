@@ -39,8 +39,20 @@ export const STUDENT_DOCUMENTS_TABLE_HEAD = [
     label: 'Número',
   },
   {
-    key: 'description',
-    label: 'Descripción',
+    key: 'createdAt',
+    label: 'Fecha de creación',
+  },
+  {
+    key: 'userName',
+    label: 'Creado Por',
+  },
+  {
+    key: 'councilId',
+    label: 'Consejo',
+  },
+  {
+    key: 'templateId',
+    label: 'Plantilla',
   },
 ]
 
