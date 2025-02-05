@@ -1,5 +1,5 @@
 'use client'
-import { Button, Stack, Typography } from '@mui/material'
+import { Button, Fab, Stack, SwipeableDrawer, Typography } from '@mui/material'
 import React from 'react'
 import Iconify from '../iconify'
 import { VariablesAccordion } from '../variables-accordion/varibles-accordion'
@@ -16,6 +16,7 @@ const DocumentVisualizer = ({
   shouldLoadVariables?: boolean
 }) => {
   const isSpreadsheet = driveId.includes('**spreadsheet**')
+  const [open, setOpen] = React.useState(false)
   const router = useRouter()
 
   const documentURL = !isSpreadsheet
@@ -54,14 +55,41 @@ const DocumentVisualizer = ({
           </Stack>
           {shouldLoadVariables && (
             <>
-              <Stack
+              <Fab
+                color="primary"
+                onClick={() => setOpen(true)}
                 sx={{
-                  flexGrow: 1,
-                  flexBasis: 10,
+                  p: 1,
+                  borderRadius: '10%',
+                  position: 'fixed',
+                  right: '10px',
+                  bottom: '50vh',
+                  width: 'auto',
                 }}
               >
-                <VariablesAccordion />
-              </Stack>
+                <Iconify icon="eva:code-outline" />
+                <Typography variant="body2">Variables</Typography>
+              </Fab>
+              <SwipeableDrawer
+                open={open}
+                anchor="right"
+                onClose={() => setOpen(false)}
+                onOpen={() => setOpen(true)}
+                sx={{
+                  width: 400,
+                  flexShrink: 0,
+                  '& .MuiDrawer-paper': { width: 400 },
+                }}
+              >
+                <Stack
+                  sx={{
+                    flexGrow: 1,
+                    flexBasis: 10,
+                  }}
+                >
+                  <VariablesAccordion />
+                </Stack>
+              </SwipeableDrawer>
             </>
           )}
         </Stack>
