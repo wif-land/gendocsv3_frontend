@@ -8,7 +8,11 @@ const Page = () => {
   const returnLink = usePathname().split('/').slice(0, -2).join('/')
 
   return (
-    <DocumentVisualizer driveId={driveId as string} returnLink={returnLink} />
+    <DocumentVisualizer
+      driveId={driveId as string}
+      returnLink={returnLink}
+      shouldLoadVariables
+    />
   )
 }
 
