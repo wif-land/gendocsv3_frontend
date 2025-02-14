@@ -229,8 +229,8 @@ export const transformData = (data: any[]): DegreeCertificateForBulk[] =>
       certificateStatus: item['Estado Acta']
         ? String(item['Estado Acta']).trim().toUpperCase()
         : undefined,
-      firstMainQualifierDni: safeToString(item['Ced Calif Prino 1']),
-      secondMainQualifierDni: safeToString(item['Ced Calif Prino 2']),
+      firstMainQualifierDni: safeToString(item['Ced Calif Princ 1']),
+      secondMainQualifierDni: safeToString(item['Ced Calif Princ 2']),
       firstSecondaryQualifierDni: safeToString(item['Ced Calf Supl 1']),
       secondSecondaryQualifierDni: safeToString(item['Ced Calf Supl 2']),
       mentorDni: safeToString(item['Ced Tutor']),
