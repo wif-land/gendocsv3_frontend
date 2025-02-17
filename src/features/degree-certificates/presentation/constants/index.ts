@@ -169,8 +169,7 @@ export const defaultFilters = (
 export const NewDegreeCertificateSchema = Yup.object().shape({
   topic: Yup.string()
     .required('El tema es requerido')
-    .min(5, 'Entre 5 y 255 carácteres')
-    .max(255, 'Entre 5 y 255 carácteres'),
+    .min(5, 'Entre 5 y 255 carácteres'),
   // selectedValue: Yup.object().shape({
   //   id: Yup.number().min(1).required('El estudiante es requerido'),
   //   label: Yup.string().required('El estudiante es requerido'),
